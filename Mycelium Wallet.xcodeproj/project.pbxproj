@@ -1,0 +1,429 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		208FFB9519D9802000D4C159 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9419D9802000D4C159 /* main.m */; };
+		208FFB9819D9802000D4C159 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9719D9802000D4C159 /* AppDelegate.m */; };
+		208FFB9B19D9802000D4C159 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9A19D9802000D4C159 /* ViewController.m */; };
+		208FFB9E19D9802000D4C159 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 208FFB9C19D9802000D4C159 /* Main.storyboard */; };
+		208FFBA019D9802000D4C159 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 208FFB9F19D9802000D4C159 /* Images.xcassets */; };
+		208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBA119D9802000D4C159 /* LaunchScreen.xib */; };
+		208FFBAF19D9802000D4C159 /* Mycelium_WalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFBAE19D9802000D4C159 /* Mycelium_WalletTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		208FFBA919D9802000D4C159 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 208FFB8719D9802000D4C159 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 208FFB8E19D9802000D4C159;
+			remoteInfo = "Mycelium Wallet";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		208FFB8F19D9802000D4C159 /* Mycelium Wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mycelium Wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		208FFB9319D9802000D4C159 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		208FFB9419D9802000D4C159 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		208FFB9619D9802000D4C159 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		208FFB9719D9802000D4C159 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		208FFB9919D9802000D4C159 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		208FFB9A19D9802000D4C159 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		208FFB9D19D9802000D4C159 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		208FFB9F19D9802000D4C159 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		208FFBA219D9802000D4C159 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		208FFBA819D9802000D4C159 /* Mycelium WalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Mycelium WalletTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		208FFBAD19D9802000D4C159 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		208FFBAE19D9802000D4C159 /* Mycelium_WalletTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Mycelium_WalletTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		208FFB8C19D9802000D4C159 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		208FFBA519D9802000D4C159 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		208FFB8619D9802000D4C159 = {
+			isa = PBXGroup;
+			children = (
+				208FFB9119D9802000D4C159 /* Mycelium Wallet */,
+				208FFBAB19D9802000D4C159 /* Mycelium WalletTests */,
+				208FFB9019D9802000D4C159 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		208FFB9019D9802000D4C159 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				208FFB8F19D9802000D4C159 /* Mycelium Wallet.app */,
+				208FFBA819D9802000D4C159 /* Mycelium WalletTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		208FFB9119D9802000D4C159 /* Mycelium Wallet */ = {
+			isa = PBXGroup;
+			children = (
+				208FFB9619D9802000D4C159 /* AppDelegate.h */,
+				208FFB9719D9802000D4C159 /* AppDelegate.m */,
+				208FFB9919D9802000D4C159 /* ViewController.h */,
+				208FFB9A19D9802000D4C159 /* ViewController.m */,
+				208FFB9C19D9802000D4C159 /* Main.storyboard */,
+				208FFB9F19D9802000D4C159 /* Images.xcassets */,
+				208FFBA119D9802000D4C159 /* LaunchScreen.xib */,
+				208FFB9219D9802000D4C159 /* Supporting Files */,
+			);
+			path = "Mycelium Wallet";
+			sourceTree = "<group>";
+		};
+		208FFB9219D9802000D4C159 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				208FFB9319D9802000D4C159 /* Info.plist */,
+				208FFB9419D9802000D4C159 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		208FFBAB19D9802000D4C159 /* Mycelium WalletTests */ = {
+			isa = PBXGroup;
+			children = (
+				208FFBAE19D9802000D4C159 /* Mycelium_WalletTests.m */,
+				208FFBAC19D9802000D4C159 /* Supporting Files */,
+			);
+			path = "Mycelium WalletTests";
+			sourceTree = "<group>";
+		};
+		208FFBAC19D9802000D4C159 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				208FFBAD19D9802000D4C159 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		208FFB8E19D9802000D4C159 /* Mycelium Wallet */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 208FFBB219D9802000D4C159 /* Build configuration list for PBXNativeTarget "Mycelium Wallet" */;
+			buildPhases = (
+				208FFB8B19D9802000D4C159 /* Sources */,
+				208FFB8C19D9802000D4C159 /* Frameworks */,
+				208FFB8D19D9802000D4C159 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Mycelium Wallet";
+			productName = "Mycelium Wallet";
+			productReference = 208FFB8F19D9802000D4C159 /* Mycelium Wallet.app */;
+			productType = "com.apple.product-type.application";
+		};
+		208FFBA719D9802000D4C159 /* Mycelium WalletTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 208FFBB519D9802000D4C159 /* Build configuration list for PBXNativeTarget "Mycelium WalletTests" */;
+			buildPhases = (
+				208FFBA419D9802000D4C159 /* Sources */,
+				208FFBA519D9802000D4C159 /* Frameworks */,
+				208FFBA619D9802000D4C159 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				208FFBAA19D9802000D4C159 /* PBXTargetDependency */,
+			);
+			name = "Mycelium WalletTests";
+			productName = "Mycelium WalletTests";
+			productReference = 208FFBA819D9802000D4C159 /* Mycelium WalletTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		208FFB8719D9802000D4C159 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0600;
+				ORGANIZATIONNAME = Mycelium;
+				TargetAttributes = {
+					208FFB8E19D9802000D4C159 = {
+						CreatedOnToolsVersion = 6.0.1;
+					};
+					208FFBA719D9802000D4C159 = {
+						CreatedOnToolsVersion = 6.0.1;
+						TestTargetID = 208FFB8E19D9802000D4C159;
+					};
+				};
+			};
+			buildConfigurationList = 208FFB8A19D9802000D4C159 /* Build configuration list for PBXProject "Mycelium Wallet" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 208FFB8619D9802000D4C159;
+			productRefGroup = 208FFB9019D9802000D4C159 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				208FFB8E19D9802000D4C159 /* Mycelium Wallet */,
+				208FFBA719D9802000D4C159 /* Mycelium WalletTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		208FFB8D19D9802000D4C159 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				208FFB9E19D9802000D4C159 /* Main.storyboard in Resources */,
+				208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */,
+				208FFBA019D9802000D4C159 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		208FFBA619D9802000D4C159 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		208FFB8B19D9802000D4C159 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				208FFB9B19D9802000D4C159 /* ViewController.m in Sources */,
+				208FFB9819D9802000D4C159 /* AppDelegate.m in Sources */,
+				208FFB9519D9802000D4C159 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		208FFBA419D9802000D4C159 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				208FFBAF19D9802000D4C159 /* Mycelium_WalletTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		208FFBAA19D9802000D4C159 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 208FFB8E19D9802000D4C159 /* Mycelium Wallet */;
+			targetProxy = 208FFBA919D9802000D4C159 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		208FFB9C19D9802000D4C159 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				208FFB9D19D9802000D4C159 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		208FFBA119D9802000D4C159 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				208FFBA219D9802000D4C159 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		208FFBB019D9802000D4C159 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		208FFBB119D9802000D4C159 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		208FFBB319D9802000D4C159 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		208FFBB419D9802000D4C159 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		208FFBB619D9802000D4C159 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Mycelium WalletTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mycelium Wallet.app/Mycelium Wallet";
+			};
+			name = Debug;
+		};
+		208FFBB719D9802000D4C159 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Mycelium WalletTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mycelium Wallet.app/Mycelium Wallet";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		208FFB8A19D9802000D4C159 /* Build configuration list for PBXProject "Mycelium Wallet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				208FFBB019D9802000D4C159 /* Debug */,
+				208FFBB119D9802000D4C159 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		208FFBB219D9802000D4C159 /* Build configuration list for PBXNativeTarget "Mycelium Wallet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				208FFBB319D9802000D4C159 /* Debug */,
+				208FFBB419D9802000D4C159 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		208FFBB519D9802000D4C159 /* Build configuration list for PBXNativeTarget "Mycelium WalletTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				208FFBB619D9802000D4C159 /* Debug */,
+				208FFBB719D9802000D4C159 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 208FFB8719D9802000D4C159 /* Project object */;
+}
