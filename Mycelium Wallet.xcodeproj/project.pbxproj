@@ -7,13 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E37619D9858F00CD81B8 /* MYCWallet.m */; };
 		208FFB9519D9802000D4C159 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9419D9802000D4C159 /* main.m */; };
-		208FFB9819D9802000D4C159 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9719D9802000D4C159 /* AppDelegate.m */; };
-		208FFB9B19D9802000D4C159 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9A19D9802000D4C159 /* ViewController.m */; };
-		208FFB9E19D9802000D4C159 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 208FFB9C19D9802000D4C159 /* Main.storyboard */; };
+		208FFB9819D9802000D4C159 /* MYCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9719D9802000D4C159 /* MYCAppDelegate.m */; };
 		208FFBA019D9802000D4C159 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 208FFB9F19D9802000D4C159 /* Images.xcassets */; };
 		208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBA119D9802000D4C159 /* LaunchScreen.xib */; };
 		208FFBAF19D9802000D4C159 /* Mycelium_WalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFBAE19D9802000D4C159 /* Mycelium_WalletTests.m */; };
+		208FFBBB19D9848800D4C159 /* MYCWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFBB919D9848800D4C159 /* MYCWelcomeViewController.m */; };
+		208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBBA19D9848800D4C159 /* MYCWelcomeViewController.xib */; };
+		208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFBC219D984E700D4C159 /* MYCTabBarController.m */; };
+		208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBC319D984E700D4C159 /* MYCTabBarController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,19 +30,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2064E37519D9858F00CD81B8 /* MYCWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCWallet.h; path = Models/MYCWallet.h; sourceTree = "<group>"; };
+		2064E37619D9858F00CD81B8 /* MYCWallet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWallet.m; path = Models/MYCWallet.m; sourceTree = "<group>"; };
 		208FFB8F19D9802000D4C159 /* Mycelium Wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mycelium Wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		208FFB9319D9802000D4C159 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		208FFB9419D9802000D4C159 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		208FFB9619D9802000D4C159 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		208FFB9719D9802000D4C159 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		208FFB9919D9802000D4C159 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		208FFB9A19D9802000D4C159 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		208FFB9D19D9802000D4C159 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		208FFB9619D9802000D4C159 /* MYCAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MYCAppDelegate.h; sourceTree = "<group>"; };
+		208FFB9719D9802000D4C159 /* MYCAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MYCAppDelegate.m; sourceTree = "<group>"; };
 		208FFB9F19D9802000D4C159 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		208FFBA219D9802000D4C159 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		208FFBA819D9802000D4C159 /* Mycelium WalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Mycelium WalletTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		208FFBAD19D9802000D4C159 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		208FFBAE19D9802000D4C159 /* Mycelium_WalletTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Mycelium_WalletTests.m; sourceTree = "<group>"; };
+		208FFBB819D9848800D4C159 /* MYCWelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCWelcomeViewController.h; sourceTree = "<group>"; };
+		208FFBB919D9848800D4C159 /* MYCWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCWelcomeViewController.m; sourceTree = "<group>"; };
+		208FFBBA19D9848800D4C159 /* MYCWelcomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCWelcomeViewController.xib; sourceTree = "<group>"; };
+		208FFBC119D984E700D4C159 /* MYCTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCTabBarController.h; sourceTree = "<group>"; };
+		208FFBC219D984E700D4C159 /* MYCTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCTabBarController.m; sourceTree = "<group>"; };
+		208FFBC319D984E700D4C159 /* MYCTabBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCTabBarController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,11 +89,12 @@
 		208FFB9119D9802000D4C159 /* Mycelium Wallet */ = {
 			isa = PBXGroup;
 			children = (
-				208FFB9619D9802000D4C159 /* AppDelegate.h */,
-				208FFB9719D9802000D4C159 /* AppDelegate.m */,
-				208FFB9919D9802000D4C159 /* ViewController.h */,
-				208FFB9A19D9802000D4C159 /* ViewController.m */,
-				208FFB9C19D9802000D4C159 /* Main.storyboard */,
+				208FFB9619D9802000D4C159 /* MYCAppDelegate.h */,
+				208FFB9719D9802000D4C159 /* MYCAppDelegate.m */,
+				208FFBBF19D984A100D4C159 /* Models */,
+				208FFBC019D984B800D4C159 /* Networking */,
+				208FFBBD19D9848B00D4C159 /* Welcome Views */,
+				208FFBBE19D9849800D4C159 /* Main Views */,
 				208FFB9F19D9802000D4C159 /* Images.xcassets */,
 				208FFBA119D9802000D4C159 /* LaunchScreen.xib */,
 				208FFB9219D9802000D4C159 /* Supporting Files */,
@@ -117,6 +126,42 @@
 				208FFBAD19D9802000D4C159 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		208FFBBD19D9848B00D4C159 /* Welcome Views */ = {
+			isa = PBXGroup;
+			children = (
+				208FFBB819D9848800D4C159 /* MYCWelcomeViewController.h */,
+				208FFBB919D9848800D4C159 /* MYCWelcomeViewController.m */,
+				208FFBBA19D9848800D4C159 /* MYCWelcomeViewController.xib */,
+			);
+			name = "Welcome Views";
+			sourceTree = "<group>";
+		};
+		208FFBBE19D9849800D4C159 /* Main Views */ = {
+			isa = PBXGroup;
+			children = (
+				208FFBC119D984E700D4C159 /* MYCTabBarController.h */,
+				208FFBC219D984E700D4C159 /* MYCTabBarController.m */,
+				208FFBC319D984E700D4C159 /* MYCTabBarController.xib */,
+			);
+			name = "Main Views";
+			sourceTree = "<group>";
+		};
+		208FFBBF19D984A100D4C159 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2064E37519D9858F00CD81B8 /* MYCWallet.h */,
+				2064E37619D9858F00CD81B8 /* MYCWallet.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		208FFBC019D984B800D4C159 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Networking;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,9 +244,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				208FFB9E19D9802000D4C159 /* Main.storyboard in Resources */,
 				208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */,
+				208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */,
 				208FFBA019D9802000D4C159 /* Images.xcassets in Resources */,
+				208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,9 +265,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				208FFB9B19D9802000D4C159 /* ViewController.m in Sources */,
-				208FFB9819D9802000D4C159 /* AppDelegate.m in Sources */,
+				208FFB9819D9802000D4C159 /* MYCAppDelegate.m in Sources */,
+				208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */,
 				208FFB9519D9802000D4C159 /* main.m in Sources */,
+				208FFBBB19D9848800D4C159 /* MYCWelcomeViewController.m in Sources */,
+				2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,14 +292,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		208FFB9C19D9802000D4C159 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				208FFB9D19D9802000D4C159 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		208FFBA119D9802000D4C159 /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -414,6 +454,7 @@
 				208FFBB419D9802000D4C159 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		208FFBB519D9802000D4C159 /* Build configuration list for PBXNativeTarget "Mycelium WalletTests" */ = {
 			isa = XCConfigurationList;
@@ -422,6 +463,7 @@
 				208FFBB719D9802000D4C159 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

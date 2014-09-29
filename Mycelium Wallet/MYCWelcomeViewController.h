@@ -1,5 +1,5 @@
 //
-//  AppDelegate.h
+//  MYCWelcomeViewController.h
 //  Mycelium Wallet
 //
 //  Created by Oleg Andreev on 29.09.2014.
@@ -8,10 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
-
-@property (strong, nonatomic) UIWindow *window;
-
+@interface MYCWelcomeViewController : UIViewController
 
 @end
-
