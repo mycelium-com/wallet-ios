@@ -7,31 +7,58 @@
 //
 
 #import "MYCWelcomeViewController.h"
+#import "MYCAppDelegate.h"
 
 @interface MYCWelcomeViewController ()
+@property (weak, nonatomic) IBOutlet UIView *containerView;
+@property (weak, nonatomic) IBOutlet UILabel *welcomeMessageLabel;
+@property (weak, nonatomic) IBOutlet UIButton *createWalletButton;
+@property (weak, nonatomic) IBOutlet UIButton *restoreButton;
+
+@property (strong, nonatomic) IBOutlet UIView *generatingWalletView;
+@property (weak, nonatomic) IBOutlet UILabel *generatingLabel;
+@property (weak, nonatomic) IBOutlet UIProgressView *generatingProgressView;
 
 @end
 
 @implementation MYCWelcomeViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (BOOL) prefersStatusBarHidden
+{
+    return YES;
 }
 
-/*
-#pragma mark - Navigation
+- (IBAction)createNewWallet:(id)sender
+{
+    self.generatingWalletView.frame = self.containerView.bounds;
+    self.generatingWalletView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    self.generatingWalletView.translatesAutoresizingMaskIntoConstraints = YES;
+    [self.containerView addSubview:self.generatingWalletView];
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    self.generatingProgressView.progress = 0.0;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.generatingProgressView setProgress:1.0 animated:YES];
+    });
+
+#warning DEBUG: showing full view.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+        [[MYCAppDelegate sharedInstance] displayMainView];
+        
+    });
 }
-*/
+
+- (IBAction)restoreFromBackup:(id)sender
+{
+
+}
+
 
 @end

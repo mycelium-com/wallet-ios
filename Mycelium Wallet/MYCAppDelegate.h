@@ -12,6 +12,10 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
++ (MYCAppDelegate*) sharedInstance;
+
+// Called when new wallet is created or imported and we can show the main view.
+- (void) displayMainView;
 
 @end
 

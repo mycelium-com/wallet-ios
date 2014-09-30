@@ -7,26 +7,51 @@
 //
 
 #import "MYCAppDelegate.h"
+#import "MYCWelcomeViewController.h"
+#import "MYCTabBarController.h"
 
 @interface MYCAppDelegate ()
-@property(nonatomic) UIWindow* window;
+@property(nonatomic) MYCWelcomeViewController* welcomeViewController;
+@property(nonatomic) MYCTabBarController* mainController;
 @end
 
 @implementation MYCAppDelegate
 
++ (MYCAppDelegate*) sharedInstance
+{
+    return (MYCAppDelegate*)[UIApplication sharedApplication].delegate;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
-    // If wallet is not created yet, show welcome view.
+    // 1. If wallet is not created yet, show welcome view.
+    // 2. If wallet is created already, show the main view.
 
-    // If wallet is created already, show the 
-
+    self.welcomeViewController = [[MYCWelcomeViewController alloc] initWithNibName:nil bundle:nil];
+    self.window.rootViewController = self.welcomeViewController;
 
     [self.window makeKeyAndVisible];
     return YES;
 }
+
+- (void) displayMainView
+{
+    if (!self.mainController)
+    {
+        self.mainController = [[UINib nibWithNibName:@"MYCTabBarController" bundle:nil] instantiateWithOwner:nil options:nil].firstObject;
+    }
+
+    if (!self.window)
+    {
+        self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    }
+
+    self.window.rootViewController = self.mainController;
+    [self.window makeKeyAndVisible];
+}
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {

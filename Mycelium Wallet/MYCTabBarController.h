@@ -8,6 +8,23 @@
 
 #import <UIKit/UIKit.h>
 
+@class MYCBalanceViewController;
+@class MYCAccountsViewController;
+@class MYCTransactionsViewController;
+@class MYCSettingsViewController;
+
 @interface MYCTabBarController : UITabBarController
 
+@property(nonatomic) MYCBalanceViewController* balanceController;
+@property(nonatomic) MYCAccountsViewController* accountsController;
+@property(nonatomic) MYCTransactionsViewController* transactionsController;
+@property(nonatomic) MYCSettingsViewController* settingsController;
+
 @end
+
+@interface MYCTabViewController : UIViewController
+
+@property(nonatomic) UIColor* tintColor;
+
+@end
+

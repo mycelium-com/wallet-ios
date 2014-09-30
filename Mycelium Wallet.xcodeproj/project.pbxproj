@@ -8,6 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E37619D9858F00CD81B8 /* MYCWallet.m */; };
+		2064E37B19D996B400CD81B8 /* MYCRoundedButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E37A19D996B400CD81B8 /* MYCRoundedButton.m */; };
+		2064E37E19D996C500CD81B8 /* MYCRoundedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E37D19D996C500CD81B8 /* MYCRoundedView.m */; };
+		2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */; };
+		2064E38319D9A0D000CD81B8 /* MYCBalanceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */; };
+		2064E38719D9A0E400CD81B8 /* MYCAccountsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38519D9A0E400CD81B8 /* MYCAccountsViewController.m */; };
+		2064E38819D9A0E400CD81B8 /* MYCAccountsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E38619D9A0E400CD81B8 /* MYCAccountsViewController.xib */; };
+		2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38A19D9A0F200CD81B8 /* MYCTransactionsViewController.m */; };
+		2064E38D19D9A0F200CD81B8 /* MYCTransactionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E38B19D9A0F200CD81B8 /* MYCTransactionsViewController.xib */; };
+		2064E39119D9A10400CD81B8 /* MYCSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38F19D9A10400CD81B8 /* MYCSettingsViewController.m */; };
+		2064E39219D9A10400CD81B8 /* MYCSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E39019D9A10400CD81B8 /* MYCSettingsViewController.xib */; };
 		208FFB9519D9802000D4C159 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9419D9802000D4C159 /* main.m */; };
 		208FFB9819D9802000D4C159 /* MYCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9719D9802000D4C159 /* MYCAppDelegate.m */; };
 		208FFBA019D9802000D4C159 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 208FFB9F19D9802000D4C159 /* Images.xcassets */; };
@@ -32,6 +42,23 @@
 /* Begin PBXFileReference section */
 		2064E37519D9858F00CD81B8 /* MYCWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCWallet.h; path = Models/MYCWallet.h; sourceTree = "<group>"; };
 		2064E37619D9858F00CD81B8 /* MYCWallet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWallet.m; path = Models/MYCWallet.m; sourceTree = "<group>"; };
+		2064E37919D996B400CD81B8 /* MYCRoundedButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCRoundedButton.h; path = "UI Utils/MYCRoundedButton.h"; sourceTree = "<group>"; };
+		2064E37A19D996B400CD81B8 /* MYCRoundedButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCRoundedButton.m; path = "UI Utils/MYCRoundedButton.m"; sourceTree = "<group>"; };
+		2064E37C19D996C500CD81B8 /* MYCRoundedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCRoundedView.h; path = "UI Utils/MYCRoundedView.h"; sourceTree = "<group>"; };
+		2064E37D19D996C500CD81B8 /* MYCRoundedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCRoundedView.m; path = "UI Utils/MYCRoundedView.m"; sourceTree = "<group>"; };
+		2064E37F19D9A0D000CD81B8 /* MYCBalanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCBalanceViewController.h; sourceTree = "<group>"; };
+		2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCBalanceViewController.m; sourceTree = "<group>"; };
+		2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCBalanceViewController.xib; sourceTree = "<group>"; };
+		2064E38419D9A0E400CD81B8 /* MYCAccountsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCAccountsViewController.h; sourceTree = "<group>"; };
+		2064E38519D9A0E400CD81B8 /* MYCAccountsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCAccountsViewController.m; sourceTree = "<group>"; };
+		2064E38619D9A0E400CD81B8 /* MYCAccountsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCAccountsViewController.xib; sourceTree = "<group>"; };
+		2064E38919D9A0F200CD81B8 /* MYCTransactionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCTransactionsViewController.h; sourceTree = "<group>"; };
+		2064E38A19D9A0F200CD81B8 /* MYCTransactionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCTransactionsViewController.m; sourceTree = "<group>"; };
+		2064E38B19D9A0F200CD81B8 /* MYCTransactionsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCTransactionsViewController.xib; sourceTree = "<group>"; };
+		2064E38E19D9A10400CD81B8 /* MYCSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCSettingsViewController.h; sourceTree = "<group>"; };
+		2064E38F19D9A10400CD81B8 /* MYCSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCSettingsViewController.m; sourceTree = "<group>"; };
+		2064E39019D9A10400CD81B8 /* MYCSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCSettingsViewController.xib; sourceTree = "<group>"; };
+		2064E39319D9AE1C00CD81B8 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; fileEncoding = 4; path = Podfile; sourceTree = "<group>"; };
 		208FFB8F19D9802000D4C159 /* Mycelium Wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mycelium Wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		208FFB9319D9802000D4C159 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		208FFB9419D9802000D4C159 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -68,9 +95,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2064E37819D995C600CD81B8 /* UI Utils */ = {
+			isa = PBXGroup;
+			children = (
+				2064E37919D996B400CD81B8 /* MYCRoundedButton.h */,
+				2064E37A19D996B400CD81B8 /* MYCRoundedButton.m */,
+				2064E37C19D996C500CD81B8 /* MYCRoundedView.h */,
+				2064E37D19D996C500CD81B8 /* MYCRoundedView.m */,
+			);
+			name = "UI Utils";
+			sourceTree = "<group>";
+		};
 		208FFB8619D9802000D4C159 = {
 			isa = PBXGroup;
 			children = (
+				2064E39319D9AE1C00CD81B8 /* Podfile */,
 				208FFB9119D9802000D4C159 /* Mycelium Wallet */,
 				208FFBAB19D9802000D4C159 /* Mycelium WalletTests */,
 				208FFB9019D9802000D4C159 /* Products */,
@@ -92,6 +131,7 @@
 				208FFB9619D9802000D4C159 /* MYCAppDelegate.h */,
 				208FFB9719D9802000D4C159 /* MYCAppDelegate.m */,
 				208FFBBF19D984A100D4C159 /* Models */,
+				2064E37819D995C600CD81B8 /* UI Utils */,
 				208FFBC019D984B800D4C159 /* Networking */,
 				208FFBBD19D9848B00D4C159 /* Welcome Views */,
 				208FFBBE19D9849800D4C159 /* Main Views */,
@@ -144,6 +184,18 @@
 				208FFBC119D984E700D4C159 /* MYCTabBarController.h */,
 				208FFBC219D984E700D4C159 /* MYCTabBarController.m */,
 				208FFBC319D984E700D4C159 /* MYCTabBarController.xib */,
+				2064E37F19D9A0D000CD81B8 /* MYCBalanceViewController.h */,
+				2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */,
+				2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */,
+				2064E38419D9A0E400CD81B8 /* MYCAccountsViewController.h */,
+				2064E38519D9A0E400CD81B8 /* MYCAccountsViewController.m */,
+				2064E38619D9A0E400CD81B8 /* MYCAccountsViewController.xib */,
+				2064E38919D9A0F200CD81B8 /* MYCTransactionsViewController.h */,
+				2064E38A19D9A0F200CD81B8 /* MYCTransactionsViewController.m */,
+				2064E38B19D9A0F200CD81B8 /* MYCTransactionsViewController.xib */,
+				2064E38E19D9A10400CD81B8 /* MYCSettingsViewController.h */,
+				2064E38F19D9A10400CD81B8 /* MYCSettingsViewController.m */,
+				2064E39019D9A10400CD81B8 /* MYCSettingsViewController.xib */,
 			);
 			name = "Main Views";
 			sourceTree = "<group>";
@@ -244,10 +296,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2064E38819D9A0E400CD81B8 /* MYCAccountsViewController.xib in Resources */,
 				208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */,
 				208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */,
 				208FFBA019D9802000D4C159 /* Images.xcassets in Resources */,
+				2064E38D19D9A0F200CD81B8 /* MYCTransactionsViewController.xib in Resources */,
 				208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */,
+				2064E38319D9A0D000CD81B8 /* MYCBalanceViewController.xib in Resources */,
+				2064E39219D9A10400CD81B8 /* MYCSettingsViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,7 +322,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				208FFB9819D9802000D4C159 /* MYCAppDelegate.m in Sources */,
+				2064E37E19D996C500CD81B8 /* MYCRoundedView.m in Sources */,
+				2064E37B19D996B400CD81B8 /* MYCRoundedButton.m in Sources */,
+				2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */,
+				2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */,
+				2064E39119D9A10400CD81B8 /* MYCSettingsViewController.m in Sources */,
 				208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */,
+				2064E38719D9A0E400CD81B8 /* MYCAccountsViewController.m in Sources */,
 				208FFB9519D9802000D4C159 /* main.m in Sources */,
 				208FFBBB19D9848800D4C159 /* MYCWelcomeViewController.m in Sources */,
 				2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */,
