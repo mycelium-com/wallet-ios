@@ -24,14 +24,14 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Xo-xP-PBe" userLabel="Border View">
-                    <rect key="frame" x="0.0" y="176" width="320" height="1"/>
+                    <rect key="frame" x="0.0" y="176.5" width="320" height="1"/>
                     <color key="backgroundColor" red="0.76499247550000005" green="0.76496958729999998" blue="0.76498252150000001" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="1" id="rBg-LU-LnO"/>
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2xo-SL-GVo">
-                    <rect key="frame" x="109" y="186" width="102" height="35"/>
+                    <rect key="frame" x="109" y="186.5" width="102" height="35"/>
                     <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="19"/>
                     <state key="normal" title="Use all funds">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -41,7 +41,7 @@
                     </connections>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 042 234 bits" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="heC-AM-0sz">
-                    <rect key="frame" x="109" y="221" width="102.5" height="20.5"/>
+                    <rect key="frame" x="109" y="221.5" width="102.5" height="20.5"/>
                     <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="17"/>
                     <color key="textColor" red="0.42808070778846741" green="0.42805227637290955" blue="0.42806887626647949" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
@@ -57,7 +57,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="320" height="176.5"/>
                     <subviews>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="0 000 000" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="U14-Fb-xG0">
-                            <rect key="frame" x="0.0" y="72.5" width="191" height="36"/>
+                            <rect key="frame" x="0.0" y="72" width="181" height="36"/>
                             <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="30"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
                             <connections>
@@ -67,7 +67,7 @@
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Alr-FU-WiU">
-                            <rect key="frame" x="195" y="72.5" width="55" height="36"/>
+                            <rect key="frame" x="185" y="72" width="55" height="36"/>
                             <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="30"/>
                             <inset key="contentEdgeInsets" minX="4" minY="0.0" maxX="4" maxY="0.0"/>
                             <state key="normal" title="bits">
@@ -78,7 +78,7 @@
                             </connections>
                         </button>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="0.00" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WPS-vR-XU3">
-                            <rect key="frame" x="0.0" y="113.5" width="191" height="27"/>
+                            <rect key="frame" x="0.0" y="113" width="181" height="27"/>
                             <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="22"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
                             <connections>
@@ -88,7 +88,7 @@
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tgY-eg-DNg">
-                            <rect key="frame" x="195" y="113.5" width="55" height="27"/>
+                            <rect key="frame" x="185" y="113" width="55" height="27"/>
                             <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="22"/>
                             <inset key="contentEdgeInsets" minX="4" minY="0.0" maxX="4" maxY="0.0"/>
                             <state key="normal" title="usd">
@@ -99,7 +99,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PgE-Wo-9nb">
-                            <rect key="frame" x="8" y="27" width="51" height="32"/>
+                            <rect key="frame" x="10" y="27" width="51" height="32"/>
                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                             <state key="normal" title="Cancel">
                                 <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -109,7 +109,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vvc-u8-Kig">
-                            <rect key="frame" x="273" y="27" width="39" height="32"/>
+                            <rect key="frame" x="271" y="27" width="39" height="32"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                             <state key="normal" title="Send">
                                 <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -120,13 +120,13 @@
                             </connections>
                         </button>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Main Account" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c4H-3C-XyI">
-                            <rect key="frame" x="106" y="32" width="109" height="20.5"/>
+                            <rect key="frame" x="105" y="32" width="109" height="20.5"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fee: 5 000 bits" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qTt-2c-8V1">
-                            <rect key="frame" x="89.5" y="146.5" width="99.5" height="17.5"/>
+                            <rect key="frame" x="79" y="146" width="99.5" height="17.5"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                             <color key="textColor" red="0.70039774723050008" green="0.70039774723050008" blue="0.70355269160583944" alpha="1" colorSpace="deviceRGB"/>
                             <nil key="highlightedColor"/>
@@ -137,12 +137,12 @@
                         <constraint firstItem="qTt-2c-8V1" firstAttribute="top" secondItem="WPS-vR-XU3" secondAttribute="bottom" constant="6" id="1rC-F3-8DG"/>
                         <constraint firstItem="Alr-FU-WiU" firstAttribute="leading" secondItem="U14-Fb-xG0" secondAttribute="trailing" constant="4" id="2Pp-b1-uSU"/>
                         <constraint firstItem="WPS-vR-XU3" firstAttribute="trailing" secondItem="qTt-2c-8V1" secondAttribute="trailing" constant="2" id="2tl-xB-xbj"/>
-                        <constraint firstAttribute="trailing" secondItem="tgY-eg-DNg" secondAttribute="trailing" priority="999" constant="70" id="4fc-rm-ag1"/>
+                        <constraint firstAttribute="trailing" secondItem="tgY-eg-DNg" secondAttribute="trailing" multiplier="1.333" priority="999" id="4fc-rm-ag1"/>
                         <constraint firstItem="WPS-vR-XU3" firstAttribute="top" secondItem="U14-Fb-xG0" secondAttribute="bottom" constant="5" id="4u3-7b-lFE"/>
-                        <constraint firstItem="PgE-Wo-9nb" firstAttribute="leading" secondItem="BDk-Vc-NZZ" secondAttribute="leading" constant="8" id="7ln-gk-J5W"/>
+                        <constraint firstItem="PgE-Wo-9nb" firstAttribute="leading" secondItem="BDk-Vc-NZZ" secondAttribute="leading" constant="10" id="7ln-gk-J5W"/>
                         <constraint firstItem="U14-Fb-xG0" firstAttribute="leading" secondItem="BDk-Vc-NZZ" secondAttribute="leading" id="BLz-tZ-HLf"/>
                         <constraint firstItem="U14-Fb-xG0" firstAttribute="trailing" secondItem="qTt-2c-8V1" secondAttribute="trailing" constant="2" id="CiL-71-yZI"/>
-                        <constraint firstAttribute="trailing" secondItem="Alr-FU-WiU" secondAttribute="trailing" priority="999" constant="70" id="KWm-Uv-qDN"/>
+                        <constraint firstAttribute="trailing" secondItem="Alr-FU-WiU" secondAttribute="trailing" multiplier="1.333" priority="999" id="KWm-Uv-qDN"/>
                         <constraint firstAttribute="centerX" secondItem="c4H-3C-XyI" secondAttribute="centerX" constant="-0.25" id="RTJ-l6-Sje"/>
                         <constraint firstItem="PgE-Wo-9nb" firstAttribute="baseline" secondItem="c4H-3C-XyI" secondAttribute="baseline" id="RnB-4L-aTe"/>
                         <constraint firstItem="WPS-vR-XU3" firstAttribute="baseline" secondItem="tgY-eg-DNg" secondAttribute="baseline" id="SvG-So-ptA"/>
@@ -151,7 +151,7 @@
                         <constraint firstItem="c4H-3C-XyI" firstAttribute="top" secondItem="BDk-Vc-NZZ" secondAttribute="top" constant="32" id="X7G-iT-1t7"/>
                         <constraint firstItem="c4H-3C-XyI" firstAttribute="baseline" secondItem="Vvc-u8-Kig" secondAttribute="baseline" id="ZKj-ZF-OfC"/>
                         <constraint firstItem="tgY-eg-DNg" firstAttribute="leading" secondItem="WPS-vR-XU3" secondAttribute="trailing" constant="4" id="bMQ-La-XAi"/>
-                        <constraint firstAttribute="trailing" secondItem="Vvc-u8-Kig" secondAttribute="trailing" constant="8" id="jxk-wa-eTe"/>
+                        <constraint firstAttribute="trailing" secondItem="Vvc-u8-Kig" secondAttribute="trailing" constant="10" id="jxk-wa-eTe"/>
                         <constraint firstAttribute="bottom" secondItem="WPS-vR-XU3" secondAttribute="bottom" multiplier="1.4" constant="-20" id="tIX-a1-1TF"/>
                         <constraint firstItem="Alr-FU-WiU" firstAttribute="leading" secondItem="tgY-eg-DNg" secondAttribute="leading" id="usR-Ic-cwX"/>
                         <constraint firstItem="U14-Fb-xG0" firstAttribute="baseline" secondItem="Alr-FU-WiU" secondAttribute="baseline" id="yC7-NB-Pyc"/>
@@ -181,7 +181,7 @@
                 <constraint firstItem="2xo-SL-GVo" firstAttribute="top" secondItem="BDk-Vc-NZZ" secondAttribute="bottom" constant="10" id="xI9-dM-9fj"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="242" y="452"/>
+            <point key="canvasLocation" x="-1" y="425"/>
         </view>
     </objects>
 </document>

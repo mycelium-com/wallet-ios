@@ -77,9 +77,11 @@
 - (IBAction) receive:(id)sender
 {
     MYCReceiveViewController* vc = [[MYCReceiveViewController alloc] initWithNibName:nil bundle:nil];
-    UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
-    vc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissReceiveView:)];
-    [self presentViewController:navc animated:YES completion:^{
+    vc.completionBlock = ^{
+        [self dismissViewControllerAnimated:YES completion:nil];
+    };
+
+    [self presentViewController:vc animated:YES completion:^{
     }];
 }
 
@@ -92,15 +94,6 @@
     }];
 }
 
-- (void) dismissSendView:(id)_
-{
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void) dismissReceiveView:(id)_
-{
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
 
 - (void) dismissBackupView:(id)_
 {

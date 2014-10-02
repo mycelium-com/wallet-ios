@@ -10,4 +10,6 @@
 
 @interface MYCReceiveViewController : UIViewController
 
+@property(nonatomic,copy) void(^completionBlock)();
+
 @end
