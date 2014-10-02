@@ -125,9 +125,9 @@
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fee: 5 000 bits" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qTt-2c-8V1">
-                            <rect key="frame" x="79" y="146" width="99.5" height="17.5"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Fee: 5 000 bits" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qTt-2c-8V1">
+                            <rect key="frame" x="110.5" y="146" width="99.5" height="17.5"/>
+                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="15"/>
                             <color key="textColor" red="0.70039774723050008" green="0.70039774723050008" blue="0.70355269160583944" alpha="1" colorSpace="deviceRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
@@ -152,6 +152,7 @@
                         <constraint firstItem="c4H-3C-XyI" firstAttribute="baseline" secondItem="Vvc-u8-Kig" secondAttribute="baseline" id="ZKj-ZF-OfC"/>
                         <constraint firstItem="tgY-eg-DNg" firstAttribute="leading" secondItem="WPS-vR-XU3" secondAttribute="trailing" constant="4" id="bMQ-La-XAi"/>
                         <constraint firstAttribute="trailing" secondItem="Vvc-u8-Kig" secondAttribute="trailing" constant="10" id="jxk-wa-eTe"/>
+                        <constraint firstAttribute="centerX" secondItem="qTt-2c-8V1" secondAttribute="centerX" id="q36-fv-p8O"/>
                         <constraint firstAttribute="bottom" secondItem="WPS-vR-XU3" secondAttribute="bottom" multiplier="1.4" constant="-20" id="tIX-a1-1TF"/>
                         <constraint firstItem="Alr-FU-WiU" firstAttribute="leading" secondItem="tgY-eg-DNg" secondAttribute="leading" id="usR-Ic-cwX"/>
                         <constraint firstItem="U14-Fb-xG0" firstAttribute="baseline" secondItem="Alr-FU-WiU" secondAttribute="baseline" id="yC7-NB-Pyc"/>
@@ -159,6 +160,7 @@
                     <variation key="default">
                         <mask key="constraints">
                             <exclude reference="CiL-71-yZI"/>
+                            <exclude reference="2tl-xB-xbj"/>
                         </mask>
                     </variation>
                 </view>

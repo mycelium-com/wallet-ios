@@ -70,8 +70,7 @@
         [self dismissViewControllerAnimated:YES completion:nil];
     };
 
-    [self presentViewController:vc animated:YES completion:^{
-    }];
+    [self presentViewController:vc animated:YES completion:nil];
 }
 
 - (IBAction) receive:(id)sender
@@ -81,17 +80,17 @@
         [self dismissViewControllerAnimated:YES completion:nil];
     };
 
-    [self presentViewController:vc animated:YES completion:^{
-    }];
+    [self presentViewController:vc animated:YES completion:nil];
 }
 
 - (IBAction) backup:(id)sender
 {
     MYCBackupViewController* vc = [[MYCBackupViewController alloc] initWithNibName:nil bundle:nil];
+    vc.completionBlock = ^(BOOL finished){
+        [self dismissViewControllerAnimated:YES completion:nil];
+    };
     UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
-    vc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissBackupView:)];
-    [self presentViewController:navc animated:YES completion:^{
-    }];
+    [self presentViewController:navc animated:YES completion:nil];
 }
 
 

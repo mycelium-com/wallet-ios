@@ -29,20 +29,20 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uw4-md-gDa">
-                    <rect key="frame" x="112" y="331" width="97" height="33"/>
+                    <rect key="frame" x="112" y="351" width="97" height="33"/>
                     <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="17"/>
                     <state key="normal" title="Main Account">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1CBtcGivXmHQ8ZqdPgeMfcpQNJrqTrSAcG" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.20000000298023224" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jya-1l-D26">
-                    <rect key="frame" x="22" y="357" width="278" height="24"/>
+                    <rect key="frame" x="22" y="377" width="278" height="24"/>
                     <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="20"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SampleQRCode" translatesAutoresizingMaskIntoConstraints="NO" id="qKL-wx-tqI">
-                    <rect key="frame" x="64" y="135" width="192" height="191.5"/>
+                    <rect key="frame" x="64" y="155" width="192" height="191.5"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="qKL-wx-tqI" secondAttribute="height" multiplier="1:1" id="OBh-gp-1mO"/>
                     </constraints>
@@ -60,11 +60,11 @@
                     </connections>
                 </visualEffectView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zI5-WZ-INr" userLabel="Top Bar">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="120"/>
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="140"/>
                     <subviews>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="0 000 000" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kFl-8S-cfl">
-                            <rect key="frame" x="0.0" y="64" width="194.5" height="27"/>
-                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="22"/>
+                            <rect key="frame" x="0.0" y="68" width="188.5" height="32"/>
+                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="26"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
                             <connections>
                                 <action selector="didBeginEditingBtc:" destination="-1" eventType="editingDidBegin" id="1n2-b5-WJH"/>
@@ -72,8 +72,8 @@
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3RM-6k-xvO">
-                            <rect key="frame" x="198" y="64" width="42" height="27"/>
-                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="22"/>
+                            <rect key="frame" x="192" y="68" width="48" height="32"/>
+                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="26"/>
                             <inset key="contentEdgeInsets" minX="4" minY="0.0" maxX="4" maxY="0.0"/>
                             <state key="normal" title="bits">
                                 <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -83,8 +83,8 @@
                             </connections>
                         </button>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="0.00" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="JKe-vf-UtV">
-                            <rect key="frame" x="0.0" y="93" width="194.5" height="20"/>
-                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="16"/>
+                            <rect key="frame" x="0.0" y="104" width="188.5" height="24"/>
+                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="20"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
                             <connections>
                                 <action selector="didBeginEditingFiat:" destination="-1" eventType="editingDidBegin" id="VJ9-KJ-xpI"/>
@@ -92,8 +92,8 @@
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LZw-UV-QNe">
-                            <rect key="frame" x="198" y="93" width="41.5" height="20"/>
-                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="16"/>
+                            <rect key="frame" x="192" y="104" width="47.5" height="24"/>
+                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="20"/>
                             <inset key="contentEdgeInsets" minX="4" minY="0.0" maxX="4" maxY="0.0"/>
                             <state key="normal" title="usd">
                                 <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -126,7 +126,7 @@
                         <constraint firstItem="kFl-8S-cfl" firstAttribute="trailing" secondItem="JKe-vf-UtV" secondAttribute="trailing" id="HZt-0b-rWb"/>
                         <constraint firstItem="kFl-8S-cfl" firstAttribute="baseline" secondItem="3RM-6k-xvO" secondAttribute="baseline" id="Jfv-kl-77W"/>
                         <constraint firstItem="3RM-6k-xvO" firstAttribute="leading" secondItem="kFl-8S-cfl" secondAttribute="trailing" constant="4" id="Kcc-8j-LYu"/>
-                        <constraint firstAttribute="height" constant="120" id="Mr1-vC-jtv"/>
+                        <constraint firstAttribute="height" constant="140" id="Mr1-vC-jtv"/>
                         <constraint firstAttribute="centerX" secondItem="gJD-sZ-hFA" secondAttribute="centerX" constant="-0.25" id="ODo-x1-hM8"/>
                         <constraint firstItem="JKe-vf-UtV" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" id="OPq-tC-FQi"/>
                         <constraint firstItem="gJD-sZ-hFA" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="top" constant="32" id="QCb-bX-XD2"/>
@@ -134,14 +134,14 @@
                         <constraint firstItem="LZw-UV-QNe" firstAttribute="leading" secondItem="JKe-vf-UtV" secondAttribute="trailing" constant="4" id="dzl-eL-Zh3"/>
                         <constraint firstItem="kFl-8S-cfl" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" id="epa-68-63W"/>
                         <constraint firstItem="0vX-Jh-BID" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" constant="10" id="hg5-ZM-wAX"/>
-                        <constraint firstItem="kFl-8S-cfl" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="top" constant="64" id="iVT-H8-2qH"/>
+                        <constraint firstItem="kFl-8S-cfl" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="top" constant="68" id="iVT-H8-2qH"/>
                         <constraint firstAttribute="trailing" secondItem="3RM-6k-xvO" secondAttribute="trailing" multiplier="1.333" priority="999" id="k6K-sf-3AY"/>
-                        <constraint firstItem="JKe-vf-UtV" firstAttribute="top" secondItem="kFl-8S-cfl" secondAttribute="bottom" constant="2" id="n0T-UN-qcK"/>
+                        <constraint firstItem="JKe-vf-UtV" firstAttribute="top" secondItem="kFl-8S-cfl" secondAttribute="bottom" constant="4" id="n0T-UN-qcK"/>
                         <constraint firstAttribute="trailing" secondItem="LZw-UV-QNe" secondAttribute="trailing" multiplier="1.333" priority="999" id="rQn-8q-17P"/>
                     </constraints>
                 </view>
                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UIJ-5J-paw" userLabel="Border View">
-                    <rect key="frame" x="0.0" y="120" width="320" height="1"/>
+                    <rect key="frame" x="0.0" y="140" width="320" height="1"/>
                     <color key="backgroundColor" red="0.76499247550000005" green="0.76496958729999998" blue="0.76498252150000001" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="1" id="c9m-RA-dhy"/>
@@ -174,7 +174,7 @@
                 <constraint firstAttribute="bottom" secondItem="MXC-lp-Lj8" secondAttribute="bottom" id="vhV-jV-n6p"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="14" y="427"/>
+            <point key="canvasLocation" x="-116" y="393"/>
         </view>
         <tapGestureRecognizer id="5sX-Ey-r1D">
             <connections>

@@ -2,18 +2,92 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MYCBackupViewController">
             <connections>
+                <outlet property="pageControl" destination="LpL-j6-nbg" id="6W9-ua-aXy"/>
+                <outlet property="scrollView" destination="32w-ST-Zso" id="aEq-t4-qcv"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" alwaysBounceHorizontal="YES" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="32w-ST-Zso">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="6i7-V6-MZI"/>
+                    </connections>
+                </scrollView>
+                <pageControl opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="14" translatesAutoresizingMaskIntoConstraints="NO" id="LpL-j6-nbg">
+                    <rect key="frame" x="0.0" y="420" width="320" height="37"/>
+                    <color key="pageIndicatorTintColor" red="0.92764736682606619" green="0.92764736682606619" blue="0.9318259580291971" alpha="1" colorSpace="deviceRGB"/>
+                    <color key="currentPageIndicatorTintColor" red="0.42208719253540039" green="0.42207452654838562" blue="0.42208170890808105" alpha="1" colorSpace="calibratedRGB"/>
+                </pageControl>
+            </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="32w-ST-Zso" secondAttribute="bottom" id="9fg-mi-bmn"/>
+                <constraint firstAttribute="trailing" secondItem="LpL-j6-nbg" secondAttribute="trailing" id="Fgn-P0-h5T"/>
+                <constraint firstItem="32w-ST-Zso" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="Neo-cB-g5z"/>
+                <constraint firstItem="32w-ST-Zso" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Qzu-z1-QXq"/>
+                <constraint firstItem="LpL-j6-nbg" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="pXA-hC-XwW"/>
+                <constraint firstAttribute="trailing" secondItem="32w-ST-Zso" secondAttribute="trailing" id="u8g-Fl-88n"/>
+                <constraint firstAttribute="bottom" secondItem="LpL-j6-nbg" secondAttribute="bottom" multiplier="1.05" id="yNZ-uq-yFD"/>
+            </constraints>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="49" y="187"/>
+        </view>
+        <view contentMode="scaleToFill" id="nlT-lW-GSD" userLabel="Page View" customClass="MYCBackupPageView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M9V-QC-tQ0">
+                    <rect key="frame" x="10" y="118" width="300" height="163.5"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="300" id="EfT-CB-R81"/>
+                    </constraints>
+                    <string key="text">You are about to back up your master wallet seed. This seed is not encrypted and allows to restore entire wallet contents.
+
+You will see a list of words, one by one. Write them down and store in a safe place.</string>
+                    <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" tag="200" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uX2-yj-Xtc">
+                    <rect key="frame" x="143" y="310" width="34" height="33"/>
+                    <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="17"/>
+                    <state key="normal" title="Start">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="centerX" secondItem="M9V-QC-tQ0" secondAttribute="centerX" id="Jib-Sy-u54"/>
+                <constraint firstAttribute="centerX" secondItem="uX2-yj-Xtc" secondAttribute="centerX" constant="-0.5" id="QUy-Qq-dUI"/>
+                <constraint firstAttribute="bottom" secondItem="uX2-yj-Xtc" secondAttribute="bottom" multiplier="1.4" priority="999" id="S52-gv-ld0"/>
+                <constraint firstAttribute="centerY" secondItem="M9V-QC-tQ0" secondAttribute="centerY" multiplier="1.2" id="cLU-iH-ijR"/>
+                <constraint firstItem="uX2-yj-Xtc" firstAttribute="top" relation="greaterThanOrEqual" secondItem="M9V-QC-tQ0" secondAttribute="bottom" constant="20" id="lZK-8G-gVz"/>
+                <constraint firstItem="M9V-QC-tQ0" firstAttribute="leading" secondItem="nlT-lW-GSD" secondAttribute="leading" multiplier="1.2" id="zbL-Sl-Ox3"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="zbL-Sl-Ox3"/>
+                </mask>
+            </variation>
+            <connections>
+                <outlet property="button" destination="uX2-yj-Xtc" id="ZLa-mt-EFg"/>
+                <outlet property="label" destination="M9V-QC-tQ0" id="dvE-va-mJf"/>
+            </connections>
+            <point key="canvasLocation" x="420" y="187"/>
         </view>
     </objects>
 </document>

@@ -61,15 +61,15 @@
         {
             self.editingOverlay.hidden = NO;
             self.editingOverlay.alpha = 0.0;
-            [UIView animateWithDuration:0.3 animations:^{
-                self.editingOverlay.alpha = maxAlpha;
+            [UIView animateWithDuration:0.5 animations:^{
+                self.editingOverlay.alpha = 1.0;
             } completion:^(BOOL finished) {
             }];
         }
         else
         {
             self.editingOverlay.hidden = NO;
-            self.editingOverlay.alpha = maxAlpha;
+            self.editingOverlay.alpha = 1.0;
         }
     }
     else
@@ -79,10 +79,10 @@
 
         if (animated)
         {
-            [UIView animateWithDuration:0.3 animations:^{
+            [UIView animateWithDuration:0.25 animations:^{
                 self.editingOverlay.alpha = 0.0;
             } completion:^(BOOL finished) {
-                self.editingOverlay.alpha = maxAlpha;
+                self.editingOverlay.alpha = 1.0;
                 self.editingOverlay.hidden = YES;
             }];
         }

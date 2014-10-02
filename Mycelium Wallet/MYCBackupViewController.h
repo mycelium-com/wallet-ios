@@ -10,4 +10,7 @@
 
 @interface MYCBackupViewController : UIViewController
 
+// Called with YES if completed successfully. NO if cancelled.
+@property(nonatomic,copy) void(^completionBlock)(BOOL completed);
+
 @end
