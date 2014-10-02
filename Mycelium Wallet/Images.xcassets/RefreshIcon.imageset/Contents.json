@@ -7,12 +7,12 @@
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "TabBalanceSelected@2x.png"
+      "filename" : "RefreshIcon@2x.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "TabBalanceSelected@3x.png"
+      "filename" : "RefreshIcon@3x.png"
     }
   ],
   "info" : {

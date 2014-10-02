@@ -40,7 +40,11 @@
     self.transactionsController = [[MYCTransactionsViewController alloc] initWithNibName:nil bundle:nil];
     self.settingsController     = [[MYCSettingsViewController alloc] initWithNibName:nil bundle:nil];
 
-    self.viewControllers = @[ self.balanceController, self.accountsController, self.transactionsController, self.settingsController ];
+    UINavigationController* accountsNVC = [[UINavigationController alloc] initWithRootViewController:self.accountsController];
+    UINavigationController* transactionsNVC = [[UINavigationController alloc] initWithRootViewController:self.transactionsController];
+    UINavigationController* settingsNVC = [[UINavigationController alloc] initWithRootViewController:self.settingsController];
+
+    self.viewControllers = @[ self.balanceController, accountsNVC, transactionsNVC, settingsNVC ];
 }
 
 - (void)viewDidLoad
@@ -70,6 +74,7 @@
 {
     [super viewDidAppear:animated];
     self.tabBarController.tabBar.tintColor = self.tintColor;
+    self.navigationController.navigationBar.tintColor = self.tintColor;
 }
 
 @end

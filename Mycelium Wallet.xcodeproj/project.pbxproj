@@ -7,9 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49419DC364200572BD9 /* MYCWalletAccount.m */; };
+		203AA49819DC365D00572BD9 /* MYCConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49719DC365D00572BD9 /* MYCConnection.m */; };
+		203AA4A319DC3C4500572BD9 /* MYCRoundedButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49E19DC3C4500572BD9 /* MYCRoundedButton.m */; };
+		203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A019DC3C4500572BD9 /* MYCRoundedView.m */; };
+		203AA4A519DC3C4500572BD9 /* PTableViewSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A219DC3C4500572BD9 /* PTableViewSource.m */; };
+		203AA4A819DC4A2600572BD9 /* PColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A719DC4A2600572BD9 /* PColor.m */; };
+		203AA4AD19DC517200572BD9 /* MYCSendViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4AB19DC517200572BD9 /* MYCSendViewController.m */; };
+		203AA4AE19DC517200572BD9 /* MYCSendViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 203AA4AC19DC517200572BD9 /* MYCSendViewController.xib */; };
+		203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4B119DC525100572BD9 /* MYCReceiveViewController.m */; };
+		203AA4B419DC525100572BD9 /* MYCReceiveViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 203AA4B219DC525100572BD9 /* MYCReceiveViewController.xib */; };
+		203AA4B919DC53C900572BD9 /* MYCBackupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4B719DC53C900572BD9 /* MYCBackupViewController.m */; };
+		203AA4BA19DC53C900572BD9 /* MYCBackupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 203AA4B819DC53C900572BD9 /* MYCBackupViewController.xib */; };
 		2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E37619D9858F00CD81B8 /* MYCWallet.m */; };
-		2064E37B19D996B400CD81B8 /* MYCRoundedButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E37A19D996B400CD81B8 /* MYCRoundedButton.m */; };
-		2064E37E19D996C500CD81B8 /* MYCRoundedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E37D19D996C500CD81B8 /* MYCRoundedView.m */; };
 		2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */; };
 		2064E38319D9A0D000CD81B8 /* MYCBalanceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */; };
 		2064E38719D9A0E400CD81B8 /* MYCAccountsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38519D9A0E400CD81B8 /* MYCAccountsViewController.m */; };
@@ -40,12 +50,29 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		203AA49319DC364200572BD9 /* MYCWalletAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCWalletAccount.h; path = Models/MYCWalletAccount.h; sourceTree = "<group>"; };
+		203AA49419DC364200572BD9 /* MYCWalletAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWalletAccount.m; path = Models/MYCWalletAccount.m; sourceTree = "<group>"; };
+		203AA49619DC365D00572BD9 /* MYCConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCConnection.h; path = Networking/MYCConnection.h; sourceTree = "<group>"; };
+		203AA49719DC365D00572BD9 /* MYCConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCConnection.m; path = Networking/MYCConnection.m; sourceTree = "<group>"; };
+		203AA49D19DC3C4500572BD9 /* MYCRoundedButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCRoundedButton.h; sourceTree = "<group>"; };
+		203AA49E19DC3C4500572BD9 /* MYCRoundedButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCRoundedButton.m; sourceTree = "<group>"; };
+		203AA49F19DC3C4500572BD9 /* MYCRoundedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCRoundedView.h; sourceTree = "<group>"; };
+		203AA4A019DC3C4500572BD9 /* MYCRoundedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCRoundedView.m; sourceTree = "<group>"; };
+		203AA4A119DC3C4500572BD9 /* PTableViewSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTableViewSource.h; sourceTree = "<group>"; };
+		203AA4A219DC3C4500572BD9 /* PTableViewSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTableViewSource.m; sourceTree = "<group>"; };
+		203AA4A619DC4A2600572BD9 /* PColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PColor.h; sourceTree = "<group>"; };
+		203AA4A719DC4A2600572BD9 /* PColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PColor.m; sourceTree = "<group>"; };
+		203AA4AA19DC517200572BD9 /* MYCSendViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCSendViewController.h; sourceTree = "<group>"; };
+		203AA4AB19DC517200572BD9 /* MYCSendViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCSendViewController.m; sourceTree = "<group>"; };
+		203AA4AC19DC517200572BD9 /* MYCSendViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCSendViewController.xib; sourceTree = "<group>"; };
+		203AA4B019DC525100572BD9 /* MYCReceiveViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCReceiveViewController.h; sourceTree = "<group>"; };
+		203AA4B119DC525100572BD9 /* MYCReceiveViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCReceiveViewController.m; sourceTree = "<group>"; };
+		203AA4B219DC525100572BD9 /* MYCReceiveViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCReceiveViewController.xib; sourceTree = "<group>"; };
+		203AA4B619DC53C900572BD9 /* MYCBackupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCBackupViewController.h; sourceTree = "<group>"; };
+		203AA4B719DC53C900572BD9 /* MYCBackupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCBackupViewController.m; sourceTree = "<group>"; };
+		203AA4B819DC53C900572BD9 /* MYCBackupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCBackupViewController.xib; sourceTree = "<group>"; };
 		2064E37519D9858F00CD81B8 /* MYCWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCWallet.h; path = Models/MYCWallet.h; sourceTree = "<group>"; };
 		2064E37619D9858F00CD81B8 /* MYCWallet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWallet.m; path = Models/MYCWallet.m; sourceTree = "<group>"; };
-		2064E37919D996B400CD81B8 /* MYCRoundedButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCRoundedButton.h; path = "UI Utils/MYCRoundedButton.h"; sourceTree = "<group>"; };
-		2064E37A19D996B400CD81B8 /* MYCRoundedButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCRoundedButton.m; path = "UI Utils/MYCRoundedButton.m"; sourceTree = "<group>"; };
-		2064E37C19D996C500CD81B8 /* MYCRoundedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCRoundedView.h; path = "UI Utils/MYCRoundedView.h"; sourceTree = "<group>"; };
-		2064E37D19D996C500CD81B8 /* MYCRoundedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCRoundedView.m; path = "UI Utils/MYCRoundedView.m"; sourceTree = "<group>"; };
 		2064E37F19D9A0D000CD81B8 /* MYCBalanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCBalanceViewController.h; sourceTree = "<group>"; };
 		2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCBalanceViewController.m; sourceTree = "<group>"; };
 		2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCBalanceViewController.xib; sourceTree = "<group>"; };
@@ -95,15 +122,89 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2064E37819D995C600CD81B8 /* UI Utils */ = {
+		203AA48F19DC33CB00572BD9 /* Accounts Tab */ = {
 			isa = PBXGroup;
 			children = (
-				2064E37919D996B400CD81B8 /* MYCRoundedButton.h */,
-				2064E37A19D996B400CD81B8 /* MYCRoundedButton.m */,
-				2064E37C19D996C500CD81B8 /* MYCRoundedView.h */,
-				2064E37D19D996C500CD81B8 /* MYCRoundedView.m */,
+				2064E38419D9A0E400CD81B8 /* MYCAccountsViewController.h */,
+				2064E38519D9A0E400CD81B8 /* MYCAccountsViewController.m */,
+				2064E38619D9A0E400CD81B8 /* MYCAccountsViewController.xib */,
 			);
-			name = "UI Utils";
+			name = "Accounts Tab";
+			sourceTree = "<group>";
+		};
+		203AA49019DC33D800572BD9 /* Balance Tab */ = {
+			isa = PBXGroup;
+			children = (
+				2064E37F19D9A0D000CD81B8 /* MYCBalanceViewController.h */,
+				2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */,
+				2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */,
+			);
+			name = "Balance Tab";
+			sourceTree = "<group>";
+		};
+		203AA49119DC33E200572BD9 /* Transactions Tab */ = {
+			isa = PBXGroup;
+			children = (
+				2064E38919D9A0F200CD81B8 /* MYCTransactionsViewController.h */,
+				2064E38A19D9A0F200CD81B8 /* MYCTransactionsViewController.m */,
+				2064E38B19D9A0F200CD81B8 /* MYCTransactionsViewController.xib */,
+			);
+			name = "Transactions Tab";
+			sourceTree = "<group>";
+		};
+		203AA49219DC33E800572BD9 /* Settings Tab */ = {
+			isa = PBXGroup;
+			children = (
+				2064E38E19D9A10400CD81B8 /* MYCSettingsViewController.h */,
+				2064E38F19D9A10400CD81B8 /* MYCSettingsViewController.m */,
+				2064E39019D9A10400CD81B8 /* MYCSettingsViewController.xib */,
+			);
+			name = "Settings Tab";
+			sourceTree = "<group>";
+		};
+		203AA49C19DC3C4500572BD9 /* UI Utils */ = {
+			isa = PBXGroup;
+			children = (
+				203AA49D19DC3C4500572BD9 /* MYCRoundedButton.h */,
+				203AA49E19DC3C4500572BD9 /* MYCRoundedButton.m */,
+				203AA49F19DC3C4500572BD9 /* MYCRoundedView.h */,
+				203AA4A019DC3C4500572BD9 /* MYCRoundedView.m */,
+				203AA4A119DC3C4500572BD9 /* PTableViewSource.h */,
+				203AA4A219DC3C4500572BD9 /* PTableViewSource.m */,
+				203AA4A619DC4A2600572BD9 /* PColor.h */,
+				203AA4A719DC4A2600572BD9 /* PColor.m */,
+			);
+			path = "UI Utils";
+			sourceTree = "<group>";
+		};
+		203AA4A919DC514C00572BD9 /* Send View */ = {
+			isa = PBXGroup;
+			children = (
+				203AA4AA19DC517200572BD9 /* MYCSendViewController.h */,
+				203AA4AB19DC517200572BD9 /* MYCSendViewController.m */,
+				203AA4AC19DC517200572BD9 /* MYCSendViewController.xib */,
+			);
+			name = "Send View";
+			sourceTree = "<group>";
+		};
+		203AA4AF19DC523100572BD9 /* Receive View */ = {
+			isa = PBXGroup;
+			children = (
+				203AA4B019DC525100572BD9 /* MYCReceiveViewController.h */,
+				203AA4B119DC525100572BD9 /* MYCReceiveViewController.m */,
+				203AA4B219DC525100572BD9 /* MYCReceiveViewController.xib */,
+			);
+			name = "Receive View";
+			sourceTree = "<group>";
+		};
+		203AA4B519DC53B200572BD9 /* Backup */ = {
+			isa = PBXGroup;
+			children = (
+				203AA4B619DC53C900572BD9 /* MYCBackupViewController.h */,
+				203AA4B719DC53C900572BD9 /* MYCBackupViewController.m */,
+				203AA4B819DC53C900572BD9 /* MYCBackupViewController.xib */,
+			);
+			name = Backup;
 			sourceTree = "<group>";
 		};
 		208FFB8619D9802000D4C159 = {
@@ -131,24 +232,27 @@
 				208FFB9619D9802000D4C159 /* MYCAppDelegate.h */,
 				208FFB9719D9802000D4C159 /* MYCAppDelegate.m */,
 				208FFBBF19D984A100D4C159 /* Models */,
-				2064E37819D995C600CD81B8 /* UI Utils */,
 				208FFBC019D984B800D4C159 /* Networking */,
 				208FFBBD19D9848B00D4C159 /* Welcome Views */,
 				208FFBBE19D9849800D4C159 /* Main Views */,
-				208FFB9F19D9802000D4C159 /* Images.xcassets */,
-				208FFBA119D9802000D4C159 /* LaunchScreen.xib */,
-				208FFB9219D9802000D4C159 /* Supporting Files */,
+				203AA4A919DC514C00572BD9 /* Send View */,
+				203AA4AF19DC523100572BD9 /* Receive View */,
+				203AA4B519DC53B200572BD9 /* Backup */,
+				203AA49C19DC3C4500572BD9 /* UI Utils */,
+				208FFB9219D9802000D4C159 /* Other */,
 			);
 			path = "Mycelium Wallet";
 			sourceTree = "<group>";
 		};
-		208FFB9219D9802000D4C159 /* Supporting Files */ = {
+		208FFB9219D9802000D4C159 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				208FFB9F19D9802000D4C159 /* Images.xcassets */,
+				208FFBA119D9802000D4C159 /* LaunchScreen.xib */,
 				208FFB9319D9802000D4C159 /* Info.plist */,
 				208FFB9419D9802000D4C159 /* main.m */,
 			);
-			name = "Supporting Files";
+			name = Other;
 			sourceTree = "<group>";
 		};
 		208FFBAB19D9802000D4C159 /* Mycelium WalletTests */ = {
@@ -184,18 +288,10 @@
 				208FFBC119D984E700D4C159 /* MYCTabBarController.h */,
 				208FFBC219D984E700D4C159 /* MYCTabBarController.m */,
 				208FFBC319D984E700D4C159 /* MYCTabBarController.xib */,
-				2064E37F19D9A0D000CD81B8 /* MYCBalanceViewController.h */,
-				2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */,
-				2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */,
-				2064E38419D9A0E400CD81B8 /* MYCAccountsViewController.h */,
-				2064E38519D9A0E400CD81B8 /* MYCAccountsViewController.m */,
-				2064E38619D9A0E400CD81B8 /* MYCAccountsViewController.xib */,
-				2064E38919D9A0F200CD81B8 /* MYCTransactionsViewController.h */,
-				2064E38A19D9A0F200CD81B8 /* MYCTransactionsViewController.m */,
-				2064E38B19D9A0F200CD81B8 /* MYCTransactionsViewController.xib */,
-				2064E38E19D9A10400CD81B8 /* MYCSettingsViewController.h */,
-				2064E38F19D9A10400CD81B8 /* MYCSettingsViewController.m */,
-				2064E39019D9A10400CD81B8 /* MYCSettingsViewController.xib */,
+				203AA49019DC33D800572BD9 /* Balance Tab */,
+				203AA48F19DC33CB00572BD9 /* Accounts Tab */,
+				203AA49119DC33E200572BD9 /* Transactions Tab */,
+				203AA49219DC33E800572BD9 /* Settings Tab */,
 			);
 			name = "Main Views";
 			sourceTree = "<group>";
@@ -205,6 +301,8 @@
 			children = (
 				2064E37519D9858F00CD81B8 /* MYCWallet.h */,
 				2064E37619D9858F00CD81B8 /* MYCWallet.m */,
+				203AA49319DC364200572BD9 /* MYCWalletAccount.h */,
+				203AA49419DC364200572BD9 /* MYCWalletAccount.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -212,6 +310,8 @@
 		208FFBC019D984B800D4C159 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				203AA49619DC365D00572BD9 /* MYCConnection.h */,
+				203AA49719DC365D00572BD9 /* MYCConnection.m */,
 			);
 			name = Networking;
 			sourceTree = "<group>";
@@ -296,9 +396,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				203AA4B419DC525100572BD9 /* MYCReceiveViewController.xib in Resources */,
 				2064E38819D9A0E400CD81B8 /* MYCAccountsViewController.xib in Resources */,
 				208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */,
 				208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */,
+				203AA4AE19DC517200572BD9 /* MYCSendViewController.xib in Resources */,
+				203AA4BA19DC53C900572BD9 /* MYCBackupViewController.xib in Resources */,
 				208FFBA019D9802000D4C159 /* Images.xcassets in Resources */,
 				2064E38D19D9A0F200CD81B8 /* MYCTransactionsViewController.xib in Resources */,
 				208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */,
@@ -322,16 +425,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				208FFB9819D9802000D4C159 /* MYCAppDelegate.m in Sources */,
-				2064E37E19D996C500CD81B8 /* MYCRoundedView.m in Sources */,
-				2064E37B19D996B400CD81B8 /* MYCRoundedButton.m in Sources */,
+				203AA49819DC365D00572BD9 /* MYCConnection.m in Sources */,
+				203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */,
 				2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */,
 				2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */,
+				203AA4AD19DC517200572BD9 /* MYCSendViewController.m in Sources */,
 				2064E39119D9A10400CD81B8 /* MYCSettingsViewController.m in Sources */,
 				208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */,
+				203AA4B919DC53C900572BD9 /* MYCBackupViewController.m in Sources */,
 				2064E38719D9A0E400CD81B8 /* MYCAccountsViewController.m in Sources */,
+				203AA4A319DC3C4500572BD9 /* MYCRoundedButton.m in Sources */,
+				203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */,
 				208FFB9519D9802000D4C159 /* main.m in Sources */,
 				208FFBBB19D9848800D4C159 /* MYCWelcomeViewController.m in Sources */,
+				203AA4A519DC3C4500572BD9 /* PTableViewSource.m in Sources */,
 				2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */,
+				203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */,
+				203AA4A819DC4A2600572BD9 /* PColor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -450,6 +560,7 @@
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "37d225d5-ce19-42ef-9bdd-94adcc046135";
 			};
 			name = Debug;
 		};
@@ -460,6 +571,7 @@
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "37d225d5-ce19-42ef-9bdd-94adcc046135";
 			};
 			name = Release;
 		};
