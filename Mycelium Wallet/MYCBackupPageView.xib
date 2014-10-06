@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MYCBackupViewController"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="vxf-g5-QaA" userLabel="Page View" customClass="MYCBackupPageView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="You will see a list of words, one by one. Write them down and store in a safe place." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.29999999999999999" translatesAutoresizingMaskIntoConstraints="NO" id="K0x-4q-p1g">
+                    <rect key="frame" x="10" y="145" width="300" height="70"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="lessThanOrEqual" constant="160" id="1rF-vL-Yjx"/>
+                        <constraint firstAttribute="width" constant="300" id="t3y-6P-eoh"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" tag="200" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GDd-qc-sbh">
+                    <rect key="frame" x="140" y="308" width="41" height="35"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="19"/>
+                    <state key="normal" title="Start">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="chancellor brink second bailout banks" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qtG-f3-3YQ">
+                    <rect key="frame" x="20" y="235" width="280" height="30"/>
+                    <color key="backgroundColor" red="0.95999999999999996" green="0.95999999999999996" blue="0.95999999999999996" alpha="1" colorSpace="deviceRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="T87-9X-AJc"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="done"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="dMp-BH-byo"/>
+                    </connections>
+                </textField>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="qtG-f3-3YQ" firstAttribute="top" secondItem="K0x-4q-p1g" secondAttribute="bottom" constant="20" id="8BD-kO-0t7"/>
+                <constraint firstAttribute="centerX" secondItem="GDd-qc-sbh" secondAttribute="centerX" constant="-0.5" id="Is2-LL-0aQ"/>
+                <constraint firstAttribute="centerX" secondItem="K0x-4q-p1g" secondAttribute="centerX" id="Nx5-8e-oQv"/>
+                <constraint firstItem="K0x-4q-p1g" firstAttribute="leading" secondItem="vxf-g5-QaA" secondAttribute="leading" multiplier="1.2" id="QLF-rN-cF8"/>
+                <constraint firstItem="qtG-f3-3YQ" firstAttribute="leading" secondItem="vxf-g5-QaA" secondAttribute="leading" constant="20" id="klA-Ha-iri"/>
+                <constraint firstItem="GDd-qc-sbh" firstAttribute="top" relation="greaterThanOrEqual" secondItem="qtG-f3-3YQ" secondAttribute="bottom" constant="20" id="mHM-Ii-iV1"/>
+                <constraint firstAttribute="bottom" secondItem="GDd-qc-sbh" secondAttribute="bottom" multiplier="1.4" priority="999" id="oJP-fH-XsH"/>
+                <constraint firstAttribute="trailing" secondItem="qtG-f3-3YQ" secondAttribute="trailing" constant="20" id="obL-mx-etv"/>
+                <constraint firstAttribute="centerY" secondItem="K0x-4q-p1g" secondAttribute="centerY" multiplier="1.333" id="xY9-aC-KVU"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="QLF-rN-cF8"/>
+                </mask>
+            </variation>
+            <connections>
+                <outlet property="button" destination="GDd-qc-sbh" id="jXI-Iu-wvH"/>
+                <outlet property="label" destination="K0x-4q-p1g" id="8B6-8b-lEn"/>
+                <outlet property="textField" destination="qtG-f3-3YQ" id="uvu-lb-vKJ"/>
+            </connections>
+            <point key="canvasLocation" x="303" y="266"/>
+        </view>
+    </objects>
+</document>

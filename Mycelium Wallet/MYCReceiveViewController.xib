@@ -10,7 +10,7 @@
             <connections>
                 <outlet property="btcButton" destination="3RM-6k-xvO" id="PgZ-bW-bcq"/>
                 <outlet property="btcField" destination="kFl-8S-cfl" id="5fM-O3-eDr"/>
-                <outlet property="editingOverlay" destination="hF4-Jr-0TT" id="1qU-aE-XzI"/>
+                <outlet property="editingOverlay" destination="kos-8N-C97" id="RcG-qn-zTk"/>
                 <outlet property="fiatButton" destination="LZw-UV-QNe" id="p6a-xe-deA"/>
                 <outlet property="fiatField" destination="JKe-vf-UtV" id="6ia-FC-NnN"/>
                 <outlet property="view" destination="SYu-BO-0m1" id="Owo-Iv-V8q"/>
@@ -29,14 +29,14 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uw4-md-gDa">
-                    <rect key="frame" x="112" y="351" width="97" height="33"/>
-                    <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="17"/>
+                    <rect key="frame" x="113.5" y="351" width="93" height="30"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                     <state key="normal" title="Main Account">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1CBtcGivXmHQ8ZqdPgeMfcpQNJrqTrSAcG" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.20000000298023224" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jya-1l-D26">
-                    <rect key="frame" x="22" y="377" width="278" height="24"/>
+                    <rect key="frame" x="20" y="374" width="280" height="24"/>
                     <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="20"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
@@ -47,18 +47,15 @@
                         <constraint firstAttribute="width" secondItem="qKL-wx-tqI" secondAttribute="height" multiplier="1:1" id="OBh-gp-1mO"/>
                     </constraints>
                 </imageView>
-                <visualEffectView hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hF4-Jr-0TT">
-                    <rect key="frame" x="0.0" y="120" width="320" height="360"/>
-                    <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="TYq-hU-oGb">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="360"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                    </view>
+                <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kos-8N-C97" userLabel="Editing Overlay">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                    <color key="backgroundColor" white="1" alpha="0.95000000000000007" colorSpace="calibratedWhite"/>
                     <gestureRecognizers/>
-                    <blurEffect style="extraLight"/>
                     <connections>
-                        <outletCollection property="gestureRecognizers" destination="5sX-Ey-r1D" appends="YES" id="GHO-g3-HEa"/>
+                        <outletCollection property="gestureRecognizers" destination="5sX-Ey-r1D" appends="YES" id="L8g-yc-AUc"/>
+                        <outletCollection property="gestureRecognizers" destination="PjU-BC-4aN" appends="YES" id="40x-WC-O8g"/>
                     </connections>
-                </visualEffectView>
+                </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zI5-WZ-INr" userLabel="Top Bar">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="140"/>
                     <subviews>
@@ -150,37 +147,42 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstItem="kos-8N-C97" firstAttribute="top" secondItem="SYu-BO-0m1" secondAttribute="top" id="1I9-X0-vi2"/>
                 <constraint firstItem="jya-1l-D26" firstAttribute="top" secondItem="Uw4-md-gDa" secondAttribute="bottom" constant="-7" id="2d5-Hy-L5d"/>
                 <constraint firstItem="zI5-WZ-INr" firstAttribute="leading" secondItem="SYu-BO-0m1" secondAttribute="leading" id="5x6-wD-KpD"/>
                 <constraint firstItem="UIJ-5J-paw" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="bottom" id="A36-sA-8im"/>
                 <constraint firstItem="UIJ-5J-paw" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" id="Afb-5r-T5E"/>
+                <constraint firstAttribute="bottom" secondItem="kos-8N-C97" secondAttribute="bottom" id="DgR-hz-e2t"/>
                 <constraint firstAttribute="trailing" secondItem="zI5-WZ-INr" secondAttribute="trailing" id="EfC-1s-NS5"/>
-                <constraint firstItem="hF4-Jr-0TT" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="top" constant="120" id="Fcy-Lp-BKr"/>
-                <constraint firstAttribute="bottom" secondItem="hF4-Jr-0TT" secondAttribute="bottom" id="G8w-JO-AVo"/>
+                <constraint firstItem="kos-8N-C97" firstAttribute="leading" secondItem="SYu-BO-0m1" secondAttribute="leading" id="F4E-sF-yfb"/>
                 <constraint firstAttribute="centerX" secondItem="qKL-wx-tqI" secondAttribute="centerX" id="Irt-wi-G8w"/>
                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="jya-1l-D26" secondAttribute="trailing" constant="20" id="J9b-e9-Chr"/>
                 <constraint firstItem="MXC-lp-Lj8" firstAttribute="top" secondItem="SYu-BO-0m1" secondAttribute="top" id="QDI-um-aXC"/>
                 <constraint firstItem="Uw4-md-gDa" firstAttribute="top" secondItem="qKL-wx-tqI" secondAttribute="bottom" constant="4" id="S23-Gu-yms"/>
-                <constraint firstAttribute="trailing" secondItem="hF4-Jr-0TT" secondAttribute="trailing" id="Sks-mm-7W3"/>
                 <constraint firstItem="Uw4-md-gDa" firstAttribute="centerX" secondItem="qKL-wx-tqI" secondAttribute="centerX" id="Wbq-jv-7CD"/>
                 <constraint firstItem="zI5-WZ-INr" firstAttribute="top" secondItem="SYu-BO-0m1" secondAttribute="top" id="aBD-xo-rwE"/>
                 <constraint firstItem="Uw4-md-gDa" firstAttribute="centerX" secondItem="jya-1l-D26" secondAttribute="centerX" id="bgK-X9-MxK"/>
-                <constraint firstItem="hF4-Jr-0TT" firstAttribute="leading" secondItem="SYu-BO-0m1" secondAttribute="leading" id="i9c-kX-pj3"/>
                 <constraint firstItem="UIJ-5J-paw" firstAttribute="trailing" secondItem="zI5-WZ-INr" secondAttribute="trailing" id="kiQ-2G-tOR"/>
                 <constraint firstAttribute="trailing" secondItem="MXC-lp-Lj8" secondAttribute="trailing" id="lXM-u5-0pm"/>
                 <constraint firstItem="qKL-wx-tqI" firstAttribute="height" secondItem="MXC-lp-Lj8" secondAttribute="height" multiplier="0.4" id="lwr-c1-cRu"/>
                 <constraint firstItem="jya-1l-D26" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="SYu-BO-0m1" secondAttribute="leading" constant="20" id="mgL-Vk-dYl"/>
                 <constraint firstItem="qKL-wx-tqI" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="bottom" constant="15" id="q37-Th-61E"/>
+                <constraint firstAttribute="trailing" secondItem="kos-8N-C97" secondAttribute="trailing" id="swf-eE-Ko4"/>
                 <constraint firstAttribute="bottom" secondItem="MXC-lp-Lj8" secondAttribute="bottom" id="vhV-jV-n6p"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-116" y="393"/>
+            <point key="canvasLocation" x="-177" y="278"/>
         </view>
         <tapGestureRecognizer id="5sX-Ey-r1D">
             <connections>
                 <action selector="editingOverlayTap:" destination="-1" id="WBn-Qz-85r"/>
             </connections>
         </tapGestureRecognizer>
+        <swipeGestureRecognizer direction="down" id="PjU-BC-4aN">
+            <connections>
+                <action selector="editingOverlayTap:" destination="-1" id="5w8-2x-7rt"/>
+            </connections>
+        </swipeGestureRecognizer>
     </objects>
     <resources>
         <image name="SampleQRCode" width="512" height="512"/>

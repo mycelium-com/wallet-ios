@@ -6,22 +6,15 @@
 //  Copyright (c) 2014 Mycelium. All rights reserved.
 //
 
+#import "MYCBackupPageView.h"
 #import "MYCBackupViewController.h"
 
-@interface MYCBackupPageView : UIView
-@property(nonatomic, weak) IBOutlet UILabel* label;
-@property(nonatomic, weak) IBOutlet UIButton* button;
-@end
-@implementation MYCBackupPageView
-@end
-
-@interface MYCBackupViewController () <UIScrollViewDelegate>
+@interface MYCBackupViewController () <UIScrollViewDelegate, UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIPageControl *pageControl;
-@property (weak, nonatomic) IBOutlet MYCBackupPageView *existingPageView;
 
-@property(nonatomic) UINib* nib;
+@property(nonatomic) UINib* pageNib;
 
 @end
 
@@ -32,7 +25,7 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         self.title = NSLocalizedString(@"Backup your wallet", @"");
-        self.nib = [UINib nibWithNibName:@"MYCBackupViewController" bundle:nil];
+        self.pageNib = [UINib nibWithNibName:@"MYCBackupPageView" bundle:nil];
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                               target:self
                                                                                               action:@selector(cancel:)];
@@ -45,44 +38,35 @@
 {
     [super viewDidLoad];
 
-
     [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"You are about to back up your master wallet seed. This seed is not encrypted and allows to restore entire wallet contents.\n\nYou will see a list of words, one by one. Write them down and store in a safe place.", @"") button:NSLocalizedString(@"Start", @"") action:@selector(nextPage:)]];
+
+    NSArray* words = @[@"quick", @"brown", @"fox", @"jumped", @"over", @"the", @"lazy", @"dog"];
+
+    for (NSString* word in words)
+    {
+        [self.scrollView addSubview:[self pageViewWithText:word button:NSLocalizedString(@"Next word", @"") action:@selector(nextPage:)]];
+    }
+
+    MYCBackupPageView* validatePage = [self pageViewWithText:NSLocalizedString(@"Please enter all words to verify they are written correctly", @"") button:NSLocalizedString(@"Next", @"") action:@selector(nextPage:)];
+    validatePage.textField.hidden = NO;
+    [self.scrollView addSubview:validatePage];
+
+    [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"The backup is complete. Keep your master seed safe. You can use it to restore your wallet when you install Mycelium Wallet on another device (or reinstall on this one).", @"") button:NSLocalizedString(@"Finish", @"") action:@selector(finish:)]];
+
+    self.pageControl.numberOfPages = self.scrollView.subviews.count;
+    [self scrollViewDidScroll:self.scrollView];
 }
 
-- (void) viewDidAppear:(BOOL)animated
+- (void) viewWillAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [super viewWillAppear:animated];
 
-    if (self.scrollView.subviews.count <= 1)
-    {
-        NSArray* words = @[@"quick", @"brown", @"fox", @"jumped", @"over", @"the", @"lazy", @"dog", @"and", @"ate", @"its", @"breakfast"];
-
-        for (NSString* word in words)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.scrollView addSubview:[self pageViewWithText:word button:NSLocalizedString(@"Next word", @"") action:@selector(nextPage:)]];
-                [self.view setNeedsLayout];
-            });
-        }
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"Please enter all words to verify they are written correctly", @"") button:NSLocalizedString(@"Next", @"") action:@selector(nextPage:)]];
-        });
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"The backup is complete. Keep your master seed safe. You can use it to restore your wallet when you install Mycelium Wallet on another device (or reinstall on this one).", @"") button:NSLocalizedString(@"Finish", @"") action:@selector(finish:)]];
-
-            self.pageControl.numberOfPages = self.scrollView.subviews.count;
-            [self scrollViewDidScroll:self.scrollView];
-        });
-    }
+    self.pageControl.hidden = YES;
 }
 
 - (void) viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-
-    NSLog(@"!!! layout: %@", @(self.scrollView.subviews.count));
 
     self.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width*self.scrollView.subviews.count,
                                              self.view.bounds.size.height - self.topLayoutGuide.length - self.bottomLayoutGuide.length);
@@ -98,12 +82,12 @@
 
 - (MYCBackupPageView*) pageViewWithText:(NSString*)text button:(NSString*)buttonLabel action:(SEL)selector
 {
-    MYCBackupPageView* pageView = self.existingPageView ?: [self.nib instantiateWithOwner:[NSMutableDictionary dictionary] options:nil][1];
-
-    self.existingPageView = nil; // do not use further.
+    MYCBackupPageView* pageView = [self.pageNib instantiateWithOwner:self options:nil][0];
 
     pageView.label.text = text;
     [pageView.button setTitle:buttonLabel ?: @"" forState:UIControlStateNormal];
+
+    pageView.textField.hidden = YES;
 
     if (buttonLabel && selector)
     {
@@ -115,6 +99,7 @@
 
 - (void) nextPage:(id)_
 {
+    self.pageControl.hidden = NO;
     CGPoint offset = self.scrollView.contentOffset;
     offset.x += self.scrollView.bounds.size.width;
     [self.scrollView setContentOffset:offset animated:YES];
@@ -137,13 +122,45 @@
 }
 
 
+
+#pragma mark - UITextFieldDelegate
+
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [self.view endEditing:YES];
+    return YES;
+}
+
+
 #pragma mark - UIScrollViewDelegate
 
 
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    self.pageControl.currentPage = (NSInteger)round(scrollView.contentOffset.x / scrollView.bounds.size.width);
+    NSInteger p = (NSInteger)round(scrollView.contentOffset.x / scrollView.bounds.size.width);
+
+    if (p != self.pageControl.currentPage)
+    {
+        [self.view endEditing:YES];
+    }
+
+    self.pageControl.currentPage = p;
+
+
+    for (UIView* v in scrollView.subviews)
+    {
+        if ([v isKindOfClass:[MYCBackupPageView class]])
+        {
+            MYCBackupPageView* pv = (id)v;
+
+            CGPoint p = [self.view convertPoint:pv.button.center fromView:pv];
+            CGFloat diff = ABS(p.x - self.view.bounds.size.width/2.0);
+            pv.button.alpha = 1.0 - diff/50.0;
+        }
+    }
+
 }
 
 

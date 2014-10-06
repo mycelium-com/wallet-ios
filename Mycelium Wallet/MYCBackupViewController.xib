@@ -42,52 +42,5 @@
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="49" y="187"/>
         </view>
-        <view contentMode="scaleToFill" id="nlT-lW-GSD" userLabel="Page View" customClass="MYCBackupPageView">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M9V-QC-tQ0">
-                    <rect key="frame" x="10" y="118" width="300" height="163.5"/>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="300" id="EfT-CB-R81"/>
-                    </constraints>
-                    <string key="text">You are about to back up your master wallet seed. This seed is not encrypted and allows to restore entire wallet contents.
-
-You will see a list of words, one by one. Write them down and store in a safe place.</string>
-                    <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="17"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <button opaque="NO" tag="200" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uX2-yj-Xtc">
-                    <rect key="frame" x="143" y="310" width="34" height="33"/>
-                    <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="17"/>
-                    <state key="normal" title="Start">
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                    </state>
-                </button>
-            </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-            <constraints>
-                <constraint firstAttribute="centerX" secondItem="M9V-QC-tQ0" secondAttribute="centerX" id="Jib-Sy-u54"/>
-                <constraint firstAttribute="centerX" secondItem="uX2-yj-Xtc" secondAttribute="centerX" constant="-0.5" id="QUy-Qq-dUI"/>
-                <constraint firstAttribute="bottom" secondItem="uX2-yj-Xtc" secondAttribute="bottom" multiplier="1.4" priority="999" id="S52-gv-ld0"/>
-                <constraint firstAttribute="centerY" secondItem="M9V-QC-tQ0" secondAttribute="centerY" multiplier="1.2" id="cLU-iH-ijR"/>
-                <constraint firstItem="uX2-yj-Xtc" firstAttribute="top" relation="greaterThanOrEqual" secondItem="M9V-QC-tQ0" secondAttribute="bottom" constant="20" id="lZK-8G-gVz"/>
-                <constraint firstItem="M9V-QC-tQ0" firstAttribute="leading" secondItem="nlT-lW-GSD" secondAttribute="leading" multiplier="1.2" id="zbL-Sl-Ox3"/>
-            </constraints>
-            <nil key="simulatedStatusBarMetrics"/>
-            <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
-            <variation key="default">
-                <mask key="constraints">
-                    <exclude reference="zbL-Sl-Ox3"/>
-                </mask>
-            </variation>
-            <connections>
-                <outlet property="button" destination="uX2-yj-Xtc" id="ZLa-mt-EFg"/>
-                <outlet property="label" destination="M9V-QC-tQ0" id="dvE-va-mJf"/>
-            </connections>
-            <point key="canvasLocation" x="420" y="187"/>
-        </view>
     </objects>
 </document>

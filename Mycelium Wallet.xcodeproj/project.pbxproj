@@ -37,6 +37,8 @@
 		208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBBA19D9848800D4C159 /* MYCWelcomeViewController.xib */; };
 		208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFBC219D984E700D4C159 /* MYCTabBarController.m */; };
 		208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBC319D984E700D4C159 /* MYCTabBarController.xib */; };
+		20C2D7F419E290830022CAAC /* MYCBackupPageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20C2D7F319E290830022CAAC /* MYCBackupPageView.xib */; };
+		20C2D7F719E292F80022CAAC /* MYCBackupPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D7F619E292F80022CAAC /* MYCBackupPageView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +104,9 @@
 		208FFBC119D984E700D4C159 /* MYCTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCTabBarController.h; sourceTree = "<group>"; };
 		208FFBC219D984E700D4C159 /* MYCTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCTabBarController.m; sourceTree = "<group>"; };
 		208FFBC319D984E700D4C159 /* MYCTabBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCTabBarController.xib; sourceTree = "<group>"; };
+		20C2D7F319E290830022CAAC /* MYCBackupPageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCBackupPageView.xib; sourceTree = "<group>"; };
+		20C2D7F519E292F80022CAAC /* MYCBackupPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCBackupPageView.h; sourceTree = "<group>"; };
+		20C2D7F619E292F80022CAAC /* MYCBackupPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCBackupPageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +208,9 @@
 				203AA4B619DC53C900572BD9 /* MYCBackupViewController.h */,
 				203AA4B719DC53C900572BD9 /* MYCBackupViewController.m */,
 				203AA4B819DC53C900572BD9 /* MYCBackupViewController.xib */,
+				20C2D7F519E292F80022CAAC /* MYCBackupPageView.h */,
+				20C2D7F619E292F80022CAAC /* MYCBackupPageView.m */,
+				20C2D7F319E290830022CAAC /* MYCBackupPageView.xib */,
 			);
 			name = Backup;
 			sourceTree = "<group>";
@@ -405,6 +413,7 @@
 				208FFBA019D9802000D4C159 /* Images.xcassets in Resources */,
 				2064E38D19D9A0F200CD81B8 /* MYCTransactionsViewController.xib in Resources */,
 				208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */,
+				20C2D7F419E290830022CAAC /* MYCBackupPageView.xib in Resources */,
 				2064E38319D9A0D000CD81B8 /* MYCBalanceViewController.xib in Resources */,
 				2064E39219D9A10400CD81B8 /* MYCSettingsViewController.xib in Resources */,
 			);
@@ -436,6 +445,7 @@
 				2064E38719D9A0E400CD81B8 /* MYCAccountsViewController.m in Sources */,
 				203AA4A319DC3C4500572BD9 /* MYCRoundedButton.m in Sources */,
 				203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */,
+				20C2D7F719E292F80022CAAC /* MYCBackupPageView.m in Sources */,
 				208FFB9519D9802000D4C159 /* main.m in Sources */,
 				208FFBBB19D9848800D4C159 /* MYCWelcomeViewController.m in Sources */,
 				203AA4A519DC3C4500572BD9 /* PTableViewSource.m in Sources */,
