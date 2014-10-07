@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>E469C4A6-2DA2-433F-8C80-1A1BF8B2157C</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Mycelium Wallet</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>E58524EECF6EFCDE811E6FDDFAEC17A7A67BACF8</key>
+		<string>sss.pierlis.com:mycelium/iosapp.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Mycelium Wallet.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>E58524EECF6EFCDE811E6FDDFAEC17A7A67BACF8</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>sss.pierlis.com:mycelium/iosapp.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>E58524EECF6EFCDE811E6FDDFAEC17A7A67BACF8</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E58524EECF6EFCDE811E6FDDFAEC17A7A67BACF8</string>
+			<key>IDESourceControlWCCName</key>
+			<string>iosapp</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,30 @@
+PODS:
+  - CoreBitcoin (0.3.0):
+    - OpenSSL-Universal (= 1.0.1.h)
+  - FMDB (2.1):
+    - FMDB/standard
+  - FMDB/common (2.1)
+  - FMDB/standard (2.1):
+    - FMDB/common
+  - MBProgressHUD (0.9)
+  - OpenSSL-Universal (1.0.1.h)
+
+DEPENDENCIES:
+  - CoreBitcoin (from `https://github.com/oleganza/CoreBitcoin.git`)
+  - FMDB (from `https://github.com/pierlis/fmdb.git`, commit `9264dec1133c646af5c59ed8ad12a647599a99be`)
+  - MBProgressHUD
+
+EXTERNAL SOURCES:
+  CoreBitcoin:
+    :git: https://github.com/oleganza/CoreBitcoin.git
+  FMDB:
+    :commit: 9264dec1133c646af5c59ed8ad12a647599a99be
+    :git: https://github.com/pierlis/fmdb.git
+
+SPEC CHECKSUMS:
+  CoreBitcoin: 351ea65d3e4f3f6fd7f01303fb23c333fd714121
+  FMDB: 3fd5aaf632ca4ed39e3f101e0398504e6d5b0918
+  MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
+  OpenSSL-Universal: 9c112508615ed33bb35f730eed820e93175a9dec
+
+COCOAPODS: 0.32.1
