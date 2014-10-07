@@ -40,6 +40,8 @@
 		208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBC319D984E700D4C159 /* MYCTabBarController.xib */; };
 		20C2D7F419E290830022CAAC /* MYCBackupPageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20C2D7F319E290830022CAAC /* MYCBackupPageView.xib */; };
 		20C2D7F719E292F80022CAAC /* MYCBackupPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D7F619E292F80022CAAC /* MYCBackupPageView.m */; };
+		20C2D81219E3EDB10022CAAC /* MYCDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D80F19E3EDB10022CAAC /* MYCDatabase.m */; };
+		20C2D81319E3EDB10022CAAC /* MYCDatabaseRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81119E3EDB10022CAAC /* MYCDatabaseRecord.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +110,10 @@
 		20C2D7F319E290830022CAAC /* MYCBackupPageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCBackupPageView.xib; sourceTree = "<group>"; };
 		20C2D7F519E292F80022CAAC /* MYCBackupPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCBackupPageView.h; sourceTree = "<group>"; };
 		20C2D7F619E292F80022CAAC /* MYCBackupPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCBackupPageView.m; sourceTree = "<group>"; };
+		20C2D80E19E3EDB10022CAAC /* MYCDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCDatabase.h; sourceTree = "<group>"; };
+		20C2D80F19E3EDB10022CAAC /* MYCDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCDatabase.m; sourceTree = "<group>"; };
+		20C2D81019E3EDB10022CAAC /* MYCDatabaseRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCDatabaseRecord.h; sourceTree = "<group>"; };
+		20C2D81119E3EDB10022CAAC /* MYCDatabaseRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCDatabaseRecord.m; sourceTree = "<group>"; };
 		6DE72487367B42AE9A25BAE3 /* Pods-Mycelium Wallet.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.xcconfig"; path = "Pods/Pods-Mycelium Wallet.xcconfig"; sourceTree = "<group>"; };
 		BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mycelium Wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -246,6 +252,7 @@
 				208FFB9619D9802000D4C159 /* MYCAppDelegate.h */,
 				208FFB9719D9802000D4C159 /* MYCAppDelegate.m */,
 				208FFBBF19D984A100D4C159 /* Models */,
+				20C2D80D19E3EDB10022CAAC /* Database */,
 				208FFBC019D984B800D4C159 /* Networking */,
 				208FFBBD19D9848B00D4C159 /* Welcome Views */,
 				208FFBBE19D9849800D4C159 /* Main Views */,
@@ -328,6 +335,17 @@
 				203AA49719DC365D00572BD9 /* MYCConnection.m */,
 			);
 			name = Networking;
+			sourceTree = "<group>";
+		};
+		20C2D80D19E3EDB10022CAAC /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				20C2D80E19E3EDB10022CAAC /* MYCDatabase.h */,
+				20C2D80F19E3EDB10022CAAC /* MYCDatabase.m */,
+				20C2D81019E3EDB10022CAAC /* MYCDatabaseRecord.h */,
+				20C2D81119E3EDB10022CAAC /* MYCDatabaseRecord.m */,
+			);
+			path = Database;
 			sourceTree = "<group>";
 		};
 		2D8A166B7A734937ACF4ACCC /* Frameworks */ = {
@@ -487,6 +505,8 @@
 				203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */,
 				2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */,
 				2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */,
+				20C2D81219E3EDB10022CAAC /* MYCDatabase.m in Sources */,
+				20C2D81319E3EDB10022CAAC /* MYCDatabaseRecord.m in Sources */,
 				203AA4AD19DC517200572BD9 /* MYCSendViewController.m in Sources */,
 				2064E39119D9A10400CD81B8 /* MYCSettingsViewController.m in Sources */,
 				208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */,
