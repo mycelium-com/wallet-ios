@@ -2,6 +2,7 @@
 
 #import "BTCMnemonic.h"
 #import "BTCData.h"
+#import "BTCKeychain.h"
 #import "BTCProtocolSerialization.h"
 #include <CommonCrypto/CommonKeyDerivation.h>
 
@@ -12,6 +13,7 @@
 @property(nonatomic, readwrite) NSArray* words;
 @property(nonatomic, readwrite) NSString* password;
 @property(nonatomic, readwrite) NSData* seed;
+@property(nonatomic, readwrite) BTCKeychain* keychain;
 
 @end
 
@@ -78,13 +80,23 @@ static inline NSUInteger BTCMnemonicIntegerFrom11Bits(uint8_t* buf, int bitIndex
 {
     if (!words) return nil;
 
+    if (words.count != 12 &&
+        words.count != 15 &&
+        words.count != 18 &&
+        words.count != 21 &&
+        words.count != 24)
+    {
+        // Words count should be between 12 and 24 and be divisible by 13.
+        return nil;
+    }
+
     if (self = [super init])
     {
         _words = words;
         _password = password ?: @"";
         _wordListType = wordListType;
 
-        // If the list is given, get the entropy from it and 
+        // If the list is given, get the entropy from it
         if (wordListType != BTCMnemonicWordListTypeUnknown)
         {
             _entropy = [self entropyFromWords:_words wordListType:wordListType];
@@ -208,6 +220,16 @@ static inline NSUInteger BTCMnemonicIntegerFrom11Bits(uint8_t* buf, int bitIndex
     return _seed;
 }
 
+// Root keychain instantiated with a given seed.
+- (BTCKeychain*) keychain
+{
+    if (!_keychain)
+    {
+        _keychain = [[BTCKeychain alloc] initWithSeed:self.seed];
+    }
+    return _keychain;
+}
+
 - (NSData*) data
 {
     return [self dataWithSeed:NO];
@@ -266,6 +288,8 @@ static inline NSUInteger BTCMnemonicIntegerFrom11Bits(uint8_t* buf, int bitIndex
 {
     BTCDataClear(_entropy);
     BTCDataClear(_seed);
+    [_keychain clear];
+    _keychain = nil;
     _entropy = nil;
     _seed = nil;
 }
