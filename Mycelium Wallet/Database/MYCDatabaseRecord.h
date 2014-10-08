@@ -60,10 +60,34 @@ extern NSString* const MYCDatabaseRecordColumnKey;          // Defined for NSErr
  */
 + (instancetype)loadWithPrimaryKey:(id)primaryKey fromDatabase:(FMDatabase *)db;
 
+// Array of dictionaries with given attributes
++ (NSArray*) loadAttributes:(NSArray*)attrs condition:(NSString*)condition fromDatabase:(FMDatabase*)db;
++ (NSArray*) loadAttributes:(NSArray*)attrs condition:(NSString*)condition params:(id)params fromDatabase:(FMDatabase*)db;
+
+// Array of dictionaries for a given column
++ (NSArray*) loadValuesForKey:(NSString*)attr condition:(NSString*)condition fromDatabase:(FMDatabase*)db;
++ (NSArray*) loadValuesForKey:(NSString*)attr condition:(NSString*)condition params:(id)params fromDatabase:(FMDatabase*)db;
+
 /**
+ Loads instances with a given condition. Arguments for the condition placeholders could either be an array, or a dictionary.
+ Default limit is NSNotFound which means no limit.
+ Default offset is zero.
+ Example 1: [MYCWalletAccount loadWithCondition:@"archived = ?" params: @[ @NO ] fromDatabase:db]
+ Example 2: [MYCWalletAccount loadWithCondition:@"archived = :flag" params: @{@"flag": @NO } fromDatabase:db]
+ */
++ (NSArray*)loadAllFromDatabase:(FMDatabase*)db;
++ (NSArray*)loadWithCondition:(NSString*)condition fromDatabase:(FMDatabase*)db;
++ (NSArray*)loadWithCondition:(NSString*)condition params:(id)params fromDatabase:(FMDatabase*)db;
+
+/**
+ * Reloads all attributes from the database.
  */
 - (BOOL)reloadFromDatabase:(FMDatabase *)db;
 
+/**
+ * If you override this, always call super.
+ */
+- (void) didLoadFromDatabase:(FMDatabase*)db;
 
 #pragma mark - Modifying, Saving & Deleting
 

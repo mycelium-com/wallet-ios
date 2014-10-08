@@ -17,5 +17,8 @@
 // Called when new wallet is created or imported and we can show the main view.
 - (void) displayMainView;
 
+// Called from other views to go to accounts view.
+- (void) manageAccounts:(id)sender;
+
 @end
 

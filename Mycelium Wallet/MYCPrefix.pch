@@ -1,0 +1,9 @@
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <QuartzCore/QuartzCore.h>
+
+    #import <FMDB/FMDatabase.h>
+    #import <FMDB/FMDatabaseAdditions.h>
+    #import <CoreBitcoin/CoreBitcoin.h>
+#endif

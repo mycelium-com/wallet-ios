@@ -58,6 +58,11 @@
     
 }
 
+- (void) manageAccounts:(id)sender
+{
+    self.selectedViewController = self.accountsController.navigationController;
+}
+
 @end
 
 

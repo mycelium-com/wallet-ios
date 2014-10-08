@@ -20,6 +20,8 @@
 @property(nonatomic) MYCTransactionsViewController* transactionsController;
 @property(nonatomic) MYCSettingsViewController* settingsController;
 
+- (void) manageAccounts:(id)sender;
+
 @end
 
 @interface MYCTabViewController : UIViewController

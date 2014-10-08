@@ -60,6 +60,11 @@
     [self.window makeKeyAndVisible];
 }
 
+- (void) manageAccounts:(id)sender
+{
+    [self.mainController manageAccounts:sender];
+}
+
 
 
 

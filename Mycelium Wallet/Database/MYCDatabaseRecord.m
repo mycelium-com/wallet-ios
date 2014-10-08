@@ -16,7 +16,9 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
 @end
 
 
-@implementation MYCDatabaseRecord
+@implementation MYCDatabaseRecord {
+    BOOL _existingRecord;
+}
 
 + (NSString*)tableName
 {
@@ -40,6 +42,15 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
         [self updateFromDictionary:dict];
     }
     return self;
+}
+
+- (BOOL) isNewRecord
+{
+    return !_existingRecord;
+}
+
+- (void) didLoadFromDatabase:(FMDatabase*)db
+{
 }
 
 - (NSString*)description
@@ -313,6 +324,122 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     }
     return res;
 }
+
+
+// Array of dictionaries with given attributes
++ (NSArray*) loadAttributes:(NSArray*)attrs condition:(NSString*)condition fromDatabase:(FMDatabase*)db
+{
+    return [self loadAttributes:attrs condition:condition params:nil fromDatabase:db];
+}
+
++ (NSArray*) loadAttributes:(NSArray*)attrs condition:(NSString*)condition params:(id)params fromDatabase:(FMDatabase*)db
+{
+    NSString* tableName = [self tableName];
+    if (tableName)
+    {
+        NSMutableArray* results = [NSMutableArray array];
+
+        NSString* query = [NSString stringWithFormat:@"SELECT %@ FROM %@ WHERE %@",
+                           [(attrs ?: @[@"*"]) componentsJoinedByString:@", "],
+                           tableName,
+                           condition ?: @"1"];
+
+        FMResultSet* fmrs = nil;
+
+        if (!params) params = @[];
+
+        if ([params isKindOfClass:[NSArray class]])
+        {
+            fmrs = [db executeQuery:query withArgumentsInArray:params];
+        }
+        else if ([params isKindOfClass:[NSDictionary class]])
+        {
+            fmrs = [db executeQuery:query withParameterDictionary:params];
+        }
+        else
+        {
+            [[NSException exceptionWithName:NSInvalidArgumentException reason:@"params must be dictionary or array" userInfo:nil] raise];
+        }
+        while ([fmrs next])
+        {
+            [results addObject:fmrs.resultDictionary];
+        }
+        [fmrs close];
+        return results;
+    }
+    return nil;
+}
+
+// Array of objects for a given column
++ (NSArray*) loadValuesForKey:(NSString*)attr condition:(NSString*)condition fromDatabase:(FMDatabase*)db
+{
+    return [self loadValuesForKey:attr condition:condition params:nil fromDatabase:db];
+}
+
++ (NSArray*) loadValuesForKey:(NSString*)attr condition:(NSString*)condition params:(id)params fromDatabase:(FMDatabase*)db
+{
+    if (!attr) return @[];
+    return [[self loadAttributes:@[attr] condition:condition params:params fromDatabase:db] valueForKey:attr];
+}
+
+
+
++ (NSArray*)loadAllFromDatabase:(FMDatabase*)db
+{
+    return [self loadWithCondition:nil params:nil fromDatabase:db];
+}
+
++ (NSArray*)loadWithCondition:(NSString*)condition fromDatabase:(FMDatabase*)db
+{
+    return [self loadWithCondition:condition params:nil fromDatabase:db];
+}
+
++ (NSArray*)loadWithCondition:(NSString*)condition params:(id)params fromDatabase:(FMDatabase*)db
+{
+    NSString* tableName = [self tableName];
+
+    if (tableName)
+    {
+        if (!condition) condition = @"1";
+
+        NSString* query = [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@", tableName, condition];
+
+        FMResultSet* fmrs = nil;
+
+        if (!params) params = @[];
+
+        if ([params isKindOfClass:[NSArray class]])
+        {
+            fmrs = [db executeQuery:query withArgumentsInArray:params];
+        }
+        else if ([params isKindOfClass:[NSDictionary class]])
+        {
+            fmrs = [db executeQuery:query withParameterDictionary:params];
+        }
+        else
+        {
+            [[NSException exceptionWithName:NSInvalidArgumentException reason:@"params must be dictionary or array" userInfo:nil] raise];
+        }
+
+        if (fmrs)
+        {
+            NSMutableArray* results = [NSMutableArray array];
+            while ([fmrs next])
+            {
+                MYCDatabaseRecord* record = [[self alloc] init];
+                record->_existingRecord = YES;
+                [record updateFromDictionary:fmrs.resultDictionary];
+                [record didLoadFromDatabase:db];
+                [results addObject:record];
+            }
+            [fmrs close];
+            return results;
+        }
+    }
+    return nil;
+}
+
+
 
 - (BOOL)reloadFromDatabase:(FMDatabase *)db
 {

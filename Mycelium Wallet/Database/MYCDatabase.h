@@ -1,4 +1,5 @@
 #import <FMDB/FMDatabase.h>
+#import <FMDB/FMDatabaseAdditions.h>
 
 /**
  * This notification is posted after -[MYCDatabase inDatabase:] and

@@ -7,6 +7,7 @@
 //
 
 #import "MYCSettingsViewController.h"
+#import "MYCWallet.h"
 #import "PTableViewSource.h"
 #import "PColor.h"
 
@@ -118,7 +119,42 @@
                 cell.accessoryView = switchControl;
             };
         }];
+
+        [section item:^(PTableViewSourceItem *item) {
+            item.title = NSLocalizedString(@"Reset Wallet", @"");
+            item.selectionStyle = UITableViewCellSelectionStyleDefault;
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Reset Wallet?", @"")
+                                                    message:NSLocalizedString(@"Your keys will be wiped out from this device and app will restart with clean state.", @"") preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                    [weakself.tableView deselectRowAtIndexPath:[weakself.tableView indexPathForSelectedRow] animated:NO];
+                    [weakself dismissViewControllerAnimated:YES completion:nil];
+                }]];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+
+                    // Remove secrets from the keychain
+                    [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
+                        uw.mnemonic = nil;
+                    } reason:NSLocalizedString(@"Authorize removal of the master key", @"")];
+
+                    // Erase database
+                    [[MYCWallet currentWallet] removeDatabase];
+
+                    [weakself dismissViewControllerAnimated:YES completion:nil];
+
+                    // Kill the app so we show startup screen as in fresh install.
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        exit(666);
+                    });
+
+                }]];
+                [weakself presentViewController:alert animated:YES completion:nil];
+            };
+
+        }];
     }];
+
+    
 
 }
 

@@ -11,14 +11,30 @@
 #import "MYCReceiveViewController.h"
 #import "MYCBackupViewController.h"
 
+#import "MYCAppDelegate.h"
+#import "MYCWallet.h"
+#import "MYCWalletAccount.h"
+#import "BTCQRCode.h"
+
 @interface MYCBalanceViewController ()
 
+@property (nonatomic) MYCWalletAccount* account;
 @property(nonatomic, getter=isRefreshing) BOOL refreshing;
 
+// IBOutlets
 @property (weak, nonatomic) IBOutlet UIButton *refreshButton;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* refreshActivityIndicator;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *borderHeightConstraint;
+@property (weak, nonatomic) IBOutlet UILabel *btcAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *fiatAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *statusLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *qrcodeView;
+@property (weak, nonatomic) IBOutlet UIButton* accountButton;
+@property (weak, nonatomic) IBOutlet UILabel* addressLabel;
 
+@property (weak, nonatomic) IBOutlet UIButton *sendButton;
+@property (weak, nonatomic) IBOutlet UIButton *receiveButton;
+@property (weak, nonatomic) IBOutlet UIButton *backupButton;
 
 @end
 
@@ -40,12 +56,33 @@
     [super viewDidLoad];
 
     self.borderHeightConstraint.constant = 1.0/[UIScreen mainScreen].nativeScale;
+
+    [self reloadAccount];
 }
 
-//- (BOOL) prefersStatusBarHidden
-//{
-//    return YES;
-//}
+- (void) reloadAccount
+{
+    [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+        self.account = [[MYCWallet currentWallet] currentAccountFromDatabase:db];
+    }];
+}
+
+- (void) setAccount:(MYCWalletAccount *)account
+{
+    _account = account;
+    [self updateAccountInfo];
+}
+
+- (void) updateAccountInfo
+{
+    [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
+
+    NSString* address = self.account.externalAddress.base58String;
+
+    self.addressLabel.text = address;
+
+    self.qrcodeView.image = [BTCQRCode imageForString:address size:self.qrcodeView.bounds.size scale:[UIScreen mainScreen].scale];
+}
 
 - (void) setRefreshing:(BOOL)refreshing
 {
@@ -61,6 +98,11 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.refreshing = NO;
     });
+}
+
+- (IBAction)selectAccount:(id)sender
+{
+    [[MYCAppDelegate sharedInstance] manageAccounts:sender];
 }
 
 - (IBAction) send:(id)sender

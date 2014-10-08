@@ -8,9 +8,18 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MYCBalanceViewController">
             <connections>
+                <outlet property="accountButton" destination="Enb-d0-ZL3" id="8um-oD-ytN"/>
+                <outlet property="addressLabel" destination="0H5-d1-pTV" id="Sq2-1S-Kr4"/>
+                <outlet property="backupButton" destination="E9X-Ob-kXK" id="LfG-fl-7TA"/>
                 <outlet property="borderHeightConstraint" destination="s1P-gH-wna" id="cjt-0E-Mvd"/>
+                <outlet property="btcAmountLabel" destination="Yb0-XZ-Ygw" id="bT8-v1-hLL"/>
+                <outlet property="fiatAmountLabel" destination="o2C-Sr-dwE" id="ijy-zE-ggl"/>
+                <outlet property="qrcodeView" destination="5Sc-x8-LD5" id="Fzb-Wu-qrY"/>
+                <outlet property="receiveButton" destination="MPE-AQ-jAs" id="mQ4-kf-6VU"/>
                 <outlet property="refreshActivityIndicator" destination="bE2-35-rUf" id="Jaj-np-kYS"/>
                 <outlet property="refreshButton" destination="B2o-6q-Qie" id="p9I-NL-OME"/>
+                <outlet property="sendButton" destination="qAK-Zb-AXQ" id="BFD-Cr-rHH"/>
+                <outlet property="statusLabel" destination="MLg-NG-sWO" id="WsE-6I-uDQ"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -41,7 +50,7 @@
                             <color key="textColor" red="0.050128921866416931" green="0.4369625449180603" blue="0.99840229749679565" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Réceîvïñg 849 900 bits..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MLg-NG-sWO">
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Receiving 849 900 bits..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MLg-NG-sWO">
                             <rect key="frame" x="74" y="73" width="167.5" height="17"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <color key="textColor" red="0.42356908321380615" green="0.42355641722679138" blue="0.42356359958648682" alpha="1" colorSpace="calibratedRGB"/>
@@ -103,13 +112,13 @@
                     </constraints>
                 </view>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SampleQRCode" translatesAutoresizingMaskIntoConstraints="NO" id="5Sc-x8-LD5">
-                    <rect key="frame" x="93" y="116" width="133.5" height="134"/>
+                    <rect key="frame" x="92.5" y="116" width="134.5" height="135"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="5Sc-x8-LD5" secondAttribute="height" multiplier="1:1" id="w4t-h6-qMr"/>
                     </constraints>
                 </imageView>
                 <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qAK-Zb-AXQ" customClass="MYCRoundedButton">
-                    <rect key="frame" x="20" y="335.5" width="130" height="43"/>
+                    <rect key="frame" x="20" y="336.5" width="130" height="43"/>
                     <color key="backgroundColor" red="0.0" green="0.53333333333333321" blue="1" alpha="1" colorSpace="deviceRGB"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
                     <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
@@ -121,7 +130,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MPE-AQ-jAs" customClass="MYCRoundedButton">
-                    <rect key="frame" x="170" y="335.5" width="130" height="43"/>
+                    <rect key="frame" x="170" y="336.5" width="130" height="43"/>
                     <color key="backgroundColor" red="0.0" green="0.53333333333333321" blue="1" alpha="1" colorSpace="deviceRGB"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
                     <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
@@ -133,8 +142,8 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E9X-Ob-kXK">
-                    <rect key="frame" x="73" y="388" width="174" height="22"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                    <rect key="frame" x="74.5" y="389" width="171" height="21"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
                     <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
                     <state key="normal" title="Backup your wallet"/>
                     <connections>
@@ -142,14 +151,17 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Enb-d0-ZL3">
-                    <rect key="frame" x="107" y="259.5" width="106" height="33"/>
+                    <rect key="frame" x="107" y="260.5" width="106" height="33"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <state key="normal" title="Main Account">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
+                    <connections>
+                        <action selector="selectAccount:" destination="-1" eventType="touchUpInside" id="Xa0-c5-4gx"/>
+                    </connections>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="1CBtcGivXmHQ8ZqdPgeMfcpQNJrqTrSAcG" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.20000000000000001" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0H5-d1-pTV">
-                    <rect key="frame" x="20" y="287.5" width="280" height="24"/>
+                    <rect key="frame" x="20" y="288.5" width="280" height="24"/>
                     <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="20"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>

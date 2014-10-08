@@ -48,7 +48,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uKo-X3-ODu" customClass="MYCRoundedButton">
-                                    <rect key="frame" x="59" y="415" width="202" height="42"/>
+                                    <rect key="frame" x="59" y="408" width="202" height="42"/>
                                     <color key="backgroundColor" red="0.098039224743843079" green="0.57647061347961426" blue="0.9803922176361084" alpha="1" colorSpace="deviceRGB"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="42" id="cM9-cZ-cVG"/>
@@ -63,7 +63,7 @@
                                     </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f5C-7p-rC0" customClass="MYCRoundedButton">
-                                    <rect key="frame" x="59" y="346" width="202" height="50"/>
+                                    <rect key="frame" x="59" y="339" width="202" height="50"/>
                                     <color key="backgroundColor" red="0.098039224743843079" green="0.57647061347961426" blue="0.9803922176361084" alpha="1" colorSpace="deviceRGB"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="50" id="FPQ-QF-D6h"/>
@@ -78,8 +78,8 @@
                                     </connections>
                                 </button>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start by creating a new wallet or restoring one from backup." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="p7p-Ow-3x1">
-                                    <rect key="frame" x="8" y="259" width="304" height="47.5"/>
-                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="20"/>
+                                    <rect key="frame" x="16" y="259" width="288" height="40.5"/>
+                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
@@ -93,8 +93,8 @@
                                 <constraint firstItem="p7p-Ow-3x1" firstAttribute="top" secondItem="Bok-yr-jXV" secondAttribute="bottom" constant="40" id="Q6H-sb-4kL"/>
                                 <constraint firstAttribute="centerX" secondItem="f5C-7p-rC0" secondAttribute="centerX" id="RzE-rS-Yld"/>
                                 <constraint firstItem="WA9-aI-NWX" firstAttribute="top" secondItem="zk1-nh-s99" secondAttribute="top" constant="8" id="Ueg-Am-v6w"/>
-                                <constraint firstAttribute="trailing" secondItem="p7p-Ow-3x1" secondAttribute="trailing" constant="8" id="aFa-d4-0Gr"/>
-                                <constraint firstItem="p7p-Ow-3x1" firstAttribute="leading" secondItem="zk1-nh-s99" secondAttribute="leading" constant="8" id="c88-Ni-ypr"/>
+                                <constraint firstAttribute="trailing" secondItem="p7p-Ow-3x1" secondAttribute="trailing" constant="16" id="aFa-d4-0Gr"/>
+                                <constraint firstItem="p7p-Ow-3x1" firstAttribute="leading" secondItem="zk1-nh-s99" secondAttribute="leading" constant="16" id="c88-Ni-ypr"/>
                                 <constraint firstItem="uKo-X3-ODu" firstAttribute="top" secondItem="f5C-7p-rC0" secondAttribute="bottom" constant="19" id="dfR-ZR-3bK"/>
                                 <constraint firstItem="f5C-7p-rC0" firstAttribute="centerX" secondItem="uKo-X3-ODu" secondAttribute="centerX" id="gHg-vp-VnW"/>
                                 <constraint firstItem="Bok-yr-jXV" firstAttribute="top" secondItem="WA9-aI-NWX" secondAttribute="bottom" constant="-30" id="n8G-ao-6XE"/>
@@ -138,14 +138,14 @@
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Shake your phone to generate a unique master key to your wallet." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="AQU-jP-I10">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Shake your iPhone to generate a unique master key to your wallet." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="AQU-jP-I10">
                     <rect key="frame" x="20" y="239" width="280" height="40.5"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Q6v-pN-Dob">
-                    <rect key="frame" x="50" y="308.5" width="220" height="2"/>
+                    <rect key="frame" x="50" y="308" width="220" height="2"/>
                     <color key="tintColor" red="0.098039224743843079" green="0.57647061347961426" blue="0.9803922176361084" alpha="1" colorSpace="deviceRGB"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="220" id="Og2-Nf-x90"/>

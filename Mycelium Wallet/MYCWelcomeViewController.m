@@ -68,6 +68,7 @@
 {
     [super viewDidLoad];
 
+    self.generatingLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Shake your %@ to generate a unique master key to your wallet.", @""), [UIDevice currentDevice].localizedModel];
 }
 
 - (BOOL) prefersStatusBarHidden
@@ -86,6 +87,20 @@
     [(UIScrollView*)self.view setContentInset:UIEdgeInsetsZero];
 }
 
+- (void) setupWalletWithMnemonic:(BTCMnemonic*)mnemonic
+{
+    MYCWallet* wallet = [MYCWallet currentWallet];
+
+    [wallet setupDatabaseWithMnemonic:mnemonic];
+
+    [wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
+
+        // This will write the mnemonic to iOS keychain.
+        unlockedWallet.mnemonic = mnemonic;
+
+    } reason:NSLocalizedString(@"Authenticate to store master key on the device", @"")];
+}
+
 - (IBAction)createNewWallet:(id)sender
 {
     self.generatingWalletView.frame = self.containerView.bounds;
@@ -101,16 +116,7 @@
 
         // Prepare a database and store the mnemonic in the keychain
 
-        MYCWallet* wallet = [MYCWallet currentWallet];
-
-        [wallet setupDatabaseWithMnemonic:mnemonic];
-
-        [wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
-
-            // This will write the mnemonic to iOS keychain.
-            unlockedWallet.mnemonic = mnemonic;
-
-        } reason:NSLocalizedString(@"Authenticate to store master key on the device", @"")];
+        [self setupWalletWithMnemonic:mnemonic];
 
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [[MYCAppDelegate sharedInstance] displayMainView];
@@ -145,9 +151,21 @@
 
 - (IBAction)finishRestore:(id)sender
 {
-#warning TODO: setup the wallet and display the main view.
+    [self.view endEditing:YES];
 
-    [[MYCAppDelegate sharedInstance] displayMainView];
+    BTCMnemonic* mnemonic = [[BTCMnemonic alloc] initWithWords:[self currentWords] password:nil wordListType:BTCMnemonicWordListTypeEnglish];
+
+    if (mnemonic && mnemonic.keychain)
+    {
+        [self setupWalletWithMnemonic:mnemonic];
+
+        [[MYCAppDelegate sharedInstance] displayMainView];
+    }
+    else
+    {
+        self.restoreLabel.text = NSLocalizedString(@"Failed to restore wallet with this mnemonic", @"");
+        self.restoreLabel.textColor = [UIColor redColor];
+    }
 }
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -336,6 +354,8 @@
 
     CC_SHA256_Init(&_shaCTX);
 
+    // First, get the random bytes from /dev/urandom.
+    // We'll mix in bytes from accelerometer.
     NSData* systemRandom = BTCRandomDataWithLength(32);
 
     CC_SHA256_Update(&_shaCTX, systemRandom.bytes, (CC_LONG)systemRandom.length);
@@ -358,7 +378,7 @@
             double entropyY = [_entropyMeterY consumePoint:acc.y];
             double entropyZ = [_entropyMeterZ consumePoint:acc.z];
 
-            double entropy = pow(10*(entropyX + entropyY + entropyZ)*0.5/256.0, 1.41); // make entropy counted more quickly towards the end.
+            double entropy = pow(10*(entropyX + entropyY + entropyZ)*0.66/256.0, 1.41); // make entropy counted more quickly towards the end.
 
             CC_SHA256_Update(&_shaCTX, &acc, sizeof(acc));
 

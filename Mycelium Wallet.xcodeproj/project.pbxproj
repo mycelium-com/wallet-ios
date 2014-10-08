@@ -41,6 +41,8 @@
 		20C2D7F719E292F80022CAAC /* MYCBackupPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D7F619E292F80022CAAC /* MYCBackupPageView.m */; };
 		20C2D81219E3EDB10022CAAC /* MYCDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D80F19E3EDB10022CAAC /* MYCDatabase.m */; };
 		20C2D81319E3EDB10022CAAC /* MYCDatabaseRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81119E3EDB10022CAAC /* MYCDatabaseRecord.m */; };
+		20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */; };
+		20C2D81B19E5961C0022CAAC /* BTCQRCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81A19E5961C0022CAAC /* BTCQRCode.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +113,11 @@
 		20C2D80F19E3EDB10022CAAC /* MYCDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCDatabase.m; sourceTree = "<group>"; };
 		20C2D81019E3EDB10022CAAC /* MYCDatabaseRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCDatabaseRecord.h; sourceTree = "<group>"; };
 		20C2D81119E3EDB10022CAAC /* MYCDatabaseRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCDatabaseRecord.m; sourceTree = "<group>"; };
+		20C2D81419E5713A0022CAAC /* MYCPrefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MYCPrefix.pch; sourceTree = "<group>"; };
+		20C2D81519E573B00022CAAC /* MYCUnlockedWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCUnlockedWallet.h; path = Models/MYCUnlockedWallet.h; sourceTree = "<group>"; };
+		20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCUnlockedWallet.m; path = Models/MYCUnlockedWallet.m; sourceTree = "<group>"; };
+		20C2D81919E5961C0022CAAC /* BTCQRCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCQRCode.h; sourceTree = "<group>"; };
+		20C2D81A19E5961C0022CAAC /* BTCQRCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCQRCode.m; sourceTree = "<group>"; };
 		6DE72487367B42AE9A25BAE3 /* Pods-Mycelium Wallet.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.xcconfig"; path = "Pods/Pods-Mycelium Wallet.xcconfig"; sourceTree = "<group>"; };
 		BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mycelium Wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -255,6 +262,7 @@
 				203AA4AF19DC523100572BD9 /* Receive View */,
 				203AA4B519DC53B200572BD9 /* Backup */,
 				203AA49C19DC3C4500572BD9 /* UI Utils */,
+				20C2D81819E595E60022CAAC /* CoreBitcoin Spinoffs */,
 				208FFB9219D9802000D4C159 /* Other */,
 			);
 			path = "Mycelium Wallet";
@@ -267,6 +275,7 @@
 				208FFBA119D9802000D4C159 /* LaunchScreen.xib */,
 				208FFB9319D9802000D4C159 /* Info.plist */,
 				208FFB9419D9802000D4C159 /* main.m */,
+				20C2D81419E5713A0022CAAC /* MYCPrefix.pch */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -317,6 +326,8 @@
 			children = (
 				2064E37519D9858F00CD81B8 /* MYCWallet.h */,
 				2064E37619D9858F00CD81B8 /* MYCWallet.m */,
+				20C2D81519E573B00022CAAC /* MYCUnlockedWallet.h */,
+				20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */,
 				203AA49319DC364200572BD9 /* MYCWalletAccount.h */,
 				203AA49419DC364200572BD9 /* MYCWalletAccount.m */,
 			);
@@ -341,6 +352,15 @@
 				20C2D81119E3EDB10022CAAC /* MYCDatabaseRecord.m */,
 			);
 			path = Database;
+			sourceTree = "<group>";
+		};
+		20C2D81819E595E60022CAAC /* CoreBitcoin Spinoffs */ = {
+			isa = PBXGroup;
+			children = (
+				20C2D81919E5961C0022CAAC /* BTCQRCode.h */,
+				20C2D81A19E5961C0022CAAC /* BTCQRCode.m */,
+			);
+			name = "CoreBitcoin Spinoffs";
 			sourceTree = "<group>";
 		};
 		2D8A166B7A734937ACF4ACCC /* Frameworks */ = {
@@ -508,11 +528,13 @@
 				203AA4B919DC53C900572BD9 /* MYCBackupViewController.m in Sources */,
 				2064E38719D9A0E400CD81B8 /* MYCAccountsViewController.m in Sources */,
 				203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */,
+				20C2D81B19E5961C0022CAAC /* BTCQRCode.m in Sources */,
 				20C2D7F719E292F80022CAAC /* MYCBackupPageView.m in Sources */,
 				208FFB9519D9802000D4C159 /* main.m in Sources */,
 				208FFBBB19D9848800D4C159 /* MYCWelcomeViewController.m in Sources */,
 				203AA4A519DC3C4500572BD9 /* PTableViewSource.m in Sources */,
 				2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */,
+				20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */,
 				203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */,
 				203AA4A819DC4A2600572BD9 /* PColor.m in Sources */,
 			);
@@ -631,6 +653,8 @@
 			baseConfigurationReference = 6DE72487367B42AE9A25BAE3 /* Pods-Mycelium Wallet.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Mycelium Wallet/MYCPrefix.pch";
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -643,6 +667,8 @@
 			baseConfigurationReference = 6DE72487367B42AE9A25BAE3 /* Pods-Mycelium Wallet.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Mycelium Wallet/MYCPrefix.pch";
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";

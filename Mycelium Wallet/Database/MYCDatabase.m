@@ -1,6 +1,5 @@
 #import <FMDB/FMDatabaseQueue.h>
 #import "MYCDatabase.h"
-#import <FMDB/FMDatabaseAdditions.h>
 
 #ifdef MYCDatabase_DEBUG
 #warning DEBUG: Verbose MYCDatabase
@@ -13,7 +12,7 @@
 @interface MYCDatabaseMigrator : NSObject
 - (id)initWithDatabaseQueue:(FMDatabaseQueue*)databaseQueue;
 - (void)registerMigration:(NSString*)name withBlock:(BOOL (^)(FMDatabase *db, NSError **outError))aBlock;
-- (BOOL)migrate:(NSError **)outError;
+- (BOOL)migrateDatabase:(MYCDatabase*)db error:(NSError **)outError;
 @end
 
 
@@ -98,7 +97,7 @@ static MYCDatabase *sharedModelDatabase;
     }
     
     // migrate
-    if (![self.migrator migrate:outError]) {
+    if (![self.migrator migrateDatabase:self error:outError]) {
         return NO;
     }
     
@@ -227,7 +226,7 @@ static MYCDatabase *sharedModelDatabase;
     }
 }
 
-- (BOOL)migrate:(NSError **)outError
+- (BOOL)migrateDatabase:(MYCDatabase*)mycdb error:(NSError **)outError
 {
     if (!_migrationNames) {
         // no registered migrations: nothing to do
@@ -237,7 +236,7 @@ static MYCDatabase *sharedModelDatabase;
     __block BOOL success = YES;
     __block NSError *databaseError;
     NSMutableArray *appliedMigrations = [[NSMutableArray alloc] initWithCapacity:16];
-    [_databaseQueue inDatabase:^(FMDatabase *db) {
+    [mycdb inDatabase:^(FMDatabase *db) {
         FMResultSet* rs = [db executeQuery:@"SELECT identifier FROM db_migrations ORDER BY position;"];
         if (!rs) {
             databaseError = db.lastError;
@@ -269,7 +268,7 @@ static MYCDatabase *sharedModelDatabase;
     
     for (NSString* migrationName in migrationNamesToApply)
     {
-        [_databaseQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        [mycdb inTransaction:^(FMDatabase *db, BOOL *rollback) {
 #ifdef MYCDatabase_DEBUG
             // Debug configuration: verbose database
             db.traceExecution = YES;

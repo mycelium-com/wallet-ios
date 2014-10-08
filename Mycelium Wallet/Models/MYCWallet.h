@@ -6,22 +6,9 @@
 //  Copyright (c) 2014 Mycelium. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreBitcoin/CoreBitcoin.h>
+#import "MYCUnlockedWallet.h"
 
-@class MYCDatabase;
-
-// Unlocked wallet is a transient instance for handling sensitive data.
-@interface MYCUnlockedWallet : NSObject
-
-// Root wallet seed encoded as a BIP39 mnemonic.
-@property(nonatomic) BTCMnemonic* mnemonic;
-
-// Returns a BIP32 keychain for current wallet configuration (seed/purpose'/coin_type').
-// To get an address for a given account, you should drill in with "account'/change/address_index".
-@property(nonatomic, readonly) BTCKeychain* keychain;
-
-@end
+@class MYCWalletAccount;
 
 @interface MYCWallet : NSObject
 
@@ -35,15 +22,24 @@
 // Returns YES if wallet is fully initialized and stored on disk.
 - (BOOL) isStored;
 
-// Returns current database configuration.
-// Returns nil if database is not created yet.
-- (MYCDatabase*) database;
-
 // Creates database and populates with default account.
 - (void) setupDatabaseWithMnemonic:(BTCMnemonic*)mnemonic;
 
 // Removes database from disk.
 - (void) removeDatabase;
 
+// Access database
+- (void) inDatabase:(void(^)(FMDatabase *db))block;
+- (void) inTransaction:(void(^)(FMDatabase *db, BOOL *rollback))block;
+
+// Loads current active account from database.
+- (MYCWalletAccount*) currentAccountFromDatabase:(FMDatabase*)db;
+
+// Loads all accounts from database.
+- (NSArray*) accountsFromDatabase:(FMDatabase*)db;
+
+// Loads a specific account at index from database.
+// If account does not exist, returns nil.
+- (MYCWalletAccount*) accountAtIndex:(uint32_t)index fromDatabase:(FMDatabase*)db;
 
 @end
