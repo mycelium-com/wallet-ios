@@ -297,7 +297,7 @@
         }
         else
         {
-            NSLog(@"MYCUnlockedWallet: ERROR: failed while querying the iOS keychain (getting mnemonic): %d", status);
+            NSLog(@"MYCUnlockedWallet: ERROR: failed searching iOS keychain (getting mnemonic): %d", status);
         }
     }
     return _mnemonic;
@@ -307,39 +307,55 @@
 {
     _mnemonic = mnemonic;
 
+    // We cannot update the value, only attributes of the keychain items.
+    // So to update value we delete the item and add a new one.
+
+    SecItemDelete((__bridge CFDictionaryRef)[self keychainSearchRequestForMnemonic]);
+
     CFDictionaryRef attributes = NULL;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)[self keychainSearchRequestForMnemonic], (CFTypeRef *)&attributes);
+    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)[self keychainCreateRequestForMnemonic], (CFTypeRef *)&attributes);
     if (status == errSecSuccess)
     {
-        // item found - update.
-        status = SecItemUpdate((__bridge CFDictionaryRef)[self keychainSearchRequestForMnemonic],
-                               (__bridge CFDictionaryRef)@{(__bridge id)kSecValueData: _mnemonic.dataWithSeed ?: [NSData data]});
-        if (status == errSecSuccess)
-        {
-            // done.
-        }
-        else
-        {
-            NSLog(@"MYCUnlockedWallet: ERROR: failed while updating item with mnemonic data in iOS keychain: %d", status);
-        }
-    }
-    else if (status == errSecItemNotFound)
-    {
-        // not found - create.
-        status = SecItemAdd((__bridge CFDictionaryRef)[self keychainCreateRequestForMnemonic], (CFTypeRef *)&attributes);
-        if (status == errSecSuccess)
-        {
-            // done.
-        }
-        else
-        {
-            NSLog(@"MYCUnlockedWallet: ERROR: failed while adding mnemonic data to iOS keychain: %d", status);
-        }
+        // done.
     }
     else
     {
-        NSLog(@"MYCUnlockedWallet: ERROR: failed while querying the iOS keychain (setting mnemonic): %d", status);
+        NSLog(@"MYCUnlockedWallet: ERROR: failed to add mnemonic data to iOS keychain: %d", status);
     }
+
+//    CFDictionaryRef attributes = NULL;
+//    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)[self keychainSearchRequestForMnemonic], (CFTypeRef *)&attributes);
+//    if (status == errSecSuccess)
+//    {
+//        // item found - update.
+//        status = SecItemUpdate((__bridge CFDictionaryRef)[self keychainSearchRequestForMnemonic],
+//                               (__bridge CFDictionaryRef)@{(__bridge id)kSecValueData: _mnemonic.dataWithSeed ?: [NSData data]});
+//        if (status == errSecSuccess)
+//        {
+//            // done.
+//        }
+//        else
+//        {
+//            NSLog(@"MYCUnlockedWallet: ERROR: failed to update item with mnemonic data in iOS keychain: %d", status);
+//        }
+//    }
+//    else if (status == errSecItemNotFound)
+//    {
+//        // not found - create.
+//        status = SecItemAdd((__bridge CFDictionaryRef)[self keychainCreateRequestForMnemonic], (CFTypeRef *)&attributes);
+//        if (status == errSecSuccess)
+//        {
+//            // done.
+//        }
+//        else
+//        {
+//            NSLog(@"MYCUnlockedWallet: ERROR: failed to add mnemonic data to iOS keychain: %d", status);
+//        }
+//    }
+//    else
+//    {
+//        NSLog(@"MYCUnlockedWallet: ERROR: failed searching iOS keychain (setting mnemonic): %d", status);
+//    }
 }
 
 // OSStatus values specific to Security framework.
@@ -410,9 +426,6 @@
 
 - (void) clear
 {
-    // debug:
-    _mnemonic = nil;
-    [self mnemonic];
     [_mnemonic clear];
     [_keychain clear];
     _mnemonic = nil;

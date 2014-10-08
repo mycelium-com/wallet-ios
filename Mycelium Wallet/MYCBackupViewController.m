@@ -84,6 +84,8 @@
 {
     MYCBackupPageView* pageView = [self.pageNib instantiateWithOwner:self options:nil][0];
 
+    pageView.label.textAlignment = text.length > 20 ? NSTextAlignmentLeft : NSTextAlignmentCenter;
+
     pageView.label.text = text;
     [pageView.button setTitle:buttonLabel ?: @"" forState:UIControlStateNormal];
 

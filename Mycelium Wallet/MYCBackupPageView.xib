@@ -12,11 +12,10 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="You will see a list of words, one by one. Write them down and store in a safe place." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.29999999999999999" translatesAutoresizingMaskIntoConstraints="NO" id="K0x-4q-p1g">
-                    <rect key="frame" x="10" y="150.5" width="300" height="59.5"/>
+                    <rect key="frame" x="20" y="150" width="280" height="59.5"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="lessThanOrEqual" constant="160" id="1rF-vL-Yjx"/>
-                        <constraint firstAttribute="width" constant="300" id="t3y-6P-eoh"/>
                     </constraints>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -35,7 +34,7 @@
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="T87-9X-AJc"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="done"/>
                     <connections>
                         <outlet property="delegate" destination="-1" id="dMp-BH-byo"/>
@@ -45,11 +44,13 @@
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="qtG-f3-3YQ" firstAttribute="top" secondItem="K0x-4q-p1g" secondAttribute="bottom" constant="20" id="8BD-kO-0t7"/>
+                <constraint firstAttribute="trailing" secondItem="K0x-4q-p1g" secondAttribute="trailing" constant="20" id="Di6-5s-w29"/>
                 <constraint firstAttribute="centerX" secondItem="GDd-qc-sbh" secondAttribute="centerX" constant="-0.5" id="Is2-LL-0aQ"/>
                 <constraint firstAttribute="centerX" secondItem="K0x-4q-p1g" secondAttribute="centerX" id="Nx5-8e-oQv"/>
                 <constraint firstItem="K0x-4q-p1g" firstAttribute="leading" secondItem="vxf-g5-QaA" secondAttribute="leading" multiplier="1.2" id="QLF-rN-cF8"/>
                 <constraint firstItem="qtG-f3-3YQ" firstAttribute="leading" secondItem="vxf-g5-QaA" secondAttribute="leading" constant="20" id="klA-Ha-iri"/>
                 <constraint firstItem="GDd-qc-sbh" firstAttribute="top" relation="greaterThanOrEqual" secondItem="qtG-f3-3YQ" secondAttribute="bottom" constant="20" id="mHM-Ii-iV1"/>
+                <constraint firstItem="K0x-4q-p1g" firstAttribute="leading" secondItem="vxf-g5-QaA" secondAttribute="leading" constant="20" id="nj0-mp-cX1"/>
                 <constraint firstAttribute="bottom" secondItem="GDd-qc-sbh" secondAttribute="bottom" multiplier="1.4" priority="999" id="oJP-fH-XsH"/>
                 <constraint firstAttribute="trailing" secondItem="qtG-f3-3YQ" secondAttribute="trailing" constant="20" id="obL-mx-etv"/>
                 <constraint firstAttribute="centerY" secondItem="K0x-4q-p1g" secondAttribute="centerY" multiplier="1.333" id="xY9-aC-KVU"/>

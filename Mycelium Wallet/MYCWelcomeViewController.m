@@ -399,12 +399,12 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
             double progress = 0;
-            double speed = 0.0066;
+            double speed = 0.02;
             while (progress < 1.0 && _queue)
             {
                 usleep(10000);
                 progress += speed;
-                speed += 0.000001*(2*drand48() - 1.0);
+                speed += speed*0.2*(2*drand48() - 1.0);
 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     progressBlock(progress);

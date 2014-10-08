@@ -9,7 +9,7 @@
 #import "MYCAppDelegate.h"
 #import "MYCWelcomeViewController.h"
 #import "MYCTabBarController.h"
-#import "MYCDatabase.h"
+#import "MYCWallet.h"
 
 @interface MYCAppDelegate ()
 @property(nonatomic) MYCWelcomeViewController* welcomeViewController;
@@ -27,13 +27,20 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
-    // 1. If wallet is not created yet, show welcome view.
-    // 2. If wallet is created already, show the main view.
+    // Wallet exists - display the main UI.
+    if ([[MYCWallet currentWallet] isStored])
+    {
+        [self displayMainView];
+    }
+    else
+    {
+        // Wallet is not yet created - show the welcome view.
 
-    self.welcomeViewController = [[MYCWelcomeViewController alloc] initWithNibName:nil bundle:nil];
-    self.window.rootViewController = self.welcomeViewController;
+        self.welcomeViewController = [[MYCWelcomeViewController alloc] initWithNibName:nil bundle:nil];
+        self.window.rootViewController = self.welcomeViewController;
 
-    [self.window makeKeyAndVisible];
+        [self.window makeKeyAndVisible];
+    }
     return YES;
 }
 
