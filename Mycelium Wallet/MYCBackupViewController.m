@@ -71,6 +71,13 @@
     self.pageControl.hidden = YES;
 }
 
+- (void) viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
+    [self.view endEditing:YES];
+}
+
 - (void) viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
