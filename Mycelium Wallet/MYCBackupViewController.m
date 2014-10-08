@@ -99,7 +99,8 @@
 
 - (void) nextPage:(id)_
 {
-    self.pageControl.hidden = NO;
+    // Do not show page control to avoid distraction
+    // self.pageControl.hidden = NO;
     CGPoint offset = self.scrollView.contentOffset;
     offset.x += self.scrollView.bounds.size.width;
     [self.scrollView setContentOffset:offset animated:YES];

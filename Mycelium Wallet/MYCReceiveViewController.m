@@ -124,7 +124,7 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    NSString* newValue = [textField.text stringByReplacingCharactersInRange:range withString:string];
+//    NSString* newValue = [textField.text stringByReplacingCharactersInRange:range withString:string];
 
     if (textField == self.btcField)
     {

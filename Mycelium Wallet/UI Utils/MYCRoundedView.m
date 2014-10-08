@@ -9,6 +9,8 @@
 #import "MYCRoundedView.h"
 #import <QuartzCore/QuartzCore.h>
 
+#define MYCRoundingRadius 3.0
+
 @implementation MYCRoundedView
 
 - (void) awakeFromNib
@@ -28,7 +30,82 @@
 
 - (void) setMYCRoundedCorners
 {
-    self.layer.cornerRadius = 3.0;
+    self.layer.cornerRadius = MYCRoundingRadius;
+    self.layer.masksToBounds = YES;
+}
+
+@end
+
+@implementation MYCRoundedButton
+
+- (void) awakeFromNib
+{
+    [super awakeFromNib];
+    [self setMYCRoundedCorners];
+}
+
+- (id) initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self setMYCRoundedCorners];
+    }
+    return self;
+}
+
+- (void) setMYCRoundedCorners
+{
+    self.layer.cornerRadius = MYCRoundingRadius;
+    self.layer.masksToBounds = YES;
+}
+
+@end
+
+@implementation MYCRoundedTextField
+
+- (void) awakeFromNib
+{
+    [super awakeFromNib];
+    [self setMYCRoundedCorners];
+}
+
+- (id) initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self setMYCRoundedCorners];
+    }
+    return self;
+}
+
+- (void) setMYCRoundedCorners
+{
+    self.layer.cornerRadius = MYCRoundingRadius;
+    self.layer.masksToBounds = YES;
+}
+
+@end
+
+@implementation MYCRoundedTextView
+
+- (void) awakeFromNib
+{
+    [super awakeFromNib];
+    [self setMYCRoundedCorners];
+}
+
+- (id) initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self setMYCRoundedCorners];
+    }
+    return self;
+}
+
+- (void) setMYCRoundedCorners
+{
+    self.layer.cornerRadius = MYCRoundingRadius;
     self.layer.masksToBounds = YES;
 }
 

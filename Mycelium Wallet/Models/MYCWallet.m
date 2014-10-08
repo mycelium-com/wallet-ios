@@ -46,7 +46,7 @@
     if (self = [super init])
     {
     }
-    return nil;
+    return self;
 }
 
 - (BOOL) isTestnet
@@ -264,7 +264,7 @@
     {
         self.wallet = wallet;
     }
-    return nil;
+    return self;
 }
 
 - (BTCMnemonic*) mnemonic
@@ -313,7 +313,7 @@
     {
         // item found - update.
         status = SecItemUpdate((__bridge CFDictionaryRef)[self keychainSearchRequestForMnemonic],
-                               (__bridge CFDictionaryRef)@{(__bridge id)kSecValueData: _mnemonic ?: [NSData data]});
+                               (__bridge CFDictionaryRef)@{(__bridge id)kSecValueData: _mnemonic.dataWithSeed ?: [NSData data]});
         if (status == errSecSuccess)
         {
             // done.
@@ -326,7 +326,7 @@
     else if (status == errSecItemNotFound)
     {
         // not found - create.
-        status = SecItemAdd((__bridge CFDictionaryRef)[self keychainUpdateRequestForMnemonic], (CFTypeRef *)&attributes);
+        status = SecItemAdd((__bridge CFDictionaryRef)[self keychainCreateRequestForMnemonic], (CFTypeRef *)&attributes);
         if (status == errSecSuccess)
         {
             // done.
@@ -383,16 +383,17 @@
 
     if (self.reason) dict[(__bridge id)kSecUseOperationPrompt] = self.reason;
     dict[(__bridge id)kSecReturnData] = @YES;
+    dict[(__bridge id)kSecReturnAttributes] = @YES; // when both ReturnData and ReturnAttributes are specified, result is the dictionary.
 
     return dict;
 }
 
-- (NSMutableDictionary*) keychainUpdateRequestForMnemonic
+- (NSMutableDictionary*) keychainCreateRequestForMnemonic
 {
     NSMutableDictionary* dict = [self keychainBaseDictForMnemonic];
 
     if (self.reason) dict[(__bridge id)kSecUseOperationPrompt] = self.reason;
-    if (_mnemonic) dict[(__bridge id)kSecValueData] = _mnemonic;
+    if (_mnemonic) dict[(__bridge id)kSecValueData] = _mnemonic.dataWithSeed ?: [NSData data];
     dict[(__bridge id)kSecAttrAccessible] = (__bridge id)kSecAttrAccessibleWhenUnlockedThisDeviceOnly;
 
     return dict;
@@ -409,8 +410,11 @@
 
 - (void) clear
 {
-    [self.mnemonic clear];
-    [self.keychain clear];
+    // debug:
+    _mnemonic = nil;
+    [self mnemonic];
+    [_mnemonic clear];
+    [_keychain clear];
     _mnemonic = nil;
     _keychain = nil;
 }

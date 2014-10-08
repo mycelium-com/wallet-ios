@@ -23,7 +23,7 @@
                         <outlet property="delegate" destination="-1" id="6i7-V6-MZI"/>
                     </connections>
                 </scrollView>
-                <pageControl opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="14" translatesAutoresizingMaskIntoConstraints="NO" id="LpL-j6-nbg">
+                <pageControl hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="14" translatesAutoresizingMaskIntoConstraints="NO" id="LpL-j6-nbg">
                     <rect key="frame" x="0.0" y="420" width="320" height="37"/>
                     <color key="pageIndicatorTintColor" red="0.92764736682606619" green="0.92764736682606619" blue="0.9318259580291971" alpha="1" colorSpace="deviceRGB"/>
                     <color key="currentPageIndicatorTintColor" red="0.42208719253540039" green="0.42207452654838562" blue="0.42208170890808105" alpha="1" colorSpace="calibratedRGB"/>

@@ -9,5 +9,13 @@
 #import <UIKit/UIKit.h>
 
 @interface MYCRoundedView : UIView
+@end
 
+@interface MYCRoundedButton : UIButton
+@end
+
+@interface MYCRoundedTextField : UITextField
+@end
+
+@interface MYCRoundedTextView : UITextView
 @end

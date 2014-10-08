@@ -16,6 +16,9 @@
 #import <CommonCrypto/CommonCrypto.h>
 
 @interface MYCWelcomeViewController ()<UITextViewDelegate>
+
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+
 @property (weak, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UILabel *welcomeMessageLabel;
 @property (weak, nonatomic) IBOutlet UIButton *createWalletButton;
@@ -46,6 +49,19 @@
     MYCEntropyMeter* _entropyMeterZ;
     CC_SHA256_CTX _shaCTX;
 
+    NSString* _restorePlaceholderText;
+}
+
+- (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
+    {
+        _restorePlaceholderText = @"chancellor brink second bailout banks";
+
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    }
+    return self;
 }
 
 - (void)viewDidLoad
@@ -57,6 +73,17 @@
 - (BOOL) prefersStatusBarHidden
 {
     return YES;
+}
+
+- (BOOL) automaticallyAdjustsScrollViewInsets
+{
+    return YES;
+}
+
+- (void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [(UIScrollView*)self.view setContentInset:UIEdgeInsetsZero];
 }
 
 - (IBAction)createNewWallet:(id)sender
@@ -72,10 +99,11 @@
 
         [self.generatingProgressView setProgress:1.0 animated:YES];
 
-        // TODO: prepare a database and store the mnemonic in the keychain
-        NSLog(@"Mnemonic: %@", mnemonic.dataWithSeed);
+        // Prepare a database and store the mnemonic in the keychain
 
         MYCWallet* wallet = [MYCWallet currentWallet];
+
+        [wallet setupDatabaseWithMnemonic:mnemonic];
 
         [wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
 
@@ -83,8 +111,6 @@
             unlockedWallet.mnemonic = mnemonic;
 
         } reason:NSLocalizedString(@"Authenticate to store master key on the device", @"")];
-
-        [wallet setupDatabaseWithMnemonic:mnemonic];
 
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [[MYCAppDelegate sharedInstance] displayMainView];
@@ -107,7 +133,9 @@
     [self.restoreCompleteButton setTitle:NSLocalizedString(@"Continue", @"") forState:UIControlStateNormal];
 
     self.restoreTextView.text = @"";
+
     [self updateRestoreUI];
+    [self updateRestorePlaceholder];
 }
 
 - (IBAction)cancelRestore:(id)sender
@@ -130,9 +158,62 @@
     }
 }
 
+- (void)textViewDidBeginEditing:(UITextView *)textView
+{
+    [self updateRestorePlaceholder];
+    [self updateRestoreUI];
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+    [self updateRestorePlaceholder];
+    [self updateRestoreUI];
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    if ([text isEqualToString:@"\n"])
+    {
+        // User tapped "Done" button, simply add another space.
+        [textView resignFirstResponder];
+        [self updateRestoreUI];
+        return NO;
+    }
+    return YES;
+}
+
+- (void) updateRestorePlaceholder
+{
+    if (!_restorePlaceholderText) return;
+
+    NSString* text = [[self currentWords] componentsJoinedByString:@" "];
+
+    if (self.restoreTextView.isFirstResponder)
+    {
+        if ([text isEqualToString:_restorePlaceholderText])
+        {
+            self.restoreTextView.text = @"";
+        }
+        self.restoreTextView.textColor = [UIColor blackColor];
+    }
+    else
+    {
+        if (text.length == 0 || [text isEqualToString:_restorePlaceholderText])
+        {
+            self.restoreTextView.text = _restorePlaceholderText;
+            self.restoreTextView.textColor = [UIColor colorWithWhite:0.8 alpha:1.0];
+        }
+        else
+        {
+            self.restoreTextView.textColor = [UIColor blackColor];
+        }
+    }
+}
+
 - (void) updateRestoreUI
 {
     self.restoreLabel.text = NSLocalizedString(@"Type in your 12-word master seed separated by spaces", @"");
+    self.restoreLabel.textColor = [UIColor blackColor];
 
     self.restoreCompleteButton.enabled = NO;
 
@@ -141,6 +222,7 @@
     if (words.count > 12)
     {   
         self.restoreLabel.text = NSLocalizedString(@"Too many words entered.", @"");
+        self.restoreLabel.textColor = [UIColor redColor];
     }
     else if (words.count == 12)
     {
@@ -150,22 +232,94 @@
         if (mnemonic.entropy)
         {
             self.restoreLabel.text = NSLocalizedString(@"Master seed is correct.", @"");
+            self.restoreLabel.textColor = [UIColor colorWithHue:0.33 saturation:1.0 brightness:0.6 alpha:1.0];
             self.restoreCompleteButton.enabled = YES;
         }
         else
         {
             self.restoreLabel.text = NSLocalizedString(@"Master seed is incorrect.", @"");
+            self.restoreLabel.textColor = [UIColor redColor];
         }
+    }
+    else if (!self.restoreTextView.isFirstResponder &&
+             words.count > 0 &&
+             !(_restorePlaceholderText && [self.restoreTextView.text isEqual:_restorePlaceholderText]))
+    {
+        self.restoreLabel.text = NSLocalizedString(@"Master seed is incorrect.", @"");
+        self.restoreLabel.textColor = [UIColor redColor];
     }
 }
 
 - (NSArray*) currentWords
 {
-    return [[[self.restoreTextView.text lowercaseStringWithLocale:[NSLocale currentLocale]]
+    NSArray* words = [[[[[[[self.restoreTextView.text lowercaseStringWithLocale:[NSLocale currentLocale]]
              stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
+              stringByReplacingOccurrencesOfString:@"\n" withString:@" "]
+               stringByReplacingOccurrencesOfString:@"  " withString:@" "]
+                stringByReplacingOccurrencesOfString:@"  " withString:@" "]
+                 stringByReplacingOccurrencesOfString:@"  " withString:@" "]
             componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+    if (words.count == 1 && [words.firstObject isEqualToString:@""])
+    {
+        return @[];
+    }
+
+    return words;
 }
 
+
+
+- (void)keyboardWillShow:(NSNotification*)notif
+{
+    [self updateWithKeyboardNotification:notif block:^(CGRect keyboardRect) {
+        self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, keyboardRect.size.height, 0);
+
+        [self.scrollView scrollRectToVisible:[self.scrollView convertRect:CGRectInset(self.restoreCompleteButton.frame, 0, -20)
+                                                                 fromView:self.restoreTextView.superview] animated:NO];
+    }];
+}
+
+- (void)keyboardWillHide:(NSNotification*)notif
+{
+    [self updateWithKeyboardNotification:notif block:^(CGRect keyboardRect) {
+        self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, keyboardRect.size.height, 0);
+    }];
+}
+
+- (void) updateWithKeyboardNotification:(NSNotification*)notif block:(void(^)(CGRect keyboardRect))block
+{
+    NSDictionary* info = [notif userInfo];
+
+    CGRect localKeyboardRect = CGRectMake(0, 0, 0, 0);
+
+    if ([notif.name isEqualToString:UIKeyboardWillShowNotification])
+    {
+        CGRect keyboardRect = [info[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+        localKeyboardRect = [self.view convertRect:keyboardRect fromView:self.view.window];
+        localKeyboardRect = CGRectIntersection(localKeyboardRect, self.view.bounds); // shorten keyboard height appropriately.
+        if (localKeyboardRect.size.height < 0.1) localKeyboardRect = CGRectZero;
+    }
+
+    NSTimeInterval animationDuration = [info[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    UIViewAnimationCurve animationCurve = [info[UIKeyboardAnimationCurveUserInfoKey] integerValue];
+
+    if (animationDuration < 0.01) animationDuration = 0.0;
+
+    if (animationDuration > 0.0)
+    {
+        [UIView beginAnimations:@"keyboardAppearance" context:NULL];
+        [UIView setAnimationCurve:animationCurve];
+        [UIView setAnimationDuration:animationDuration];
+    }
+
+    block(localKeyboardRect);
+
+    if (animationDuration > 0.0)
+    {
+        [UIView commitAnimations];
+    }
+}
 
 
 #pragma mark - Private Methods
