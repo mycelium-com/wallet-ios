@@ -23,26 +23,41 @@ static const uint32_t BTCKeychainMaxIndex = 0x7fffffff;
 // Initializes master keychain from a seed. This is the "root" keychain of the entire hierarchy.
 - (id) initWithSeed:(NSData*)seed;
 
+// Initializes with a base58-encoded extended public or private key.
+- (id) initWithExtendedKey:(NSString*)extendedKey;
+
 // Initializes keychain with a serialized extended key.
 // Use BTCDataFromBase58Check() to convert from Base58 string.
-- (id) initWithExtendedKey:(NSData*)extendedKey;
+- (id) initWithExtendedKeyData:(NSData*)extendedKeyData;
 
 // Clears all sensitive data from keychain (keychain becomes invalid)
 - (void) clear;
 
-// The root key of the keychain. If this is a public-only keychain, key does not have a private key.
-- (BTCKey*) rootKey;
+// Deprecated because of the badly chosen name. See `-key`.
+- (BTCKey*) rootKey DEPRECATED_ATTRIBUTE;
+
+// Instance of BTCKey that is a "head" of this keychain.
+// If the keychain is public-only, key does not have a private component.
+- (BTCKey*) key;
 
 // Chain code associated with the key.
 - (NSData*) chainCode;
 
-// Serialized extended public key.
-// Use BTCBase58CheckStringWithData() to convert to Base58 form.
-- (NSData*) extendedPublicKey;
+// Base58-encoded extended public key.
+- (NSString*) extendedPublicKey;
 
-// Serialized extended private key or nil if the receiver is public-only keychain.
+// Base58-encoded extended private key.
+// Returns nil if this is a public-only keychain.
+- (NSString*) extendedPrivateKey;
+
+// Raw binary data for serialized extended public key.
 // Use BTCBase58CheckStringWithData() to convert to Base58 form.
-- (NSData*) extendedPrivateKey;
+- (NSData*) extendedPublicKeyData;
+
+// Raw binary data for serialized extended private key.
+// Returns nil if the receiver is public-only keychain.
+// Use BTCBase58CheckStringWithData() to convert to Base58 form.
+- (NSData*) extendedPrivateKeyData;
 
 // 160-bit identifier (aka "hash") of the keychain (RIPEMD160(SHA256(pubkey))).
 - (NSData*) identifier;
