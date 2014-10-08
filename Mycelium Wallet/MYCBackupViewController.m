@@ -41,6 +41,7 @@
 
     [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"You are about to back up your master wallet seed. This seed is not encrypted and allows to restore entire wallet contents.\n\nYou will see a list of words, one by one. Write them down and store in a safe place.", @"") button:NSLocalizedString(@"Start", @"") action:@selector(nextPage:)]];
 
+#warning TODO: prefer asking for the secret when we tap Next the first time.
     __block NSArray* words = nil;
     [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *wallet) {
 
