@@ -46,9 +46,9 @@
                     <color key="textColor" red="0.42808070778846741" green="0.42805227637290955" blue="0.42806887626647949" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9jj-0h-6H4" userLabel="Keyboard Placeholder">
+                <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9jj-0h-6H4" userLabel="Keyboard Placeholder">
                     <rect key="frame" x="0.0" y="264" width="320" height="216"/>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" red="0.88453406095504761" green="0.88450765609741211" blue="0.88452267646789551" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="216" id="EBd-Oj-mmT"/>
                     </constraints>
@@ -183,7 +183,7 @@
                 <constraint firstItem="2xo-SL-GVo" firstAttribute="top" secondItem="BDk-Vc-NZZ" secondAttribute="bottom" constant="10" id="xI9-dM-9fj"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-1" y="425"/>
+            <point key="canvasLocation" x="-162" y="426"/>
         </view>
     </objects>
 </document>

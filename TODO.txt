@@ -19,4 +19,5 @@
 - accounts: edit account label.
 - accounts: archive/unarchive accounts.
 - accounts: make account current.
+- wallet: exchange rate API
 

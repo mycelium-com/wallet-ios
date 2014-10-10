@@ -1,6 +1,8 @@
 #import "BTCNumberFormatter.h"
 
 #define NarrowNbsp @"\xE2\x80\xAF"
+//#define PunctSpace @" "
+//#define ThinSpace  @" "
 
 NSString* const BTCNumberFormatterBitcoinCode    = @"XBT";
 
@@ -24,10 +26,6 @@ NSString* const BTCNumberFormatterSymbolSatoshi  = @"ṡ";
         _bitcoinUnit = unit;
         _symbolStyle = symbolStyle;
 
-        self.numberStyle = NSNumberFormatterCurrencyStyle;
-        self.currencyCode = @"XBT";
-        self.negativeFormat = [self.positiveFormat stringByReplacingCharactersInRange:[self.positiveFormat rangeOfString:@"#"] withString:@"-#"];
-
         [self updateFormatterProperties];
     }
     return self;
@@ -49,23 +47,150 @@ NSString* const BTCNumberFormatterSymbolSatoshi  = @"ṡ";
 
 - (void) updateFormatterProperties
 {
-    self.currencySymbol = [NSString stringWithFormat:@"%@%@%@", NarrowNbsp, [self bitcoinSymbol], NarrowNbsp];
+    // Reset formats so they are recomputed after we change properties.
+    self.positiveFormat = nil;
+    self.negativeFormat = nil;
+
+    self.lenient = YES;
+    self.generatesDecimalNumbers = YES;
+    self.numberStyle = NSNumberFormatterCurrencyStyle;
+    self.currencyCode = @"XBT";
+    self.groupingSize = 3;
+
+    self.currencySymbol = [self bitcoinUnitSymbol] ?: @"";
+
     self.internationalCurrencySymbol = self.currencySymbol;
 
-    self.minimumFractionDigits = 0; // On iOS 8 we have to set this *after* setting the currency symbol
-    self.maximumFractionDigits = 2;
+    // On iOS 8 we have to set these *after* setting the currency symbol.
+    switch (_bitcoinUnit)
+    {
+        case BTCNumberFormatterUnitSatoshi:
+            self.minimumFractionDigits = 0;
+            self.maximumFractionDigits = 0;
+            break;
+        case BTCNumberFormatterUnitBit:
+            self.minimumFractionDigits = 0;
+            self.maximumFractionDigits = 2;
+            break;
+        case BTCNumberFormatterUnitMilliBTC:
+            self.minimumFractionDigits = 1;
+            self.maximumFractionDigits = 5;
+            break;
+        case BTCNumberFormatterUnitBTC:
+            self.minimumFractionDigits = 1;
+            self.maximumFractionDigits = 8;
+            break;
+        default:
+            [[NSException exceptionWithName:@"BTCNumberFormatter: not supported bitcoin unit" reason:@"" userInfo:nil] raise];
+    }
 
+    switch (_symbolStyle)
+    {
+        case BTCNumberFormatterSymbolStyleNone:
+            self.positivePrefix = @"";
+            self.positiveSuffix = @"";
+            self.negativePrefix = @"–";
+            self.negativeSuffix = @"";
+            break;
+        case BTCNumberFormatterSymbolStyleCode:
+        case BTCNumberFormatterSymbolStyleLowercase:
+            self.positivePrefix = @"";
+            self.positiveSuffix = [NSString stringWithFormat:@" %@", self.currencySymbol]; // nobreaking space here.
+            self.negativePrefix = @"-";
+            self.negativeSuffix = self.positiveSuffix;
+            break;
+
+        case BTCNumberFormatterSymbolStyleSymbol:
+            // Leave positioning of the currency symbol to locale (in English it'll be prefix, in French it'll be suffix).
+            break;
+    }
     self.maximum = @(BTC_MAX_MONEY/(int64_t)pow(10.0, self.maximumFractionDigits));
+
+    // Fixup prefix symbol with a no-breaking space. When it's postfix, Foundation puts nobr space already.
+    self.positiveFormat = [self.positiveFormat stringByReplacingOccurrencesOfString:@"¤" withString:@"¤" NarrowNbsp "#"];
+
+    // Fixup negative format to have the same format as positive format and a minus sign in front of the first digit.
+    self.negativeFormat = [self.positiveFormat stringByReplacingCharactersInRange:[self.positiveFormat rangeOfString:@"#"] withString:@"–#"];
 }
 
-- (NSString*) bitcoinSymbol
+- (NSString*) bitcoinUnitSymbol
 {
+    switch (_symbolStyle)
+    {
+        case BTCNumberFormatterSymbolStyleNone:
+            return nil;
+        case BTCNumberFormatterSymbolStyleCode:
+            switch (_bitcoinUnit)
+            {
+                case BTCNumberFormatterUnitSatoshi:
+                    return NSLocalizedStringFromTable(@"SAT", @"CoreBitcoin", @"");
+                case BTCNumberFormatterUnitBit:
+                    return NSLocalizedStringFromTable(@"Bits", @"CoreBitcoin", @"");
+                case BTCNumberFormatterUnitMilliBTC:
+                    return NSLocalizedStringFromTable(@"mBTC", @"CoreBitcoin", @"");
+                case BTCNumberFormatterUnitBTC:
+                    return NSLocalizedStringFromTable(@"BTC", @"CoreBitcoin", @"");
+                default:
+                    [[NSException exceptionWithName:@"BTCNumberFormatter: not supported bitcoin unit" reason:@"" userInfo:nil] raise];
+            }
+        case BTCNumberFormatterSymbolStyleLowercase:
+            switch (_bitcoinUnit)
+            {
+                case BTCNumberFormatterUnitSatoshi:
+                    return [NSLocalizedStringFromTable(@"SAT", @"CoreBitcoin", @"") lowercaseString];
+                case BTCNumberFormatterUnitBit:
+                    return [NSLocalizedStringFromTable(@"Bits", @"CoreBitcoin", @"") lowercaseString];
+                case BTCNumberFormatterUnitMilliBTC:
+                    return [NSLocalizedStringFromTable(@"mBTC", @"CoreBitcoin", @"") lowercaseString];
+                case BTCNumberFormatterUnitBTC:
+                    return [NSLocalizedStringFromTable(@"BTC", @"CoreBitcoin", @"") lowercaseString];
+                default:
+                    [[NSException exceptionWithName:@"BTCNumberFormatter: not supported bitcoin unit" reason:@"" userInfo:nil] raise];
+            }
+        case BTCNumberFormatterSymbolStyleSymbol:
+            switch (_bitcoinUnit)
+            {
+                case BTCNumberFormatterUnitSatoshi:
+                    return BTCNumberFormatterSymbolSatoshi;
+                case BTCNumberFormatterUnitBit:
+                    return BTCNumberFormatterSymbolBit;
+                case BTCNumberFormatterUnitMilliBTC:
+                    return BTCNumberFormatterSymbolMilliBTC;
+                case BTCNumberFormatterUnitBTC:
+                    return BTCNumberFormatterSymbolBTC;
+                default:
+                    [[NSException exceptionWithName:@"BTCNumberFormatter: not supported bitcoin unit" reason:@"" userInfo:nil] raise];
+            }
+        default:
+            [[NSException exceptionWithName:@"BTCNumberFormatter: not supported symbol style" reason:@"" userInfo:nil] raise];
+    }
     return nil;
+}
+
+- (NSString *) placeholderText
+{
+    NSString* groupSeparator = self.currencyGroupingSeparator ?: @"";
+    NSString* decimalPoint = self.currencyDecimalSeparator ?: @".";
+    switch (_bitcoinUnit)
+    {
+        case BTCNumberFormatterUnitSatoshi:
+            return [NSString stringWithFormat:@"000%@000%@000", groupSeparator, groupSeparator];
+        case BTCNumberFormatterUnitBit:
+            return [NSString stringWithFormat:@"0%@000%@000%@00", groupSeparator, groupSeparator, decimalPoint];
+        case BTCNumberFormatterUnitMilliBTC:
+            return [NSString stringWithFormat:@"0%@000%@00000", groupSeparator, decimalPoint];
+        case BTCNumberFormatterUnitBTC:
+            return [NSString stringWithFormat:@"0%@00000000", decimalPoint];
+        default:
+            [[NSException exceptionWithName:@"BTCNumberFormatter: not supported bitcoin unit" reason:@"" userInfo:nil] raise];
+            return nil;
+    }
 }
 
 - (NSNumber*) numberFromSatoshis:(BTCSatoshi)satoshis
 {
-    switch (_bitcoinUnit) {
+    switch (_bitcoinUnit)
+    {
         case BTCNumberFormatterUnitSatoshi:
             return @(satoshis);
         case BTCNumberFormatterUnitBit:
@@ -75,24 +200,44 @@ NSString* const BTCNumberFormatterSymbolSatoshi  = @"ṡ";
         case BTCNumberFormatterUnitBTC:
             return [[NSDecimalNumber alloc] initWithMantissa:ABS(satoshis) exponent:-8 isNegative:satoshis < 0];
         default:
+            [[NSException exceptionWithName:@"BTCNumberFormatter: not supported bitcoin unit" reason:@"" userInfo:nil] raise];
             return nil;
     }
 }
 
 - (BTCSatoshi) satoshisFromNumber:(NSNumber*)number
 {
-    switch (_bitcoinUnit) {
+    switch (_bitcoinUnit)
+    {
         case BTCNumberFormatterUnitSatoshi:
             return number.longLongValue;
         case BTCNumberFormatterUnitBit:
-//            return number.decimalValue
+            return [[self number:number multipliedByPowerOf10:2] longLongValue];
         case BTCNumberFormatterUnitMilliBTC:
-//            return [[NSDecimalNumber alloc] initWithMantissa:ABS(satoshis) exponent:-5 isNegative:satoshis < 0];
+            return [[self number:number multipliedByPowerOf10:5] longLongValue];
         case BTCNumberFormatterUnitBTC:
-//            return [[NSDecimalNumber alloc] initWithMantissa:ABS(satoshis) exponent:-8 isNegative:satoshis < 0];
+            return [[self number:number multipliedByPowerOf10:8] longLongValue];
         default:
+            [[NSException exceptionWithName:@"BTCNumberFormatter: not supported bitcoin unit" reason:@"" userInfo:nil] raise];
             return 0;
     }
+}
+
+- (NSNumber*) number:(NSNumber*)num multipliedByPowerOf10:(int)power
+{
+    if (!num) return nil;
+
+    NSDecimalNumber* dn = nil;
+    if ([num isKindOfClass:[NSDecimalNumber class]])
+    {
+        dn = (id)num;
+    }
+    else
+    {
+        dn = [NSDecimalNumber decimalNumberWithDecimal:num.decimalValue];
+    }
+
+    return [dn decimalNumberByMultiplyingByPowerOf10:power];
 }
 
 - (NSString *) stringFromAmount:(BTCSatoshi)amount
@@ -104,5 +249,11 @@ NSString* const BTCNumberFormatterSymbolSatoshi  = @"ṡ";
 {
     return [self satoshisFromNumber:[self numberFromString:string]];
 }
+
+- (id) copyWithZone:(NSZone *)zone
+{
+    return [[BTCNumberFormatter alloc] initWithBitcoinUnit:self.bitcoinUnit symbolStyle:self.symbolStyle];
+}
+
 
 @end

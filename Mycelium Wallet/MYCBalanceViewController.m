@@ -47,8 +47,20 @@
         self.tintColor = [UIColor colorWithHue:208.0f/360.0f saturation:1.0f brightness:1.0f alpha:1.0f];
 
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Balance", @"") image:[UIImage imageNamed:@"TabBalance"] selectedImage:[UIImage imageNamed:@"TabBalanceSelected"]];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
     }
     return self;
+}
+
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void) formattersDidUpdate:(NSNotification*)notif
+{
+    [self updateAccountInfo];
 }
 
 - (void)viewDidLoad
@@ -75,15 +87,18 @@
 
 - (void) updateAccountInfo
 {
+    if (!self.isViewLoaded) return;
+
+    self.btcAmountLabel.text = [[MYCWallet currentWallet].btcFormatter stringFromAmount:self.account.confirmedAmount];
+
+    NSNumber* fiatAmount = [[MYCWallet currentWallet].currencyConverter fiatFromBitcoin:self.account.confirmedAmount];
+    self.fiatAmountLabel.text = [[MYCWallet currentWallet].fiatFormatter stringFromNumber:fiatAmount];
+
     [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
 
     NSString* address = self.account.externalAddress.base58String;
     self.addressLabel.text = address;
-
     self.qrcodeView.image = [BTCQRCode imageForString:address size:self.qrcodeView.bounds.size scale:[UIScreen mainScreen].scale];
-
-    address = @"12 \xC9\x83   2344 \xC6\x80  satoshi: ṡ";
-    NSLog(@"address = %@", address);
 }
 
 - (void) setRefreshing:(BOOL)refreshing

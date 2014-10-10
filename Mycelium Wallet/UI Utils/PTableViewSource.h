@@ -81,6 +81,8 @@
 
 @interface PTableViewSourceSection : PTableViewSourceAttributes
 
+@property(nonatomic) NSUInteger sectionIndex;
+
 @property(nonatomic) NSArray* items;
 @property(nonatomic, weak, readonly) PTableViewSource* source;
 
@@ -112,6 +114,8 @@
 
 
 @interface PTableViewSourceItem : PTableViewSourceAttributes
+
+@property(nonatomic) NSUInteger rowIndex;
 
 @property(nonatomic) NSString* title;
 @property(nonatomic) NSString* detailTitle;

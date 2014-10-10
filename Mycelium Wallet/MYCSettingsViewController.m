@@ -8,6 +8,7 @@
 
 #import "MYCSettingsViewController.h"
 #import "MYCWallet.h"
+#import "MYCWalletAccount.h"
 #import "PTableViewSource.h"
 #import "PColor.h"
 
@@ -25,15 +26,29 @@
         self.title = NSLocalizedString(@"Settings", @"");
         self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:1.0f brightness:0.77f alpha:1.0];
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Settings", @"") image:[UIImage imageNamed:@"TabSettings"] selectedImage:[UIImage imageNamed:@"TabSettingsSelected"]];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
     }
     return self;
 }
 
-- (void)viewDidLoad
+- (void) dealloc
 {
-    [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void) formattersDidUpdate:(NSNotification*)notif
+{
+    [self updateSections];
+    [self.tableView reloadData];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
 
     [self updateSections];
+    [self.tableView reloadData];
 }
 
 - (BOOL) prefersStatusBarHidden
@@ -43,6 +58,11 @@
 
 - (void) updateSections
 {
+    __block MYCWalletAccount* currentAccount = nil;
+    [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+        currentAccount = [[MYCWallet currentWallet] currentAccountFromDatabase:db];
+    }];
+
     self.tableViewSource = [[PTableViewSource alloc] init];
 
     __typeof(self) __weak weakself = self;
@@ -53,31 +73,36 @@
         section.cellStyle = UITableViewCellStyleSubtitle;
         section.detailFont = [UIFont systemFontOfSize:15.0];
         section.detailTextColor = [UIColor grayColor];
-        [section item:^(PTableViewSourceItem *item) {
-            item.title = NSLocalizedString(@"BTC", @"");
-            item.detailTitle = NSLocalizedString(@"1.2345 btc", @"");
-            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
-                [weakself.tableView deselectRowAtIndexPath:indexPath animated:YES];
-                [weakself.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            };
-        }];
-        [section item:^(PTableViewSourceItem *item) {
-            item.title = NSLocalizedString(@"mBTC", @"");
-            item.detailTitle = NSLocalizedString(@"1234.5 mbtc", @"");
-            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
-                [weakself.tableView deselectRowAtIndexPath:indexPath animated:YES];
-                [weakself.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            };
-        }];
-        [section item:^(PTableViewSourceItem *item) {
-            item.title = NSLocalizedString(@"Bits", @"");
-            item.detailTitle = NSLocalizedString(@"1 234 500 bits", @"");
-            item.accessoryType = UITableViewCellAccessoryCheckmark;
-            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
-                [weakself.tableView deselectRowAtIndexPath:indexPath animated:YES];
-                [weakself.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            };
-        }];
+
+        for (NSNumber* unitObj in @[ @(BTCNumberFormatterUnitBTC),
+                                     @(BTCNumberFormatterUnitMilliBTC),
+                                     @(BTCNumberFormatterUnitBit) ])
+        {
+            BTCNumberFormatterUnit unit = unitObj.unsignedIntegerValue;
+
+            BTCNumberFormatter* fmt = [[MYCWallet currentWallet].btcFormatter copy];
+            fmt.bitcoinUnit = unit;
+
+            BTCSatoshi amount = currentAccount.confirmedAmount;
+            if (amount == 0) amount = 123456789; // sample amount in case wallet is empty.
+
+            BTCNumberFormatter* fmt2 = [fmt copy];
+            fmt2.symbolStyle = BTCNumberFormatterSymbolStyleCode;
+            NSString* symbol = fmt2.currencySymbol;
+
+            NSString* sampleString = [fmt stringFromAmount:amount];
+
+            [section item:^(PTableViewSourceItem *item) {
+                item.title = symbol;
+                item.detailTitle = sampleString;
+                item.accessoryType = [MYCWallet currentWallet].bitcoinUnit == unit ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+                item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                    [MYCWallet currentWallet].bitcoinUnit = unit;
+                    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletFormatterDidUpdateNotification object:nil];
+                };
+            }];
+
+        }
     }];
 
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
@@ -153,11 +178,7 @@
 
         }];
     }];
-
-    
-
 }
-
 
 #pragma mark - UITableView
 

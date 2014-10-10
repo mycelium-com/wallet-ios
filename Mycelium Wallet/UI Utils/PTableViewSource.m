@@ -64,14 +64,15 @@
     if (!section) return;
     if (!_sections) _sections = @[];
     section.source = self;
+    section.sectionIndex = _sections.count;
     _sections = [_sections arrayByAddingObject:section];
 }
 
 - (void) section:(void (^)(PTableViewSourceSection *))block
 {
     PTableViewSourceSection* section = [PTableViewSourceSection new];
-    
     [section inheritAttributesFrom:self];
+    section.sectionIndex = _sections.count;
     block(section);
     [self addSection:section];
 }
@@ -315,6 +316,7 @@
     if (!item) return;
     if (!_items) _items = @[];
     item.section = self;
+    item.rowIndex = _items.count;
     _items = [_items arrayByAddingObject:item];
 }
 
@@ -323,6 +325,7 @@
     PTableViewSourceItem* item = [PTableViewSourceItem new];
     
     [item inheritAttributesFrom:self];
+    item.rowIndex = _items.count;
     block(item);
     [self addItem:item];
 }

@@ -44,6 +44,7 @@
 		20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */; };
 		20C2D81B19E5961C0022CAAC /* BTCQRCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81A19E5961C0022CAAC /* BTCQRCode.m */; };
 		20C2D82219E7CDD70022CAAC /* BTCNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82119E7CDD70022CAAC /* BTCNumberFormatter.m */; };
+		20C2D82619E82B780022CAAC /* BTCCurrencyConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82519E82B780022CAAC /* BTCCurrencyConverter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +123,8 @@
 		20C2D81E19E7CBE30022CAAC /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
 		20C2D82019E7CDD70022CAAC /* BTCNumberFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCNumberFormatter.h; sourceTree = "<group>"; };
 		20C2D82119E7CDD70022CAAC /* BTCNumberFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCNumberFormatter.m; sourceTree = "<group>"; };
+		20C2D82419E82B780022CAAC /* BTCCurrencyConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCCurrencyConverter.h; sourceTree = "<group>"; };
+		20C2D82519E82B780022CAAC /* BTCCurrencyConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCCurrencyConverter.m; sourceTree = "<group>"; };
 		6DE72487367B42AE9A25BAE3 /* Pods-Mycelium Wallet.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.xcconfig"; path = "Pods/Pods-Mycelium Wallet.xcconfig"; sourceTree = "<group>"; };
 		BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mycelium Wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -366,6 +369,8 @@
 				20C2D81A19E5961C0022CAAC /* BTCQRCode.m */,
 				20C2D82019E7CDD70022CAAC /* BTCNumberFormatter.h */,
 				20C2D82119E7CDD70022CAAC /* BTCNumberFormatter.m */,
+				20C2D82419E82B780022CAAC /* BTCCurrencyConverter.h */,
+				20C2D82519E82B780022CAAC /* BTCCurrencyConverter.m */,
 			);
 			name = "CoreBitcoin Spinoffs";
 			sourceTree = "<group>";
@@ -543,6 +548,7 @@
 				203AA4A519DC3C4500572BD9 /* PTableViewSource.m in Sources */,
 				2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */,
 				20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */,
+				20C2D82619E82B780022CAAC /* BTCCurrencyConverter.m in Sources */,
 				203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */,
 				203AA4A819DC4A2600572BD9 /* PColor.m in Sources */,
 			);

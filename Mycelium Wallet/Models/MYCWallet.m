@@ -11,6 +11,8 @@
 #import "MYCWalletAccount.h"
 #import "MYCDatabase.h"
 
+NSString* const MYCWalletFormatterDidUpdateNotification = @"MYCWalletFormatterDidUpdateNotification";
+NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCurrencyConverterDidUpdateNotification";
 
 @interface MYCWallet ()
 @property(nonatomic) NSURL* databaseURL;
@@ -66,6 +68,77 @@
 - (void) setBackedUp:(BOOL)backedUp
 {
     [[NSUserDefaults standardUserDefaults] setBool:backedUp forKey:@"MYCWalletBackedUp"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (BTCNumberFormatterUnit) bitcoinUnit
+{
+    NSNumber* num = [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletBitcoinUnit"];
+    if (!num) return BTCNumberFormatterUnitBit;
+    return [num unsignedIntegerValue];
+}
+
+- (void) setBitcoinUnit:(BTCNumberFormatterUnit)bitcoinUnit
+{
+    [[NSUserDefaults standardUserDefaults] setObject:@(bitcoinUnit) forKey:@"MYCWalletBitcoinUnit"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    self.btcFormatter.bitcoinUnit = bitcoinUnit;
+}
+
+- (BTCNumberFormatter*) btcFormatter
+{
+    if (!_btcFormatter)
+    {
+        _btcFormatter = [[BTCNumberFormatter alloc] initWithBitcoinUnit:self.bitcoinUnit symbolStyle:BTCNumberFormatterSymbolStyleLowercase];
+    }
+    return _btcFormatter;
+}
+
+- (NSNumberFormatter*) fiatFormatter
+{
+    if (!_fiatFormatter)
+    {
+        // For now we only support USD, but will have to support various currency exchanges later.
+        _fiatFormatter = [[NSNumberFormatter alloc] init];
+        _fiatFormatter.lenient = YES;
+        _fiatFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
+        _fiatFormatter.currencyCode = @"USD";
+        _fiatFormatter.groupingSize = 3;
+        _fiatFormatter.currencySymbol = [NSLocalizedString(@"USD", @"") lowercaseString];
+        _fiatFormatter.internationalCurrencySymbol = _fiatFormatter.currencySymbol;
+
+        _fiatFormatter.positivePrefix = @"";
+        _fiatFormatter.positiveSuffix = [@"\xE2\x80\xAF" stringByAppendingString:_fiatFormatter.currencySymbol];
+        _fiatFormatter.negativeFormat = [_fiatFormatter.positiveFormat stringByReplacingCharactersInRange:[_fiatFormatter.positiveFormat rangeOfString:@"#"] withString:@"-#"];
+    }
+    return _fiatFormatter;
+}
+
+- (BTCCurrencyConverter*) currencyConverter
+{
+    if (!_currencyConverter)
+    {
+        NSDictionary* dict = [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletCurrencyConverter"];
+
+        _currencyConverter = [[BTCCurrencyConverter alloc] initWithDictionary:dict];
+
+        if (!_currencyConverter)
+        {
+            _currencyConverter = [[BTCCurrencyConverter alloc] init];
+            _currencyConverter.currencyCode = @"USD";
+            _currencyConverter.marketName = @"Bitstamp";
+            _currencyConverter.averageRate = [NSDecimalNumber decimalNumberWithString:@"356.0"];
+            _currencyConverter.date = [NSDate dateWithTimeIntervalSince1970:0];
+        }
+    }
+    return _currencyConverter;
+}
+
+- (void) saveCurrencyConverter
+{
+    if (!_currencyConverter) return;
+    [[NSUserDefaults standardUserDefaults] setObject:_currencyConverter.dictionary forKey:@"MYCWalletCurrencyConverter"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 

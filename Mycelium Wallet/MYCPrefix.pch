@@ -5,5 +5,9 @@
 
     #import <FMDB/FMDatabase.h>
     #import <FMDB/FMDatabaseAdditions.h>
+
     #import <CoreBitcoin/CoreBitcoin.h>
+    #import "BTCNumberFormatter.h" // this will be in CoreBitcoin
+    #import "BTCQRCode.h" // this will be in CoreBitcoin
+    #import "BTCCurrencyConverter.h" // this will be in CoreBitcoin
 #endif

@@ -9,7 +9,7 @@ typedef NS_ENUM(NSUInteger, BTCNumberFormatterUnit) {
 
 typedef NS_ENUM(NSUInteger, BTCNumberFormatterSymbolStyle) {
     BTCNumberFormatterSymbolStyleNone      = 0, // no suffix
-    BTCNumberFormatterSymbolStyleCode      = 1, // suffix is BTC, mBTC, uBTC or SAT
+    BTCNumberFormatterSymbolStyleCode      = 1, // suffix is BTC, mBTC, Bits or SAT
     BTCNumberFormatterSymbolStyleLowercase = 2, // suffix is btc, mbtc, bits or sat
     BTCNumberFormatterSymbolStyleSymbol    = 3, // suffix is Ƀ, mɃ, ƀ or ṡ
 };
@@ -26,7 +26,7 @@ extern NSString* const BTCNumberFormatterSymbolSatoshi;  // ṡ
  * Instantiates and configures number formatter with given unit and suffix style.
  */
 - (id) initWithBitcoinUnit:(BTCNumberFormatterUnit)unit;
-- (id) initWithBitcoinUnit:(BTCNumberFormatterUnit)unit symbolStyle:(BTCNumberFormatterSymbolStyle)suffixStyle;
+- (id) initWithBitcoinUnit:(BTCNumberFormatterUnit)unit symbolStyle:(BTCNumberFormatterSymbolStyle)symbolStyle;
 
 /*!
  * Unit size to be displayed (regardless of how it is presented)
@@ -37,6 +37,12 @@ extern NSString* const BTCNumberFormatterSymbolSatoshi;  // ṡ
  * Style of formatting the units regardless of the unit size.
  */
 @property(nonatomic) BTCNumberFormatterSymbolStyle symbolStyle;
+
+/*!
+ * Placeholder text for the input field.
+ * E.g. "0 000 000.00" for 'bits' and "0.00000000" for 'BTC'.
+ */
+- (NSString *) placeholderText;
 
 /*!
  * Formats the amount according to units and current formatting style.
