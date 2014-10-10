@@ -47,7 +47,7 @@
 
         words = wallet.mnemonic.words;
 
-    } reason:NSLocalizedString(@"Authorize access to the master key for back up", @"")];
+    } reason:NSLocalizedString(@"Authorize access to the master key for backup", @"")];
 
     for (NSString* word in words)
     {

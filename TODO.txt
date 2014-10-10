@@ -1,0 +1,22 @@
+
+- wallet: btc formatter with btc/mbtc/bits and lowercase mode.
+- wallet: btc formatter placeholder values.
+- wallet: fiat formatter.
+- backup: test restore from backup.
+- backup: complete export to backup screen with highlighting words and enabling next button.
+- balance: show backup button only when amount > 0 and was never backed up.
+- send: add address field and scan UI
+- wallet: add API to fetch balance.
+- wallet: add API to fetch unspent outputs.
+- send: compose transactions for sending.
+- receive: generate proper QR code for bitcoin: url.
+- receive: show tip to tap to dismiss.
+- settings: switch to testnet and back.
+- settings: enable testnet by default from the start.
+- settings: switch btc formatting.
+- settings: show credits and other info.
+- accounts: show all accounts.
+- accounts: edit account label.
+- accounts: archive/unarchive accounts.
+- accounts: make account current.
+

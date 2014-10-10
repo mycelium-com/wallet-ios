@@ -12,15 +12,20 @@
 
 @interface MYCWallet : NSObject
 
-@property(nonatomic, getter=isTestnet) BOOL testnet;
-
+// Wallet is a singleton instance.
+// Use this method to access it.
 + (instancetype) currentWallet;
 
-// Unlocks wallet with a human-readable reason.
-- (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason;
+@property(nonatomic, getter=isTestnet) BOOL testnet;
+
+// Set to YES once the user has backed up the wallet.
+@property(nonatomic, getter=isBackedUp) BOOL backedUp;
 
 // Returns YES if wallet is fully initialized and stored on disk.
 - (BOOL) isStored;
+
+// Unlocks wallet with a human-readable reason.
+- (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason;
 
 // Creates database and populates with default account.
 - (void) setupDatabaseWithMnemonic:(BTCMnemonic*)mnemonic;

@@ -78,10 +78,12 @@
     [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
 
     NSString* address = self.account.externalAddress.base58String;
-
     self.addressLabel.text = address;
 
     self.qrcodeView.image = [BTCQRCode imageForString:address size:self.qrcodeView.bounds.size scale:[UIScreen mainScreen].scale];
+
+    address = @"12 \xC9\x83   2344 \xC6\x80  satoshi: ṡ";
+    NSLog(@"address = %@", address);
 }
 
 - (void) setRefreshing:(BOOL)refreshing

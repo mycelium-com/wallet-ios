@@ -58,6 +58,23 @@
     if (_database) _database = [self openDatabase];
 }
 
+- (BOOL) isBackedUp
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"MYCWalletBackedUp"];
+}
+
+- (void) setBackedUp:(BOOL)backedUp
+{
+    [[NSUserDefaults standardUserDefaults] setBool:backedUp forKey:@"MYCWalletBackedUp"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+// Returns YES if wallet is fully initialized and stored on disk.
+- (BOOL) isStored
+{
+    return [[NSFileManager defaultManager] fileExistsAtPath:self.databaseURL.path];
+}
+
 - (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason
 {
     MYCUnlockedWallet* unlockedWallet = [[MYCUnlockedWallet alloc] init];
@@ -99,12 +116,6 @@
     [self removeDatabase];
 
     _database = [self openDatabaseOrCreateWithMnemonic:mnemonic];
-}
-
-// Returns YES if wallet is fully initialized and stored on disk.
-- (BOOL) isStored
-{
-    return [[NSFileManager defaultManager] fileExistsAtPath:self.databaseURL.path];
 }
 
 - (MYCDatabase*) openDatabase

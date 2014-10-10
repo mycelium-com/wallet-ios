@@ -1,11 +1,3 @@
-//
-//  BTCQRCode.m
-//  Mycelium Wallet
-//
-//  Created by Oleg Andreev on 08.10.2014.
-//  Copyright (c) 2014 Mycelium. All rights reserved.
-//
-
 #import "BTCQRCode.h"
 
 @implementation BTCQRCode
