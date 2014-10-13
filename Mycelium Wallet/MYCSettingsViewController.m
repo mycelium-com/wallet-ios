@@ -131,6 +131,7 @@
         }];
     }];
 
+#if MYCTESTNET
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
         section.headerTitle = NSLocalizedString(@"Developer Build", @"");
 
@@ -140,7 +141,8 @@
             item.setupAction =  ^(PTableViewSourceItem* item_, NSIndexPath* indexPath, UITableViewCell* cell) {
                 [item_ setupCell:cell atIndexPath:indexPath];
                 UISwitch* switchControl = [[UISwitch alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
-                switchControl.on = YES;
+                switchControl.on = [MYCWallet currentWallet].isTestnet;
+                [switchControl addTarget:self action:@selector(switchTestnet:) forControlEvents:UIControlEventValueChanged];
                 cell.accessoryView = switchControl;
             };
         }];
@@ -178,7 +180,17 @@
 
         }];
     }];
+#endif // MYCTESTNET
+
 }
+
+
+- (void) switchTestnet:(UISwitch*)switchControl
+{
+    [MYCWallet currentWallet].testnet = switchControl.on;
+}
+
+
 
 #pragma mark - UITableView
 

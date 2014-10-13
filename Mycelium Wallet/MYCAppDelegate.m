@@ -27,6 +27,10 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
+#if MYCTESTNET
+    [[MYCWallet currentWallet] setTestnetOnce];
+#endif
+
     // Wallet exists - display the main UI.
     if ([[MYCWallet currentWallet] isStored])
     {
@@ -41,6 +45,9 @@
 
         [self.window makeKeyAndVisible];
     }
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidUpdateNetworkActivity:) name:MYCWalletDidUpdateNetworkActivity object:nil];
+
     return YES;
 }
 
@@ -65,7 +72,10 @@
     [self.mainController manageAccounts:sender];
 }
 
-
+- (void) walletDidUpdateNetworkActivity:(id)notif
+{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = [MYCWallet currentWallet].isNetworkActive;
+}
 
 
 @end

@@ -47,6 +47,11 @@
     return _keychain;
 }
 
+- (BTCKeychain*) externalKeychain
+{
+    return [self.keychain derivedKeychainAtIndex:0 hardened:NO];
+}
+
 // Currently available external address to receive payments on.
 - (BTCPublicKeyAddress*) externalAddress
 {
@@ -69,6 +74,10 @@
     return [BTCPublicKeyAddress addressWithData:BTCHash160(pubkey)];
 }
 
+- (BTCSatoshi) combinedAmount
+{
+    return self.confirmedAmount + self.unconfirmedAmount;
+}
 
 - (NSDate *) syncDate
 {

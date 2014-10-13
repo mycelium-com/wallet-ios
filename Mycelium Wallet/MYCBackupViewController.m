@@ -9,13 +9,17 @@
 #import "MYCBackupPageView.h"
 #import "MYCBackupViewController.h"
 #import "MYCWallet.h"
+#import "MYCErrorAnimation.h"
 
 @interface MYCBackupViewController () <UIScrollViewDelegate, UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIPageControl *pageControl;
+@property (weak, nonatomic) IBOutlet UITextField* verifyTextField;
 
 @property(nonatomic) UINib* pageNib;
+
+@property(nonatomic) NSArray* words;
 
 @end
 
@@ -39,28 +43,8 @@
 {
     [super viewDidLoad];
 
-    [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"You are about to back up your master wallet seed. This seed is not encrypted and allows to restore entire wallet contents.\n\nYou will see a list of words, one by one. Write them down and store in a safe place.", @"") button:NSLocalizedString(@"Start", @"") action:@selector(nextPage:)]];
+    [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"You are about to back up your master wallet seed. This seed is not encrypted and allows to restore entire wallet contents.\n\nYou will see a list of words, one by one. Write them down and store in a safe place.", @"") button:NSLocalizedString(@"Start", @"") action:@selector(start:)]];
 
-#warning TODO: prefer asking for the secret when we tap Next the first time.
-    __block NSArray* words = nil;
-    [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *wallet) {
-
-        words = wallet.mnemonic.words;
-
-    } reason:NSLocalizedString(@"Authorize access to the master key for backup", @"")];
-
-    for (NSString* word in words)
-    {
-        [self.scrollView addSubview:[self pageViewWithText:word button:NSLocalizedString(@"Next word", @"") action:@selector(nextPage:)]];
-    }
-
-    MYCBackupPageView* validatePage = [self pageViewWithText:NSLocalizedString(@"Please enter all words to verify they are written correctly", @"") button:NSLocalizedString(@"Next", @"") action:@selector(nextPage:)];
-    validatePage.textField.hidden = NO;
-    [self.scrollView addSubview:validatePage];
-
-    [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"The backup is complete. Keep your master seed safe. You can use it to restore your wallet when you install Mycelium Wallet on another device (or reinstall on this one).", @"") button:NSLocalizedString(@"Finish", @"") action:@selector(finish:)]];
-
-    self.pageControl.numberOfPages = self.scrollView.subviews.count;
     [self scrollViewDidScroll:self.scrollView];
 }
 
@@ -113,6 +97,33 @@
     return pageView;
 }
 
+- (void) start:(id)_
+{
+    if (!self.words)
+    {
+        [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *wallet) {
+
+            self.words = wallet.mnemonic.words;
+
+        } reason:NSLocalizedString(@"Authorize access to the master key for backup", @"")];
+
+        for (NSString* word in self.words)
+        {
+            [self.scrollView addSubview:[self pageViewWithText:word button:NSLocalizedString(@"Next word", @"") action:@selector(nextPage:)]];
+        }
+
+        MYCBackupPageView* validatePage = [self pageViewWithText:NSLocalizedString(@"Please enter all words separated by space to verify they are written correctly", @"") button:NSLocalizedString(@"Next", @"") action:@selector(verifyWords:)];
+        validatePage.textField.hidden = NO;
+        self.verifyTextField = validatePage.textField;
+        [self.verifyTextField addTarget:self action:@selector(didUpdateVerifyTextField:) forControlEvents:UIControlEventEditingChanged];
+        [self.scrollView addSubview:validatePage];
+
+        self.pageControl.numberOfPages = self.scrollView.subviews.count;
+        [self scrollViewDidScroll:self.scrollView];
+    }
+    [self nextPage:_];
+}
+
 - (void) nextPage:(id)_
 {
     // Do not show page control to avoid distraction
@@ -120,6 +131,34 @@
     CGPoint offset = self.scrollView.contentOffset;
     offset.x += self.scrollView.bounds.size.width;
     [self.scrollView setContentOffset:offset animated:YES];
+}
+
+- (void) verifyWords:(id)_
+{
+    NSArray* enteredWords = [[[[[[[self.verifyTextField.text lowercaseStringWithLocale:[NSLocale currentLocale]]
+                                  stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
+                                 stringByReplacingOccurrencesOfString:@"\n" withString:@" "]
+                                stringByReplacingOccurrencesOfString:@"  " withString:@" "]
+                               stringByReplacingOccurrencesOfString:@"  " withString:@" "]
+                              stringByReplacingOccurrencesOfString:@"  " withString:@" "]
+                             componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+    if ([enteredWords isEqual:self.words])
+    {
+        // Remember that the wallet is backed up now.
+        [MYCWallet currentWallet].backedUp = YES;
+
+        [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"The backup is complete. Keep your master seed safe. You can use it to restore your wallet when you install Mycelium Wallet on another device (or reinstall on this one).", @"") button:NSLocalizedString(@"Finish", @"") action:@selector(finish:)]];
+
+        self.pageControl.numberOfPages = self.scrollView.subviews.count;
+        [self scrollViewDidScroll:self.scrollView];
+
+        [self nextPage:_];
+    }
+    else
+    {
+        [MYCErrorAnimation animateError:self.verifyTextField radius:16.0];
+    }
 }
 
 - (void) finish:(id)_
@@ -147,6 +186,24 @@
 {
     [self.view endEditing:YES];
     return YES;
+}
+
+- (void) didUpdateVerifyTextField:(UITextField*)textField
+{
+    NSMutableAttributedString* as = [[NSMutableAttributedString alloc] initWithString:textField.text];
+
+    NSUInteger offset = 0;
+    for (NSString* word in self.words)
+    {
+        NSRange r = [as.string rangeOfString:word options:NSCaseInsensitiveSearch range:NSMakeRange(offset, as.string.length - offset)];
+        if (r.length == 0) break;
+
+        [as setAttributes:@{
+                            NSForegroundColorAttributeName: [UIColor colorWithHue:0.33 saturation:1.0 brightness:0.5 alpha:1.0]
+                            } range:r];
+    }
+
+    textField.attributedText = as;
 }
 
 

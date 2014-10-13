@@ -23,8 +23,18 @@
 @property(nonatomic, getter=isCurrent) BOOL current;
 @property(nonatomic) NSDate* syncDate;
 
-// Derived properties.
+// Derived Properties
+
+// Confirmed and unconfirmed amounts combined.
+@property(nonatomic, readonly) BTCSatoshi combinedAmount;
+
+// Keychain representing this account.
 @property(nonatomic, readonly) BTCKeychain* keychain;
+
+// Keychain m/44'/coin'/accountIndex'/0 for exporting to external services to issue invoices and collect payments.
+// This refers to "external chain" in BIP44. Whoever knows this keychain cannot learn change addresses,
+// so your privacy leak is limited to invoice addresses.
+@property(nonatomic, readonly) BTCKeychain* externalKeychain;
 
 // Currently available external address to receive payments on.
 @property(nonatomic, readonly) BTCPublicKeyAddress* externalAddress;

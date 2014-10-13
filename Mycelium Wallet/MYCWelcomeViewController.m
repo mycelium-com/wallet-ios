@@ -56,7 +56,7 @@
 {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
-        _restorePlaceholderText = @"chancellor brink second bailout banks";
+        _restorePlaceholderText = @"chancellor brink second bailout banks ...";
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -408,7 +408,8 @@
                     _motionManager = nil;
                     _queue = nil;
 
-                    completionBlock([[BTCMnemonic alloc] initWithEntropy:seed password:nil wordListType:BTCMnemonicWordListTypeEnglish]);
+                    // Our seed is random 128 bits to form 12 mnemonic words.
+                    completionBlock([[BTCMnemonic alloc] initWithEntropy:BTCDataRange(seed, NSMakeRange(0, 16)) password:nil wordListType:BTCMnemonicWordListTypeEnglish]);
                 });
             }
         }];
@@ -434,7 +435,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
 
                 // On simulator we can afford a simple random seed.
-                completionBlock([[BTCMnemonic alloc] initWithEntropy:BTCRandomDataWithLength(32) password:nil wordListType:BTCMnemonicWordListTypeEnglish]);
+                completionBlock([[BTCMnemonic alloc] initWithEntropy:BTCRandomDataWithLength(16) password:nil wordListType:BTCMnemonicWordListTypeEnglish]);
             });
         });
     }

@@ -35,7 +35,7 @@
             else
             {
                 // Not found the data.
-                NSLog(@"MYCUnlockedWallet: ERROR: read the keychain item, but the data is %@ (attrs: %@)", data, attrs);
+                MYCError(@"MYCUnlockedWallet: read the keychain item, but the data is %@ (attrs: %@)", data, attrs);
             }
         }
         else if (status == errSecItemNotFound)
@@ -45,7 +45,7 @@
         }
         else
         {
-            NSLog(@"MYCUnlockedWallet: ERROR: failed searching iOS keychain (getting mnemonic): %d", (int)status);
+            MYCError(@"MYCUnlockedWallet: failed searching iOS keychain (getting mnemonic): %d", (int)status);
         }
     }
     return _mnemonic;
@@ -70,7 +70,7 @@
         }
         else
         {
-            NSLog(@"MYCUnlockedWallet: ERROR: failed to add mnemonic data to iOS keychain: %d", (int)status);
+            MYCError(@"MYCUnlockedWallet: failed to add mnemonic data to iOS keychain: %d", (int)status);
         }
     }
 }

@@ -73,11 +73,11 @@ NSString* const BTCNumberFormatterSymbolSatoshi  = @"ṡ";
             self.maximumFractionDigits = 2;
             break;
         case BTCNumberFormatterUnitMilliBTC:
-            self.minimumFractionDigits = 1;
+            self.minimumFractionDigits = 2;
             self.maximumFractionDigits = 5;
             break;
         case BTCNumberFormatterUnitBTC:
-            self.minimumFractionDigits = 1;
+            self.minimumFractionDigits = 2;
             self.maximumFractionDigits = 8;
             break;
         default:

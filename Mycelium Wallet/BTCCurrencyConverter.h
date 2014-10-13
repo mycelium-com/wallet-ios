@@ -82,9 +82,16 @@ typedef NS_ENUM(NSUInteger, BTCCurrencyConverterMode) {
 @property(nonatomic) NSDate* date;
 
 /*!
- * Code of the fiat currency.
+ * Code of the fiat currency in which prices are expressed.
  */
 @property(nonatomic) NSString* currencyCode;
+
+/*!
+ * Code of the fiat currency used by exchange natively.
+ * Typically, it is the same as `currencyCode`, but may differ if, 
+ * for instance, prices are expressed in USD, but exchange operates in EUR.
+ */
+@property(nonatomic) NSString* nativeCurrencyCode;
 
 /*!
  * Name of the exchange/market that provides this exchange rate.

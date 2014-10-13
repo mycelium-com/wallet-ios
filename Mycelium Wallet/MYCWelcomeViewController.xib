@@ -32,7 +32,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="450" height="550"/>
                     <subviews>
                         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zk1-nh-s99" userLabel="Container View">
-                            <rect key="frame" x="64.5" y="34.5" width="320" height="480"/>
+                            <rect key="frame" x="65" y="35" width="320" height="480"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="WA9-aI-NWX">
                                     <rect key="frame" x="60" y="8" width="200" height="200"/>
@@ -48,12 +48,12 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uKo-X3-ODu" customClass="MYCRoundedButton">
-                                    <rect key="frame" x="59" y="408" width="202" height="42"/>
+                                    <rect key="frame" x="64" y="408" width="192" height="40"/>
                                     <color key="backgroundColor" red="0.098039224743843079" green="0.57647061347961426" blue="0.9803922176361084" alpha="1" colorSpace="deviceRGB"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" constant="42" id="cM9-cZ-cVG"/>
+                                        <constraint firstAttribute="height" constant="40" id="cM9-cZ-cVG"/>
                                     </constraints>
-                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                                     <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
                                     <state key="normal" title="Restore from Backup">
                                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -63,13 +63,13 @@
                                     </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f5C-7p-rC0" customClass="MYCRoundedButton">
-                                    <rect key="frame" x="59" y="339" width="202" height="50"/>
+                                    <rect key="frame" x="64" y="339" width="192" height="50"/>
                                     <color key="backgroundColor" red="0.098039224743843079" green="0.57647061347961426" blue="0.9803922176361084" alpha="1" colorSpace="deviceRGB"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="50" id="FPQ-QF-D6h"/>
                                     </constraints>
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
-                                    <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
+                                    <inset key="contentEdgeInsets" minX="30" minY="0.0" maxX="30" maxY="0.0"/>
                                     <state key="normal" title="New Wallet">
                                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </state>
@@ -216,7 +216,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vrQ-D3-ash">
-                    <rect key="frame" x="20" y="432.5" width="53" height="32"/>
+                    <rect key="frame" x="20" y="431" width="53" height="32"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                     <state key="normal" title="Cancel">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -240,7 +240,7 @@
                 <constraint firstItem="m1J-cf-4cX" firstAttribute="centerX" secondItem="bNA-Jd-rew" secondAttribute="centerX" constant="-0.5" id="cAD-dP-bcO"/>
                 <constraint firstItem="vIh-qV-MuP" firstAttribute="leading" secondItem="ZEF-I3-YbT" secondAttribute="leading" constant="20" id="chL-WP-7fY"/>
                 <constraint firstAttribute="centerX" secondItem="m1J-cf-4cX" secondAttribute="centerX" id="ecg-8r-lpr"/>
-                <constraint firstItem="vrQ-D3-ash" firstAttribute="baseline" secondItem="UaT-Wz-zig" secondAttribute="baseline" id="g7q-wp-AeU"/>
+                <constraint firstItem="vrQ-D3-ash" firstAttribute="baseline" secondItem="UaT-Wz-zig" secondAttribute="baseline" constant="-1" id="g7q-wp-AeU"/>
                 <constraint firstItem="vIh-qV-MuP" firstAttribute="top" secondItem="bNA-Jd-rew" secondAttribute="bottom" constant="16" id="lQL-4G-7OA"/>
                 <constraint firstItem="ZaI-mu-D2p" firstAttribute="leading" secondItem="ZEF-I3-YbT" secondAttribute="leading" constant="20" id="n3W-DA-hTy"/>
                 <constraint firstItem="UaT-Wz-zig" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="vrQ-D3-ash" secondAttribute="trailing" constant="20" id="oSi-7w-H9G"/>

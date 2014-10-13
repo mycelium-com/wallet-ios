@@ -10,9 +10,12 @@
 #import "MYCUnlockedWallet.h"
 #import "MYCWalletAccount.h"
 #import "MYCDatabase.h"
+#import "MYCBackend.h"
 
 NSString* const MYCWalletFormatterDidUpdateNotification = @"MYCWalletFormatterDidUpdateNotification";
 NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCurrencyConverterDidUpdateNotification";
+NSString* const MYCWalletDidReloadNotification = @"MYCWalletDidReloadNotification";
+NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkActivity";
 
 @interface MYCWallet ()
 @property(nonatomic) NSURL* databaseURL;
@@ -25,6 +28,8 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
 
 @implementation MYCWallet {
     MYCDatabase* _database;
+    int _updatingExchangeRate;
+    int _updatingAccountsTaskCount;
 }
 
 + (instancetype) currentWallet
@@ -57,7 +62,28 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
     [[NSUserDefaults standardUserDefaults] setBool:testnet forKey:@"MYCWalletTestnet"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-    if (_database) _database = [self openDatabase];
+    if (_database)
+    {
+        _database = [self openDatabase];
+
+        // Database does not exist for this configuration.
+        // Lets load mnemonic
+        if (!_database)
+        {
+            MYCLog(@"MYCWallet: loading mnemonic to create another database for %@", testnet ? @"testnet" : @"mainnet");
+            [self unlockWallet:^(MYCUnlockedWallet *uw) {
+                _database = [self openDatabaseOrCreateWithMnemonic:uw.mnemonic];
+            } reason:NSLocalizedString(@"Authorize access to master key to switch testnet mode", @"")];
+        }
+    }
+}
+
+- (void) setTestnetOnce
+{
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletTestnet"])
+    {
+        self.testnet = YES;
+    }
 }
 
 - (BOOL) isBackedUp
@@ -128,7 +154,7 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
             _currencyConverter = [[BTCCurrencyConverter alloc] init];
             _currencyConverter.currencyCode = @"USD";
             _currencyConverter.marketName = @"Bitstamp";
-            _currencyConverter.averageRate = [NSDecimalNumber decimalNumberWithString:@"356.0"];
+            _currencyConverter.averageRate = [NSDecimalNumber decimalNumberWithString:@"0.0"];
             _currencyConverter.date = [NSDate dateWithTimeIntervalSince1970:0];
         }
     }
@@ -158,6 +184,15 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
     block(unlockedWallet);
 
     [unlockedWallet clear];
+}
+
+- (MYCBackend*) backend
+{
+    if (self.testnet)
+    {
+        return [MYCBackend testnetBackend];
+    }
+    return [MYCBackend mainnetBackend];
 }
 
 - (MYCDatabase*) database
@@ -215,7 +250,7 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
         return nil;
     }
 
-    NSLog(@"MYCWallet: opening a database at %@", databaseURL.absoluteString);
+    MYCLog(@"MYCWallet: opening a database at %@", databaseURL.absoluteString);
 
     database = [[MYCDatabase alloc] initWithURL:databaseURL];
     NSAssert([fm fileExistsAtPath:databaseURL.path], @"Database file does not exist");
@@ -292,7 +327,7 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
 
             MYCWalletAccount* account = [[MYCWalletAccount alloc] initWithKeychain:[bitcoinKeychain keychainForAccount:0]];
 
-            NSAssert(account, @"Must be valid account");
+            NSAssert(account, @"Must be a valid account");
 
             account.label = NSLocalizedString(@"Main Account", @"");
             account.current = YES;
@@ -306,7 +341,7 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
 
     if (![database open:&error])
     {
-        NSLog(@"[%@ %@] error:%@", [self class], NSStringFromSelector(_cmd), error);
+        MYCError(@"[%@ %@] error:%@", [self class], NSStringFromSelector(_cmd), error);
 
         // Could not open the database: suppress the database file, and restart from scratch
         if ([fm removeItemAtURL:database.URL error:&error])
@@ -326,7 +361,12 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
     }
 
     // Done
-    
+
+    // Notify on main queue 1) to enforce main thread and 2) to let MYCWallet to assign this database instance to its ivar.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidReloadNotification object:self];
+    });
+
     return database;
 }
 
@@ -335,7 +375,7 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
 {
     if ([[NSFileManager defaultManager] fileExistsAtPath:self.databaseURL.path])
     {
-        NSLog(@"WARNING: MYCWallet is removing Mycelium database from disk.");
+        MYCLog(@"WARNING: MYCWallet is removing Mycelium database from disk.");
     }
 
     if (_database) [_database close];
@@ -343,6 +383,8 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
     _database = nil;
     NSError* error = nil;
     [[NSFileManager defaultManager] removeItemAtURL:self.databaseURL error:&error];
+
+    // Do not notify to not break the app.
 }
 
 // Access database
@@ -374,6 +416,88 @@ NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCur
 {
     return [MYCWalletAccount loadWithPrimaryKey:@(index) fromDatabase:db];
 }
+
+
+
+
+#pragma mark - Networking
+
+
+
+- (BOOL) isNetworkActive
+{
+    return self.backend.isActive;
+}
+
+- (BOOL) isUpdatingAccounts
+{
+    return _updatingAccountsTaskCount > 0;
+}
+
+// Updates exchange rate if needed.
+// Set force=YES to force update (e.g. if user tapped 'refresh' button).
+- (void) updateExchangeRate:(BOOL)force completion:(void(^)(BOOL success, NSError *error))completion
+{
+    if (!force)
+    {
+        if (_updatingExchangeRate)
+        {
+            if (completion) completion(NO, nil);
+            return;
+        }
+        NSDate* date = [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletCurrencyRateUpdateDate"];
+        if (date && [date timeIntervalSinceNow] > -3600.0)
+        {
+            // Updated an hour ago, so should be up to date.
+            if (completion) completion(NO, nil);
+            return;
+        }
+    }
+
+    [self notifyNetworkActivity];
+
+    _updatingExchangeRate++;
+
+    [self.backend fetchExchangeRateForCurrencyCode:self.currencyConverter.currencyCode
+                                        completion:^(NSDecimalNumber *btcPrice, NSString *marketName, NSDate *date, NSString *nativeCurrencyCode, NSError *error) {
+
+                                            _updatingExchangeRate--;
+
+                                            if (!btcPrice)
+                                            {
+                                                if (completion) completion(NO, error);
+                                                return;
+                                            }
+
+                                            self.currencyConverter.averageRate = btcPrice;
+                                            self.currencyConverter.marketName = marketName;
+                                            if (date) self.currencyConverter.date = date;
+                                            self.currencyConverter.nativeCurrencyCode = nativeCurrencyCode ?: self.currencyConverter.currencyCode;
+
+                                            if (completion) completion(YES, nil);
+
+                                            [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletCurrencyConverterDidUpdateNotification object:self];
+
+                                            [self notifyNetworkActivity];
+                                        }];
+}
+
+// Updates a given account.
+// Set force=YES to force update (e.g. if user tapped 'refresh' button).
+// If update is skipped, completion block is called with (NO,nil).
+- (void) updateAccount:(MYCWalletAccount*)account force:(BOOL)force completion:(void(^)(BOOL success, NSError *error))completion
+{
+    // TODO: update balance info and unspent outputs.
+    if (completion) completion(NO, nil);
+}
+
+
+- (void) notifyNetworkActivity
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateNetworkActivity object:self];
+}
+
+
 
 @end
 

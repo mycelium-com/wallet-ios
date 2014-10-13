@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		13DC93D53302498C84E6F0E9 /* libPods-Mycelium Wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */; };
 		203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49419DC364200572BD9 /* MYCWalletAccount.m */; };
-		203AA49819DC365D00572BD9 /* MYCConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49719DC365D00572BD9 /* MYCConnection.m */; };
+		203AA49819DC365D00572BD9 /* MYCBackend.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49719DC365D00572BD9 /* MYCBackend.m */; };
 		203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A019DC3C4500572BD9 /* MYCRoundedView.m */; };
 		203AA4A519DC3C4500572BD9 /* PTableViewSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A219DC3C4500572BD9 /* PTableViewSource.m */; };
 		203AA4A819DC4A2600572BD9 /* PColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A719DC4A2600572BD9 /* PColor.m */; };
@@ -45,6 +45,8 @@
 		20C2D81B19E5961C0022CAAC /* BTCQRCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81A19E5961C0022CAAC /* BTCQRCode.m */; };
 		20C2D82219E7CDD70022CAAC /* BTCNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82119E7CDD70022CAAC /* BTCNumberFormatter.m */; };
 		20C2D82619E82B780022CAAC /* BTCCurrencyConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82519E82B780022CAAC /* BTCCurrencyConverter.m */; };
+		20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */; };
+		20C2D82C19EBD6CB0022CAAC /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82B19EBD6CB0022CAAC /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,8 +62,8 @@
 /* Begin PBXFileReference section */
 		203AA49319DC364200572BD9 /* MYCWalletAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCWalletAccount.h; path = Models/MYCWalletAccount.h; sourceTree = "<group>"; };
 		203AA49419DC364200572BD9 /* MYCWalletAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWalletAccount.m; path = Models/MYCWalletAccount.m; sourceTree = "<group>"; };
-		203AA49619DC365D00572BD9 /* MYCConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCConnection.h; path = Networking/MYCConnection.h; sourceTree = "<group>"; };
-		203AA49719DC365D00572BD9 /* MYCConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCConnection.m; path = Networking/MYCConnection.m; sourceTree = "<group>"; };
+		203AA49619DC365D00572BD9 /* MYCBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCBackend.h; path = Networking/MYCBackend.h; sourceTree = "<group>"; };
+		203AA49719DC365D00572BD9 /* MYCBackend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCBackend.m; path = Networking/MYCBackend.m; sourceTree = "<group>"; };
 		203AA49F19DC3C4500572BD9 /* MYCRoundedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCRoundedView.h; sourceTree = "<group>"; };
 		203AA4A019DC3C4500572BD9 /* MYCRoundedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCRoundedView.m; sourceTree = "<group>"; };
 		203AA4A119DC3C4500572BD9 /* PTableViewSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTableViewSource.h; sourceTree = "<group>"; };
@@ -125,6 +127,10 @@
 		20C2D82119E7CDD70022CAAC /* BTCNumberFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCNumberFormatter.m; sourceTree = "<group>"; };
 		20C2D82419E82B780022CAAC /* BTCCurrencyConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCCurrencyConverter.h; sourceTree = "<group>"; };
 		20C2D82519E82B780022CAAC /* BTCCurrencyConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCCurrencyConverter.m; sourceTree = "<group>"; };
+		20C2D82719EBC7680022CAAC /* MYCErrorAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCErrorAnimation.h; sourceTree = "<group>"; };
+		20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCErrorAnimation.m; sourceTree = "<group>"; };
+		20C2D82A19EBD6CB0022CAAC /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		20C2D82B19EBD6CB0022CAAC /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		6DE72487367B42AE9A25BAE3 /* Pods-Mycelium Wallet.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.xcconfig"; path = "Pods/Pods-Mycelium Wallet.xcconfig"; sourceTree = "<group>"; };
 		BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mycelium Wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -197,6 +203,8 @@
 				203AA4A219DC3C4500572BD9 /* PTableViewSource.m */,
 				203AA4A619DC4A2600572BD9 /* PColor.h */,
 				203AA4A719DC4A2600572BD9 /* PColor.m */,
+				20C2D82719EBC7680022CAAC /* MYCErrorAnimation.h */,
+				20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */,
 			);
 			path = "UI Utils";
 			sourceTree = "<group>";
@@ -345,8 +353,10 @@
 		208FFBC019D984B800D4C159 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				203AA49619DC365D00572BD9 /* MYCConnection.h */,
-				203AA49719DC365D00572BD9 /* MYCConnection.m */,
+				203AA49619DC365D00572BD9 /* MYCBackend.h */,
+				203AA49719DC365D00572BD9 /* MYCBackend.m */,
+				20C2D82A19EBD6CB0022CAAC /* Reachability.h */,
+				20C2D82B19EBD6CB0022CAAC /* Reachability.m */,
 			);
 			name = Networking;
 			sourceTree = "<group>";
@@ -527,8 +537,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20C2D82C19EBD6CB0022CAAC /* Reachability.m in Sources */,
 				208FFB9819D9802000D4C159 /* MYCAppDelegate.m in Sources */,
-				203AA49819DC365D00572BD9 /* MYCConnection.m in Sources */,
+				20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */,
+				203AA49819DC365D00572BD9 /* MYCBackend.m in Sources */,
 				203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */,
 				2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */,
 				2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */,
@@ -669,10 +681,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mycelium Wallet/MYCPrefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"MYCTESTNET=1",
+				);
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "37d225d5-ce19-42ef-9bdd-94adcc046135";
+				PROVISIONING_PROFILE = "2ef9ec64-d8be-4d22-a733-d64d052824d1";
 			};
 			name = Debug;
 		};
@@ -683,10 +700,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mycelium Wallet/MYCPrefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"MYCTESTNET=1",
+				);
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "37d225d5-ce19-42ef-9bdd-94adcc046135";
+				PROVISIONING_PROFILE = "2ef9ec64-d8be-4d22-a733-d64d052824d1";
 			};
 			name = Release;
 		};

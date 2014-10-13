@@ -39,19 +39,19 @@
                     <rect key="frame" x="0.0" y="0.0" width="320" height="96"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 029 400 bits" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yb0-XZ-Ygw">
-                            <rect key="frame" x="97" y="24" width="125" height="24"/>
-                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Medium" family="Apple SD Gothic Neo" pointSize="20"/>
+                            <rect key="frame" x="97" y="24" width="125.5" height="24"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="20"/>
                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="398.23 usd" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o2C-Sr-dwE">
-                            <rect key="frame" x="117" y="48" width="85" height="22"/>
-                            <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="18"/>
+                            <rect key="frame" x="120" y="48" width="80" height="19"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                             <color key="textColor" red="0.050128921866416931" green="0.4369625449180603" blue="0.99840229749679565" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Receiving 849 900 bits..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MLg-NG-sWO">
-                            <rect key="frame" x="74" y="73" width="167.5" height="17"/>
+                            <rect key="frame" x="75" y="70" width="167.5" height="17"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <color key="textColor" red="0.42356908321380615" green="0.42355641722679138" blue="0.42356359958648682" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
@@ -111,16 +111,16 @@
                         <constraint firstAttribute="height" constant="1" id="s1P-gH-wna"/>
                     </constraints>
                 </view>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SampleQRCode" translatesAutoresizingMaskIntoConstraints="NO" id="5Sc-x8-LD5">
-                    <rect key="frame" x="92.5" y="116" width="134.5" height="135"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="SampleQRCode" translatesAutoresizingMaskIntoConstraints="NO" id="5Sc-x8-LD5">
+                    <rect key="frame" x="93" y="116" width="133.5" height="134.5"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="5Sc-x8-LD5" secondAttribute="height" multiplier="1:1" id="w4t-h6-qMr"/>
                     </constraints>
                 </imageView>
                 <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qAK-Zb-AXQ" customClass="MYCRoundedButton">
-                    <rect key="frame" x="20" y="336.5" width="130" height="43"/>
+                    <rect key="frame" x="20" y="337" width="130" height="43"/>
                     <color key="backgroundColor" red="0.0" green="0.53333333333333321" blue="1" alpha="1" colorSpace="deviceRGB"/>
-                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                     <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
                     <state key="normal" title="Send">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -130,9 +130,9 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MPE-AQ-jAs" customClass="MYCRoundedButton">
-                    <rect key="frame" x="170" y="336.5" width="130" height="43"/>
+                    <rect key="frame" x="170" y="337" width="130" height="43"/>
                     <color key="backgroundColor" red="0.0" green="0.53333333333333321" blue="1" alpha="1" colorSpace="deviceRGB"/>
-                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                     <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
                     <state key="normal" title="Receive">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -142,8 +142,8 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E9X-Ob-kXK">
-                    <rect key="frame" x="74.5" y="389" width="171" height="21"/>
-                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
+                    <rect key="frame" x="76.5" y="390" width="166" height="20"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                     <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
                     <state key="normal" title="Backup your wallet"/>
                     <connections>
@@ -151,8 +151,8 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Enb-d0-ZL3">
-                    <rect key="frame" x="107" y="260.5" width="106" height="33"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <rect key="frame" x="109.5" y="260" width="101" height="33"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                     <state key="normal" title="Main Account">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
@@ -160,11 +160,15 @@
                         <action selector="selectAccount:" destination="-1" eventType="touchUpInside" id="Xa0-c5-4gx"/>
                     </connections>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="1CBtcGivXmHQ8ZqdPgeMfcpQNJrqTrSAcG" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.20000000000000001" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0H5-d1-pTV">
-                    <rect key="frame" x="20" y="288.5" width="280" height="24"/>
-                    <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="20"/>
+                <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="1CBtcGivXmHQ8ZqdPgeMfcpQNJrqTrSAcG" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.20000000000000001" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0H5-d1-pTV">
+                    <rect key="frame" x="8" y="293" width="304" height="20.5"/>
+                    <gestureRecognizers/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
+                    <connections>
+                        <outletCollection property="gestureRecognizers" destination="TZG-gs-8Cr" appends="YES" id="ZSG-dd-bSN"/>
+                    </connections>
                 </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -186,9 +190,9 @@
                 <constraint firstItem="qAK-Zb-AXQ" firstAttribute="top" secondItem="0H5-d1-pTV" secondAttribute="bottom" constant="24" id="S8Q-hU-wBa"/>
                 <constraint firstItem="PcU-0b-wQB" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="UhA-QU-2Cd"/>
                 <constraint firstItem="MPE-AQ-jAs" firstAttribute="height" secondItem="qAK-Zb-AXQ" secondAttribute="height" id="Y88-nw-2FC"/>
-                <constraint firstItem="0H5-d1-pTV" firstAttribute="top" secondItem="Enb-d0-ZL3" secondAttribute="bottom" constant="-5" id="Zu5-DW-h2E"/>
+                <constraint firstItem="0H5-d1-pTV" firstAttribute="top" secondItem="Enb-d0-ZL3" secondAttribute="bottom" id="Zu5-DW-h2E"/>
                 <constraint firstItem="5Sc-x8-LD5" firstAttribute="width" relation="lessThanOrEqual" secondItem="PcU-0b-wQB" secondAttribute="width" multiplier="0.66" id="eb8-PF-dTK"/>
-                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="0H5-d1-pTV" secondAttribute="trailing" constant="20" id="ely-YT-Urk"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="0H5-d1-pTV" secondAttribute="trailing" constant="8" id="ely-YT-Urk"/>
                 <constraint firstItem="0H5-d1-pTV" firstAttribute="centerX" secondItem="5Sc-x8-LD5" secondAttribute="centerX" constant="0.5" id="gpR-Xh-KaY"/>
                 <constraint firstItem="MPE-AQ-jAs" firstAttribute="top" secondItem="qAK-Zb-AXQ" secondAttribute="top" id="kM6-Wb-DHq"/>
                 <constraint firstItem="5Sc-x8-LD5" firstAttribute="height" secondItem="hBS-0n-s9I" secondAttribute="height" multiplier="0.53" priority="999" constant="-80" id="m0G-O8-3iJ"/>
@@ -197,7 +201,7 @@
                 <constraint firstAttribute="bottom" secondItem="hBS-0n-s9I" secondAttribute="bottom" id="med-4z-6Bl"/>
                 <constraint firstItem="5Sc-x8-LD5" firstAttribute="centerX" secondItem="Enb-d0-ZL3" secondAttribute="centerX" id="pjr-ba-kWQ"/>
                 <constraint firstItem="s1z-gs-H7K" firstAttribute="top" secondItem="PcU-0b-wQB" secondAttribute="bottom" id="qfs-eY-Qge"/>
-                <constraint firstItem="0H5-d1-pTV" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="rKA-B0-MGb"/>
+                <constraint firstItem="0H5-d1-pTV" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="rKA-B0-MGb"/>
                 <constraint firstItem="qAK-Zb-AXQ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="vM9-5e-Lop"/>
                 <constraint firstAttribute="centerX" secondItem="E9X-Ob-kXK" secondAttribute="centerX" id="yoD-W5-mSw"/>
             </constraints>
@@ -208,8 +212,13 @@
                     <exclude reference="H52-uF-Eer"/>
                 </mask>
             </variation>
-            <point key="canvasLocation" x="-398.5" y="193"/>
+            <point key="canvasLocation" x="-1410" y="216"/>
         </view>
+        <tapGestureRecognizer id="TZG-gs-8Cr">
+            <connections>
+                <action selector="tapAddress:" destination="-1" id="d3P-XQ-wLc"/>
+            </connections>
+        </tapGestureRecognizer>
     </objects>
     <resources>
         <image name="RefreshIcon" width="26" height="26"/>

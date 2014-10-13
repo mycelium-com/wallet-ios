@@ -81,7 +81,7 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
 #if !defined(NS_BLOCK_ASSERTIONS)
         else
         {
-            NSLog(@"[%@ %@] Ignore unknown key %@", [self class], NSStringFromSelector(_cmd), key);
+            MYCLog(@"[%@ %@] Ignore unknown key %@", [self class], NSStringFromSelector(_cmd), key);
         }
 #endif
     }];

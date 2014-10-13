@@ -133,7 +133,7 @@ static MYCDatabase *sharedModelDatabase;
     
     if (changedTableNames.count > 0) {
 #ifdef MYCDatabase_DEBUG
-        NSLog(@"MYCDatabaseDidChangeNotification: %@", changedTableNames);
+        MYCLog(@"MYCDatabaseDidChangeNotification: %@", changedTableNames);
 #endif
         [[NSNotificationCenter defaultCenter] postNotificationName:MYCDatabaseDidChangeNotification object:self userInfo:@{ PChangedModelTableNamesKey: changedTableNames }];
     }
@@ -163,7 +163,7 @@ static MYCDatabase *sharedModelDatabase;
     
     if (changedTableNames.count > 0) {
 #ifdef MYCDatabase_DEBUG
-        NSLog(@"MYCDatabaseDidChangeNotification: %@", changedTableNames);
+        MYCLog(@"MYCDatabaseDidChangeNotification: %@", changedTableNames);
 #endif
         [[NSNotificationCenter defaultCenter] postNotificationName:MYCDatabaseDidChangeNotification object:self userInfo:@{ PChangedModelTableNamesKey: changedTableNames }];
     }
