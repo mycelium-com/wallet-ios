@@ -90,7 +90,7 @@
 }
 
 - (void) fetchExchangeRateForCurrencyCode:(NSString*)currencyCode
-                               completion:(void(^)(NSDecimalNumber* btcPrice, NSString* marketName, NSDate* date, NSString* nativeCurrencyCode, NSError* error))completionBlock
+                               completion:(void(^)(NSDecimalNumber* btcPrice, NSString* marketName, NSDate* date, NSString* nativeCurrencyCode, NSError* error))completion
 {
     NSParameterAssert(currencyCode);
 
@@ -118,25 +118,19 @@
 
                    if (!result)
                    {
-                       dispatch_async(dispatch_get_main_queue(), ^{
-                           completionBlock(nil, nil, nil, nil, error);
-                       });
+                       if (completion) completion(nil, nil, nil, nil, error);
                        return;
                    }
 
                    if (![result[@"exchangeRates"] isKindOfClass:[NSArray class]])
                    {
-                       dispatch_async(dispatch_get_main_queue(), ^{
-                           completionBlock(nil, nil, nil, nil, [self formatError:@"Malformed result: 'exchangeRates' is not an array"]);
-                       });
+                       if (completion) completion(nil, nil, nil, nil, [self formatError:@"Malformed result: 'exchangeRates' is not an array"]);
                        return;
                    }
 
                    if ([result[@"exchangeRates"] count] < 1)
                    {
-                       dispatch_async(dispatch_get_main_queue(), ^{
-                           completionBlock(nil, nil, nil, nil, [self dataError:@"No exchange rates returned"]);
-                       });
+                       if (completion) completion(nil, nil, nil, nil, [self dataError:@"No exchange rates returned"]);
                        return;
                    }
 
@@ -144,22 +138,56 @@
 
                    if (![rateDict isKindOfClass:[NSDictionary class]])
                    {
-                       dispatch_async(dispatch_get_main_queue(), ^{
-                           completionBlock(nil, nil, nil, nil, [self formatError:@"Malformed result: exchange rate is not an dictionary"]);
-                       });
+                       if (completion) completion(nil, nil, nil, nil, [self formatError:@"Malformed result: exchange rate is not an dictionary"]);
                        return;
                    }
 
-                   dispatch_async(dispatch_get_main_queue(), ^{
-                       completionBlock([self ensureDecimalNumber:rateDict[@"price"]],
-                                       rateDict[@"name"],
-                                       [NSDate dateWithTimeIntervalSince1970:[rateDict[@"time"] doubleValue]],
-                                       rateDict[@"currency"],
-                                       nil);
-                   });
+                   if (completion) completion([self ensureDecimalNumber:rateDict[@"price"]],
+                                                       rateDict[@"name"],
+                                                       [NSDate dateWithTimeIntervalSince1970:[rateDict[@"time"] doubleValue]],
+                                                       rateDict[@"currency"],
+                                                       nil);
                }];
 }
 
+
+//
+//curl  -k -X POST -H "Content-Type: application/json" -d '{"version":1,"addresses":["miWYetn5RRjatKmHgNm6VGYT2jivUjZv5y"]}' https://144.76.165.115/wapitestnet/wapi/queryUnspentOutputs
+//
+//{
+//    "errorCode": 0,
+//    "r": {
+//        "height": 300825,
+//        "unspent": [{
+//            "outPoint": "2c2cea628728ed8c6345a0d8bc172dd301104707ab1057a0309984b5a212dd98:0",
+//            "height": 300766,
+//            "value": 100000000,
+//            "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
+//            "isCoinBase": false
+//        },
+//                    {
+//                        "outPoint": "5630d46ba9be82a4061931be11b7ba3126068aad93873ef0f742d8f419961e63:1",
+//                        "height": 300825,
+//                        "value": 90000000,
+//                        "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
+//                        "isCoinBase": false
+//                    },
+//                    {
+//                        "outPoint": "6a73582d58fcbf6345ddb5d59daaf74776303e425237a7e5d9e683495187dc85:0",
+//                        "height": 300825,
+//                        "value": 91000000,
+//                        "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
+//                        "isCoinBase": false
+//                    },
+//                    {
+//                        "outPoint": "92082fa94ae0e5b97b8f1b5a15c5f3f55648394f576755235bb2c2389d906f1d:0",
+//                        "height": 300766,
+//                        "value": 100000000,
+//                        "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
+//                        "isCoinBase": false
+//                    }]
+//    }
+//}
 
 
 #pragma mark - Utils
