@@ -7,6 +7,7 @@
 //
 
 #import "MYCSettingsViewController.h"
+#import "MYCBackupViewController.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "PTableViewSource.h"
@@ -111,6 +112,25 @@
         [section item:^(PTableViewSourceItem *item) {
             item.title = NSLocalizedString(@"Import Private Key", @"");
             item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }];
+    }];
+
+    [self.tableViewSource section:^(PTableViewSourceSection *section) {
+        section.headerTitle = NSLocalizedString(@"Backup", @"");
+
+        [section item:^(PTableViewSourceItem *item) {
+            item.title = NSLocalizedString(@"Export Wallet Master Key", @"");
+            item.accessoryType = UITableViewCellAccessoryNone;
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+
+                MYCBackupViewController* vc = [[MYCBackupViewController alloc] initWithNibName:nil bundle:nil];
+                vc.completionBlock = ^(BOOL finished){
+                    [self dismissViewControllerAnimated:YES completion:nil];
+                };
+                UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
+                [self presentViewController:navc animated:YES completion:nil];
+
+            };
         }];
     }];
 
