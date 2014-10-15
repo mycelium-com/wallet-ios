@@ -131,8 +131,9 @@
 		20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCErrorAnimation.m; sourceTree = "<group>"; };
 		20C2D82A19EBD6CB0022CAAC /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		20C2D82B19EBD6CB0022CAAC /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		6DE72487367B42AE9A25BAE3 /* Pods-Mycelium Wallet.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.xcconfig"; path = "Pods/Pods-Mycelium Wallet.xcconfig"; sourceTree = "<group>"; };
+		677B515CE201D7130F53029B /* Pods-Mycelium Wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mycelium Wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAB8F4EBE2F75284722E9193 /* Pods-Mycelium Wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -250,8 +251,8 @@
 				208FFB9119D9802000D4C159 /* Mycelium Wallet */,
 				208FFBAB19D9802000D4C159 /* Mycelium WalletTests */,
 				208FFB9019D9802000D4C159 /* Products */,
-				6DE72487367B42AE9A25BAE3 /* Pods-Mycelium Wallet.xcconfig */,
 				2D8A166B7A734937ACF4ACCC /* Frameworks */,
+				B854AA3614D7CE6D59DB9FA3 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -393,6 +394,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B854AA3614D7CE6D59DB9FA3 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				FAB8F4EBE2F75284722E9193 /* Pods-Mycelium Wallet.debug.xcconfig */,
+				677B515CE201D7130F53029B /* Pods-Mycelium Wallet.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -512,7 +522,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-Mycelium Wallet-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EAE4443B03794778906CC7CB /* Check Pods Manifest.lock */ = {
@@ -676,7 +686,7 @@
 		};
 		208FFBB319D9802000D4C159 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6DE72487367B42AE9A25BAE3 /* Pods-Mycelium Wallet.xcconfig */;
+			baseConfigurationReference = FAB8F4EBE2F75284722E9193 /* Pods-Mycelium Wallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -686,6 +696,7 @@
 					"COCOAPODS=1",
 					"MYCTESTNET=1",
 				);
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -695,7 +706,7 @@
 		};
 		208FFBB419D9802000D4C159 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6DE72487367B42AE9A25BAE3 /* Pods-Mycelium Wallet.xcconfig */;
+			baseConfigurationReference = 677B515CE201D7130F53029B /* Pods-Mycelium Wallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -705,6 +716,7 @@
 					"COCOAPODS=1",
 					"MYCTESTNET=1",
 				);
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -4,6 +4,8 @@
 
 platform :ios, '8.0'
 
+source 'https://github.com/CocoaPods/Specs.git'
+
 target "Mycelium Wallet" do
   pod 'MBProgressHUD'
   pod 'FMDB', :git => 'https://github.com/pierlis/fmdb.git', :commit => '9264dec1133c646af5c59ed8ad12a647599a99be'
