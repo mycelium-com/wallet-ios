@@ -74,9 +74,24 @@
     return [BTCPublicKeyAddress addressWithData:BTCHash160(pubkey)];
 }
 
-- (BTCSatoshi) combinedAmount
+- (BTCSatoshi) unconfirmedAmount
 {
-    return self.confirmedAmount + self.unconfirmedAmount;
+    return self.confirmedAmount + self.pendingChangeAmount + self.pendingReceivedAmount - self.pendingSentAmount;
+}
+
+- (BTCSatoshi) spendableAmount
+{
+    return self.confirmedAmount + self.pendingChangeAmount;
+}
+
+- (BTCSatoshi) receivingAmount
+{
+    return self.pendingReceivedAmount;
+}
+
+- (BTCSatoshi) sendingAmount
+{
+    return self.pendingSentAmount - self.pendingChangeAmount;
 }
 
 - (NSDate *) syncDate
@@ -121,7 +136,9 @@
              MYCDatabaseColumn(label),
              MYCDatabaseColumn(extendedPublicKey),
              MYCDatabaseColumn(confirmedAmount),
-             MYCDatabaseColumn(unconfirmedAmount),
+             MYCDatabaseColumn(pendingChangeAmount),
+             MYCDatabaseColumn(pendingReceivedAmount),
+             MYCDatabaseColumn(pendingSentAmount),
              MYCDatabaseColumn(archived),
              MYCDatabaseColumn(current),
              MYCDatabaseColumn(externalKeyIndex),

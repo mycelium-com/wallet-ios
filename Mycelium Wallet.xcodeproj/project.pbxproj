@@ -37,6 +37,10 @@
 		208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBBA19D9848800D4C159 /* MYCWelcomeViewController.xib */; };
 		208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFBC219D984E700D4C159 /* MYCTabBarController.m */; };
 		208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBC319D984E700D4C159 /* MYCTabBarController.xib */; };
+		20C0F6FF19EEAF7300DD0748 /* MYCAccountTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C0F6FD19EEAF7300DD0748 /* MYCAccountTableViewCell.m */; };
+		20C0F70019EEAF7300DD0748 /* MYCAccountTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20C0F6FE19EEAF7300DD0748 /* MYCAccountTableViewCell.xib */; };
+		20C0F70419EEB37D00DD0748 /* MYCAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C0F70219EEB37D00DD0748 /* MYCAccountViewController.m */; };
+		20C0F70519EEB37D00DD0748 /* MYCAccountViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20C0F70319EEB37D00DD0748 /* MYCAccountViewController.xib */; };
 		20C2D7F419E290830022CAAC /* MYCBackupPageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20C2D7F319E290830022CAAC /* MYCBackupPageView.xib */; };
 		20C2D7F719E292F80022CAAC /* MYCBackupPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D7F619E292F80022CAAC /* MYCBackupPageView.m */; };
 		20C2D81219E3EDB10022CAAC /* MYCDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D80F19E3EDB10022CAAC /* MYCDatabase.m */; };
@@ -110,6 +114,12 @@
 		208FFBC119D984E700D4C159 /* MYCTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCTabBarController.h; sourceTree = "<group>"; };
 		208FFBC219D984E700D4C159 /* MYCTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCTabBarController.m; sourceTree = "<group>"; };
 		208FFBC319D984E700D4C159 /* MYCTabBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCTabBarController.xib; sourceTree = "<group>"; };
+		20C0F6FC19EEAF7300DD0748 /* MYCAccountTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCAccountTableViewCell.h; sourceTree = "<group>"; };
+		20C0F6FD19EEAF7300DD0748 /* MYCAccountTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCAccountTableViewCell.m; sourceTree = "<group>"; };
+		20C0F6FE19EEAF7300DD0748 /* MYCAccountTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCAccountTableViewCell.xib; sourceTree = "<group>"; };
+		20C0F70119EEB37D00DD0748 /* MYCAccountViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCAccountViewController.h; sourceTree = "<group>"; };
+		20C0F70219EEB37D00DD0748 /* MYCAccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCAccountViewController.m; sourceTree = "<group>"; };
+		20C0F70319EEB37D00DD0748 /* MYCAccountViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCAccountViewController.xib; sourceTree = "<group>"; };
 		20C2D7F319E290830022CAAC /* MYCBackupPageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCBackupPageView.xib; sourceTree = "<group>"; };
 		20C2D7F519E292F80022CAAC /* MYCBackupPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCBackupPageView.h; sourceTree = "<group>"; };
 		20C2D7F619E292F80022CAAC /* MYCBackupPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCBackupPageView.m; sourceTree = "<group>"; };
@@ -161,6 +171,12 @@
 				2064E38419D9A0E400CD81B8 /* MYCAccountsViewController.h */,
 				2064E38519D9A0E400CD81B8 /* MYCAccountsViewController.m */,
 				2064E38619D9A0E400CD81B8 /* MYCAccountsViewController.xib */,
+				20C0F6FC19EEAF7300DD0748 /* MYCAccountTableViewCell.h */,
+				20C0F6FD19EEAF7300DD0748 /* MYCAccountTableViewCell.m */,
+				20C0F6FE19EEAF7300DD0748 /* MYCAccountTableViewCell.xib */,
+				20C0F70119EEB37D00DD0748 /* MYCAccountViewController.h */,
+				20C0F70219EEB37D00DD0748 /* MYCAccountViewController.m */,
+				20C0F70319EEB37D00DD0748 /* MYCAccountViewController.xib */,
 			);
 			name = "Accounts Tab";
 			sourceTree = "<group>";
@@ -485,6 +501,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20C0F70019EEAF7300DD0748 /* MYCAccountTableViewCell.xib in Resources */,
 				203AA4B419DC525100572BD9 /* MYCReceiveViewController.xib in Resources */,
 				2064E38819D9A0E400CD81B8 /* MYCAccountsViewController.xib in Resources */,
 				208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */,
@@ -496,6 +513,7 @@
 				208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */,
 				20C2D7F419E290830022CAAC /* MYCBackupPageView.xib in Resources */,
 				2064E38319D9A0D000CD81B8 /* MYCBalanceViewController.xib in Resources */,
+				20C0F70519EEB37D00DD0748 /* MYCAccountViewController.xib in Resources */,
 				2064E39219D9A10400CD81B8 /* MYCSettingsViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -547,6 +565,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20C0F6FF19EEAF7300DD0748 /* MYCAccountTableViewCell.m in Sources */,
 				20C2D82C19EBD6CB0022CAAC /* Reachability.m in Sources */,
 				208FFB9819D9802000D4C159 /* MYCAppDelegate.m in Sources */,
 				20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */,
@@ -564,6 +583,7 @@
 				2064E38719D9A0E400CD81B8 /* MYCAccountsViewController.m in Sources */,
 				203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */,
 				20C2D81B19E5961C0022CAAC /* BTCQRCode.m in Sources */,
+				20C0F70419EEB37D00DD0748 /* MYCAccountViewController.m in Sources */,
 				20C2D7F719E292F80022CAAC /* MYCBackupPageView.m in Sources */,
 				208FFB9519D9802000D4C159 /* main.m in Sources */,
 				208FFBBB19D9848800D4C159 /* MYCWelcomeViewController.m in Sources */,

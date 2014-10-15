@@ -15,7 +15,8 @@
 NSString* const MYCWalletFormatterDidUpdateNotification = @"MYCWalletFormatterDidUpdateNotification";
 NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCurrencyConverterDidUpdateNotification";
 NSString* const MYCWalletDidReloadNotification = @"MYCWalletDidReloadNotification";
-NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkActivity";
+NSString* const MYCWalletDidUpdateNetworkActivityNotification = @"MYCWalletDidUpdateNetworkActivityNotification";
+NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAccountNotification";
 
 @interface MYCWallet ()
 @property(nonatomic) NSURL* databaseURL;
@@ -278,16 +279,18 @@ NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkA
         [database registerMigration:@"Create MYCWalletAccounts" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
             return [db executeUpdate:
                     @"CREATE TABLE MYCWalletAccounts("
-                    "accountIndex      INT PRIMARY KEY NOT NULL,"
-                    "label             TEXT            NOT NULL,"
-                    "extendedPublicKey TEXT            NOT NULL,"
-                    "confirmedAmount   INT             NOT NULL,"
-                    "unconfirmedAmount INT             NOT NULL,"
-                    "archived          INT             NOT NULL,"
-                    "current           INT             NOT NULL,"
-                    "externalKeyIndex  INT             NOT NULL,"
-                    "internalKeyIndex  INT             NOT NULL,"
-                    "syncTimestamp     DATETIME                 "
+                    "accountIndex          INT PRIMARY KEY NOT NULL,"
+                    "label                 TEXT            NOT NULL,"
+                    "extendedPublicKey     TEXT            NOT NULL,"
+                    "confirmedAmount       INT             NOT NULL," // The sum of the unspent outputs which are confirmed and currently not spent in pending transactions.
+                    "pendingChangeAmount   INT             NOT NULL," // pending funds in our own change outputs
+                    "pendingReceivedAmount INT             NOT NULL," // pending funds from someone that are not confirmed yet
+                    "pendingSentAmount     INT             NOT NULL," // pending funds that we are sending
+                    "archived              INT             NOT NULL,"
+                    "current               INT             NOT NULL,"
+                    "externalKeyIndex      INT             NOT NULL,"
+                    "internalKeyIndex      INT             NOT NULL,"
+                    "syncTimestamp         DATETIME                 "
                     ")"];
         }];
 
@@ -296,13 +299,13 @@ NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkA
                     @"CREATE TABLE MYCUnspentOutputs("
                     "outpointHash      TEXT NOT NULL,"
                     "outpointIndex     INT  NOT NULL,"
-                    "blockHeight       INT  NOT NULL,"
+                    "blockHeight       INT  NOT NULL," // equals -1 if tx is not confirmed yet.
                     "script            TEXT NOT NULL,"
                     "value             INT  NOT NULL,"
                     "accountIndex      INT  NOT NULL,"
-                    "keyIndex          INT  NOT NULL," // index of the address used in the keychain
-                    "type              TEXT NOT NULL," // unspent, change, receiving
-                    "PRIMARY KEY (outpointHash, outpointIndex)"
+                    "keyIndex          INT  NOT NULL," // index of the address used in the keychain.
+                    "type              TEXT NOT NULL," // unspent, change, receiving.
+                    "PRIMARY KEY (accountIndex, outpointHash, outpointIndex)"
                     ")"] &&
             [db executeUpdate:
              @"CREATE INDEX MYCUnspentOutputs_accountIndex ON MYCUnspentOutputs (accountIndex)"];
@@ -311,14 +314,14 @@ NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkA
         [database registerMigration:@"Create MYCTransactionSummaries" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
             return [db executeUpdate:
                     @"CREATE TABLE MYCTransactionSummaries("
-                    "txhash            TEXT NOT NULL,"
+                    "txhash            TEXT NOT NULL," // note: we allow duplicate txs if they happen to pay from one account to another.
                     "data              TEXT NOT NULL,"
-                    "blockHeight       INT  NOT NULL,"
-                    "accountIndex      INT  NOT NULL,"
-                    "PRIMARY KEY (txhash)"
+                    "blockHeight       INT  NOT NULL," // equals -1 if not confirmed yet.
+                    "accountIndex      INT  NOT NULL," // index of an account to which this tx belongs.
+                    "PRIMARY KEY (accountIndex, txhash)"  // note: we allow duplicate txs if they happen to pay from one account to another.
                     ")"]  &&
             [db executeUpdate:
-             @"CREATE INDEX MYCTransactionSummaries_accountIndex ON MYCTransactionSummaries (accountIndex)"];
+             @"CREATE INDEX MYCTransactionSummaries_accountIndex ON MYCTransactionSummaries (accountIndex, txhash)"];
         }];
 
         [database registerMigration:@"createDefaultAccount" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
@@ -387,6 +390,16 @@ NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkA
     // Do not notify to not break the app.
 }
 
+// For debug only: deletes database and re-creates it with a given mnemonic.
+- (void) resetDatabase
+{
+    [self unlockWallet:^(MYCUnlockedWallet *w) {
+        BTCMnemonic* mnemonic = w.mnemonic;
+        [self removeDatabase];
+        _database = [self openDatabaseOrCreateWithMnemonic:mnemonic];
+    } reason:@"Authorize access to mnemonic to re-create database."];
+}
+
 // Access database
 - (void) inDatabase:(void(^)(FMDatabase *db))block
 {
@@ -407,7 +420,7 @@ NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkA
 // Loads all accounts from database.
 - (NSArray*) accountsFromDatabase:(FMDatabase*)db
 {
-    return [MYCWalletAccount loadWithCondition:@"ORDER BY accountIndex" fromDatabase:db];
+    return [MYCWalletAccount loadWithCondition:@"1 ORDER BY accountIndex" fromDatabase:db];
 }
 
 // Loads a specific account at index from database.
@@ -446,9 +459,9 @@ NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkA
             return;
         }
         NSDate* date = [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletCurrencyRateUpdateDate"];
-        if (date && [date timeIntervalSinceNow] > -3600.0)
+        if (date && [date timeIntervalSinceNow] > -300.0)
         {
-            // Updated an hour ago, so should be up to date.
+            // Updated less than 5 minutes ago, so should be up to date.
             if (completion) completion(NO, nil);
             return;
         }
@@ -469,10 +482,15 @@ NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkA
                                                 return;
                                             }
 
+                                            // Remember when we last updated it.
+                                            [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"MYCWalletCurrencyRateUpdateDate"];
+
                                             self.currencyConverter.averageRate = btcPrice;
                                             self.currencyConverter.marketName = marketName;
                                             if (date) self.currencyConverter.date = date;
                                             self.currencyConverter.nativeCurrencyCode = nativeCurrencyCode ?: self.currencyConverter.currencyCode;
+
+                                            [self saveCurrencyConverter];
 
                                             if (completion) completion(YES, nil);
 
@@ -487,6 +505,47 @@ NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkA
 // If update is skipped, completion block is called with (NO,nil).
 - (void) updateAccount:(MYCWalletAccount*)account force:(BOOL)force completion:(void(^)(BOOL success, NSError *error))completion
 {
+    if (!force)
+    {
+        // If synced less than 5 minutes ago, skip sync.
+        if (account.syncDate && [account.syncDate timeIntervalSinceNow] > -300)
+        {
+            if (completion) completion(NO, nil);
+            return;
+        }
+    }
+
+    /*
+     ANALYSIS OF THE MYCELIUM WALLET ON ANDROID:
+
+     1. From time to time, app does discovery of new transactions:
+        Bip44Account.doDiscovery
+            Wapi.queryTransactionInventory - loads transactions mentioning the addresses (DOES NOT WORK YET! RETURNS EMPTY LIST.)
+            AbstractAccount.handleNewExternalTransaction
+                AbstractAccount.fetchStoreAndValidateParentOutputs
+                    tries to find existing outputs
+                    if fails, tries to find stored transactions and get outputs from there
+                    if fails, runs Wapi.getTransactions and saves outputs on disk
+
+     2. Afterwards, it updates unspent outputs:
+
+        Bip44Account.updateUnspentOutputs 
+        - finds all external and change addresses within a current scan range
+            AbstractAccount.synchronizeUnspentOutputs with these addresses
+                Wapi.queryUnspentOutputs
+                Deletes local unspents that do not exist on the server.
+                If unspent is not saved locally or was unconfirmed (different block height),
+                calls Wapi.getTransactions (with subsequent handleNewExternalTransaction)
+                And saves all unspent outputs.
+
+     3. AbstractAccount.monitorYoungTransactions (up to 5 confirmations)
+        It does Wapi.checkTransactions and simply updates transactions that were updated.
+     
+     4. Bip44Account.updateLocalBalance - recomputes local balance for the account.
+     
+     */
+
+
     // TODO: update balance info and unspent outputs.
     if (completion) completion(NO, nil);
 }
@@ -494,7 +553,7 @@ NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkA
 
 - (void) notifyNetworkActivity
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateNetworkActivity object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateNetworkActivityNotification object:self];
 }
 
 

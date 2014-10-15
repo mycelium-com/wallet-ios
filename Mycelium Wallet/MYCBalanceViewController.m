@@ -54,7 +54,8 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidReload:) name:MYCWalletDidReloadNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletExchangeRateDidUpdate:) name:MYCWalletCurrencyConverterDidUpdateNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidUpdateNetworkActivity:) name:MYCWalletDidUpdateNetworkActivity object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidUpdateNetworkActivity:) name:MYCWalletDidUpdateNetworkActivityNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidUpdateAccount:) name:MYCWalletDidUpdateAccountNotification object:nil];
     }
     return self;
 }
@@ -105,6 +106,14 @@
     [self updateRefreshControl];
 }
 
+- (void) walletDidUpdateAccount:(NSNotification*)notif
+{
+    MYCWalletAccount* acc = notif.object;
+    if ([acc isKindOfClass:[MYCWalletAccount class]] && [self.account isEqual:acc])
+    {
+        [self reloadAccount];
+    }
+}
 
 // Update methods
 
@@ -139,7 +148,7 @@
     self.qrcodeView.image = [BTCQRCode imageForString:address size:self.qrcodeView.bounds.size scale:[UIScreen mainScreen].scale];
 
     // Backup button must be visible only when it has > 0 btc and was never backed up.
-    self.backupButton.hidden = !(!wallet.isBackedUp && self.account.combinedAmount > 0);
+    self.backupButton.hidden = !(!wallet.isBackedUp && self.account.unconfirmedAmount > 0);
 
     [self updateStatusLabel];
 }
@@ -152,10 +161,15 @@
 
 - (void) updateStatusLabel
 {
-    if (self.account.unconfirmedAmount > 0)
+    if (self.account.sendingAmount > 0)
+    {
+        self.statusLabel.text = [NSString stringWithFormat:[NSLocalizedString(@"  Sending %@...", @"") lowercaseString],
+                                 [self.wallet.btcFormatter stringFromAmount:self.account.sendingAmount]];
+    }
+    else if (self.account.receivingAmount > 0)
     {
         self.statusLabel.text = [NSString stringWithFormat:[NSLocalizedString(@"  Receiving %@...", @"") lowercaseString],
-                                 [self.wallet.btcFormatter stringFromAmount:self.account.unconfirmedAmount]];
+                                 [self.wallet.btcFormatter stringFromAmount:self.account.receivingAmount]];
     }
     else
     {
@@ -212,7 +226,10 @@
 
     [self.wallet updateAccount:self.account force:YES completion:^(BOOL success, NSError *error) {
 
-        // TODO: display an error if failed to connect or something.
+        if (!success)
+        {
+            // TODO: display an error if failed to connect or something.
+        }
 
         [self.wallet updateExchangeRate:YES completion:^(BOOL success, NSError *error2) {
 

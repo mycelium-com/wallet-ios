@@ -168,7 +168,32 @@
         }];
 
         [section item:^(PTableViewSourceItem *item) {
+            item.title = NSLocalizedString(@"Reset Database", @"");
+            item.selectionStyle = UITableViewCellSelectionStyleDefault;
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Reset Database?", @"")
+                                                                               message:NSLocalizedString(@"History of all transactions will be removed. Master key will be preserved.", @"") preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                    [weakself.tableView deselectRowAtIndexPath:[weakself.tableView indexPathForSelectedRow] animated:NO];
+                    [weakself dismissViewControllerAnimated:YES completion:nil];
+                }]];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+
+                    // Erase database
+                    [[MYCWallet currentWallet] resetDatabase];
+
+                    [weakself dismissViewControllerAnimated:YES completion:nil];
+
+                    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidReloadNotification object:self];
+                }]];
+                [weakself presentViewController:alert animated:YES completion:nil];
+            };
+            
+        }];
+
+        [section item:^(PTableViewSourceItem *item) {
             item.title = NSLocalizedString(@"Reset Wallet", @"");
+            item.textColor = [UIColor redColor];
             item.selectionStyle = UITableViewCellSelectionStyleDefault;
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
                 UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Reset Wallet?", @"")
@@ -199,6 +224,8 @@
             };
 
         }];
+
+
     }];
 #endif // MYCTESTNET
 

@@ -8,6 +8,10 @@
 
 #import "MYCTabBarController.h"
 
+@class MYCWalletAccount;
 @interface MYCTransactionsViewController : MYCTabViewController
+
+// If nil, uses current account.
+@property(nonatomic) MYCWalletAccount* account;
 
 @end

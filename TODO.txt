@@ -1,21 +1,21 @@
 Todo:
 
 - send: add address field and scan UI.
-- wallet: persist the currency converter.
 - wallet: add API to fetch balance.
 - wallet: add API to fetch unspent outputs.
 - send: compose transactions for sending.
 - receive: generate proper QR code for "bitcoin:..." url.
 - receive: show tip to tap to dismiss.
-- settings: add backup option to allow user backup again.
 - settings: show credits and other info.
-- accounts: show all accounts.
 - accounts: edit account label.
 - accounts: archive/unarchive accounts.
 - accounts: make account current.
 
 Done:
 
++ wallet: persist the currency converter.
++ settings: add backup option to allow user backup again.
++ accounts: show all accounts.
 + settings: switch btc formatting.
 + wallet: exchange rate API
 + balance: update exchange rate

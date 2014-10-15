@@ -4,22 +4,22 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MYCAccountsViewController">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MYCAccountViewController">
             <connections>
-                <outlet property="tableView" destination="xgR-Gh-pCV" id="WRh-5N-4VF"/>
-                <outlet property="view" destination="xgR-Gh-pCV" id="LUE-EJ-pKV"/>
+                <outlet property="tableView" destination="awJ-MR-03D" id="dHi-oi-UOh"/>
+                <outlet property="view" destination="awJ-MR-03D" id="QZh-2r-Ei4"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="default" rowHeight="64" sectionHeaderHeight="10" sectionFooterHeight="10" id="xgR-Gh-pCV">
+        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="awJ-MR-03D">
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <color key="backgroundColor" red="0.96862745100000003" green="0.96470588239999999" blue="0.96078431369999995" alpha="1" colorSpace="calibratedRGB"/>
             <connections>
-                <outlet property="dataSource" destination="-1" id="PWo-rN-NCx"/>
-                <outlet property="delegate" destination="-1" id="rJe-cY-VIh"/>
+                <outlet property="dataSource" destination="-1" id="YAR-Oa-Kat"/>
+                <outlet property="delegate" destination="-1" id="Hwa-Pg-cH2"/>
             </connections>
-            <point key="canvasLocation" x="39" y="114"/>
+            <point key="canvasLocation" x="-310" y="307"/>
         </tableView>
     </objects>
 </document>

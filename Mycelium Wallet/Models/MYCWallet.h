@@ -18,7 +18,10 @@ extern NSString* const MYCWalletCurrencyConverterDidUpdateNotification;
 extern NSString* const MYCWalletDidReloadNotification;
 
 // Posted when network activity begins or ends. See also -isNetworkActive.
-extern NSString* const MYCWalletDidUpdateNetworkActivity;
+extern NSString* const MYCWalletDidUpdateNetworkActivityNotification;
+
+// Posted when account was updated. Object is MYCWalletAccount.
+extern NSString* const MYCWalletDidUpdateAccountNotification;
 
 
 @class MYCBackend;
@@ -90,6 +93,10 @@ extern NSString* const MYCWalletDidUpdateNetworkActivity;
 
 // Removes database from disk.
 - (void) removeDatabase;
+
+// For debug only: deletes database and re-creates it with a given mnemonic.
+- (void) resetDatabase;
+
 
 // Access database
 - (void) inDatabase:(void(^)(FMDatabase *db))block;

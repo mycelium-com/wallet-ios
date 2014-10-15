@@ -7,11 +7,15 @@
 //
 
 #import "MYCTransactionsViewController.h"
+#import "MYCWallet.h"
+#import "MYCWalletAccount.h"
+
 #import "PTableViewSource.h"
 
 @interface MYCTransactionsViewController () <UITableViewDelegate, UITableViewDataSource>
 @property(nonatomic, weak) IBOutlet UITableView* tableView;
 @property(nonatomic) PTableViewSource* tableViewSource;
+@property(nonatomic) MYCWalletAccount* currentAccount;
 @end
 
 @implementation MYCTransactionsViewController
@@ -32,7 +36,42 @@
     [super viewDidLoad];
 }
 
+- (BOOL) shouldOverrideTintColor
+{
+    // Only override tint color if opened in the context of tabbar (no specific account is selected).
+    return !_account;
+}
 
+- (MYCWalletAccount*) account
+{
+    return _account ?: self.currentAccount;
+}
+
+- (MYCWalletAccount*) currentAccount
+{
+    if (!_currentAccount)
+    {
+        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+            _currentAccount = [[MYCWallet currentWallet] currentAccountFromDatabase:db];
+        }];
+    }
+    return _currentAccount;
+}
+
+- (void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    // Reload current account.
+    if (_currentAccount)
+    {
+        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+            _currentAccount = [[MYCWallet currentWallet] currentAccountFromDatabase:db];
+        }];
+    }
+
+    [self.tableView reloadData];
+}
 
 #pragma mark - UITableView
 

@@ -72,14 +72,26 @@
 {
     [super viewDidLoad];
 
-    self.view.tintColor = self.tintColor;
+    if (self.shouldOverrideTintColor)
+    {
+        self.view.tintColor = self.tintColor;
+    }
+}
+
+- (BOOL) shouldOverrideTintColor
+{
+    return YES;
 }
 
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    self.tabBarController.tabBar.tintColor = self.tintColor;
-    self.navigationController.navigationBar.tintColor = self.tintColor;
+
+    if (self.shouldOverrideTintColor)
+    {
+        self.tabBarController.tabBar.tintColor = self.tintColor;
+        self.navigationController.navigationBar.tintColor = self.tintColor;
+    }
 }
 
 @end

@@ -244,17 +244,46 @@
 
                        NSArray* txHashAndIndex = [dict[@"outPoint"] componentsSeparatedByString:@":"];
 
-
                        if (txHashAndIndex.count != 2)
                        {
                            if (completion) completion(nil, 0, [self formatError:@"Malformed result: 'outPoint' is a string with a single ':' separator"]);
                            return;
                        }
 
+                       if (![dict[@"value"] isKindOfClass:[NSNumber class]])
+                       {
+                           if (completion) completion(nil, 0, [self formatError:@"Malformed result: 'value' is not a number"]);
+                           return;
+                       }
+
+                       if (![dict[@"script"] isKindOfClass:[NSString class]])
+                       {
+                           if (completion) completion(nil, 0, [self formatError:@"Malformed result: 'script' is not a string"]);
+                           return;
+                       }
+
+                       NSData* scriptData = [[NSData alloc] initWithBase64EncodedString:dict[@"script"] options:0];
+
+                       if (!scriptData)
+                       {
+                           if (completion) completion(nil, 0, [self formatError:@"Malformed result: 'script' is not a valid Base64 string"]);
+                           return;
+                       }
+
+                       // tx hash is sent reversed, but we store the true hash
                        NSData* txhash = BTCReversedData(BTCDataWithHexString(txHashAndIndex[0]));
+
+                       if (!txhash || txhash.length != 32)
+                       {
+                           if (completion) completion(nil, 0, [self formatError:@"Malformed result: 'outPoint' does not contain a correct reversed hex 256-bit transaction hash."]);
+                           return;
+                       }
 
                        BTCTransactionOutput* txout = [[BTCTransactionOutput alloc] init];
 
+                       txout.value = [dict[@"value"] longLongValue];
+                       txout.script = [[BTCScript alloc] initWithData:scriptData];
+                       txout.transactionHash = txhash;
 
                        [unspentOutputs addObject:txout];
                    }
