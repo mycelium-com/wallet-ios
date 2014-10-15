@@ -89,7 +89,7 @@
     return self.pendingTasksCount > 0;
 }
 
-- (void) fetchExchangeRateForCurrencyCode:(NSString*)currencyCode
+- (void) loadExchangeRateForCurrencyCode:(NSString*)currencyCode
                                completion:(void(^)(NSDecimalNumber* btcPrice, NSString* marketName, NSDate* date, NSString* nativeCurrencyCode, NSError* error))completion
 {
     NSParameterAssert(currencyCode);
@@ -151,43 +151,119 @@
 }
 
 
-//
-//curl  -k -X POST -H "Content-Type: application/json" -d '{"version":1,"addresses":["miWYetn5RRjatKmHgNm6VGYT2jivUjZv5y"]}' https://144.76.165.115/wapitestnet/wapi/queryUnspentOutputs
-//
-//{
-//    "errorCode": 0,
-//    "r": {
-//        "height": 300825,
-//        "unspent": [{
-//            "outPoint": "2c2cea628728ed8c6345a0d8bc172dd301104707ab1057a0309984b5a212dd98:0",
-//            "height": 300766,
-//            "value": 100000000,
-//            "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
-//            "isCoinBase": false
-//        },
-//                    {
-//                        "outPoint": "5630d46ba9be82a4061931be11b7ba3126068aad93873ef0f742d8f419961e63:1",
-//                        "height": 300825,
-//                        "value": 90000000,
-//                        "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
-//                        "isCoinBase": false
-//                    },
-//                    {
-//                        "outPoint": "6a73582d58fcbf6345ddb5d59daaf74776303e425237a7e5d9e683495187dc85:0",
-//                        "height": 300825,
-//                        "value": 91000000,
-//                        "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
-//                        "isCoinBase": false
-//                    },
-//                    {
-//                        "outPoint": "92082fa94ae0e5b97b8f1b5a15c5f3f55648394f576755235bb2c2389d906f1d:0",
-//                        "height": 300766,
-//                        "value": 100000000,
-//                        "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
-//                        "isCoinBase": false
-//                    }]
-//    }
-//}
+// Fetches unspent outputs for given addresses (BTCAddress instances)
+- (void) loadUnspentOutputsForAddresses:(NSArray*)addresses completion:(void(^)(NSArray* outputs, NSInteger height, NSError* error))completion
+{
+    NSParameterAssert(addresses);
+
+    if (addresses.count == 0)
+    {
+        if (completion) completion(@[], 0, nil);
+        return;
+    }
+
+    //
+    //curl  -k -X POST -H "Content-Type: application/json" -d '{"version":1,"addresses":["miWYetn5RRjatKmHgNm6VGYT2jivUjZv5y"]}' https://144.76.165.115/wapitestnet/wapi/queryUnspentOutputs
+    //
+    //{
+    //    "errorCode": 0,
+    //    "r": {
+    //        "height": 300825,
+    //        "unspent": [{
+    //            "outPoint": "2c2cea628728ed8c6345a0d8bc172dd301104707ab1057a0309984b5a212dd98:0",
+    //            "height": 300766,
+    //            "value": 100000000,
+    //            "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
+    //            "isCoinBase": false
+    //        },
+    //        {
+    //            "outPoint": "5630d46ba9be82a4061931be11b7ba3126068aad93873ef0f742d8f419961e63:1",
+    //            "height": 300825,
+    //            "value": 90000000,
+    //            "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
+    //            "isCoinBase": false
+    //        },
+    //        {
+    //            "outPoint": "6a73582d58fcbf6345ddb5d59daaf74776303e425237a7e5d9e683495187dc85:0",
+    //            "height": 300825,
+    //            "value": 91000000,
+    //            "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
+    //            "isCoinBase": false
+    //        },
+    //        {
+    //            "outPoint": "92082fa94ae0e5b97b8f1b5a15c5f3f55648394f576755235bb2c2389d906f1d:0",
+    //            "height": 300766,
+    //            "value": 100000000,
+    //            "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
+    //            "isCoinBase": false
+    //        }]
+    //    }
+    //}
+
+    [self makeJSONRequest:@"queryUnspentOutputs"
+                  payload:@{ @"version": self.version,
+                             @"address": [addresses valueForKeyPath:@"publicAddress.base58String"] }
+               completion:^(NSDictionary* result, NSError* error){
+
+                   if (!result)
+                   {
+                       if (completion) completion(nil, 0, error);
+                       return;
+                   }
+
+                   if (![result[@"unspent"] isKindOfClass:[NSArray class]])
+                   {
+                       if (completion) completion(nil, 0, [self formatError:@"Malformed result: 'unspent' is not an array"]);
+                       return;
+                   }
+
+                   // Get the current block height.
+                   NSInteger height = [result[@"height"] integerValue];
+
+                   NSMutableArray* unspentOutputs = [NSMutableArray array];
+
+                   for (NSDictionary* dict in result[@"unspent"])
+                   {
+                       if (![dict isKindOfClass:[NSDictionary class]])
+                       {
+                           if (completion) completion(nil, 0, [self formatError:@"Malformed result: 'unspent' item is not a dictionary"]);
+                           return;
+                       }
+
+                       // "outPoint": "92082fa94ae0e5b97b8f1b5a15c5f3f55648394f576755235bb2c2389d906f1d:0",
+                       // "height": 300766,
+                       // "value": 100000000,
+                       // "script": "dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
+                       // "isCoinBase": false
+
+                       if (![dict[@"outPoint"] isKindOfClass:[NSString class]])
+                       {
+                           if (completion) completion(nil, 0, [self formatError:@"Malformed result: 'outPoint' is not a string"]);
+                           return;
+                       }
+
+                       NSArray* txHashAndIndex = [dict[@"outPoint"] componentsSeparatedByString:@":"];
+
+
+                       if (txHashAndIndex.count != 2)
+                       {
+                           if (completion) completion(nil, 0, [self formatError:@"Malformed result: 'outPoint' is a string with a single ':' separator"]);
+                           return;
+                       }
+
+                       NSData* txhash = BTCReversedData(BTCDataWithHexString(txHashAndIndex[0]));
+
+                       BTCTransactionOutput* txout = [[BTCTransactionOutput alloc] init];
+
+
+                       [unspentOutputs addObject:txout];
+                   }
+
+                   if (completion) completion(unspentOutputs, height, nil);
+               }];
+}
+
+
 
 
 #pragma mark - Utils

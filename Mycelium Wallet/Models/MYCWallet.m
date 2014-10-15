@@ -458,7 +458,7 @@ NSString* const MYCWalletDidUpdateNetworkActivity = @"MYCWalletDidUpdateNetworkA
 
     _updatingExchangeRate++;
 
-    [self.backend fetchExchangeRateForCurrencyCode:self.currencyConverter.currencyCode
+    [self.backend loadExchangeRateForCurrencyCode:self.currencyConverter.currencyCode
                                         completion:^(NSDecimalNumber *btcPrice, NSString *marketName, NSDate *date, NSString *nativeCurrencyCode, NSError *error) {
 
                                             _updatingExchangeRate--;

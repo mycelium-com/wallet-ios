@@ -20,7 +20,10 @@
 - (BOOL) isActive;
 
 // Fetches exchange rate for a given currency code.
-- (void) fetchExchangeRateForCurrencyCode:(NSString*)currencyCode
-                               completion:(void(^)(NSDecimalNumber* btcPrice, NSString* marketName, NSDate* date, NSString* nativeCurrencyCode, NSError* error))completionBlock;
+- (void) loadExchangeRateForCurrencyCode:(NSString*)currencyCode
+                              completion:(void(^)(NSDecimalNumber* btcPrice, NSString* marketName, NSDate* date, NSString* nativeCurrencyCode, NSError* error))completionBlock;
+
+// Fetches unspent outputs for given addresses (BTCAddress instances)
+- (void) loadUnspentOutputsForAddresses:(NSArray*)addresses completion:(void(^)(NSArray* outputs, NSInteger height, NSError* error))completionBlock;
 
 @end

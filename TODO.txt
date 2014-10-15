@@ -7,7 +7,7 @@ Todo:
 - send: compose transactions for sending.
 - receive: generate proper QR code for "bitcoin:..." url.
 - receive: show tip to tap to dismiss.
-- settings: switch btc formatting.
+- settings: add backup option to allow user backup again.
 - settings: show credits and other info.
 - accounts: show all accounts.
 - accounts: edit account label.
@@ -16,6 +16,7 @@ Todo:
 
 Done:
 
++ settings: switch btc formatting.
 + wallet: exchange rate API
 + balance: update exchange rate
 + balance: tap address to copy.
