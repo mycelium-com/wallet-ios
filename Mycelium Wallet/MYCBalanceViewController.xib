@@ -56,7 +56,7 @@
                             <color key="textColor" red="0.42356908321380615" green="0.42355641722679138" blue="0.42356359958648682" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="bE2-35-rUf">
+                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="bE2-35-rUf">
                             <rect key="frame" x="276" y="38" width="20" height="20"/>
                         </activityIndicatorView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B2o-6q-Qie" userLabel="Refresh Button">
@@ -167,7 +167,7 @@
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                     <connections>
-                        <outletCollection property="gestureRecognizers" destination="TZG-gs-8Cr" appends="YES" id="ZSG-dd-bSN"/>
+                        <outletCollection property="gestureRecognizers" destination="qxa-GJ-bNm" appends="YES" id="wSU-bF-aO2"/>
                     </connections>
                 </label>
             </subviews>
@@ -214,11 +214,11 @@
             </variation>
             <point key="canvasLocation" x="-1410" y="216"/>
         </view>
-        <tapGestureRecognizer id="TZG-gs-8Cr">
+        <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.20000000000000001" id="qxa-GJ-bNm">
             <connections>
-                <action selector="tapAddress:" destination="-1" id="d3P-XQ-wLc"/>
+                <action selector="tapAddress:" destination="-1" id="8zb-hI-K0r"/>
             </connections>
-        </tapGestureRecognizer>
+        </pongPressGestureRecognizer>
     </objects>
     <resources>
         <image name="RefreshIcon" width="26" height="26"/>

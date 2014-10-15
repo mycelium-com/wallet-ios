@@ -159,7 +159,8 @@
     }
     else
     {
-        self.statusLabel.text = [NSString stringWithFormat:[NSLocalizedString(@"Exchange rate: %@", @"") lowercaseString],
+        self.statusLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@: %@", @""),
+                                 self.wallet.currencyConverter.marketName,
                                  [self.wallet.fiatFormatter stringFromNumber:self.wallet.currencyConverter.averageRate]];
     }
 }
@@ -174,6 +175,7 @@
     _refreshing = refreshing;
     self.refreshButton.hidden = _refreshing;
     self.refreshActivityIndicator.hidden = !_refreshing;
+    if (!_refreshing) [self.refreshActivityIndicator stopAnimating];
     if (_refreshing) [self.refreshActivityIndicator startAnimating];
 }
 
@@ -219,12 +221,15 @@
     }];
 }
 
-- (IBAction)tapAddress:(id)sender
+- (IBAction)tapAddress:(UILongPressGestureRecognizer*)gr
 {
-    [self becomeFirstResponder];
-    UIMenuController* menu = [UIMenuController sharedMenuController];
-    [menu setTargetRect:CGRectInset(self.addressLabel.bounds, 0, self.addressLabel.bounds.size.height/3.0) inView:self.addressLabel];
-    [menu setMenuVisible:YES animated:YES];
+    if (gr.state == UIGestureRecognizerStateBegan)
+    {
+        [self becomeFirstResponder];
+        UIMenuController* menu = [UIMenuController sharedMenuController];
+        [menu setTargetRect:CGRectInset(self.addressLabel.bounds, 0, self.addressLabel.bounds.size.height/3.0) inView:self.addressLabel];
+        [menu setMenuVisible:YES animated:YES];
+    }
 }
 
 - (IBAction)selectAccount:(id)sender
