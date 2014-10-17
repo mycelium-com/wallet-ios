@@ -294,34 +294,33 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
                     ")"];
         }];
 
-        [database registerMigration:@"Create MYCUnspentOutputs" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
+        [database registerMigration:@"Create MYCTransactionOutputs" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
             return [db executeUpdate:
-                    @"CREATE TABLE MYCUnspentOutputs("
+                    @"CREATE TABLE MYCTransactionOutputs("
                     "outpointHash      TEXT NOT NULL,"
                     "outpointIndex     INT  NOT NULL,"
                     "blockHeight       INT  NOT NULL," // equals -1 if tx is not confirmed yet.
-                    "script            TEXT NOT NULL,"
+                    "script            TEXT NOT NULL," // binary script
                     "value             INT  NOT NULL,"
-                    "accountIndex      INT  NOT NULL,"
+                    "accountIndex      INT  NOT NULL," // -1 if this output is not spendable by any account.
+                    "change            INT  NOT NULL," // 0 for external chain, 1 for change chain
                     "keyIndex          INT  NOT NULL," // index of the address used in the keychain.
                     "type              TEXT NOT NULL," // unspent, change, receiving.
                     "PRIMARY KEY (accountIndex, outpointHash, outpointIndex)"
                     ")"] &&
-            [db executeUpdate:
-             @"CREATE INDEX MYCUnspentOutputs_accountIndex ON MYCUnspentOutputs (accountIndex)"];
+                    [db executeUpdate:@"CREATE INDEX MYCTransactionOutputs_accountIndex ON MYCTransactionOutputs (accountIndex)"];
         }];
 
-        [database registerMigration:@"Create MYCTransactionSummaries" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
+        [database registerMigration:@"Create MYCTransactions" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
             return [db executeUpdate:
-                    @"CREATE TABLE MYCTransactionSummaries("
+                    @"CREATE TABLE MYCTransactions("
                     "txhash            TEXT NOT NULL," // note: we allow duplicate txs if they happen to pay from one account to another.
-                    "data              TEXT NOT NULL,"
+                    "data              TEXT NOT NULL," // raw transaction in binary
                     "blockHeight       INT  NOT NULL," // equals -1 if not confirmed yet.
                     "accountIndex      INT  NOT NULL," // index of an account to which this tx belongs.
                     "PRIMARY KEY (accountIndex, txhash)"  // note: we allow duplicate txs if they happen to pay from one account to another.
                     ")"]  &&
-            [db executeUpdate:
-             @"CREATE INDEX MYCTransactionSummaries_accountIndex ON MYCTransactionSummaries (accountIndex, txhash)"];
+                    [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (accountIndex, txhash)"];
         }];
 
         [database registerMigration:@"createDefaultAccount" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
@@ -478,6 +477,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
                                             if (!btcPrice)
                                             {
+                                                MYCLog(@"MYCWallet: Failed to update exchange rate: %@", error.localizedDescription);
                                                 if (completion) completion(NO, error);
                                                 return;
                                             }
@@ -520,7 +520,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
      1. From time to time, app does discovery of new transactions:
         Bip44Account.doDiscovery
-            Wapi.queryTransactionInventory - loads transactions mentioning the addresses (DOES NOT WORK YET! RETURNS EMPTY LIST.)
+            Wapi.queryTransactionInventory - loads transactions mentioning the addresses (must use limit: parameter to get > 0 items)
             AbstractAccount.handleNewExternalTransaction
                 AbstractAccount.fetchStoreAndValidateParentOutputs
                     tries to find existing outputs
@@ -539,7 +539,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
                 And saves all unspent outputs.
 
      3. AbstractAccount.monitorYoungTransactions (up to 5 confirmations)
-        It does Wapi.checkTransactions and simply updates transactions that were updated.
+        It does Wapi.checkTransactions and simply updates transactions that were updated (reorged or confirmed).
      
      4. Bip44Account.updateLocalBalance - recomputes local balance for the account.
      
