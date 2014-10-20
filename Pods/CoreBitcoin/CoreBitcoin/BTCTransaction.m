@@ -8,12 +8,20 @@
 #import "BTCScript.h"
 #import "BTCErrors.h"
 
+NSData* BTCTransactionHashFromID(NSString* txid)
+{
+    return BTCReversedData(BTCDataWithHexString(txid));
+}
+
+NSString* BTCTransactionIDFromHash(NSData* txhash)
+{
+    return BTCHexStringFromData(BTCReversedData(txhash));
+}
+
+
 @interface BTCTransaction ()
-@property(nonatomic, readwrite) NSData* transactionHash;
-@property(nonatomic, readwrite) NSString* displayTransactionHash;
 @property(nonatomic, readwrite) NSArray* inputs;
 @property(nonatomic, readwrite) NSArray* outputs;
-@property(nonatomic, readwrite) NSData* data;
 @property(nonatomic, readwrite) uint32_t version;
 @end
 
@@ -28,6 +36,9 @@
         _lockTime = 0;
         _inputs = @[];
         _outputs = @[];
+        _blockHeight = 0;
+        _blockDate = nil;
+        _confirmations = NSNotFound;
     }
     return self;
 }
@@ -85,7 +96,7 @@
 - (NSDictionary*) dictionaryRepresentation
 {
     return @{
-      @"hash":      self.displayTransactionHash,
+      @"hash":      self.transactionID,
       @"ver":       @(_version),
       @"vin_sz":    @(_inputs.count),
       @"vout_sz":   @(_outputs.count),
@@ -123,8 +134,6 @@
 - (id) copyWithZone:(NSZone *)zone
 {
     BTCTransaction* tx = [[BTCTransaction alloc] init];
-    tx.transactionHash = self.transactionHash;
-    tx.displayTransactionHash = self.displayTransactionHash;
     tx.inputs = [[NSArray alloc] initWithArray:self.inputs copyItems:YES]; // so each element is copied individually
     tx.outputs = [[NSArray alloc] initWithArray:self.outputs copyItems:YES]; // so each element is copied individually
     for (BTCTransactionInput* txin in tx.inputs)
@@ -135,9 +144,15 @@
     {
         txout.transaction = self;
     }
-    tx.data = [self.data copy];
     tx.version = self.version;
     tx.lockTime = self.lockTime;
+
+    // Copy informational properties as is.
+    tx.blockHeight   = self.blockHeight;
+    tx.blockDate     = self.blockDate;
+    tx.confirmations = self.confirmations;
+    tx.userInfo      = self.userInfo;
+
     return tx;
 }
 
@@ -149,31 +164,21 @@
 - (NSData*) transactionHash
 {
     return BTCHash256(self.data);
-//    if (!_transactionHash)
-//    {
-//        _transactionHash = BTCHash256(self.data);
-//    }
-//    return _transactionHash;
 }
 
-- (NSString*) displayTransactionHash
+- (NSString*) displayTransactionHash // deprecated
 {
-    return BTCHexStringFromData(BTCReversedData(self.transactionHash));
-//    if (!_displayTransactionHash)
-//    {
-//        _displayTransactionHash = BTCHexStringFromData(BTCReversedData(self.transactionHash));
-//    }
-//    return _displayTransactionHash;
+    return self.transactionID;
+}
+
+- (NSString*) transactionID
+{
+    return BTCTransactionIDFromHash(self.transactionHash);
 }
 
 - (NSData*) data
 {
     return [self computePayload];
-//    if (!_data)
-//    {
-//        _data = [self computePayload];
-//    }
-//    return _data;
 }
 
 - (NSData*) computePayload
@@ -211,10 +216,7 @@
 
 - (void) invalidatePayload
 {
-    // These ivars will be recomputed next time their properties are accessed.
-    _transactionHash = nil;
-    _displayTransactionHash = nil;
-    _data = nil;
+    // obsolete method
 }
 
 - (void) setLockTime:(uint32_t)lockTime
