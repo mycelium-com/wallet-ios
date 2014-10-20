@@ -11,6 +11,7 @@
 #import "MYCWalletAccount.h"
 #import "MYCDatabase.h"
 #import "MYCBackend.h"
+#import "MYCUpdateAccountOperation.h"
 
 NSString* const MYCWalletFormatterDidUpdateNotification = @"MYCWalletFormatterDidUpdateNotification";
 NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCurrencyConverterDidUpdateNotification";
@@ -30,8 +31,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 @implementation MYCWallet {
     MYCDatabase* _database;
     int _updatingExchangeRate;
-    // Contains a list of indexes of the accounts that are currently updating to prevent race conditions.
-    NSMutableIndexSet* _accountsBeingUpdated;
+    NSMutableArray* _accountUpdateOperations;
 }
 
 + (instancetype) currentWallet
@@ -176,6 +176,17 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     return [[NSFileManager defaultManager] fileExistsAtPath:self.databaseURL.path];
 }
 
+- (NSInteger) blockchainHeight
+{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:@"MYCWalletBlockchainHeight"];
+}
+
+- (void) setBlockchainHeight:(NSInteger)height
+{
+    [[NSUserDefaults standardUserDefaults] setInteger:height forKey:@"MYCWalletBlockchainHeight"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 - (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason
 {
     MYCUnlockedWallet* unlockedWallet = [[MYCUnlockedWallet alloc] init];
@@ -291,37 +302,56 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
                     "current               INT             NOT NULL,"
                     "externalKeyIndex      INT             NOT NULL,"
                     "internalKeyIndex      INT             NOT NULL,"
+                    "internalKeyStartingIndex  INT         NOT NULL,"
                     "syncTimestamp         DATETIME                 "
                     ")"];
         }];
 
-        [database registerMigration:@"Create MYCTransactionOutputs" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
+        [database registerMigration:@"Create MYCUnspentOutputs" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
             return [db executeUpdate:
-                    @"CREATE TABLE MYCTransactionOutputs("
+                    @"CREATE TABLE MYCUnspentOutputs("
                     "outpointHash      TEXT NOT NULL,"
                     "outpointIndex     INT  NOT NULL,"
                     "blockHeight       INT  NOT NULL," // equals -1 if tx is not confirmed yet.
-                    "script            TEXT NOT NULL," // binary script
+                    "scriptData        TEXT NOT NULL," // binary script
                     "value             INT  NOT NULL,"
+                    "coinbase          INT  NOT NULL,"
                     "accountIndex      INT  NOT NULL," // -1 if this output is not spendable by any account.
                     "change            INT  NOT NULL," // 0 for external chain, 1 for change chain
                     "keyIndex          INT  NOT NULL," // index of the address used in the keychain.
-                    "type              TEXT NOT NULL," // unspent, change, receiving.
-                    "PRIMARY KEY (accountIndex, outpointHash, outpointIndex)"
+                    "PRIMARY KEY (outpointHash, outpointIndex, accountIndex) ON CONFLICT REPLACE"
                     ")"] &&
-                    [db executeUpdate:@"CREATE INDEX MYCTransactionOutputs_accountIndex ON MYCTransactionOutputs (accountIndex)"];
+                    [db executeUpdate:@"CREATE INDEX MYCUnspentOutputs_accountIndex ON MYCUnspentOutputs (accountIndex)"];
+        }];
+
+        [database registerMigration:@"Create MYCParentOutputs" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
+            return [db executeUpdate:
+                    @"CREATE TABLE MYCParentOutputs("
+                    "outpointHash      TEXT NOT NULL,"
+                    "outpointIndex     INT  NOT NULL,"
+                    "blockHeight       INT  NOT NULL," // equals -1 if tx is not confirmed yet.
+                    "scriptData        TEXT NOT NULL," // binary script
+                    "value             INT  NOT NULL,"
+                    "coinbase          INT  NOT NULL,"
+                    "accountIndex      INT  NOT NULL," // -1 if this output is not spendable by any account.
+                    "change            INT  NOT NULL," // 0 for external chain, 1 for change chain
+                    "keyIndex          INT  NOT NULL," // index of the address used in the keychain.
+                    "PRIMARY KEY (outpointHash, outpointIndex, accountIndex) ON CONFLICT REPLACE"
+                    ")"] &&
+            [db executeUpdate:@"CREATE INDEX MYCParentOutputs_accountIndex ON MYCParentOutputs (accountIndex)"];
         }];
 
         [database registerMigration:@"Create MYCTransactions" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
             return [db executeUpdate:
                     @"CREATE TABLE MYCTransactions("
-                    "txhash            TEXT NOT NULL," // note: we allow duplicate txs if they happen to pay from one account to another.
+                    "transactionHash   TEXT NOT NULL," // note: we allow duplicate txs if they happen to pay from one account to another.
                     "data              TEXT NOT NULL," // raw transaction in binary
                     "blockHeight       INT  NOT NULL," // equals -1 if not confirmed yet.
+                    "timestamp         INT  NOT NULL," // timestamp.
                     "accountIndex      INT  NOT NULL," // index of an account to which this tx belongs.
-                    "PRIMARY KEY (accountIndex, txhash)"  // note: we allow duplicate txs if they happen to pay from one account to another.
+                    "PRIMARY KEY (transactionHash, accountIndex) ON CONFLICT REPLACE"  // note: we allow duplicate txs if they happen to pay from one account to another.
                     ")"]  &&
-                    [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (accountIndex, txhash)"];
+                    [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (transactionHash)"];
         }];
 
         [database registerMigration:@"createDefaultAccount" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
@@ -444,7 +474,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
 - (BOOL) isUpdatingAccounts
 {
-    return _accountsBeingUpdated.count > 0;
+    return _accountUpdateOperations.count > 0;
 }
 
 // Updates exchange rate if needed.
@@ -516,43 +546,45 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
         }
     }
 
-    if (!_accountsBeingUpdated) _accountsBeingUpdated = [[NSMutableIndexSet alloc] init];
+    if (!_accountUpdateOperations) _accountUpdateOperations = [NSMutableArray array];
 
+    for (MYCUpdateAccountOperation* op in _accountUpdateOperations)
+    {
+        if (op.account.accountIndex == account.accountIndex)
+        {
+            // Skipping sync since the operation is already in progress.
+            if (completion) completion(NO, nil);
+            return;
+        }
+    }
 
+    MYCUpdateAccountOperation* op = [[MYCUpdateAccountOperation alloc] initWithAccount:account wallet:self];
+    [_accountUpdateOperations addObject:op];
 
-    /*
-     ANALYSIS OF THE MYCELIUM WALLET ON ANDROID:
+    [op update:^(BOOL success, NSError *error) {
 
-     1. From time to time, app does discovery of new transactions:
-        Bip44Account.doDiscovery
-            Wapi.queryTransactionInventory - loads transactions mentioning the addresses (must use limit: parameter to get > 0 items)
-            AbstractAccount.handleNewExternalTransaction
-                AbstractAccount.fetchStoreAndValidateParentOutputs
-                    tries to find existing outputs
-                    if fails, tries to find stored transactions and get outputs from there
-                    if fails, runs Wapi.getTransactions and saves outputs on disk
+        [_accountUpdateOperations removeObject:op];
 
-     2. Afterwards, it updates unspent outputs:
+        if (success)
+        {
+            [self inDatabase:^(FMDatabase *db) {
+                // Make sure we use the latest data and update the sync date.
+                [account reloadFromDatabase:db];
+                account.syncDate = [NSDate date];
+                NSError* dberror = nil;
+                if (![account saveInDatabase:db error:&dberror])
+                {
+                    MYCError(@"MYCWallet: failed to save account with bumped syncDate in database: %@", dberror);
+                    if (completion) completion(NO, error);
+                    return;
+                }
+            }];
+        }
 
-        Bip44Account.updateUnspentOutputs 
-        - finds all external and change addresses within a current scan range
-            AbstractAccount.synchronizeUnspentOutputs with these addresses
-                Wapi.queryUnspentOutputs
-                Deletes local unspents that do not exist on the server.
-                If unspent is not saved locally or was unconfirmed (different block height),
-                calls Wapi.getTransactions (with subsequent handleNewExternalTransaction)
-                And saves all unspent outputs.
+        if (completion) completion(success, error);
 
-     3. AbstractAccount.monitorYoungTransactions (up to 5 confirmations)
-        It does Wapi.checkTransactions and simply updates transactions that were updated (reorged or confirmed).
-     
-     4. Bip44Account.updateLocalBalance - recomputes local balance for the account.
-     
-     */
-
-
-    // TODO: update balance info and unspent outputs.
-    if (completion) completion(NO, nil);
+        [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:account];
+    }];
 }
 
 

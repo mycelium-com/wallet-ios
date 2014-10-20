@@ -22,10 +22,22 @@
 @property(nonatomic) BTCSatoshi pendingReceivedAmount; // total unconfirmed outputs on external addresses
 @property(nonatomic) BTCSatoshi pendingSentAmount; // total unconfirmed outputs spent
 
-@property(nonatomic) uint32_t externalKeyIndex;
-@property(nonatomic) uint32_t internalKeyIndex;
+// Indices to be used in the next payment for each subchain of keys.
+// Normally the latest used index is (externalKeyIndex - 1).
+// If no addresses have been used yet, externalKeyIndex is 0.
+@property(atomic) uint32_t externalKeyIndex;
+@property(atomic) uint32_t internalKeyIndex;
+
+// Earliest unspent change index. This is bumped when we spend all unspents involving this index and earlier ones.
+@property(nonatomic) uint32_t internalKeyStartingIndex;
+
+// When account is archived, it's not updated regularly.
 @property(nonatomic, getter=isArchived) BOOL archived;
+
+// Current account is the one which displays the address to the user and allows payments.
 @property(nonatomic, getter=isCurrent) BOOL current;
+
+// Last time this account was synchronized.
 @property(nonatomic) NSDate* syncDate;
 
 // Derived Properties

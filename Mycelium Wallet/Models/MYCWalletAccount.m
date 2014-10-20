@@ -143,6 +143,7 @@
              MYCDatabaseColumn(current),
              MYCDatabaseColumn(externalKeyIndex),
              MYCDatabaseColumn(internalKeyIndex),
+             MYCDatabaseColumn(internalKeyStartingIndex),
              MYCDatabaseColumn(syncTimestamp),
              ];
 }

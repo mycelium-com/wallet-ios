@@ -64,6 +64,9 @@ extern NSString* const MYCWalletDidUpdateAccountNotification;
 // Client to Mycelium backend to update state of the wallet.
 @property(nonatomic) MYCBackend* backend;
 
+// Latest blockchain height (used to determine confirmations count)
+@property(nonatomic) NSInteger blockchainHeight;
+
 // Sets testnet mode once. Call it in developer build in application:didFinishLaunchingWithOptions:
 - (void) setTestnetOnce;
 
@@ -132,6 +135,7 @@ extern NSString* const MYCWalletDidUpdateAccountNotification;
 // Updates a given account.
 // Set force=YES to force update (e.g. if user tapped 'refresh' button).
 // If update is skipped, completion block is called with (NO,nil).
+// Update can be skipped when account was recently updated or when it's already being updated.
 - (void) updateAccount:(MYCWalletAccount*)account force:(BOOL)force completion:(void(^)(BOOL success, NSError *error))completion;
 
 @end

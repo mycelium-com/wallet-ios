@@ -42,7 +42,7 @@ typedef NS_ENUM(NSUInteger, MYCBroadcastStatus) {
 - (void) loadExchangeRateForCurrencyCode:(NSString*)currencyCode
                               completion:(void(^)(NSDecimalNumber* btcPrice, NSString* marketName, NSDate* date, NSString* nativeCurrencyCode, NSError* error))completion;
 
-// Fetches unspent outputs for given addresses (BTCAddress instances)
+// Fetches unspent outputs (BTCTransactionOutput) for given addresses (BTCAddress instances)
 - (void) loadUnspentOutputsForAddresses:(NSArray*)addresses completion:(void(^)(NSArray* outputs, NSInteger height, NSError* error))completion;
 
 // Fetches the latest transaction ids (NSString reversed tx hashes) for given addresses (BTCAddress instances).

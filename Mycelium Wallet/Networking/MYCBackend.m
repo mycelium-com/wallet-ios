@@ -243,7 +243,10 @@
 
                        txout.value = [dict[@"value"] longLongValue];
                        txout.script = [[BTCScript alloc] initWithData:scriptData];
+
+                       txout.index = [((NSString*)txHashAndIndex[0]) integerValue];
                        txout.transactionHash = txhash;
+                       txout.blockHeight = [dict[@"height"] integerValue];
 
                        [unspentOutputs addObject:txout];
                    }
@@ -430,9 +433,9 @@
                    BOOL parseFailure = NO;
                    for (NSDictionary* dict in result[@"transactions"])
                    {
+                       NSInteger blockHeight = [dict[@"height"] intValue];
                        NSTimeInterval ts = [dict[@"time"] doubleValue];
                        NSDate* blockDate = ts > 0.0 ? [NSDate dateWithTimeIntervalSince1970:ts] : nil;
-                       NSInteger blockHeight = [dict[@"height"] intValue];
 
                        NSData* txdata = [[NSData alloc] initWithBase64EncodedString:dict[@"binary"] options:0];
 
@@ -444,7 +447,10 @@
                        else
                        {
                            BTCTransaction* tx = [[BTCTransaction alloc] initWithData:txdata];
-                           
+
+                           tx.blockHeight = blockHeight;
+                           tx.blockDate = blockDate;
+
                            if (!tx)
                            {
                                MYCLog(@"MYCBackend loadTransactions: malformed transaction data (can't make BTCTransaction): %@", dict);
@@ -545,48 +551,52 @@
 
     self.currentEndpointURL = self.endpointURLs.firstObject;
 
-    NSMutableURLRequest* req = [self requestWithName:name];
+    // Do json encoding on background thread.
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
 
-    if (payload)
-    {
-        NSError* jsonerror;
-        NSData* jsonPayload = [NSJSONSerialization dataWithJSONObject:payload options:0 error:&jsonerror];
-        if (!jsonPayload)
+        NSMutableURLRequest* req = [self requestWithName:name];
+
+        if (payload)
         {
-            self.pendingTasksCount--;
-            if (completion) completion(nil, jsonerror);
-            return;
+            NSError* jsonerror;
+            NSData* jsonPayload = [NSJSONSerialization dataWithJSONObject:payload options:0 error:&jsonerror];
+            if (!jsonPayload)
+            {
+                self.pendingTasksCount--;
+                if (completion) completion(nil, jsonerror);
+                return;
+            }
+
+            [req setHTTPMethod:@"POST"];
+            [req setHTTPBody:jsonPayload];
         }
 
-        [req setHTTPMethod:@"POST"];
-        [req setHTTPBody:jsonPayload];
-    }
+        [[self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *networkError) {
 
-    [[self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *networkError) {
+            NSDictionary* result = [self handleReceivedJSON:data response:response error:networkError failure:^(NSError* jsonError){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.pendingTasksCount--;
+                    if (completion) completion(nil, jsonError);
+                });
+            }];
 
-        NSDictionary* result = [self handleReceivedJSON:data response:response error:networkError failure:^(NSError* jsonError){
+            // Generic errors are already handled and reported above.
+            if (!result) return;
+
+            NSError* formatError = nil;
+            BOOL valid = NO;
+
+            // Validate the template provided
+            valid = [self validatePlist:result matchingTemplate:template error:&formatError];
+            if (!valid) result = nil;
+
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.pendingTasksCount--;
-                if (completion) completion(nil, jsonError);
+                if (completion) completion(result, formatError);
             });
-        }];
 
-        // Generic errors are already handled and reported above.
-        if (!result) return;
-
-        NSError* formatError = nil;
-        BOOL valid = NO;
-
-        // Validate the template provided
-        valid = [self validatePlist:result matchingTemplate:template error:&formatError];
-        if (!valid) result = nil;
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.pendingTasksCount--;
-            if (completion) completion(result, formatError);
-        });
-
-    }] resume];
+        }] resume];
+    });
 }
 
 - (NSMutableURLRequest*) requestWithName:(NSString*)name
