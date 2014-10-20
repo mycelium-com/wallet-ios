@@ -1,8 +1,6 @@
 Todo:
 
 - send: add address field and scan UI.
-- wallet: add API to fetch balance.
-- wallet: add API to fetch unspent outputs.
 - send: compose transactions for sending.
 - receive: generate proper QR code for "bitcoin:..." url.
 - receive: show tip to tap to dismiss.
@@ -11,16 +9,19 @@ Todo:
 - accounts: archive/unarchive accounts.
 - accounts: make account current.
 
-Notes:
+Notes from talk with Andreas:
 
+- testnet is poorly-connected to show unconfirmed txs, but quick to mine them.
 - parent outputs are fetched to check amounts
 - support entering password on init, but not on export
-- android also stores irrelevant outputs, but not used.
+- android also stores irrelevant parent outputs, but not used.
 - simple keychain usage for now without custom pincode UI.
-- 
 
 
 Done:
+
++ wallet: add API to fetch balance.
++ wallet: add API to fetch unspent outputs.
 
 + wallet: persist the currency converter.
 + settings: add backup option to allow user backup again.

@@ -30,7 +30,8 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 @implementation MYCWallet {
     MYCDatabase* _database;
     int _updatingExchangeRate;
-    int _updatingAccountsTaskCount;
+    // Contains a list of indexes of the accounts that are currently updating to prevent race conditions.
+    NSMutableIndexSet* _accountsBeingUpdated;
 }
 
 + (instancetype) currentWallet
@@ -443,7 +444,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
 - (BOOL) isUpdatingAccounts
 {
-    return _updatingAccountsTaskCount > 0;
+    return _accountsBeingUpdated.count > 0;
 }
 
 // Updates exchange rate if needed.
@@ -514,6 +515,10 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
             return;
         }
     }
+
+    if (!_accountsBeingUpdated) _accountsBeingUpdated = [[NSMutableIndexSet alloc] init];
+
+
 
     /*
      ANALYSIS OF THE MYCELIUM WALLET ON ANDROID:

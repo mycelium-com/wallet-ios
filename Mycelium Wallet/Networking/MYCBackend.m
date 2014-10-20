@@ -444,7 +444,7 @@
                        else
                        {
                            BTCTransaction* tx = [[BTCTransaction alloc] initWithData:txdata];
-
+                           
                            if (!tx)
                            {
                                MYCLog(@"MYCBackend loadTransactions: malformed transaction data (can't make BTCTransaction): %@", dict);
@@ -791,12 +791,12 @@
 {
     if (!a || !b) return NO;
     if ([a class] == [b class]) return YES;
-    if ([a isKindOfClass:[NSNumber class]] && [b isKindOfClass:[NSNumber class]]) return YES;
-    if ([a isKindOfClass:[NSString class]] && [b isKindOfClass:[NSString class]]) return YES;
+    if ([a isKindOfClass:[NSNumber class]]     && [b isKindOfClass:[NSNumber class]])     return YES;
+    if ([a isKindOfClass:[NSString class]]     && [b isKindOfClass:[NSString class]])     return YES;
     if ([a isKindOfClass:[NSDictionary class]] && [b isKindOfClass:[NSDictionary class]]) return YES;
-    if ([a isKindOfClass:[NSArray class]] && [b isKindOfClass:[NSArray class]]) return YES;
-    if ([a isKindOfClass:[NSDate class]] && [b isKindOfClass:[NSDate class]]) return YES;
-    if ([a isKindOfClass:[NSData class]] && [b isKindOfClass:[NSData class]]) return YES;
+    if ([a isKindOfClass:[NSArray class]]      && [b isKindOfClass:[NSArray class]])      return YES;
+    if ([a isKindOfClass:[NSDate class]]       && [b isKindOfClass:[NSDate class]])       return YES;
+    if ([a isKindOfClass:[NSData class]]       && [b isKindOfClass:[NSData class]])       return YES;
     return NO;
 }
 
