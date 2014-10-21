@@ -11,6 +11,7 @@
 #import "MYCWalletAccount.h"
 #import "MYCDatabase.h"
 #import "MYCBackend.h"
+#import "MYCDatabaseMigrations.h"
 #import "MYCUpdateAccountOperation.h"
 
 NSString* const MYCWalletFormatterDidUpdateNotification = @"MYCWalletFormatterDidUpdateNotification";
@@ -285,91 +286,28 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
         }
     }
 
+    // Register model migrations
 
-    // Setup database migrations
-    {
-        [database registerMigration:@"Create MYCWalletAccounts" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
-            return [db executeUpdate:
-                    @"CREATE TABLE MYCWalletAccounts("
-                    "accountIndex          INT PRIMARY KEY NOT NULL,"
-                    "label                 TEXT            NOT NULL,"
-                    "extendedPublicKey     TEXT            NOT NULL,"
-                    "confirmedAmount       INT             NOT NULL," // The sum of the unspent outputs which are confirmed and currently not spent in pending transactions.
-                    "pendingChangeAmount   INT             NOT NULL," // pending funds in our own change outputs
-                    "pendingReceivedAmount INT             NOT NULL," // pending funds from someone that are not confirmed yet
-                    "pendingSentAmount     INT             NOT NULL," // pending funds that we are sending
-                    "archived              INT             NOT NULL,"
-                    "current               INT             NOT NULL,"
-                    "externalKeyIndex      INT             NOT NULL,"
-                    "internalKeyIndex      INT             NOT NULL,"
-                    "internalKeyStartingIndex  INT         NOT NULL,"
-                    "syncTimestamp         DATETIME                 "
-                    ")"];
-        }];
-
-        [database registerMigration:@"Create MYCUnspentOutputs" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
-            return [db executeUpdate:
-                    @"CREATE TABLE MYCUnspentOutputs("
-                    "outpointHash      TEXT NOT NULL,"
-                    "outpointIndex     INT  NOT NULL,"
-                    "blockHeight       INT  NOT NULL," // equals -1 if tx is not confirmed yet.
-                    "scriptData        TEXT NOT NULL," // binary script
-                    "value             INT  NOT NULL,"
-                    "coinbase          INT  NOT NULL,"
-                    "accountIndex      INT  NOT NULL," // -1 if this output is not spendable by any account.
-                    "change            INT  NOT NULL," // 0 for external chain, 1 for change chain
-                    "keyIndex          INT  NOT NULL," // index of the address used in the keychain.
-                    "PRIMARY KEY (outpointHash, outpointIndex, accountIndex) ON CONFLICT REPLACE"
-                    ")"] &&
-                    [db executeUpdate:@"CREATE INDEX MYCUnspentOutputs_accountIndex ON MYCUnspentOutputs (accountIndex)"];
-        }];
-
-        [database registerMigration:@"Create MYCParentOutputs" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
-            return [db executeUpdate:
-                    @"CREATE TABLE MYCParentOutputs("
-                    "outpointHash      TEXT NOT NULL,"
-                    "outpointIndex     INT  NOT NULL,"
-                    "blockHeight       INT  NOT NULL," // equals -1 if tx is not confirmed yet.
-                    "scriptData        TEXT NOT NULL," // binary script
-                    "value             INT  NOT NULL,"
-                    "coinbase          INT  NOT NULL,"
-                    "accountIndex      INT  NOT NULL," // -1 if this output is not spendable by any account.
-                    "change            INT  NOT NULL," // 0 for external chain, 1 for change chain
-                    "keyIndex          INT  NOT NULL," // index of the address used in the keychain.
-                    "PRIMARY KEY (outpointHash, outpointIndex, accountIndex) ON CONFLICT REPLACE"
-                    ")"] &&
-            [db executeUpdate:@"CREATE INDEX MYCParentOutputs_accountIndex ON MYCParentOutputs (accountIndex)"];
-        }];
-
-        [database registerMigration:@"Create MYCTransactions" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
-            return [db executeUpdate:
-                    @"CREATE TABLE MYCTransactions("
-                    "transactionHash   TEXT NOT NULL," // note: we allow duplicate txs if they happen to pay from one account to another.
-                    "data              TEXT NOT NULL," // raw transaction in binary
-                    "blockHeight       INT  NOT NULL," // equals -1 if not confirmed yet.
-                    "timestamp         INT  NOT NULL," // timestamp.
-                    "accountIndex      INT  NOT NULL," // index of an account to which this tx belongs.
-                    "PRIMARY KEY (transactionHash, accountIndex) ON CONFLICT REPLACE"  // note: we allow duplicate txs if they happen to pay from one account to another.
-                    ")"]  &&
-                    [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (transactionHash)"];
-        }];
-
-        [database registerMigration:@"createDefaultAccount" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
-
-            BTCKeychain* bitcoinKeychain = self.isTestnet ? mnemonic.keychain.bitcoinTestnetKeychain : mnemonic.keychain.bitcoinMainnetKeychain;
-
-            MYCWalletAccount* account = [[MYCWalletAccount alloc] initWithKeychain:[bitcoinKeychain keychainForAccount:0]];
-
-            NSAssert(account, @"Must be a valid account");
-
-            account.label = NSLocalizedString(@"Main Account", @"");
-            account.current = YES;
-
-            return [account saveInDatabase:db error:outError];
-        }];
-    }
+    [MYCDatabaseMigrations registerMigrations:database];
 
 
+    // Create default account
+
+    [database registerMigration:@"createDefaultAccount" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
+
+        BTCKeychain* bitcoinKeychain = self.isTestnet ? mnemonic.keychain.bitcoinTestnetKeychain : mnemonic.keychain.bitcoinMainnetKeychain;
+
+        MYCWalletAccount* account = [[MYCWalletAccount alloc] initWithKeychain:[bitcoinKeychain keychainForAccount:0]];
+
+        NSAssert(account, @"Must be a valid account");
+
+        account.label = NSLocalizedString(@"Main Account", @"");
+        account.current = YES;
+
+        return [account saveInDatabase:db error:outError];
+    }];
+
+    
     // Open database
 
     if (![database open:&error])

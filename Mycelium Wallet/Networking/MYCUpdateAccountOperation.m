@@ -11,6 +11,7 @@
 #import "MYCWalletAccount.h"
 #import "MYCTransaction.h"
 #import "MYCUnspentOutput.h"
+#import "MYCParentOutput.h"
 #import "MYCBackend.h"
 #import "MYCDatabase.h"
 
@@ -209,20 +210,38 @@
 
         NSMutableArray* txidsToFetch = [NSMutableArray array];
 
+        NSMutableDictionary* parentOutputsByOutpoint = [NSMutableDictionary dictionary]; // [ BTCOutpoint : MYCParentOutput ]
+        NSMutableDictionary* parentTxsByHash = [NSMutableDictionary dictionary]; // [ NSData : MYCTransaction ]
 
         [self.wallet inDatabase:^(FMDatabase *db) {
             for (BTCTransaction* tx in txs)
             {
-                if (!tx.isCoinbase)
+                // Ignore coinbase transactions.
+                if (tx.isCoinbase) continue;
+
+                for (BTCTransactionInput* txin in tx.inputs)
                 {
-                    
-                    //                TransactionOutputEx parentOutput = _backing.getParentTransactionOutput(in.outPoint);
-                    //                if (parentOutput != null) {
-                    //                    // We already have the parent output, no need to fetch the entire
-                    //                    // parent transaction
-                    //                    parentOutputs.put(parentOutput.outPoint, parentOutput);
-                    //                    continue;
-                    //                }
+                    MYCParentOutput* parentOutput = [MYCParentOutput loadOutputForAccount:accountIndex hash:txin.previousHash index:txin.previousIndex database:db];
+
+                    if (parentOutput)
+                    {
+                        // We already have the parent output, no need to fetch the entire parent transaction.
+                        // parentOutputs.put(parentOutput.outPoint, parentOutput);
+                        continue;
+                    }
+
+                    MYCTransaction* parentTx = [MYCTransaction loadTransactionForAccount:accountIndex hash:txin.previousHash database:db];
+
+                    if (parentTx)
+                    {
+                        // We had the parent transaction in our own transactions, no need to fetch it remotely.
+                        parentTxsByHash[parentTx.transactionHash] = parentTx;
+                    }
+                    else
+                    {
+
+                    }
+
                     //                TransactionEx parentTransaction = _backing.getTransaction(in.outPoint.hash);
                     //                if (parentTransaction != null) {
                     //                    // We had the parent transaction in our own transactions, no need to
@@ -232,12 +251,12 @@
                     //                    // Need to fetch it
                     //                    toFetch.add(in.outPoint.hash);
                     //                }
-                    
-                    
+
+
                     [txidsToFetch addObjectsFromArray:[tx.inputs valueForKey:@"previousTransactionID"]];
+
                 }
             }
-
         }];
 
     });

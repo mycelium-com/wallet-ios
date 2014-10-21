@@ -89,6 +89,8 @@ extern NSString* const MYCDatabaseRecordColumnKey;          // Defined for NSErr
  */
 - (void) didLoadFromDatabase:(FMDatabase*)db;
 
+
+
 #pragma mark - Modifying, Saving & Deleting
 
 /**

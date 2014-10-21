@@ -73,7 +73,6 @@
 // Initializes account with an root account keychain (m/44'/{account}')
 - (id) initWithKeychain:(BTCKeychain*)keychain;
 
-
 // Loads current active account from database.
 + (MYCWalletAccount*) currentAccountFromDatabase:(FMDatabase*)db;
 

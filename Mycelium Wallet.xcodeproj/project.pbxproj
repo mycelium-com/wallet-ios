@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		13DC93D53302498C84E6F0E9 /* libPods-Mycelium Wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */; };
+		20203AD619F65E290085C01F /* MYCBaseTxOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 20203AD519F65E290085C01F /* MYCBaseTxOutput.m */; };
+		20203ADC19F665F80085C01F /* MYCDatabaseMigrations.m in Sources */ = {isa = PBXBuildFile; fileRef = 20203ADB19F665F80085C01F /* MYCDatabaseMigrations.m */; };
 		203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49419DC364200572BD9 /* MYCWalletAccount.m */; };
 		203AA49819DC365D00572BD9 /* MYCBackend.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49719DC365D00572BD9 /* MYCBackend.m */; };
 		203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A019DC3C4500572BD9 /* MYCRoundedView.m */; };
@@ -68,6 +70,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		20203AD419F65E290085C01F /* MYCBaseTxOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCBaseTxOutput.h; path = Models/MYCBaseTxOutput.h; sourceTree = "<group>"; };
+		20203AD519F65E290085C01F /* MYCBaseTxOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCBaseTxOutput.m; path = Models/MYCBaseTxOutput.m; sourceTree = "<group>"; };
+		20203ADA19F665F80085C01F /* MYCDatabaseMigrations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCDatabaseMigrations.h; path = Models/MYCDatabaseMigrations.h; sourceTree = "<group>"; };
+		20203ADB19F665F80085C01F /* MYCDatabaseMigrations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCDatabaseMigrations.m; path = Models/MYCDatabaseMigrations.m; sourceTree = "<group>"; };
 		203AA49319DC364200572BD9 /* MYCWalletAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCWalletAccount.h; path = Models/MYCWalletAccount.h; sourceTree = "<group>"; };
 		203AA49419DC364200572BD9 /* MYCWalletAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWalletAccount.m; path = Models/MYCWalletAccount.m; sourceTree = "<group>"; };
 		203AA49619DC365D00572BD9 /* MYCBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCBackend.h; path = Networking/MYCBackend.h; sourceTree = "<group>"; };
@@ -375,12 +381,16 @@
 				20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */,
 				203AA49319DC364200572BD9 /* MYCWalletAccount.h */,
 				203AA49419DC364200572BD9 /* MYCWalletAccount.m */,
+				20203AD419F65E290085C01F /* MYCBaseTxOutput.h */,
+				20203AD519F65E290085C01F /* MYCBaseTxOutput.m */,
 				20A9C07219F534AB00AF61DE /* MYCUnspentOutput.h */,
 				20A9C07319F534AB00AF61DE /* MYCUnspentOutput.m */,
 				20A9C07519F5520C00AF61DE /* MYCParentOutput.h */,
 				20A9C07619F5520C00AF61DE /* MYCParentOutput.m */,
 				20A9C06F19F5349500AF61DE /* MYCTransaction.h */,
 				20A9C07019F5349500AF61DE /* MYCTransaction.m */,
+				20203ADA19F665F80085C01F /* MYCDatabaseMigrations.h */,
+				20203ADB19F665F80085C01F /* MYCDatabaseMigrations.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -593,9 +603,11 @@
 				203AA49819DC365D00572BD9 /* MYCBackend.m in Sources */,
 				203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */,
 				2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */,
+				20203AD619F65E290085C01F /* MYCBaseTxOutput.m in Sources */,
 				2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */,
 				20C2D81219E3EDB10022CAAC /* MYCDatabase.m in Sources */,
 				20A9C06E19F50CBF00AF61DE /* MYCUpdateAccountOperation.m in Sources */,
+				20203ADC19F665F80085C01F /* MYCDatabaseMigrations.m in Sources */,
 				20C2D81319E3EDB10022CAAC /* MYCDatabaseRecord.m in Sources */,
 				20C2D82219E7CDD70022CAAC /* BTCNumberFormatter.m in Sources */,
 				203AA4AD19DC517200572BD9 /* MYCSendViewController.m in Sources */,
