@@ -12,7 +12,7 @@
 
 @interface MYCWalletAccount : MYCDatabaseRecord
 
-@property(nonatomic) NSUInteger accountIndex;
+@property(nonatomic) NSInteger  accountIndex;
 @property(nonatomic) NSString*  label;
 @property(nonatomic) NSString*  extendedPublicKey;
 
@@ -57,21 +57,31 @@
 @property(nonatomic, readonly) BTCSatoshi sendingAmount;
 
 // Keychain representing this account.
-@property(nonatomic, readonly) BTCKeychain* keychain;
+@property(nonatomic, readonly) BTCKeychain* keychain; // thread-safe
 
 // Keychain m/44'/coin'/accountIndex'/0 for exporting to external services to issue invoices and collect payments.
 // This refers to "external chain" in BIP44. Whoever knows this keychain cannot learn change addresses,
 // so your privacy leak is limited to invoice addresses.
-@property(nonatomic, readonly) BTCKeychain* externalKeychain;
+@property(nonatomic, readonly) BTCKeychain* externalKeychain; // thread-safe
+
+// Keychain m/44'/coin'/accountIndex'/1 for change addresses.
+@property(nonatomic, readonly) BTCKeychain* internalKeychain; // thread-safe
 
 // Currently available external address to receive payments on.
 @property(nonatomic, readonly) BTCPublicKeyAddress* externalAddress;
 
 // Currently available internal (change) address to receive payments on.
-@property(nonatomic, readonly) BTCPublicKeyAddress* changeAddress;
+@property(nonatomic, readonly) BTCPublicKeyAddress* internalAddress;
 
 // Initializes account with an root account keychain (m/44'/{account}')
 - (id) initWithKeychain:(BTCKeychain*)keychain;
+
+// Returns external index for key that matches output script data.
+// If not found, returns NSNotFound.
+// `startIndex` is included in search.
+// At most `limit` indexes are tried.
+- (NSUInteger) externalIndexForScriptData:(NSData*)data startIndex:(NSUInteger)startIndex limit:(NSUInteger)limit; // thread-safe
+- (NSUInteger) internalIndexForScriptData:(NSData*)data startIndex:(NSUInteger)startIndex limit:(NSUInteger)limit; // thread-safe
 
 // Loads current active account from database.
 + (MYCWalletAccount*) currentAccountFromDatabase:(FMDatabase*)db;

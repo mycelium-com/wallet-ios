@@ -94,9 +94,12 @@
         }
 
         // Now we know all used addresses and therefore can update unspent and spent outputs.
+        if (completion) completion(YES, nil);
 
     }];
 }
+
+
 
 
 
@@ -153,12 +156,12 @@
     for (int i = 0; i <= self.externalAddressesLookAhead; i++)
     {
         BTCKey* key = [externalKeychain keyAtIndex:(uint32_t)self.latestExternalIndex + i hardened:NO];
-        if (key) [addresses addObject:key.address];
+        if (key) [addresses addObject:[self.wallet addressForKey:key]];
     }
     for (int i = 0; i <= self.internalAddressesLookAhead; i++)
     {
         BTCKey* key = [internalKeychain keyAtIndex:(uint32_t)self.latestInternalIndex + i hardened:NO];
-        if (key) [addresses addObject:key.address];
+        if (key) [addresses addObject:[self.wallet addressForKey:key]];
     }
 
     // Load all known transactions for the given addresses.
@@ -167,6 +170,13 @@
         if (!transactions)
         {
             if (completion) completion(NO, NO, error);
+            return;
+        }
+
+        // Found no transactions, return.
+        if (transactions.count == 0)
+        {
+            if (completion) completion(YES, NO, nil);
             return;
         }
 
@@ -203,20 +213,21 @@
 
 - (void) fetchRelevantParentOutputsFromTransactions:(NSArray*)txs completion:(void(^)(BOOL success, NSError* error))completion
 {
-    NSUInteger accountIndex = self.account.accountIndex;
+    NSInteger accountIndex = self.account.accountIndex;
     MYCWallet* wallet = self.wallet;
 
+    // Perform DB loads on background thread.
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
 
-        NSMutableArray* txidsToFetch = [NSMutableArray array];
+        NSMutableSet* txidsToFetch = [NSMutableSet set];
 
-        NSMutableDictionary* parentOutputsByOutpoint = [NSMutableDictionary dictionary]; // [ BTCOutpoint : MYCParentOutput ]
-        NSMutableDictionary* parentTxsByHash = [NSMutableDictionary dictionary]; // [ NSData : MYCTransaction ]
+        NSMutableDictionary* parentOutputsByOutpoint = [NSMutableDictionary dictionary]; // [ BTCOutpoint : BTCTransactionOutput ]
+        NSMutableDictionary* parentTxsByHash = [NSMutableDictionary dictionary]; // [ NSData : BTCTransaction ]
 
-        [self.wallet inDatabase:^(FMDatabase *db) {
+        [wallet inDatabase:^(FMDatabase *db) {
             for (BTCTransaction* tx in txs)
             {
-                // Ignore coinbase transactions.
+                // Ignore coinbase transactions - they don't have parent txs.
                 if (tx.isCoinbase) continue;
 
                 for (BTCTransactionInput* txin in tx.inputs)
@@ -225,8 +236,8 @@
 
                     if (parentOutput)
                     {
-                        // We already have the parent output, no need to fetch the entire parent transaction.
-                        // parentOutputs.put(parentOutput.outPoint, parentOutput);
+                        // We already have a parent output, no need to fetch the entire parent transaction.
+                        parentOutputsByOutpoint[txin.outpoint] = parentOutput.transactionOutput;
                         continue;
                     }
 
@@ -235,49 +246,149 @@
                     if (parentTx)
                     {
                         // We had the parent transaction in our own transactions, no need to fetch it remotely.
-                        parentTxsByHash[parentTx.transactionHash] = parentTx;
+                        BTCTransaction* btctx = parentTx.transaction;
+                        parentTxsByHash[btctx.transactionHash] = btctx;
                     }
                     else
                     {
-
+                        // No parent transaction - lets fetch it.
+                        [txidsToFetch addObject:txin.previousTransactionID];
                     }
-
-                    //                TransactionEx parentTransaction = _backing.getTransaction(in.outPoint.hash);
-                    //                if (parentTransaction != null) {
-                    //                    // We had the parent transaction in our own transactions, no need to
-                    //                    // fetch it remotely
-                    //                    parentTransactions.put(parentTransaction.txid, parentTransaction);
-                    //                } else {
-                    //                    // Need to fetch it
-                    //                    toFetch.add(in.outPoint.hash);
-                    //                }
-
-
-                    [txidsToFetch addObjectsFromArray:[tx.inputs valueForKey:@"previousTransactionID"]];
-
                 }
             }
         }];
 
-    });
+        // Continue on main thread
+        dispatch_async(dispatch_get_main_queue(), ^{
 
-    completion(YES, nil);
+            // Nothing to fetch - return successfully.
+            if (txidsToFetch.count == 0)
+            {
+                if (completion) completion(YES, nil);
+                return;
+            }
+
+            // Fetch parent transactions and put them in parentTxsByHash.
+            [self.wallet.backend loadTransactions:[txidsToFetch allObjects] completion:^(NSArray *transactions, NSError *error) {
+
+                if (!transactions)
+                {
+                    if (completion) completion(NO, error);
+                    return;
+                }
+
+                for (BTCTransaction* btctx in transactions)
+                {
+                    parentTxsByHash[btctx.transactionHash] = btctx;
+                }
+
+                // Then find all outputs relevant to us and if they are not stored already,
+                // save in database as parent outputs.
+
+                // We should now have all parent transactions or parent outputs. There is
+                // a slight probability that one of them won't be found due to double
+                // spends and/or malleability and network latency etc.
+
+                // Enumerate again all inputs that we started with and try to save matching outputs that we found.
+                NSMutableArray* outputsToSave = [NSMutableArray array];
+                for (BTCTransaction* tx in txs)
+                {
+                    // Ignore coinbase transactions - they don't have parent txs.
+                    if (tx.isCoinbase) continue;
+
+                    for (BTCTransactionInput* txin in tx.inputs)
+                    {
+                        BTCTransactionOutput* txout = parentOutputsByOutpoint[txin.outpoint];
+                        if (txout)
+                        {
+                            // We have it already
+                            continue;
+                        }
+                        BTCTransaction* parentTx = parentTxsByHash[txin.previousHash];
+
+                        // Normally this is always true except when we have double-spends or network latency etc.
+                        if (parentTx)
+                        {
+                            // Take parent output from the parent transaction.
+                            if (txin.previousIndex < parentTx.outputs.count)
+                            {
+                                BTCTransactionOutput* parentOutput = parentTx.outputs[txin.previousIndex];
+
+                                // TODO: check that this output actually belongs to this account.
+
+                                parentOutput.blockHeight = parentTx.blockHeight;
+                                parentOutput.transactionHash = parentTx.transactionHash;
+                                parentOutput.index = txin.previousIndex;
+                                [outputsToSave addObject:parentOutput];
+                            }
+                            else
+                            {
+                                MYCError(@"MYCUpdateAccountOperation: broken parent transaction with txin.previousIndex exceeding parent tx outputs!");
+                            }
+                        }
+                        else
+                        {
+                            MYCError(@"MYCUpdateAccountOperation: parent transaction not found: %@", txin.previousTransactionID);
+                        }
+                    }
+                }
+
+                // Perform DB updates on background thread.
+                dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+
+                    __block NSError* dberror = nil;
+                    [wallet inDatabase:^(FMDatabase *db) {
+                        for (BTCTransactionOutput* txout in outputsToSave)
+                        {
+                            MYCParentOutput* mpout = [[MYCParentOutput alloc] init];
+
+                            mpout.transactionOutput = txout;
+                            mpout.accountIndex = accountIndex;
+
+                            if (![mpout insertInDatabase:db error:&dberror])
+                            {
+                                dberror = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error"}];
+                                MYCError(@"MYCUpdateAccountOperation: failed to save transaction output %@ for account %d in database: %@", txout, (int)accountIndex, dberror);
+                                return;
+                            }
+                            else
+                            {
+                                MYCLog(@"MYCUpdateAccountOperation: saved parent output %@:%d", BTCTransactionIDFromHash(txout.transactionHash), (int)txout.index);
+                            }
+                        }
+                    }];
+
+                    // Continue on main thread
+                    dispatch_async(dispatch_get_main_queue(), ^{
+
+                        if (completion) completion(!dberror, dberror);
+                        return;
+
+                    }); // on main thread
+                });// on bg thread
+            }]; // loaded txs
+        }); // on main thread
+    });// on bg thread
 }
 
+
+
+
+// Saves new transactions relevant to this account and updates key indexes based on which keys are found to be used.
 - (void) saveTransactions:(NSArray*)txs completion:(void(^)(BOOL success, NSError* error))completion
 {
-    NSUInteger accountIndex = self.account.accountIndex;
+    NSInteger accountIndex = self.account.accountIndex;
     MYCWallet* wallet = self.wallet;
 
     // We'll use these to advance indices
     NSInteger externalStartIndex = self.latestExternalIndex;
     NSInteger internalStartIndex = self.latestInternalIndex;
 
-    NSInteger externalEndIndex = externalStartIndex + self.externalAddressesLookAhead;
-    NSInteger internalEndIndex = internalStartIndex + self.externalAddressesLookAhead;
-
-    BTCKeychain* externalKeychain = [self.account.keychain derivedKeychainAtIndex:0];
-    BTCKeychain* internalKeychain = [self.account.keychain derivedKeychainAtIndex:1];
+//    NSInteger externalEndIndex = externalStartIndex + self.externalAddressesLookAhead;
+//    NSInteger internalEndIndex = internalStartIndex + self.internalAddressesLookAhead;
+//
+//    BTCKeychain* externalKeychain = [self.account.keychain derivedKeychainAtIndex:0];
+//    BTCKeychain* internalKeychain = [self.account.keychain derivedKeychainAtIndex:1];
 
     // We may have a lot of transactions, so lets do all DB work on a background thread.
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
@@ -293,18 +404,18 @@
             NSInteger externalCurrentIndex = -1;
             NSInteger internalCurrentIndex = -1;
 
-            NSMutableArray* externalScriptBlobs = [NSMutableArray array];
-            NSMutableArray* internalScriptBlobs = [NSMutableArray array];
-            for (NSInteger i = externalStartIndex; i <= externalEndIndex; i++)
-            {
-                BTCScript* script = [[BTCScript alloc] initWithAddress:[externalKeychain keyAtIndex:(uint32_t)i].address];
-                [externalScriptBlobs addObject:script.data];
-            }
-            for (NSInteger i = internalStartIndex; i <= internalEndIndex; i++)
-            {
-                BTCScript* script = [[BTCScript alloc] initWithAddress:[internalKeychain keyAtIndex:(uint32_t)i].address];
-                [internalScriptBlobs addObject:script.data];
-            }
+//            NSMutableArray* externalScriptBlobs = [NSMutableArray array];
+//            NSMutableArray* internalScriptBlobs = [NSMutableArray array];
+//            for (NSInteger i = externalStartIndex; i <= externalEndIndex; i++)
+//            {
+//                BTCScript* script = [[BTCScript alloc] initWithAddress:[externalKeychain keyAtIndex:(uint32_t)i].address];
+//                [externalScriptBlobs addObject:script.data];
+//            }
+//            for (NSInteger i = internalStartIndex; i <= internalEndIndex; i++)
+//            {
+//                BTCScript* script = [[BTCScript alloc] initWithAddress:[internalKeychain keyAtIndex:(uint32_t)i].address];
+//                [internalScriptBlobs addObject:script.data];
+//            }
 
             for (BTCTransaction* tx in txs)
             {
@@ -317,34 +428,44 @@
                 mtx.accountIndex    = accountIndex;
 
                 NSError* dberror = nil;
-                if (![mtx saveInDatabase:db error:&dberror])
+                if (![mtx insertInDatabase:db error:&dberror])
                 {
                     error = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error"}];
                     MYCError(@"MYCWallet: failed to save transaction %@ for account %d in database: %@", tx.transactionID, (int)accountIndex, dberror);
                     return;
                 }
+                else
+                {
+                    MYCLog(@"MYCUpdateAccountOperation: saved transaction: %@", tx.transactionID);
+                }
 
                 for (BTCTransactionOutput* txout in tx.outputs)
                 {
                     NSData* blob = txout.script.data;
-                    NSUInteger i = [externalScriptBlobs indexOfObject:blob];
+                    //NSUInteger i = [externalScriptBlobs indexOfObject:blob];
+                    NSUInteger i = [self.account externalIndexForScriptData:blob startIndex:externalStartIndex limit:self.externalAddressesLookAhead + 1];
                     if (i != NSNotFound)
                     {
-                        externalCurrentIndex = MAX(externalCurrentIndex, externalStartIndex + i);
+                        //externalCurrentIndex = MAX(externalCurrentIndex, externalStartIndex + i);
+                        externalCurrentIndex = MAX(externalCurrentIndex, (NSInteger)i);
+                        //MYCLog(@"BUMP externalCurrentIndex = %@", @(externalCurrentIndex));
                     }
                     else
                     {
-                        i = [internalScriptBlobs indexOfObject:blob];
+                        //i = [internalScriptBlobs indexOfObject:blob];
+                        i = [self.account internalIndexForScriptData:blob startIndex:internalStartIndex limit:self.internalAddressesLookAhead + 1];
                         if (i != NSNotFound)
                         {
-                            internalCurrentIndex = MAX(internalCurrentIndex, internalStartIndex + i);
+                            //internalCurrentIndex = MAX(internalCurrentIndex, internalStartIndex + i);
+                            internalCurrentIndex = MAX(internalCurrentIndex, (NSInteger)i);
+                            //MYCLog(@"BUMP internalCurrentIndex = %@", @(internalCurrentIndex));
                         }
                     }
                 } // for each txout
             } // for each tx
 
             // We normally do not fail to write txs into DB, so it's okay to advance indexes once we iterated over all transactions.
-            if (externalCurrentIndex > 0 || internalCurrentIndex > 0)
+            if (externalCurrentIndex >= 0 || internalCurrentIndex >= 0)
             {
                 // Bump indexes by 1 for the current account and save it.
                 self.account.externalKeyIndex = (uint32_t)MAX(self.account.externalKeyIndex, externalCurrentIndex + 1);
@@ -359,6 +480,10 @@
                     MYCError(@"MYCWallet: failed to save account %d after bumping key indexes in database: %@", (int)accountIndex, dberror);
                     return;
                 }
+            }
+            else
+            {
+                //MYCLog(@"NOT BUMPED ANY current index");
             }
         }];
 

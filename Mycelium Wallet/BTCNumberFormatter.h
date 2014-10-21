@@ -1,13 +1,13 @@
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSUInteger, BTCNumberFormatterUnit) {
+typedef NS_ENUM(NSInteger, BTCNumberFormatterUnit) {
     BTCNumberFormatterUnitSatoshi  = 0, // satoshis = 0.00000001 BTC
     BTCNumberFormatterUnitBit      = 2, // bits     = 0.000001 BTC
     BTCNumberFormatterUnitMilliBTC = 5, // mBTC     = 0.001 BTC
     BTCNumberFormatterUnitBTC      = 8, // BTC      = 100 million satoshis
 };
 
-typedef NS_ENUM(NSUInteger, BTCNumberFormatterSymbolStyle) {
+typedef NS_ENUM(NSInteger, BTCNumberFormatterSymbolStyle) {
     BTCNumberFormatterSymbolStyleNone      = 0, // no suffix
     BTCNumberFormatterSymbolStyleCode      = 1, // suffix is BTC, mBTC, Bits or SAT
     BTCNumberFormatterSymbolStyleLowercase = 2, // suffix is btc, mbtc, bits or sat

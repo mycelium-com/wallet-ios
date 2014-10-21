@@ -51,7 +51,7 @@
 #pragma mark - Database Access
 
 // Finds a transaction in the database for a given hash. Returns nil if not found.
-+ (instancetype) loadTransactionForAccount:(uint32_t)accountIndex hash:(NSData*)txhash database:(FMDatabase*)db
++ (instancetype) loadTransactionForAccount:(NSInteger)accountIndex hash:(NSData*)txhash database:(FMDatabase*)db
 {
     return [[self loadWithCondition:@"accountIndex = ? AND transactionHash = ?"
                              params:@[@(accountIndex), txhash ?: @"n/a" ]
@@ -75,6 +75,11 @@
  [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (transactionHash)"];
  }];
  */
+
++ (NSString *)primaryKeyName
+{
+    return nil;
+}
 
 + (NSString *)tableName
 {

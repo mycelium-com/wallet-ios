@@ -188,6 +188,55 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (MYCBackend*) backend
+{
+    if (self.isTestnet)
+    {
+        return [MYCBackend testnetBackend];
+    }
+    return [MYCBackend mainnetBackend];
+}
+
+
+
+// Note: this supports only privkey and pubkey hash, not P2SH.
+- (BTCPublicKeyAddress*) addressForAddress:(BTCAddress*)address
+{
+    address = [address publicAddress];
+    if (![address isTestnet] == !self.isTestnet)
+    {
+        return (BTCPublicKeyAddress*)address;
+    }
+    return [self addressForPublicKeyHash:address.data];
+}
+
+- (BTCPublicKeyAddress*) addressForKey:(BTCKey*)key
+{
+    NSAssert(key.isPublicKeyCompressed, @"BTCKey should be compressed when using BIP32");
+    return [self addressForPublicKey:key.publicKey];
+}
+
+- (BTCPublicKeyAddress*) addressForPublicKey:(NSData*)publicKey
+{
+    NSAssert(publicKey.length == 33, @"pubkey should be compact");
+    return [self addressForPublicKeyHash:BTCHash160(publicKey)];
+}
+
+- (BTCPublicKeyAddress*) addressForPublicKeyHash:(NSData*)hash160
+{
+    NSAssert(hash160.length == 20, @"160 bit hash should be 20 bytes long");
+    if (self.isTestnet)
+    {
+        return [BTCPublicKeyAddressTestnet addressWithData:hash160];
+    }
+    return [BTCPublicKeyAddress addressWithData:hash160];
+}
+
+
+
+
+
+
 - (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason
 {
     MYCUnlockedWallet* unlockedWallet = [[MYCUnlockedWallet alloc] init];
@@ -200,14 +249,12 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     [unlockedWallet clear];
 }
 
-- (MYCBackend*) backend
-{
-    if (self.testnet)
-    {
-        return [MYCBackend testnetBackend];
-    }
-    return [MYCBackend mainnetBackend];
-}
+
+
+
+
+
+
 
 - (MYCDatabase*) database
 {
@@ -222,8 +269,13 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
 - (NSURL*) databaseURL
 {
+    return [self databaseURLTestnet:self.isTestnet];
+}
+
+- (NSURL*) databaseURLTestnet:(BOOL)istestnet
+{
     NSURL *documentsFolderURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-    NSURL *databaseURL = [NSURL URLWithString:[NSString stringWithFormat:@"MyceliumWallet%@.sqlite3", self.isTestnet ? @"Testnet" : @"Mainnet"]
+    NSURL *databaseURL = [NSURL URLWithString:[NSString stringWithFormat:@"MyceliumWallet%@.sqlite3", istestnet ? @"Testnet" : @"Mainnet"]
                                 relativeToURL:documentsFolderURL];
     return databaseURL;
 }
@@ -344,17 +396,19 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 // Removes database from disk.
 - (void) removeDatabase
 {
-    if ([[NSFileManager defaultManager] fileExistsAtPath:self.databaseURL.path])
+    for (NSURL* dbURL in @[[self databaseURLTestnet:YES], [self databaseURLTestnet:NO]])
     {
-        MYCLog(@"WARNING: MYCWallet is removing Mycelium database from disk.");
+        if ([[NSFileManager defaultManager] fileExistsAtPath:dbURL.path])
+        {
+            MYCLog(@"WARNING: MYCWallet is removing Mycelium database from disk: %@", dbURL.absoluteString);
+        }
+
+        if (_database) [_database close];
+
+        _database = nil;
+        NSError* error = nil;
+        [[NSFileManager defaultManager] removeItemAtURL:dbURL error:&error];
     }
-
-    if (_database) [_database close];
-
-    _database = nil;
-    NSError* error = nil;
-    [[NSFileManager defaultManager] removeItemAtURL:self.databaseURL error:&error];
-
     // Do not notify to not break the app.
 }
 

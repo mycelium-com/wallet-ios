@@ -121,7 +121,7 @@
                                 @"price":    @378.12,
                                 @"currency": @"USD"
                             }]}
-               completion:^(NSDictionary* result, NSError* error){
+               completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
 
                    if (!result)
                    {
@@ -193,7 +193,7 @@
                                               @"value":      @100000000,
                                               @"script":     @"dqkUINSkoZDqj3qXkFlUtWwcl398DkaIrA==",
                                               @"isCoinBase": @NO }]}
-               completion:^(NSDictionary* result, NSError* error){
+               completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
 
                    if (!result)
                    {
@@ -258,7 +258,7 @@
 
 // Fetches the latest transaction ids for given addresses (BTCAddress instances).
 // Results include both transactions spending and receiving to the given addresses.
-- (void) loadTransactionIDsForAddresses:(NSArray*)addresses limit:(NSUInteger)limit completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion
+- (void) loadTransactionIDsForAddresses:(NSArray*)addresses limit:(NSInteger)limit completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion
 {
     NSParameterAssert(addresses);
 
@@ -286,14 +286,15 @@
 
     [self makeJSONRequest:@"queryTransactionInventory"
                   payload:@{ @"version": self.version,
-                             @"addresses": [addresses valueForKeyPath:@"publicAddress.base58String"] }
+                             @"addresses": [addresses valueForKeyPath:@"publicAddress.base58String"],
+                             @"limit": @(limit)}
                  template:@{@"height": @301943,
                             @"txIds":@[
                                @"9857dc366848ffb8d4616631d6fa1bcb139ffd11834feb6e3520f9febd17ac79",
                                @"3f7a173870c3c3b2914fc3228770863ae0aba7f3960774fb6ced88b915610262",
                                @"3635eee25fb237c57090fda60d3a2f33707201a941d281bc663e540ef1eb1f0b",
                             ]}
-               completion:^(NSDictionary* result, NSError* error){
+               completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
 
                    if (!result)
                    {
@@ -310,7 +311,7 @@
                }];
 }
 
-- (void) loadTransactionsForAddresses:(NSArray*)addresses limit:(NSUInteger)limit completion:(void(^)(NSArray* txs, NSInteger height, NSError* error))completion
+- (void) loadTransactionsForAddresses:(NSArray*)addresses limit:(NSInteger)limit completion:(void(^)(NSArray* txs, NSInteger height, NSError* error))completion
 {
     NSParameterAssert(addresses);
 
@@ -384,7 +385,7 @@
                                   @"height": @280489,
                                   @"time":   @1410965947}
                             ]}
-               completion:^(NSDictionary* result, NSError* error){
+               completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
 
                    if (!result)
                    {
@@ -448,7 +449,7 @@
                                       @"time":   @1410965947,
                                       @"binary": @"base64string"}
                                     ]}
-               completion:^(NSDictionary* result, NSError* error){
+               completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
 
                    if (!result)
                    {
@@ -461,6 +462,7 @@
                    BOOL parseFailure = NO;
                    for (NSDictionary* dict in result[@"transactions"])
                    {
+                       NSString* txid = dict[@"txid"];
                        NSInteger blockHeight = [dict[@"height"] intValue];
                        NSTimeInterval ts = [dict[@"time"] doubleValue];
                        NSDate* blockDate = ts > 0.0 ? [NSDate dateWithTimeIntervalSince1970:ts] : nil;
@@ -482,6 +484,16 @@
                            if (!tx)
                            {
                                MYCLog(@"MYCBackend loadTransactions: malformed transaction data (can't make BTCTransaction): %@", dict);
+                               parseFailure = YES;
+                           }
+                           else if (![tx.transactionID isEqualToString:txid])
+                           {
+                               MYCLog(@"MYCBackend loadTransactions: transaction data does not match declared txid: %@", dict);
+                               parseFailure = YES;
+                           }
+                           else if (![txids containsObject:tx.transactionID])
+                           {
+                               MYCLog(@"MYCBackend loadTransactions: transaction ID is not contained in the requested txids: %@ (txids: %@)", dict, txids);
                                parseFailure = YES;
                            }
                            else
@@ -537,7 +549,7 @@
                             @"success":@YES,
                             @"txid": @"1513b9b160ef6b20bbb06b7bb6e7364e58e27e1df53f8f7e12e67f17d46ad198"
                             }
-               completion:^(NSDictionary* result, NSError* error){
+               completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
 
                    if (!result)
                    {
@@ -573,7 +585,7 @@
 
 
 
-- (void) makeJSONRequest:(NSString*)name payload:(NSDictionary*)payload template:(id)template completion:(void(^)(NSDictionary* result, NSError* error))completion
+- (void) makeJSONRequest:(NSString*)name payload:(NSDictionary*)payload template:(id)template completion:(void(^)(NSDictionary* result, NSString* curlCommand, NSError* error))completion
 {
     self.pendingTasksCount++;
 
@@ -584,6 +596,8 @@
 
         NSMutableURLRequest* req = [self requestWithName:name];
 
+        NSString* curlCommand = nil;
+
         if (payload)
         {
             NSError* jsonerror;
@@ -591,12 +605,23 @@
             if (!jsonPayload)
             {
                 self.pendingTasksCount--;
-                if (completion) completion(nil, jsonerror);
+                if (completion) completion(nil, nil, jsonerror);
                 return;
             }
 
             [req setHTTPMethod:@"POST"];
             [req setHTTPBody:jsonPayload];
+
+#if DEBUG
+            curlCommand = [NSString stringWithFormat:@"curl -k -X POST -H \"Content-Type: application/json\" -d '%@' %@",
+                           [[NSString alloc] initWithData:jsonPayload encoding:NSUTF8StringEncoding], req.URL.absoluteString];
+#endif
+        }
+        else
+        {
+#if DEBUG
+            curlCommand = [NSString stringWithFormat:@"curl -k -X GET %@", req.URL.absoluteString];
+#endif
         }
 
         [[self.session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *networkError) {
@@ -604,7 +629,8 @@
             NSDictionary* result = [self handleReceivedJSON:data response:response error:networkError failure:^(NSError* jsonError){
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.pendingTasksCount--;
-                    if (completion) completion(nil, jsonError);
+                    MYCLog(@"MYCBackend: REQUEST FAILED: %@ ERROR: %@", curlCommand, jsonError);
+                    if (completion) completion(nil, nil, jsonError);
                 });
             }];
 
@@ -620,7 +646,12 @@
 
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.pendingTasksCount--;
-                if (completion) completion(result, formatError);
+
+                if (!result)
+                {
+                    MYCLog(@"MYCBackend: REQUEST FAILED: %@ ERROR: %@", curlCommand, formatError);
+                }
+                if (completion) completion(result, curlCommand, formatError);
             });
 
         }] resume];
@@ -680,6 +711,7 @@
     if (data.length == 0 && response == nil && error)
     {
         MYCLog(@"Timeout-like error: %@", error);
+#warning TODO: should switch to another hostname after timeout error.
         failureBlock(error);
         return nil;
     }
@@ -722,7 +754,7 @@
         }
         else
         {
-            MYCLog(@"MYCBackend: received errorCode %@: %@", dict[@"errorCode"], dict);
+            MYCLog(@"MYCBackend: received errorCode %@: %@ [%@]", dict[@"errorCode"], dict, httpResponse.URL);
             NSError* apiError = [NSError errorWithDomain:MYCErrorDomain
                                                      code:[dict[@"errorCode"] integerValue]
                                                  userInfo:@{

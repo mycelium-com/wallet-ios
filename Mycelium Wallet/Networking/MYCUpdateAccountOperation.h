@@ -20,11 +20,11 @@
 
 // Number of external addresses to look ahead while discovering new transactions.
 // Default is 20.
-@property(nonatomic) NSUInteger externalAddressesLookAhead;
+@property(nonatomic) NSInteger externalAddressesLookAhead;
 
 // Number of change addresses to look ahead while discovering new transactions.
 // Default is 2.
-@property(nonatomic) NSUInteger internalAddressesLookAhead;
+@property(nonatomic) NSInteger internalAddressesLookAhead;
 
 // Flag controlling if the discovery must be performed.
 // Default is YES.

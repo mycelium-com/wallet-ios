@@ -264,7 +264,7 @@ static MYCDatabase *sharedModelDatabase;
         return YES;
     }
     
-    __block NSUInteger migrationNumber = [appliedMigrations count];
+    __block NSInteger migrationNumber = [appliedMigrations count];
     
     for (NSString* migrationName in migrationNamesToApply)
     {

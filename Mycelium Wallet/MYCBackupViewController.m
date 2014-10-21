@@ -192,7 +192,7 @@
 {
     NSMutableAttributedString* as = [[NSMutableAttributedString alloc] initWithString:textField.text];
 
-    NSUInteger offset = 0;
+    NSInteger offset = 0;
     for (NSString* word in self.words)
     {
         NSRange r = [as.string rangeOfString:word options:NSCaseInsensitiveSearch range:NSMakeRange(offset, as.string.length - offset)];

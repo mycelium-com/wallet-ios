@@ -184,7 +184,7 @@
 
 - (void) walletDidUpdateAccount:(NSNotification*)notif
 {
-    MYCWalletAccount* acc = notif.object;
+    //MYCWalletAccount* acc = notif.object;
 
     // TODO: find which account was updated and reload its cell.
 

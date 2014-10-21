@@ -12,9 +12,14 @@
 @interface MYCWalletAccount ()
 @property(nonatomic) NSTimeInterval syncTimestamp;
 @property(nonatomic, readwrite) BTCKeychain* keychain;
+@property(nonatomic, readwrite) BTCKeychain* externalKeychain;
+@property(nonatomic, readwrite) BTCKeychain* internalKeychain;
 @end
 
-@implementation MYCWalletAccount
+@implementation MYCWalletAccount {
+    NSMutableDictionary* _externalScriptSearchCache; // [ index NSNumber : script NSData ]
+    NSMutableDictionary* _internalScriptSearchCache; // [ index NSNumber : script NSData ]
+}
 
 - (id) initWithKeychain:(BTCKeychain*)keychain
 {
@@ -24,11 +29,15 @@
 
     if (self = [super init])
     {
+        NSLog(@"NEW ACCOUNT WITH KEYCHAIN: account:%d first address: %@  extpubkey: %@", (int)keychain.index, [[MYCWallet currentWallet] addressForKey:[keychain externalKeyAtIndex:0]].base58String, keychain);
         _accountIndex = keychain.index;
         _extendedPublicKey = keychain.extendedPublicKey;
         _label = [NSString stringWithFormat:NSLocalizedString(@"Account %@", @""), @(_accountIndex)];
         _keychain = keychain.isPrivate ? keychain.publicKeychain : keychain;
         _syncTimestamp = 0.0;
+
+        _externalScriptSearchCache = [NSMutableDictionary dictionary];
+        _internalScriptSearchCache = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -40,38 +49,50 @@
 
 - (BTCKeychain*) keychain
 {
-    if (!_keychain)
+    @synchronized(self)
     {
-        _keychain = [[BTCKeychain alloc] initWithExtendedKey:_extendedPublicKey];
+        if (!_keychain)
+        {
+            _keychain = [[BTCKeychain alloc] initWithExtendedKey:_extendedPublicKey];
+        }
+        return _keychain;
     }
-    return _keychain;
 }
 
 - (BTCKeychain*) externalKeychain
 {
-    return [self.keychain derivedKeychainAtIndex:0 hardened:NO];
+    @synchronized(self)
+    {
+        if (!_externalKeychain)
+        {
+            _externalKeychain = [self.keychain derivedKeychainAtIndex:0 hardened:NO];
+        }
+        return _externalKeychain;
+    }
+}
+
+- (BTCKeychain*) internalKeychain
+{
+    @synchronized(self)
+    {
+        if (!_internalKeychain)
+        {
+            _internalKeychain = [self.keychain derivedKeychainAtIndex:1 hardened:NO];
+        }
+        return _internalKeychain;
+    }
 }
 
 // Currently available external address to receive payments on.
 - (BTCPublicKeyAddress*) externalAddress
 {
-    NSData* pubkey = [self.keychain externalKeyAtIndex:self.externalKeyIndex].publicKey;
-    if (self.wallet.isTestnet)
-    {
-        return [BTCPublicKeyAddressTestnet addressWithData:BTCHash160(pubkey)];
-    }
-    return [BTCPublicKeyAddress addressWithData:BTCHash160(pubkey)];
+    return [self.wallet addressForKey:[self.externalKeychain keyAtIndex:self.externalKeyIndex]];
 }
 
 // Currently available internal (change) address to receive payments on.
-- (BTCPublicKeyAddress*) changeAddress
+- (BTCPublicKeyAddress*) internalAddress
 {
-    NSData* pubkey = [self.keychain externalKeyAtIndex:self.internalKeyIndex].publicKey;
-    if (self.wallet.isTestnet)
-    {
-        return [BTCPublicKeyAddressTestnet addressWithData:BTCHash160(pubkey)];
-    }
-    return [BTCPublicKeyAddress addressWithData:BTCHash160(pubkey)];
+    return [self.wallet addressForKey:[self.internalKeychain keyAtIndex:self.internalKeyIndex]];
 }
 
 - (BTCSatoshi) unconfirmedAmount
@@ -117,6 +138,48 @@
 - (BOOL) current { return self.isCurrent; }
 
 
+
+
+- (NSUInteger) externalIndexForScriptData:(NSData*)data startIndex:(NSUInteger)startIndex limit:(NSUInteger)limit
+{
+    return [self impl_indexForScriptData:data keychain:self.externalKeychain cache:_externalScriptSearchCache startIndex:startIndex limit:limit];
+}
+
+- (NSUInteger) internalIndexForScriptData:(NSData*)data startIndex:(NSUInteger)startIndex limit:(NSUInteger)limit
+{
+    return [self impl_indexForScriptData:data keychain:self.internalKeychain cache:_internalScriptSearchCache startIndex:startIndex limit:limit];
+}
+
+- (NSUInteger) impl_indexForScriptData:(NSData*)data keychain:(BTCKeychain*)keychain cache:(NSMutableDictionary*)searchCache startIndex:(NSUInteger)startIndex limit:(NSUInteger)limit
+{
+    if (!data || !keychain) return NSNotFound;
+
+    @synchronized(self)
+    {
+        for (NSUInteger i = startIndex; i < (startIndex + limit); i++)
+        {
+            // Try to get script data for this index from the cache.
+            // If not found, compute it and put it in cache.
+            NSNumber* j = @(i);
+            NSData* ithData = searchCache[j];
+            if (!ithData)
+            {
+                BTCKey* key = [keychain keyAtIndex:(uint32_t)i];
+                BTCScript* script = [[BTCScript alloc] initWithAddress:key.address];
+                // Cache this value to avoid computing again.
+                ithData = script.data;
+                searchCache[j] = ithData;
+            }
+
+            if ([ithData isEqual:data])
+            {
+                return i;
+            }
+        }
+
+        return NSNotFound;
+    }
+}
 
 
 #pragma mark - Database Access

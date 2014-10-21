@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSUInteger, BTCCurrencyConverterMode) {
+typedef NS_ENUM(NSInteger, BTCCurrencyConverterMode) {
     /*!
      * Uses the average exchange rate to convert btc to fiat and back.
      */

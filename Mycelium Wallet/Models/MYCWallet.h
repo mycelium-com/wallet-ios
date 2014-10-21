@@ -70,26 +70,28 @@ extern NSString* const MYCWalletDidUpdateAccountNotification;
 // Sets testnet mode once. Call it in developer build in application:didFinishLaunchingWithOptions:
 - (void) setTestnetOnce;
 
-// Returns YES if wallet is fully initialized and stored on disk.
-- (BOOL) isStored;
-
 // Saves exchange rate persistently.
 - (void) saveCurrencyConverter;
 
+// Methods to produce correct testnet/mainnet presentation of the address.
+- (BTCPublicKeyAddress*) addressForAddress:(BTCAddress*)address; // converts to testnet or mainnet if needed
+- (BTCPublicKeyAddress*) addressForKey:(BTCKey*)key;
+- (BTCPublicKeyAddress*) addressForPublicKey:(NSData*)publicKey;
+- (BTCPublicKeyAddress*) addressForPublicKeyHash:(NSData*)hash160;
 
 
 // Accessing Secret Data
-
-
 
 // Unlocks wallet with a human-readable reason.
 - (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason;
 
 
 
-
 // Accessing Database
 
+
+// Returns YES if wallet is fully initialized and stored on disk.
+- (BOOL) isStored;
 
 // Creates database and populates with default account.
 - (void) setupDatabaseWithMnemonic:(BTCMnemonic*)mnemonic;

@@ -15,6 +15,11 @@
     return [[BTCScript alloc] initWithData:self.scriptData];
 }
 
+- (void) setScript:(BTCScript *)script
+{
+    self.scriptData = script.data;
+}
+
 - (BTCTransactionOutput*) transactionOutput
 {
     BTCTransactionOutput* txout = [[BTCTransactionOutput alloc] initWithValue:self.value script:self.script];
@@ -24,11 +29,20 @@
     return txout;
 }
 
+- (void) setTransactionOutput:(BTCTransactionOutput *)transactionOutput
+{
+    self.value = transactionOutput.value;
+    self.script = transactionOutput.script;
+    self.blockHeight = transactionOutput.blockHeight;
+    self.outpointIndex = transactionOutput.index;
+    self.outpointHash = transactionOutput.transactionHash;
+}
+
 
 #pragma mark - Database Access
 
 
-+ (instancetype) loadOutputForAccount:(uint32_t)accountIndex hash:(NSData*)prevHash index:(uint32_t)prevIndex database:(FMDatabase*)db
++ (instancetype) loadOutputForAccount:(NSInteger)accountIndex hash:(NSData*)prevHash index:(uint32_t)prevIndex database:(FMDatabase*)db
 {
     return [[self loadWithCondition:@"accountIndex = ? AND outpointHash = ? AND outpointIndex = ?"
                              params:@[@(accountIndex), prevHash ?: @"n/a", @(prevIndex) ]
@@ -38,6 +52,11 @@
 
 #pragma mark - MYCDatabaseRecord
 
+
++ (NSString *)primaryKeyName
+{
+    return nil;
+}
 
 + (NSString *)tableName
 {

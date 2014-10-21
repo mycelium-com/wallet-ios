@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSUInteger, MYCBroadcastStatus) {
+typedef NS_ENUM(NSInteger, MYCBroadcastStatus) {
     // Something went wrong with the server or internet connection.
     // Should try re-broadcasting again later.
     MYCBroadcastStatusFailure = 0,
@@ -48,13 +48,13 @@ typedef NS_ENUM(NSUInteger, MYCBroadcastStatus) {
 // Fetches the latest transaction ids (NSString reversed tx hashes) for given addresses (BTCAddress instances).
 // Results include both transactions spending and receiving to the given addresses.
 - (void) loadTransactionIDsForAddresses:(NSArray*)addresses
-                                  limit:(NSUInteger)limit
+                                  limit:(NSInteger)limit
                              completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion;
 
 // Fetches the latest transactions (BTCTransaction instances) for given addresses (BTCAddress instances).
 // Results include both transactions spending and receiving to the given addresses.
 - (void) loadTransactionsForAddresses:(NSArray*)addresses
-                                limit:(NSUInteger)limit
+                                limit:(NSInteger)limit
                            completion:(void(^)(NSArray* txs, NSInteger height, NSError* error))completion;
 
 // Checks status of the given transaction IDs and returns an array of dictionaries.

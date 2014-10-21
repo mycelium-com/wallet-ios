@@ -22,6 +22,6 @@
 @property(nonatomic) BTCTransaction* transaction;
 
 // Finds a transaction in the database for a given hash. Returns nil if not found.
-+ (instancetype) loadTransactionForAccount:(uint32_t)accountIndex hash:(NSData*)txhash database:(FMDatabase*)db;
++ (instancetype) loadTransactionForAccount:(NSInteger)accountIndex hash:(NSData*)txhash database:(FMDatabase*)db;
 
 @end
