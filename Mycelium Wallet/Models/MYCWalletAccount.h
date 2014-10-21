@@ -70,8 +70,19 @@
 // Currently available internal (change) address to receive payments on.
 @property(nonatomic, readonly) BTCPublicKeyAddress* changeAddress;
 
+// Initializes account with an root account keychain (m/44'/{account}')
 - (id) initWithKeychain:(BTCKeychain*)keychain;
 
+
+// Loads current active account from database.
++ (MYCWalletAccount*) currentAccountFromDatabase:(FMDatabase*)db;
+
+// Loads all accounts from database.
++ (NSArray*) accountsFromDatabase:(FMDatabase*)db;
+
+// Loads a specific account at index from database.
+// If account does not exist, returns nil.
++ (MYCWalletAccount*) accountAtIndex:(uint32_t)index fromDatabase:(FMDatabase*)db;
 
 
 @end

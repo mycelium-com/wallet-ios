@@ -106,14 +106,14 @@ extern NSString* const MYCWalletDidUpdateAccountNotification;
 - (void) inTransaction:(void(^)(FMDatabase *db, BOOL *rollback))block;
 
 // Loads current active account from database.
-- (MYCWalletAccount*) currentAccountFromDatabase:(FMDatabase*)db;
+- (MYCWalletAccount*) currentAccountFromDatabase:(FMDatabase*)db DEPRECATED_ATTRIBUTE;
 
 // Loads all accounts from database.
-- (NSArray*) accountsFromDatabase:(FMDatabase*)db;
+- (NSArray*) accountsFromDatabase:(FMDatabase*)db DEPRECATED_ATTRIBUTE;
 
 // Loads a specific account at index from database.
 // If account does not exist, returns nil.
-- (MYCWalletAccount*) accountAtIndex:(uint32_t)index fromDatabase:(FMDatabase*)db;
+- (MYCWalletAccount*) accountAtIndex:(uint32_t)index fromDatabase:(FMDatabase*)db DEPRECATED_ATTRIBUTE;
 
 
 

@@ -52,7 +52,7 @@
     if (!_currentAccount)
     {
         [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
-            _currentAccount = [[MYCWallet currentWallet] currentAccountFromDatabase:db];
+            _currentAccount = [MYCWalletAccount currentAccountFromDatabase:db];
         }];
     }
     return _currentAccount;
@@ -66,7 +66,7 @@
     if (_currentAccount)
     {
         [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
-            _currentAccount = [[MYCWallet currentWallet] currentAccountFromDatabase:db];
+            _currentAccount = [MYCWalletAccount currentAccountFromDatabase:db];
         }];
     }
 

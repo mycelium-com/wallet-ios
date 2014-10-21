@@ -444,20 +444,20 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 // Loads current active account from database.
 - (MYCWalletAccount*) currentAccountFromDatabase:(FMDatabase*)db
 {
-    return [[MYCWalletAccount loadWithCondition:@"current = 1 LIMIT 1" fromDatabase:db] firstObject];
+    return [MYCWalletAccount currentAccountFromDatabase:db];
 }
 
 // Loads all accounts from database.
 - (NSArray*) accountsFromDatabase:(FMDatabase*)db
 {
-    return [MYCWalletAccount loadWithCondition:@"1 ORDER BY accountIndex" fromDatabase:db];
+    return [MYCWalletAccount accountsFromDatabase:db];
 }
 
 // Loads a specific account at index from database.
 // If account does not exist, returns nil.
 - (MYCWalletAccount*) accountAtIndex:(uint32_t)index fromDatabase:(FMDatabase*)db
 {
-    return [MYCWalletAccount loadWithPrimaryKey:@(index) fromDatabase:db];
+    return [MYCWalletAccount accountAtIndex:index fromDatabase:db];
 }
 
 

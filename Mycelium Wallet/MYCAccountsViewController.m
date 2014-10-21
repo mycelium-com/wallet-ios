@@ -72,9 +72,8 @@
 
 - (void) updateSections
 {
-    MYCWallet* wallet = [MYCWallet currentWallet];
-    [wallet inDatabase:^(FMDatabase *db) {
-        NSArray* accs = [wallet accountsFromDatabase:db];
+    [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+        NSArray* accs = [MYCWalletAccount accountsFromDatabase:db];
         NSMutableArray* activeAccs = [NSMutableArray array];
         NSMutableArray* archivedAccs = [NSMutableArray array];
         for (MYCWalletAccount* acc in accs)

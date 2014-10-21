@@ -244,7 +244,7 @@
                        txout.value = [dict[@"value"] longLongValue];
                        txout.script = [[BTCScript alloc] initWithData:scriptData];
 
-                       txout.index = [((NSString*)txHashAndIndex[0]) integerValue];
+                       txout.index = (uint32_t)[((NSString*)txHashAndIndex[0]) integerValue];
                        txout.transactionHash = txhash;
                        txout.blockHeight = [dict[@"height"] integerValue];
 
@@ -258,13 +258,7 @@
 
 // Fetches the latest transaction ids for given addresses (BTCAddress instances).
 // Results include both transactions spending and receiving to the given addresses.
-// Default limit is 1000.
-- (void) loadTransactionsForAddresses:(NSArray*)addresses completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion
-{
-    [self loadTransactionsForAddresses:addresses limit:1000 completion:completion];
-}
-
-- (void) loadTransactionsForAddresses:(NSArray*)addresses limit:(NSUInteger)limit completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion
+- (void) loadTransactionIDsForAddresses:(NSArray*)addresses limit:(NSUInteger)limit completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion
 {
     NSParameterAssert(addresses);
 
@@ -316,6 +310,40 @@
                }];
 }
 
+- (void) loadTransactionsForAddresses:(NSArray*)addresses limit:(NSUInteger)limit completion:(void(^)(NSArray* txs, NSInteger height, NSError* error))completion
+{
+    NSParameterAssert(addresses);
+
+    if (addresses.count == 0)
+    {
+        if (completion) completion(@[], 0, nil);
+        return;
+    }
+
+    [self loadTransactionIDsForAddresses:addresses limit:limit completion:^(NSArray *txids, NSInteger height, NSError *error) {
+
+        if (!txids)
+        {
+            if (completion) completion(nil, 0, error);
+            return;
+        }
+
+        // Will return early if input is empty list.
+        [self loadTransactions:txids completion:^(NSArray *transactions, NSError *error) {
+
+            if (transactions)
+            {
+                if (transactions.count != txids.count)
+                {
+                    MYCError(@"MYCBackend: number of received transactions != number of requested txids! %d != %d (but we continue with what we have)",
+                             (int)transactions.count, (int)txids.count);
+                }
+            }
+            if (completion) completion(transactions, height, error);
+
+        }];
+    }];
+}
 
 
 // Checks status of the given transaction IDs and returns an array of dictionaries.

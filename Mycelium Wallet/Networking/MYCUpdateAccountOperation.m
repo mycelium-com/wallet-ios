@@ -161,18 +161,11 @@
     }
 
     // Load all known transactions for the given addresses.
-    [self.wallet.backend loadTransactionsForAddresses:addresses limit:1000 completion:^(NSArray *txids, NSInteger height, NSError *error) {
+    [self.wallet.backend loadTransactionsForAddresses:addresses limit:1000 completion:^(NSArray *transactions, NSInteger height, NSError *error) {
 
-        if (!txids)
+        if (!transactions)
         {
             if (completion) completion(NO, NO, error);
-            return;
-        }
-
-        // If no transactions found - we are done discovering.
-        if (txids.count == 0)
-        {
-            if (completion) completion(YES, NO, nil);
             return;
         }
 
@@ -180,46 +173,30 @@
         [self log:[NSString stringWithFormat:@"Updating blockchain height: %d", (int)height]];
         self.wallet.blockchainHeight = height;
 
-        // To figure which indexes we need to advance and how much, get the transactions and import them.
-        [self.wallet.backend loadTransactions:txids completion:^(NSArray *transactions, NSError *error) {
-            if (!transactions)
+        [self saveTransactions:transactions completion:^(BOOL success, NSError *error) {
+
+            if (!success)
             {
-                if (completion) completion(NO, NO, error);
+                 if (completion) completion(NO, NO, error);
                 return;
             }
 
-            if (transactions.count != txids.count)
-            {
-                MYCError(@"MYCUpdateAccountOperation: number of received transactions != number of requested txids! %d != %d (but we continue with what we have)",
-                         (int)transactions.count, (int)txids.count);
-            }
-
-            [self saveTransactions:transactions completion:^(BOOL success, NSError *error) {
-
+            // Fetch parent outputs.
+            // Parent outputs are used to figure which inputs are ours when we compute balance.
+            // Technically, we could assume all payments to be P2PKH and extract pubkey from the input without fetching parent outputs,
+            // but for consistency and extensibility we check the destination via the output script.
+            [self fetchRelevantParentOutputsFromTransactions:transactions completion:^(BOOL success, NSError *error) {
                 if (!success)
                 {
-                     if (completion) completion(NO, NO, error);
+                    if (completion) completion(NO, NO, error);
                     return;
                 }
 
-                // Fetch parent outputs.
-                // Parent outputs are used to figure which inputs are ours when we compute balance.
-                // Technically, we could assume all payments to be P2PKH and extract pubkey from the input without fetching parent outputs,
-                // but for consistency and extensibility we check the destination via the output script.
-                [self fetchRelevantParentOutputsFromTransactions:transactions completion:^(BOOL success, NSError *error) {
-                    if (!success)
-                    {
-                        if (completion) completion(NO, NO, error);
-                        return;
-                    }
-
-                    // Report that we found some transactions.
-                    if (completion) completion(YES, YES, nil);
-                }];
-
-            }]; // save txs.
-        }]; // load txs for txids
-    }]; // load txids for addresses
+                // Report that we found some transactions.
+                if (completion) completion(YES, YES, nil);
+            }];
+        }]; // save txs.
+    }]; // load txs for addresses
 }
 
 
@@ -228,7 +205,42 @@
     NSUInteger accountIndex = self.account.accountIndex;
     MYCWallet* wallet = self.wallet;
 
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
 
+        NSMutableArray* txidsToFetch = [NSMutableArray array];
+
+
+        [self.wallet inDatabase:^(FMDatabase *db) {
+            for (BTCTransaction* tx in txs)
+            {
+                if (!tx.isCoinbase)
+                {
+                    
+                    //                TransactionOutputEx parentOutput = _backing.getParentTransactionOutput(in.outPoint);
+                    //                if (parentOutput != null) {
+                    //                    // We already have the parent output, no need to fetch the entire
+                    //                    // parent transaction
+                    //                    parentOutputs.put(parentOutput.outPoint, parentOutput);
+                    //                    continue;
+                    //                }
+                    //                TransactionEx parentTransaction = _backing.getTransaction(in.outPoint.hash);
+                    //                if (parentTransaction != null) {
+                    //                    // We had the parent transaction in our own transactions, no need to
+                    //                    // fetch it remotely
+                    //                    parentTransactions.put(parentTransaction.txid, parentTransaction);
+                    //                } else {
+                    //                    // Need to fetch it
+                    //                    toFetch.add(in.outPoint.hash);
+                    //                }
+                    
+                    
+                    [txidsToFetch addObjectsFromArray:[tx.inputs valueForKey:@"previousTransactionID"]];
+                }
+            }
+
+        }];
+
+    });
 
     completion(YES, nil);
 }

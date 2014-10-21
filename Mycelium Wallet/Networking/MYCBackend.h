@@ -47,9 +47,15 @@ typedef NS_ENUM(NSUInteger, MYCBroadcastStatus) {
 
 // Fetches the latest transaction ids (NSString reversed tx hashes) for given addresses (BTCAddress instances).
 // Results include both transactions spending and receiving to the given addresses.
-// Default limit is 1000.
-- (void) loadTransactionsForAddresses:(NSArray*)addresses completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion;
-- (void) loadTransactionsForAddresses:(NSArray*)addresses limit:(NSUInteger)limit completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion;
+- (void) loadTransactionIDsForAddresses:(NSArray*)addresses
+                                  limit:(NSUInteger)limit
+                             completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion;
+
+// Fetches the latest transactions (BTCTransaction instances) for given addresses (BTCAddress instances).
+// Results include both transactions spending and receiving to the given addresses.
+- (void) loadTransactionsForAddresses:(NSArray*)addresses
+                                limit:(NSUInteger)limit
+                           completion:(void(^)(NSArray* txs, NSInteger height, NSError* error))completion;
 
 // Checks status of the given transaction IDs and returns an array of dictionaries.
 // Each dictionary is of this format: {@"txid": @"...", @"found": @YES/@NO, @"height": @123, @"date": NSDate }.
@@ -58,15 +64,18 @@ typedef NS_ENUM(NSUInteger, MYCBroadcastStatus) {
 // * `height` contains -1 for unconfirmed transaction and block height at which it is included.
 // * `date` contains time when transaction is recorded or noticed.
 // In case of error, `dicts` is nil and `error` contains NSError object.
-- (void) loadStatusForTransactions:(NSArray*)txids completion:(void(^)(NSArray* dicts, NSError* error))completion;
+- (void) loadStatusForTransactions:(NSArray*)txids
+                        completion:(void(^)(NSArray* dicts, NSError* error))completion;
 
 // Loads actual transactions (BTCTransaction instances) for given txids.
 // Each transaction contains blockHeight property (-1 = unconfirmed) and blockDate property.
-- (void) loadTransactions:(NSArray*)txids completion:(void(^)(NSArray* transactions, NSError* error))completion;
+- (void) loadTransactions:(NSArray*)txids
+               completion:(void(^)(NSArray* transactions, NSError* error))completion;
 
 // Broadcasts the transaction and returns appropriate status.
 // See comments on MYCBroadcastStatus above.
-- (void) broadcastTransaction:(BTCTransaction*)tx completion:(void(^)(MYCBroadcastStatus status, NSError* error))completion;
+- (void) broadcastTransaction:(BTCTransaction*)tx
+                   completion:(void(^)(MYCBroadcastStatus status, NSError* error))completion;
 
 
 @end
