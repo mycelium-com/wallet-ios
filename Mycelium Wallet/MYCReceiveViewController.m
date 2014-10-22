@@ -99,6 +99,8 @@
 {
     [self.btcButton setTitle:self.wallet.btcFormatter.standaloneSymbol forState:UIControlStateNormal];
     [self.fiatButton setTitle:self.wallet.fiatFormatter.currencySymbol forState:UIControlStateNormal];
+
+    self.btcField.placeholder = self.wallet.btcFormatter.placeholderText;
 }
 
 
@@ -272,6 +274,15 @@
     self.requestedAmount = [self.wallet.btcFormatter amountFromString:self.btcField.text];
     self.fiatField.text = [self.wallet.fiatFormatterNaked
                            stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:self.requestedAmount]];
+
+    if (self.btcField.text.length == 0)
+    {
+        self.fiatField.text = @"";
+    }
+    else
+    {
+//        self.btcField.text = [self.wallet.btcFormatterNaked stringFromAmount:self.requestedAmount];
+    }
 }
 
 - (IBAction)didEditFiat:(id)sender
@@ -279,6 +290,15 @@
     NSNumber* fiatAmount = [self.wallet.fiatFormatter numberFromString:self.fiatField.text];
     self.requestedAmount = [self.wallet.currencyConverter bitcoinFromFiat:[NSDecimalNumber decimalNumberWithDecimal:fiatAmount.decimalValue]];
     self.btcField.text = [self.wallet.btcFormatterNaked stringFromAmount:self.requestedAmount];
+
+    if (self.fiatField.text.length == 0)
+    {
+        self.btcField.text = @"";
+    }
+    else
+    {
+//        self.fiatField.text = [self.wallet.fiatFormatterNaked stringFromNumber:fiatAmount];
+    }
 }
 
 

@@ -34,7 +34,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uw4-md-gDa">
-                    <rect key="frame" x="109.5" y="351" width="101" height="33"/>
+                    <rect key="frame" x="109" y="351" width="101" height="33"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                     <state key="normal" title="Main Account">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -58,7 +58,7 @@
                 </imageView>
                 <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kos-8N-C97" userLabel="Editing Overlay">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                    <color key="backgroundColor" white="1" alpha="0.95000000000000007" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     <gestureRecognizers/>
                     <connections>
                         <outletCollection property="gestureRecognizers" destination="5sX-Ey-r1D" appends="YES" id="L8g-yc-AUc"/>
@@ -69,8 +69,8 @@
                     <rect key="frame" x="0.0" y="0.0" width="320" height="140"/>
                     <subviews>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="0 000 000" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kFl-8S-cfl">
-                            <rect key="frame" x="0.0" y="68" width="185.5" height="31"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="26"/>
+                            <rect key="frame" x="0.0" y="64" width="181.5" height="36"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="30"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
                             <connections>
                                 <action selector="didBeginEditingBtc:" destination="-1" eventType="editingDidBegin" id="1n2-b5-WJH"/>
@@ -78,8 +78,8 @@
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3RM-6k-xvO">
-                            <rect key="frame" x="189" y="68" width="51" height="31"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="26"/>
+                            <rect key="frame" x="185" y="64" width="55" height="36"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="30"/>
                             <inset key="contentEdgeInsets" minX="4" minY="0.0" maxX="4" maxY="0.0"/>
                             <state key="normal" title="bits">
                                 <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -89,8 +89,8 @@
                             </connections>
                         </button>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="0.00" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="JKe-vf-UtV">
-                            <rect key="frame" x="0.0" y="103" width="185.5" height="24"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
+                            <rect key="frame" x="0.0" y="106" width="181.5" height="23"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="19"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
                             <connections>
                                 <action selector="didBeginEditingFiat:" destination="-1" eventType="editingDidBegin" id="VJ9-KJ-xpI"/>
@@ -98,8 +98,8 @@
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LZw-UV-QNe">
-                            <rect key="frame" x="189" y="103" width="50.5" height="24"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
+                            <rect key="frame" x="185" y="106" width="54.5" height="23"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="19"/>
                             <inset key="contentEdgeInsets" minX="4" minY="0.0" maxX="4" maxY="0.0"/>
                             <state key="normal" title="usd">
                                 <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -140,9 +140,9 @@
                         <constraint firstItem="LZw-UV-QNe" firstAttribute="leading" secondItem="JKe-vf-UtV" secondAttribute="trailing" constant="4" id="dzl-eL-Zh3"/>
                         <constraint firstItem="kFl-8S-cfl" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" id="epa-68-63W"/>
                         <constraint firstItem="0vX-Jh-BID" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" constant="10" id="hg5-ZM-wAX"/>
-                        <constraint firstItem="kFl-8S-cfl" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="top" constant="68" id="iVT-H8-2qH"/>
+                        <constraint firstItem="kFl-8S-cfl" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="top" constant="64" id="iVT-H8-2qH"/>
                         <constraint firstAttribute="trailing" secondItem="3RM-6k-xvO" secondAttribute="trailing" multiplier="1.333" priority="999" id="k6K-sf-3AY"/>
-                        <constraint firstItem="JKe-vf-UtV" firstAttribute="top" secondItem="kFl-8S-cfl" secondAttribute="bottom" constant="4" id="n0T-UN-qcK"/>
+                        <constraint firstItem="JKe-vf-UtV" firstAttribute="top" secondItem="kFl-8S-cfl" secondAttribute="bottom" constant="6" id="n0T-UN-qcK"/>
                         <constraint firstAttribute="trailing" secondItem="LZw-UV-QNe" secondAttribute="trailing" multiplier="1.333" priority="999" id="rQn-8q-17P"/>
                     </constraints>
                 </view>

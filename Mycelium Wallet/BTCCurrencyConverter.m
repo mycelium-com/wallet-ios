@@ -1,4 +1,5 @@
 #import "BTCCurrencyConverter.h"
+#import "BTCNumberFormatter.h"
 
 @implementation BTCCurrencyConverter
 
@@ -121,15 +122,15 @@
     switch (_mode) {
         case BTCCurrencyConverterModeAverage:
             if (!_averageRate) return 0;
-            return [[[fiatAmount decimalNumberByDividingBy:_averageRate] decimalNumberByMultiplyingByPowerOf10:8] longLongValue];
+            return BTCAmountFromDecimalNumber([[fiatAmount decimalNumberByDividingBy:_averageRate] decimalNumberByMultiplyingByPowerOf10:8]);
 
         case BTCCurrencyConverterModeBuy:
             if (!_buyRate) return 0;
-            return [[[fiatAmount decimalNumberByDividingBy:_buyRate] decimalNumberByMultiplyingByPowerOf10:8] longLongValue];
+            return BTCAmountFromDecimalNumber([[fiatAmount decimalNumberByDividingBy:_buyRate] decimalNumberByMultiplyingByPowerOf10:8]);
 
         case BTCCurrencyConverterModeSell:
             if (!_sellRate) return 0;
-            return [[[fiatAmount decimalNumberByDividingBy:_sellRate] decimalNumberByMultiplyingByPowerOf10:8] longLongValue];
+            return BTCAmountFromDecimalNumber([[fiatAmount decimalNumberByDividingBy:_sellRate] decimalNumberByMultiplyingByPowerOf10:8]);
 
         // TODO: add order book modes
 

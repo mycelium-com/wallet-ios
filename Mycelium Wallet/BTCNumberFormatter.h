@@ -20,6 +20,12 @@ extern NSString* const BTCNumberFormatterSymbolMilliBTC; // mɃ
 extern NSString* const BTCNumberFormatterSymbolBit;      // ƀ
 extern NSString* const BTCNumberFormatterSymbolSatoshi;  // ṡ
 
+/*!
+ * Rounds the decimal number and returns its longLongValue.
+ * Do not use NSDecimalNumber.longLongValue as it will return 0 on iOS 8.0.2 if the number is not rounded first.
+ */
+BTCSatoshi BTCAmountFromDecimalNumber(NSNumber* num);
+
 @interface BTCNumberFormatter : NSNumberFormatter
 
 /*!

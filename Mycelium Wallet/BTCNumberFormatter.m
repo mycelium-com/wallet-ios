@@ -11,6 +11,24 @@ NSString* const BTCNumberFormatterSymbolMilliBTC = @"mɃ";
 NSString* const BTCNumberFormatterSymbolBit      = @"ƀ";
 NSString* const BTCNumberFormatterSymbolSatoshi  = @"ṡ";
 
+BTCSatoshi BTCAmountFromDecimalNumber(NSNumber* num)
+{
+    if ([num isKindOfClass:[NSDecimalNumber class]])
+    {
+        NSDecimalNumber* dnum = (id)num;
+        // Starting iOS 8.0.2, the longLongValue method returns 0 for some non rounded values.
+        // Rounding the number looks like a work around.
+        NSDecimalNumberHandler *roundingBehavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain
+                                                                                                          scale:0
+                                                                                               raiseOnExactness:NO
+                                                                                                raiseOnOverflow:YES
+                                                                                               raiseOnUnderflow:NO
+                                                                                            raiseOnDivideByZero:YES];
+        num = [dnum decimalNumberByRoundingAccordingToBehavior:roundingBehavior];
+    }
+    BTCSatoshi sat = [num longLongValue];
+    return sat;
+}
 
 @implementation BTCNumberFormatter
 
@@ -225,13 +243,13 @@ NSString* const BTCNumberFormatterSymbolSatoshi  = @"ṡ";
     switch (_bitcoinUnit)
     {
         case BTCNumberFormatterUnitSatoshi:
-            return number.longLongValue;
+            return BTCAmountFromDecimalNumber(number);
         case BTCNumberFormatterUnitBit:
-            return [[self number:number multipliedByPowerOf10:2] longLongValue];
+            return BTCAmountFromDecimalNumber([self number:number multipliedByPowerOf10:2]);
         case BTCNumberFormatterUnitMilliBTC:
-            return [[self number:number multipliedByPowerOf10:5] longLongValue];
+            return BTCAmountFromDecimalNumber([self number:number multipliedByPowerOf10:5]);
         case BTCNumberFormatterUnitBTC:
-            return [[self number:number multipliedByPowerOf10:8] longLongValue];
+            return BTCAmountFromDecimalNumber([self number:number multipliedByPowerOf10:8]);
         default:
             [[NSException exceptionWithName:@"BTCNumberFormatter: not supported bitcoin unit" reason:@"" userInfo:nil] raise];
             return 0;

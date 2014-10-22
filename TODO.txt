@@ -2,12 +2,12 @@ Todo:
 
 - send: add address field and scan UI.
 - send: compose transactions for sending.
-- receive: generate proper QR code for "bitcoin:..." url.
-- receive: show tip to tap to dismiss.
 - settings: show credits and other info.
+- settings: spend from WIF private key (fetch all unspents and spend them to current account's change address).
 - accounts: edit account label.
 - accounts: archive/unarchive accounts.
 - accounts: make account current.
+- handle bitcoin: URL when clicked in safari or elsewhere.
 
 Notes from talk with Andreas:
 
@@ -19,6 +19,9 @@ Notes from talk with Andreas:
 
 
 Done:
+
++ receive: generate proper QR code for "bitcoin:..." url.
+≠ receive: show tip to tap to dismiss. Simply tap the QR code to dismiss.
 
 + wallet: add API to fetch balance.
 + wallet: add API to fetch unspent outputs.

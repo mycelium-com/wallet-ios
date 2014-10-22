@@ -1,7 +1,8 @@
 #import <Foundation/Foundation.h>
 
 /*!
- * Class to compose and handle various Bitcoin URLs.
+ * Class to compose and handle various Bitcoin URLs according to BIP21.
+ * See: https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki
  */
 @interface BTCBitcoinURL : NSObject
 
@@ -12,5 +13,9 @@
  * @param label   Optional label.
  */
 + (NSURL*) URLWithAddress:(BTCAddress*)address amount:(BTCSatoshi)amount label:(NSString*)label;
+
+// TODO: support arbitrary keys and values.
+
+// TODO: support handling URL from UIApplicationDelegate.
 
 @end
