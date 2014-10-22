@@ -115,6 +115,28 @@
     return self.pendingSentAmount - self.pendingChangeAmount;
 }
 
+- (NSString*) debugBalanceDescription
+{
+    NSMutableString* s = [NSMutableString stringWithFormat:@"Spendable: %@", @(self.spendableAmount)];
+
+    if (self.confirmedAmount != self.spendableAmount)
+    {
+        [s appendFormat:@" (confirmed %@)", @(self.confirmedAmount)];
+    }
+
+    if (self.receivingAmount > 0)
+    {
+        [s appendFormat:@" Receiving: %@", @(self.receivingAmount)];
+    }
+
+    if (self.sendingAmount > 0)
+    {
+        [s appendFormat:@" Sending: %@", @(self.sendingAmount)];
+    }
+
+    return s;
+}
+
 - (NSDate *) syncDate
 {
     if (self.syncTimestamp > 0.0) {

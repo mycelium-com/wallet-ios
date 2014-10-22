@@ -77,6 +77,11 @@
                        fromDatabase:db] firstObject];
 }
 
++ (NSArray*) loadOutputsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db
+{
+    return [self loadWithCondition:@"accountIndex = ?" params:@[@(accountIndex)] fromDatabase:db];
+}
+
 
 #pragma mark - MYCDatabaseRecord
 

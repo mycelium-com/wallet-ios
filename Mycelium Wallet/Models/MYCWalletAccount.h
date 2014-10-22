@@ -17,10 +17,10 @@
 @property(nonatomic) NSString*  extendedPublicKey;
 
 // The sum of the unspent outputs which are confirmed and currently not spent in pending transactions.
-@property(nonatomic) BTCSatoshi confirmedAmount;
-@property(nonatomic) BTCSatoshi pendingChangeAmount; // total unconfirmed outputs on change addresses
-@property(nonatomic) BTCSatoshi pendingReceivedAmount; // total unconfirmed outputs on external addresses
-@property(nonatomic) BTCSatoshi pendingSentAmount; // total unconfirmed outputs spent
+@property(atomic) BTCSatoshi confirmedAmount;
+@property(atomic) BTCSatoshi pendingChangeAmount; // total unconfirmed outputs on change addresses
+@property(atomic) BTCSatoshi pendingReceivedAmount; // total unconfirmed outputs on external addresses
+@property(atomic) BTCSatoshi pendingSentAmount; // total unconfirmed outputs spent
 
 // Indices to be used in the next payment for each subchain of keys.
 // Normally the latest used index is (externalKeyIndex - 1).
@@ -55,6 +55,8 @@
 
 // Returns pendingSentAmount - pendingChangeAmount
 @property(nonatomic, readonly) BTCSatoshi sendingAmount;
+
+- (NSString*) debugBalanceDescription;
 
 // Keychain representing this account.
 @property(nonatomic, readonly) BTCKeychain* keychain; // thread-safe

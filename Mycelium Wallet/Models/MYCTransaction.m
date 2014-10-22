@@ -87,6 +87,14 @@
                        fromDatabase:db];
 }
 
+// Finds unconfirmed transactions (with height = -1)
++ (NSArray*) loadUnconfirmedTransactionsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db
+{
+    return [self loadWithCondition:@"accountIndex = ? AND blockHeight == -1"
+                            params:@[@(accountIndex)]
+                      fromDatabase:db];
+}
+
 
 
 

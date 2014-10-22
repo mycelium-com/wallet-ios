@@ -380,14 +380,152 @@
     }];
 }
 
+
+
+
 - (void) updateLocalBalance:(void(^)(BOOL success, NSError* error))completion
 {
-    
-#warning TODO: update the balance.
-    
-    if (completion) completion(YES, nil);
+    [self.wallet asyncInTransaction:^id(FMDatabase *db, BOOL *rollback, NSError *__autoreleasing *dberrorOut) {
+
+        BTCSatoshi confirmed = 0;
+        BTCSatoshi pendingChange = 0;
+        BTCSatoshi pendingSending = 0;
+        BTCSatoshi pendingReceiving = 0;
+
+        NSArray* /* [MYCUnspentOutput] */ unspentOutputs = [MYCUnspentOutput loadOutputsForAccount:self.account.accountIndex database:db];
+
+        // 1. Determine the value we are receiving and create a set of outpoints for fast lookup
+
+        NSMutableSet* unspentOutpoints = [NSMutableSet set];
+        for (MYCUnspentOutput* output in unspentOutputs)
+        {
+            // Unconfirmed output
+            if (output.blockHeight == -1)
+            {
+                // Check if any input of transaction identified by output.transactionHash is spending existing MYCParentOutput.
+                if ([self isTxSpentByMe:output.outpointHash database:db])
+                {
+                    pendingChange += output.value;
+                }
+                else
+                {
+                    pendingReceiving += output.value;
+                }
+            }
+            else
+            {
+                confirmed += output.value;
+            }
+            [unspentOutpoints addObject:output.outpoint];
+        }
+
+
+        // 2. Determine the value we are sending
+
+
+        // Get the current set of unconfirmed transactions
+        for (MYCTransaction* unconfirmedMtx in [MYCTransaction loadUnconfirmedTransactionsForAccount:self.account.accountIndex database:db])
+        {
+            BTCTransaction* tx = unconfirmedMtx.transaction;
+
+            // For each input figure out if WE are sending it by fetching the
+            // parent transaction and looking at the address
+            for (BTCTransactionInput* input in tx.inputs)
+            {
+                // Find the parent transaction
+                if (input.isCoinbase) continue;
+
+                MYCParentOutput* parent = [MYCParentOutput loadOutputForAccount:self.account.accountIndex hash:input.previousHash index:input.previousIndex database:db];
+
+                if (parent)
+                {
+                    // Have parent - we fund this transaction
+                    pendingSending += parent.value;
+                }
+            }
+
+            // Now look at the outputs and if it contains change for us, then subtract that from the sending amount
+            // if it is already spent in another transaction.
+            for (NSInteger i = 0; i < tx.outputs.count; i++)
+            {
+                BTCTransactionOutput* output = tx.outputs[i];
+
+                // If spent by us.
+                if ([self.account matchesScriptData:output.script.data change:NULL keyIndex:NULL])
+                {
+                    BTCOutpoint* outpoint = [[BTCOutpoint alloc] initWithHash:tx.transactionHash index:(uint32_t)i];
+
+                    // Note: this outpoint could be already counted as change or confirmed balance in unspent outputs.
+                    // However, here it could have been already spent. In such case we need to substract it from sent amount.
+                    if (![unspentOutpoints containsObject:outpoint])
+                    {
+                        // This output has been spent, subtract it from the amount sent.
+                        pendingSending -= output.value;
+                    }
+                }
+            }
+        } // foreach unconfirmed tx
+
+        NSString* prevBalanceDesc = [self.account debugBalanceDescription];
+
+        self.account.confirmedAmount = confirmed;
+        self.account.pendingChangeAmount = pendingChange;
+        self.account.pendingReceivedAmount = pendingReceiving;
+        self.account.pendingSentAmount = pendingSending;
+
+        NSString* currBalanceDesc = [self.account debugBalanceDescription];
+
+        if (![prevBalanceDesc isEqualToString:currBalanceDesc])
+        {
+            MYCLog(@"MYCUpdateAccountOperation[%@]: Updated account balance:", @(self.account.accountIndex));
+            MYCLog(@"MYCUpdateAccountOperation[%@]: BEFORE: %@", @(self.account.accountIndex), prevBalanceDesc);
+            MYCLog(@"MYCUpdateAccountOperation[%@]:  AFTER: %@", @(self.account.accountIndex), currBalanceDesc);
+        }
+        else
+        {
+            MYCLog(@"MYCUpdateAccountOperation[%@]: Balance did not change.", @(self.account.accountIndex));
+        }
+
+        NSError* dberror = nil;
+        if (![self.account saveInDatabase:db error:&dberror])
+        {
+            dberror = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error while updating account balance."}];
+            MYCError(@"MYCWallet: failed to save account %d after updating local balance: %@", (int)self.account.accountIndex, dberror);
+
+            if (rollback) *rollback = YES;
+            if (dberrorOut) *dberrorOut = dberror;
+            return nil;
+        }
+
+        return @1;
+
+    } completion:^(id result, NSError *dberror) {
+
+        if (completion) completion(!!result, dberror);
+
+    }];
 }
 
+
+- (BOOL) isTxSpentByMe:(NSData*)transactionHash database:(FMDatabase*)db
+{
+    if (!transactionHash) return NO;
+
+    MYCTransaction* tx = [MYCTransaction loadTransactionWithHash:transactionHash account:self.account.accountIndex database:db];
+
+    if (!tx) return NO;
+
+    for (BTCTransactionInput* input in tx.transaction.inputs)
+    {
+        // We store only our parent outputs so here it's enough to just check if one exists.
+        MYCParentOutput* parentOutput = [MYCParentOutput loadOutputForAccount:self.account.accountIndex hash:input.previousHash index:input.previousIndex database:db];
+        if (parentOutput)
+        {
+            return YES;
+        }
+    }
+    return NO;
+}
 
 
 

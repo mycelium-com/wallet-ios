@@ -28,4 +28,6 @@
 // Finds young transactions with a given height or newer (including unconfirmed ones).
 + (NSArray*) loadRecentTransactionsSinceHeight:(NSInteger)height account:(NSInteger)accountIndex database:(FMDatabase*)db;
 
+// Finds unconfirmed transactions (with height = -1)
++ (NSArray*) loadUnconfirmedTransactionsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db;
 @end

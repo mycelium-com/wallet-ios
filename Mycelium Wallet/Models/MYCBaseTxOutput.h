@@ -10,8 +10,8 @@
 
 @interface MYCBaseTxOutput : MYCDatabaseRecord
 
-@property(nonatomic) NSData* outpointHash;
-@property(nonatomic) NSInteger outpointIndex;
+@property(nonatomic) NSData* outpointHash; // hash of a tx in which this output is used
+@property(nonatomic) NSInteger outpointIndex; // index of this output in its tx
 @property(nonatomic) NSInteger blockHeight;
 @property(nonatomic) NSData* scriptData;
 @property(nonatomic) BTCSatoshi value;
@@ -26,5 +26,7 @@
 @property(nonatomic) BTCOutpoint* outpoint; // derived from outpointHash and outpointIndex
 
 + (instancetype) loadOutputForAccount:(NSInteger)accountIndex hash:(NSData*)prevHash index:(uint32_t)prevIndex database:(FMDatabase*)db;
+
++ (NSArray*) loadOutputsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db;
 
 @end
