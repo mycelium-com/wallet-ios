@@ -113,14 +113,29 @@ NSString* const BTCNumberFormatterSymbolSatoshi  = @"ṡ";
     self.negativeFormat = [self.positiveFormat stringByReplacingCharactersInRange:[self.positiveFormat rangeOfString:@"#"] withString:@"–#"];
 }
 
+- (NSString *) standaloneSymbol
+{
+    NSString* sym = [self bitcoinUnitSymbol];
+    if (!sym)
+    {
+        sym = [self bitcoinUnitSymbolForStyle:BTCNumberFormatterSymbolStyleCode unit:_bitcoinUnit];
+    }
+    return sym;
+}
+
 - (NSString*) bitcoinUnitSymbol
 {
-    switch (_symbolStyle)
+    return [self bitcoinUnitSymbolForStyle:_symbolStyle unit:_bitcoinUnit];
+}
+
+- (NSString*) bitcoinUnitSymbolForStyle:(BTCNumberFormatterSymbolStyle)symbolStyle unit:(BTCNumberFormatterUnit)bitcoinUnit
+{
+    switch (symbolStyle)
     {
         case BTCNumberFormatterSymbolStyleNone:
             return nil;
         case BTCNumberFormatterSymbolStyleCode:
-            switch (_bitcoinUnit)
+            switch (bitcoinUnit)
             {
                 case BTCNumberFormatterUnitSatoshi:
                     return NSLocalizedStringFromTable(@"SAT", @"CoreBitcoin", @"");
@@ -134,7 +149,7 @@ NSString* const BTCNumberFormatterSymbolSatoshi  = @"ṡ";
                     [[NSException exceptionWithName:@"BTCNumberFormatter: not supported bitcoin unit" reason:@"" userInfo:nil] raise];
             }
         case BTCNumberFormatterSymbolStyleLowercase:
-            switch (_bitcoinUnit)
+            switch (bitcoinUnit)
             {
                 case BTCNumberFormatterUnitSatoshi:
                     return [NSLocalizedStringFromTable(@"SAT", @"CoreBitcoin", @"") lowercaseString];
@@ -148,7 +163,7 @@ NSString* const BTCNumberFormatterSymbolSatoshi  = @"ṡ";
                     [[NSException exceptionWithName:@"BTCNumberFormatter: not supported bitcoin unit" reason:@"" userInfo:nil] raise];
             }
         case BTCNumberFormatterSymbolStyleSymbol:
-            switch (_bitcoinUnit)
+            switch (bitcoinUnit)
             {
                 case BTCNumberFormatterUnitSatoshi:
                     return BTCNumberFormatterSymbolSatoshi;

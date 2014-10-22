@@ -113,6 +113,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     [[NSUserDefaults standardUserDefaults] synchronize];
 
     self.btcFormatter.bitcoinUnit = bitcoinUnit;
+    self.btcFormatterNaked.bitcoinUnit = bitcoinUnit;
 }
 
 - (BTCNumberFormatter*) btcFormatter
@@ -122,6 +123,15 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
         _btcFormatter = [[BTCNumberFormatter alloc] initWithBitcoinUnit:self.bitcoinUnit symbolStyle:BTCNumberFormatterSymbolStyleLowercase];
     }
     return _btcFormatter;
+}
+
+- (BTCNumberFormatter*) btcFormatterNaked
+{
+    if (!_btcFormatterNaked)
+    {
+        _btcFormatterNaked = [[BTCNumberFormatter alloc] initWithBitcoinUnit:self.bitcoinUnit symbolStyle:BTCNumberFormatterSymbolStyleNone];
+    }
+    return _btcFormatterNaked;
 }
 
 - (NSNumberFormatter*) fiatFormatter
@@ -143,6 +153,22 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     }
     return _fiatFormatter;
 }
+
+- (NSNumberFormatter*) fiatFormatterNaked
+{
+    if (!_fiatFormatterNaked)
+    {
+        // For now we only support USD, but will have to support various currency exchanges later.
+        _fiatFormatterNaked = [self.fiatFormatter copy];
+        _fiatFormatterNaked.currencySymbol = @"";
+        _fiatFormatterNaked.internationalCurrencySymbol = @"";
+        _fiatFormatterNaked.positivePrefix = @"";
+        _fiatFormatterNaked.positiveSuffix = @"";
+        _fiatFormatterNaked.negativeFormat = [_fiatFormatter.positiveFormat stringByReplacingCharactersInRange:[_fiatFormatter.positiveFormat rangeOfString:@"#"] withString:@"-#"];
+    }
+    return _fiatFormatterNaked;
+}
+
 
 - (BTCCurrencyConverter*) currencyConverter
 {

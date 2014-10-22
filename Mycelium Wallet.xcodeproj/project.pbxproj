@@ -10,6 +10,7 @@
 		13DC93D53302498C84E6F0E9 /* libPods-Mycelium Wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */; };
 		20203AD619F65E290085C01F /* MYCBaseTxOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 20203AD519F65E290085C01F /* MYCBaseTxOutput.m */; };
 		20203ADC19F665F80085C01F /* MYCDatabaseMigrations.m in Sources */ = {isa = PBXBuildFile; fileRef = 20203ADB19F665F80085C01F /* MYCDatabaseMigrations.m */; };
+		20203AE019F7F8A90085C01F /* BTCBitcoinURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 20203ADF19F7F8A90085C01F /* BTCBitcoinURL.m */; };
 		203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49419DC364200572BD9 /* MYCWalletAccount.m */; };
 		203AA49819DC365D00572BD9 /* MYCBackend.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49719DC365D00572BD9 /* MYCBackend.m */; };
 		203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A019DC3C4500572BD9 /* MYCRoundedView.m */; };
@@ -74,6 +75,8 @@
 		20203AD519F65E290085C01F /* MYCBaseTxOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCBaseTxOutput.m; path = Models/MYCBaseTxOutput.m; sourceTree = "<group>"; };
 		20203ADA19F665F80085C01F /* MYCDatabaseMigrations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCDatabaseMigrations.h; path = Models/MYCDatabaseMigrations.h; sourceTree = "<group>"; };
 		20203ADB19F665F80085C01F /* MYCDatabaseMigrations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCDatabaseMigrations.m; path = Models/MYCDatabaseMigrations.m; sourceTree = "<group>"; };
+		20203ADE19F7F8A90085C01F /* BTCBitcoinURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCBitcoinURL.h; sourceTree = "<group>"; };
+		20203ADF19F7F8A90085C01F /* BTCBitcoinURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCBitcoinURL.m; sourceTree = "<group>"; };
 		203AA49319DC364200572BD9 /* MYCWalletAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCWalletAccount.h; path = Models/MYCWalletAccount.h; sourceTree = "<group>"; };
 		203AA49419DC364200572BD9 /* MYCWalletAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWalletAccount.m; path = Models/MYCWalletAccount.m; sourceTree = "<group>"; };
 		203AA49619DC365D00572BD9 /* MYCBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCBackend.h; path = Networking/MYCBackend.h; sourceTree = "<group>"; };
@@ -428,6 +431,8 @@
 				20C2D82119E7CDD70022CAAC /* BTCNumberFormatter.m */,
 				20C2D82419E82B780022CAAC /* BTCCurrencyConverter.h */,
 				20C2D82519E82B780022CAAC /* BTCCurrencyConverter.m */,
+				20203ADE19F7F8A90085C01F /* BTCBitcoinURL.h */,
+				20203ADF19F7F8A90085C01F /* BTCBitcoinURL.m */,
 			);
 			name = "CoreBitcoin Spinoffs";
 			sourceTree = "<group>";
@@ -602,6 +607,7 @@
 				20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */,
 				203AA49819DC365D00572BD9 /* MYCBackend.m in Sources */,
 				203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */,
+				20203AE019F7F8A90085C01F /* BTCBitcoinURL.m in Sources */,
 				2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */,
 				20203AD619F65E290085C01F /* MYCBaseTxOutput.m in Sources */,
 				2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */,

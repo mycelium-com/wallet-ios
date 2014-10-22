@@ -14,9 +14,6 @@
 #import "MYCAppDelegate.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
-#import "BTCQRCode.h"
-
-#import <MobileCoreServices/UTCoreTypes.h>
 
 @interface MYCBalanceViewController ()
 
@@ -103,7 +100,7 @@
 
 - (void) walletDidUpdateNetworkActivity:(NSNotification*)notif
 {
-    [self updateRefreshControl];
+    [self updateRefreshControlAnimated:YES];
 }
 
 - (void) walletDidUpdateAccount:(NSNotification*)notif
@@ -139,7 +136,7 @@
     self.btcAmountLabel.text = [wallet.btcFormatter stringFromAmount:self.account.confirmedAmount];
 
     [self updateFiatAmount];
-    [self updateRefreshControl];
+    [self updateRefreshControlAnimated:NO];
 
     [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
 
@@ -179,18 +176,98 @@
     }
 }
 
-- (void) updateRefreshControl
+- (void) updateRefreshControlAnimated:(BOOL)animated
 {
-    self.refreshing = self.wallet.isUpdatingAccounts;
+    [self setRefreshing:self.wallet.isUpdatingAccounts animated:animated];
 }
 
 - (void) setRefreshing:(BOOL)refreshing
 {
+    [self setRefreshing:refreshing animated:NO];
+}
+
+- (void) setRefreshing:(BOOL)refreshing animated:(BOOL)animated
+{
     _refreshing = refreshing;
-    self.refreshButton.hidden = _refreshing;
-    self.refreshActivityIndicator.hidden = !_refreshing;
-    if (!_refreshing) [self.refreshActivityIndicator stopAnimating];
-    if (_refreshing) [self.refreshActivityIndicator startAnimating];
+
+    const NSInteger magicTag = 6729571;
+
+    if (self.refreshButton.tag == magicTag)
+    {
+        return; // will be up to date when animation finishes.
+    }
+
+    if (!animated)
+    {
+        self.refreshButton.hidden = _refreshing;
+        self.refreshActivityIndicator.hidden = !_refreshing;
+        if (!_refreshing) [self.refreshActivityIndicator stopAnimating];
+        if (_refreshing) [self.refreshActivityIndicator startAnimating];
+    }
+    else
+    {
+        const CGFloat angle = M_PI;
+
+        if (self.refreshButton.tag != magicTag)
+        {
+            if (_refreshing)
+            {
+                [self.refreshActivityIndicator startAnimating];
+                self.refreshActivityIndicator.hidden = NO;
+                self.refreshActivityIndicator.alpha = 0.0;
+                self.refreshButton.transform = CGAffineTransformIdentity;
+            }
+            else
+            {
+                self.refreshButton.alpha = 0.0; // stopping refreshing
+                self.refreshButton.transform = CGAffineTransformMakeRotation(-angle);
+            }
+        }
+
+        self.refreshButton.tag = magicTag;
+
+        BOOL valueBeforeAnimation = _refreshing;
+
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.14 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [UIView animateWithDuration:0.15 animations:^{
+                self.refreshActivityIndicator.alpha = _refreshing ? 1.0 : 0.0;
+            } completion:^(BOOL finished) {
+            }];
+        });
+
+        [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseIn|UIViewAnimationOptionBeginFromCurrentState animations:^{
+
+            self.refreshButton.alpha = _refreshing ? 0.0 : 1.0;
+
+            if (_refreshing)
+            {
+                self.refreshButton.transform = CGAffineTransformMakeRotation(angle);
+            }
+            else
+            {
+                self.refreshButton.transform = CGAffineTransformMakeRotation(0);
+            }
+
+        } completion:^(BOOL finished) {
+
+            if (valueBeforeAnimation == _refreshing)
+            {
+                if (!_refreshing) [self.refreshActivityIndicator stopAnimating];
+                if (_refreshing) [self.refreshActivityIndicator startAnimating];
+
+                self.refreshButton.hidden = _refreshing;
+                self.refreshActivityIndicator.hidden = !_refreshing;
+                self.refreshActivityIndicator.alpha = 1.0;
+                self.refreshButton.alpha = 1.0;
+
+                self.refreshButton.tag = 0;
+            }
+            else
+            {
+                [self setRefreshing:_refreshing animated:YES];
+            }
+        }];
+    }
 }
 
 
@@ -222,7 +299,7 @@
 
 - (IBAction) refresh:(id)sender
 {
-    self.refreshing = YES;
+    [self setRefreshing:YES animated:YES];
 
     [self.wallet updateAccount:self.account force:YES completion:^(BOOL success, NSError *error) {
 

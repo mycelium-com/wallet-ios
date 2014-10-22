@@ -7,8 +7,16 @@
 //
 
 #import "MYCReceiveViewController.h"
+#import "MYCWallet.h"
+#import "MYCWalletAccount.h"
 
 @interface MYCReceiveViewController ()
+
+@property(nonatomic,readonly) MYCWallet* wallet;
+@property(nonatomic) MYCWalletAccount* account;
+@property(nonatomic) BTCSatoshi requestedAmount;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *borderHeightConstraint;
 
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 
@@ -17,6 +25,10 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *btcField;
 @property (weak, nonatomic) IBOutlet UITextField *fiatField;
+
+@property (weak, nonatomic) IBOutlet UIImageView *qrcodeView;
+@property (weak, nonatomic) IBOutlet UIButton* accountButton;
+@property (weak, nonatomic) IBOutlet UILabel* addressLabel;
 
 @property (weak, nonatomic) IBOutlet UIView *editingOverlay;
 
@@ -33,6 +45,70 @@
         self.title = NSLocalizedString(@"Receive Bitcoins", @"");
     }
     return self;
+}
+
+- (MYCWallet*) wallet
+{
+    return [MYCWallet currentWallet];
+}
+
+- (void) reloadAccount
+{
+    [self.wallet inDatabase:^(FMDatabase *db) {
+        self.account = [MYCWalletAccount currentAccountFromDatabase:db];
+    }];
+}
+
+- (void) setAccount:(MYCWalletAccount *)account
+{
+    _account = account;
+    [self updateAllViews];
+}
+
+- (void) setRequestedAmount:(BTCSatoshi)requestedAmount
+{
+    _requestedAmount = requestedAmount;
+    [self updateAllViews];
+}
+
+- (void) updateAllViews
+{
+    if (!self.isViewLoaded) return;
+
+    [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
+
+    NSString* address = self.account.externalAddress.base58String;
+    self.addressLabel.text = address;
+
+    NSString* qrString = address;
+
+    if (self.requestedAmount > 0)
+    {
+        NSURL* url = [BTCBitcoinURL URLWithAddress:self.account.externalAddress amount:self.requestedAmount label:nil];
+        qrString = [url absoluteString];
+    }
+
+    self.qrcodeView.image = [BTCQRCode imageForString:qrString
+                                                 size:self.qrcodeView.bounds.size
+                                                scale:[UIScreen mainScreen].scale];
+
+    [self updateUnits];
+}
+
+- (void) updateUnits
+{
+    [self.btcButton setTitle:self.wallet.btcFormatter.standaloneSymbol forState:UIControlStateNormal];
+    [self.fiatButton setTitle:self.wallet.fiatFormatter.currencySymbol forState:UIControlStateNormal];
+}
+
+
+
+
+- (void) viewDidLoad
+{
+    [super viewDidLoad];
+    self.borderHeightConstraint.constant = 1.0/[UIScreen mainScreen].nativeScale;
+    [self reloadAccount];
 }
 
 - (IBAction)close:(id)sender
@@ -98,6 +174,37 @@
     [self setEditing:NO animated:YES];
 }
 
+- (IBAction)tapAddress:(UILongPressGestureRecognizer*)gr
+{
+    if (gr.state == UIGestureRecognizerStateBegan)
+    {
+        [self becomeFirstResponder];
+        UIMenuController* menu = [UIMenuController sharedMenuController];
+        [menu setTargetRect:CGRectInset(self.addressLabel.bounds, 0, self.addressLabel.bounds.size.height/3.0) inView:self.addressLabel];
+        [menu setMenuVisible:YES animated:YES];
+    }
+}
+
+- (BOOL)canBecomeFirstResponder
+{
+    // To support UIMenuController.
+    return YES;
+}
+
+- (void) copy:(id)_
+{
+    [[UIPasteboard generalPasteboard] setValue:self.addressLabel.text
+                             forPasteboardType:(id)kUTTypeUTF8PlainText];
+}
+
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
+{
+    if (action == @selector(copy:))
+    {
+        return YES;
+    }
+    return NO;
+}
 
 
 - (void) setFiatInput:(BOOL)fiatInput
@@ -162,14 +269,16 @@
 
 - (IBAction)didEditBtc:(id)sender
 {
-    self.fiatField.text = [NSString stringWithFormat:@"%0.2f", 398.0 * self.btcField.text.floatValue / 1000000.0];
-
+    self.requestedAmount = [self.wallet.btcFormatter amountFromString:self.btcField.text];
+    self.fiatField.text = [self.wallet.fiatFormatterNaked
+                           stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:self.requestedAmount]];
 }
 
 - (IBAction)didEditFiat:(id)sender
 {
-    self.btcField.text = [NSString stringWithFormat:@"%0.0f", (1000000.0 / 398.0) * self.fiatField.text.floatValue];
-
+    NSNumber* fiatAmount = [self.wallet.fiatFormatter numberFromString:self.fiatField.text];
+    self.requestedAmount = [self.wallet.currencyConverter bitcoinFromFiat:[NSDecimalNumber decimalNumberWithDecimal:fiatAmount.decimalValue]];
+    self.btcField.text = [self.wallet.btcFormatterNaked stringFromAmount:self.requestedAmount];
 }
 
 

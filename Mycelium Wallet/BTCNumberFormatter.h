@@ -50,6 +50,12 @@ extern NSString* const BTCNumberFormatterSymbolSatoshi;  // ṡ
 - (NSString *) stringFromAmount:(BTCSatoshi)amount;
 
 /*!
+ * Returns a matching bitcoin symbol. 
+ * If `symbolStyle` is BTCNumberFormatterSymbolStyleNone, returns the code (BTC, mBTC, Bits or SAT).
+ */
+- (NSString *) standaloneSymbol;
+
+/*!
  * Returns 0 in case of failure to parse the string.
  * To handle that case, use `-[NSNumberFormatter numberFromString:]`, but keep in mind
  * that NSNumber* will be in specified units, not in satoshis.

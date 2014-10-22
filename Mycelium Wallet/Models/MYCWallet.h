@@ -48,10 +48,12 @@ extern NSString* const MYCWalletDidUpdateAccountNotification;
 // Formatter for bitcoin values.
 // When formatter changes, notification MYCWalletFormatterDidUpdateNotification is posted.
 @property(nonatomic) BTCNumberFormatter* btcFormatter;
+@property(nonatomic) BTCNumberFormatter* btcFormatterNaked; // without unit decoration
 
 // Formatter for current fiat currency.
 // When formatter changes, notification MYCWalletFormatterDidUpdateNotification is posted.
 @property(nonatomic) NSNumberFormatter* fiatFormatter;
+@property(nonatomic) NSNumberFormatter* fiatFormatterNaked; // without unit decoration
 
 // User-selected bitcoin unit.
 // View controllers post MYCWalletFormatterDidUpdateNotification when updating this property.
