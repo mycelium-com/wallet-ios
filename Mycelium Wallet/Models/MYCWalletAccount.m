@@ -181,6 +181,35 @@
     }
 }
 
+// Check if this script data matches one of the addresses in this account.
+// Checks within the window of known used addresses.
+// If YES, sets change (0 for external, 1 for internal chain) and keyIndex (index of the address).
+- (BOOL) matchesScriptData:(NSData*)scriptData change:(NSInteger*)changeOut keyIndex:(NSInteger*)keyIndexOut
+{
+    if (!scriptData) return NO;
+
+    NSUInteger i = [self externalIndexForScriptData:scriptData startIndex:0 limit:self.externalKeyIndex + 1];
+    if (i != NSNotFound)
+    {
+        if (changeOut) *changeOut = 0;
+        if (keyIndexOut) *keyIndexOut = i;
+        return YES;
+    }
+
+    i = [self internalIndexForScriptData:scriptData startIndex:self.internalKeyStartingIndex limit:self.internalKeyIndex + 1 - self.internalKeyStartingIndex];
+    if (i != NSNotFound)
+    {
+        if (changeOut) *changeOut = 1;
+        if (keyIndexOut) *keyIndexOut = i;
+        return YES;
+    }
+
+    return NO;
+}
+
+
+
+
 
 #pragma mark - Database Access
 

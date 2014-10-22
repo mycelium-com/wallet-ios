@@ -345,7 +345,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
     // Create default account
 
-    [database registerMigration:@"createDefaultAccount" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
+    [database registerMigration:@"Create Main Account" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
 
         BTCKeychain* bitcoinKeychain = self.isTestnet ? mnemonic.keychain.bitcoinTestnetKeychain : mnemonic.keychain.bitcoinMainnetKeychain;
 
@@ -433,6 +433,40 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     return [self.database inTransaction:block];
 }
 
+- (void) asyncInDatabase:(id(^)(FMDatabase *db, NSError** dberrorOut))block completion:(void(^)(id result, NSError* dberror))completion
+{
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+        [self inDatabase:^(FMDatabase *db) {
+
+            NSError* dberror = nil;
+            id result = block ? block(db, &dberror) : @YES;
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completion) completion(result, dberror);
+            });
+        }];
+    });
+}
+
+- (void) asyncInTransaction:(id(^)(FMDatabase *db, BOOL *rollback, NSError** dberrorOut))block completion:(void(^)(id result, NSError* dberror))completion
+{
+    NSParameterAssert(block);
+
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+        [self inTransaction:^(FMDatabase *db, BOOL *rollback) {
+
+            NSError* dberror = nil;
+            id result = block ? block(db, rollback, &dberror) : @YES;
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completion) completion(result, dberror);
+            });
+        }];
+    });
+}
+
+
+//- (void) inTransaction:(BOOL(^)(FMDatabase *db, BOOL *rollback, NSError** dberrorOut))block completion:(void(^)(BOOL result, NSError* dberror))completion;
 
 
 

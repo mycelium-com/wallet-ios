@@ -147,7 +147,7 @@
 }
 
 
-// Fetches unspent outputs for given addresses (BTCAddress instances)
+// Fetches unspent outputs (BTCTransactionOutput) for given addresses (BTCAddress instances).
 - (void) loadUnspentOutputsForAddresses:(NSArray*)addresses completion:(void(^)(NSArray* outputs, NSInteger height, NSError* error))completion
 {
     NSParameterAssert(addresses);
@@ -244,7 +244,7 @@
                        txout.value = [dict[@"value"] longLongValue];
                        txout.script = [[BTCScript alloc] initWithData:scriptData];
 
-                       txout.index = (uint32_t)[((NSString*)txHashAndIndex[0]) integerValue];
+                       txout.index = (uint32_t)[((NSString*)txHashAndIndex[1]) integerValue];
                        txout.transactionHash = txhash;
                        txout.blockHeight = [dict[@"height"] integerValue];
 

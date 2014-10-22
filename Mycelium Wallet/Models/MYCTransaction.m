@@ -10,6 +10,7 @@
 
 @interface MYCTransaction ()
 @property(nonatomic) NSTimeInterval timestamp;
+@property(nonatomic) NSString* dataHex; // MYCDebugHexDatabaseFields
 @end
 
 @implementation MYCTransaction
@@ -30,6 +31,16 @@
     self.transactionHash = transaction.transactionHash;
 }
 
+- (NSString*) transactionID
+{
+    return BTCTransactionIDFromHash(self.transactionHash);
+}
+
+- (void) setTransactionID:(NSString *)transactionID
+{
+    self.transactionHash = BTCTransactionHashFromID(transactionID);
+}
+
 - (NSDate *) date
 {
     if (self.timestamp > 0.0) {
@@ -48,10 +59,19 @@
     }
 }
 
+- (NSString*) dataHex
+{
+    return BTCHexStringFromData(self.data);
+}
+
+
+
 #pragma mark - Database Access
 
+
+
 // Finds a transaction in the database for a given hash. Returns nil if not found.
-+ (instancetype) loadTransactionForAccount:(NSInteger)accountIndex hash:(NSData*)txhash database:(FMDatabase*)db
++ (instancetype) loadTransactionWithHash:(NSData*)txhash account:(NSInteger)accountIndex database:(FMDatabase*)db
 {
     return [[self loadWithCondition:@"accountIndex = ? AND transactionHash = ?"
                              params:@[@(accountIndex), txhash ?: @"n/a" ]
@@ -59,22 +79,20 @@
 }
 
 
+// Finds young transactions with a given height or newer (including unconfirmed ones).
++ (NSArray*) loadRecentTransactionsSinceHeight:(NSInteger)height account:(NSInteger)accountIndex database:(FMDatabase*)db
+{
+    return [self loadWithCondition:@"accountIndex = ? AND (blockHeight > ? || blockHeight == -1)"
+                             params:@[@(accountIndex), @(height) ]
+                       fromDatabase:db];
+}
+
+
+
+
 #pragma mark - MYCDatabaseRecord
 
-/*
- [database registerMigration:@"Create MYCTransactions" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
- return [db executeUpdate:
- @"CREATE TABLE MYCTransactions("
- "transactionHash   TEXT NOT NULL," // note: we allow duplicate txs if they happen to pay from one account to another.
- "data              TEXT NOT NULL," // raw transaction in binary
- "blockHeight       INT  NOT NULL," // equals -1 if not confirmed yet.
- "timestamp         INT  NOT NULL," // timestamp.
- "accountIndex      INT  NOT NULL," // index of an account to which this tx belongs.
- "PRIMARY KEY (transactionHash, accountIndex)"  // note: we allow duplicate txs if they happen to pay from one account to another.
- ")"]  &&
- [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (transactionHash)"];
- }];
- */
+
 
 + (NSString *)primaryKeyName
 {
@@ -89,7 +107,13 @@
 + (NSArray *)columnNames
 {
     return @[MYCDatabaseColumn(transactionHash),
+#if MYCDebugHexDatabaseFields
+             MYCDatabaseColumn(transactionID),
+#endif
              MYCDatabaseColumn(data),
+#if MYCDebugHexDatabaseFields
+             MYCDatabaseColumn(dataHex),
+#endif
              MYCDatabaseColumn(blockHeight),
              MYCDatabaseColumn(timestamp),
              MYCDatabaseColumn(accountIndex),

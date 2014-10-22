@@ -38,10 +38,16 @@
         [mycdatabase registerMigration:[NSString stringWithFormat:@"Create %@", tableName] withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
             return [db executeUpdate:[NSString stringWithFormat:
                     @"CREATE TABLE %@("
-                    "outpointHash      TEXT NOT NULL,"
+                    "outpointHash      BLOB NOT NULL,"
+#if MYCDebugHexDatabaseFields
+                    "outpointTxID      TEXT NOT NULL,"
+#endif
                     "outpointIndex     INT  NOT NULL,"
                     "blockHeight       INT  NOT NULL," // equals -1 if tx is not confirmed yet.
-                    "scriptData        TEXT NOT NULL," // binary script
+                    "scriptData        BLOB NOT NULL," // binary script
+#if MYCDebugHexDatabaseFields
+                    "addressBase58     TEXT,"
+#endif
                     "value             INT  NOT NULL,"
                     "coinbase          INT  NOT NULL,"
                     "accountIndex      INT  NOT NULL," // -1 if this output is not spendable by any account.
@@ -56,14 +62,20 @@
     [mycdatabase registerMigration:@"Create MYCTransactions" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
         return [db executeUpdate:
                 @"CREATE TABLE MYCTransactions("
-                "transactionHash   TEXT NOT NULL," // note: we allow duplicate txs if they happen to pay from one account to another.
-                "data              TEXT NOT NULL," // raw transaction in binary
+                "transactionHash   BLOB NOT NULL," // note: we allow duplicate txs if they happen to pay from one account to another.
+#if MYCDebugHexDatabaseFields
+                "transactionID     TEXT NOT NULL,"
+#endif
+                "data              BLOB NOT NULL," // raw transaction in binary
+#if MYCDebugHexDatabaseFields
+                "dataHex           TEXT NOT NULL,"
+#endif
                 "blockHeight       INT  NOT NULL," // equals -1 if not confirmed yet.
                 "timestamp         INT  NOT NULL," // timestamp.
                 "accountIndex      INT  NOT NULL," // index of an account to which this tx belongs.
                 "PRIMARY KEY (transactionHash, accountIndex) ON CONFLICT REPLACE"  // note: we allow duplicate txs if they happen to pay from one account to another.
                 ")"]  &&
-        [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (transactionHash)"];
+        [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (blockHeight, accountIndex, timestamp)"];
     }];
 
 }

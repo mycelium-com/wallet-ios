@@ -16,10 +16,12 @@
         #import "BTCCurrencyConverter.h" // this will be in CoreBitcoin
 
         #ifdef DEBUG
+            #define MYCDebugHexDatabaseFields 1
             #define MYCDebug(expression) expression
             #define MYCLog(...)   NSLog(@"MYC: %@", [NSString stringWithFormat:__VA_ARGS__])
             #define MYCError(...) NSLog(@"MYC ERROR: %@", [NSString stringWithFormat:__VA_ARGS__])
         #else
+            #define MYCDebugHexDatabaseFields 0
             #define MYCDebug(expression)
             #define MYCLog(args...) //_Log(@"MYC: ", __FILE__,__LINE__,__PRETTY_FUNCTION__,args);
             #define MYCError(...) NSLog(@"MYC ERROR: %@", [NSString stringWithFormat:__VA_ARGS__])

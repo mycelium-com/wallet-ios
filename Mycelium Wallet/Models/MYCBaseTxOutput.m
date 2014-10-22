@@ -7,6 +7,13 @@
 //
 
 #import "MYCBaseTxOutput.h"
+#import "MYCWallet.h"
+
+
+@interface MYCBaseTxOutput ()
+@property(nonatomic) NSString* outpointTxID; // MYCDebugHexDatabaseFields
+@property(nonatomic) NSString* addressBase58; // MYCDebugHexDatabaseFields
+@end
 
 @implementation MYCBaseTxOutput
 
@@ -38,6 +45,27 @@
     self.outpointHash = transactionOutput.transactionHash;
 }
 
+- (BTCOutpoint*) outpoint
+{
+    return [[BTCOutpoint alloc] initWithHash:self.outpointHash index:(uint32_t)self.outpointIndex];
+}
+
+- (void) setOutpoint:(BTCOutpoint *)outpoint
+{
+    self.outpointHash = outpoint.txHash;
+    self.outpointIndex = outpoint.index;
+}
+
+- (NSString*) outpointTxID
+{
+    return self.outpoint.txID;
+}
+
+- (NSString*) addressBase58
+{
+    return [[[MYCWallet currentWallet] addressForAddress:self.script.standardAddress] base58String];
+}
+
 
 #pragma mark - Database Access
 
@@ -66,9 +94,15 @@
 + (NSArray *)columnNames
 {
     return @[MYCDatabaseColumn(outpointHash),
+#if MYCDebugHexDatabaseFields
+             MYCDatabaseColumn(outpointTxID),
+#endif
              MYCDatabaseColumn(outpointIndex),
              MYCDatabaseColumn(blockHeight),
              MYCDatabaseColumn(scriptData),
+#if MYCDebugHexDatabaseFields
+             MYCDatabaseColumn(addressBase58),
+#endif
              MYCDatabaseColumn(value),
              MYCDatabaseColumn(coinbase),
              MYCDatabaseColumn(accountIndex),

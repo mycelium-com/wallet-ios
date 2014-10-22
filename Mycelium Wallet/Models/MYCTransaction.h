@@ -20,8 +20,12 @@
 
 // Derived property.
 @property(nonatomic) BTCTransaction* transaction;
+@property(nonatomic) NSString* transactionID;
 
 // Finds a transaction in the database for a given hash. Returns nil if not found.
-+ (instancetype) loadTransactionForAccount:(NSInteger)accountIndex hash:(NSData*)txhash database:(FMDatabase*)db;
++ (instancetype) loadTransactionWithHash:(NSData*)txhash account:(NSInteger)accountIndex database:(FMDatabase*)db;
+
+// Finds young transactions with a given height or newer (including unconfirmed ones).
++ (NSArray*) loadRecentTransactionsSinceHeight:(NSInteger)height account:(NSInteger)accountIndex database:(FMDatabase*)db;
 
 @end

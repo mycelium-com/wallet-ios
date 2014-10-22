@@ -83,6 +83,11 @@
 - (NSUInteger) externalIndexForScriptData:(NSData*)data startIndex:(NSUInteger)startIndex limit:(NSUInteger)limit; // thread-safe
 - (NSUInteger) internalIndexForScriptData:(NSData*)data startIndex:(NSUInteger)startIndex limit:(NSUInteger)limit; // thread-safe
 
+// Check if this script data matches one of the addresses in this account.
+// Checks within the window of known used addresses.
+// If YES, sets change (0 for external, 1 for internal chain) and keyIndex (index of the address).
+- (BOOL) matchesScriptData:(NSData*)scriptData change:(NSInteger*)changeOut keyIndex:(NSInteger*)keyIndexOut;
+
 // Loads current active account from database.
 + (MYCWalletAccount*) currentAccountFromDatabase:(FMDatabase*)db;
 

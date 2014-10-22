@@ -107,6 +107,9 @@ extern NSString* const MYCWalletDidUpdateAccountNotification;
 - (void) inDatabase:(void(^)(FMDatabase *db))block;
 - (void) inTransaction:(void(^)(FMDatabase *db, BOOL *rollback))block;
 
+// Runs the db block on background thread and calls the completion block on main thread.
+- (void) asyncInDatabase:(id(^)(FMDatabase *db, NSError** dberrorOut))block completion:(void(^)(id result, NSError* dberror))completion;
+- (void) asyncInTransaction:(id(^)(FMDatabase *db, BOOL *rollback, NSError** dberrorOut))block completion:(void(^)(id result, NSError* dberror))completion;
 
 
 // Updating Data
