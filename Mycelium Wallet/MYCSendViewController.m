@@ -139,6 +139,7 @@
 
 - (IBAction) cancel:(id)sender
 {
+    [self.view endEditing:YES];
     [self complete:NO];
 }
 
@@ -332,6 +333,15 @@
 
     }
     [self updateSendButton];
+    [self updateUnits];
+}
+
+- (void) updateUnits
+{
+    [self.btcButton setTitle:self.wallet.btcFormatter.standaloneSymbol forState:UIControlStateNormal];
+    [self.fiatButton setTitle:self.wallet.fiatFormatter.currencySymbol forState:UIControlStateNormal];
+
+    self.btcField.placeholder = self.wallet.btcFormatter.placeholderText;
 }
 
 

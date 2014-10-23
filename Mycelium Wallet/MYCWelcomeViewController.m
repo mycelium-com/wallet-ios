@@ -56,7 +56,7 @@
 {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
-        _restorePlaceholderText = @"chancellor brink second bailout banks ...";
+        _restorePlaceholderText = @"chancellor brink second bailout banks...";
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -208,7 +208,7 @@
 
     if (self.restoreTextView.isFirstResponder)
     {
-        if ([text isEqualToString:_restorePlaceholderText])
+        if ([self.restoreTextView.text isEqualToString:_restorePlaceholderText])
         {
             self.restoreTextView.text = @"";
         }
@@ -216,7 +216,7 @@
     }
     else
     {
-        if (text.length == 0 || [text isEqualToString:_restorePlaceholderText])
+        if (text.length == 0 || [self.restoreTextView.text isEqualToString:_restorePlaceholderText])
         {
             self.restoreTextView.text = _restorePlaceholderText;
             self.restoreTextView.textColor = [UIColor colorWithWhite:0.8 alpha:1.0];

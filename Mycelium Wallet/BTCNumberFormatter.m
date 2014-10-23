@@ -105,6 +105,7 @@ BTCSatoshi BTCAmountFromDecimalNumber(NSNumber* num)
     switch (_symbolStyle)
     {
         case BTCNumberFormatterSymbolStyleNone:
+            self.minimumFractionDigits = 0;
             self.positivePrefix = @"";
             self.positiveSuffix = @"";
             self.negativePrefix = @"–";

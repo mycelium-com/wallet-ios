@@ -130,7 +130,6 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     if (!_btcFormatterNaked)
     {
         _btcFormatterNaked = [[BTCNumberFormatter alloc] initWithBitcoinUnit:self.bitcoinUnit symbolStyle:BTCNumberFormatterSymbolStyleNone];
-        _btcFormatterNaked.minimumFractionDigits = 0;
     }
     return _btcFormatterNaked;
 }
