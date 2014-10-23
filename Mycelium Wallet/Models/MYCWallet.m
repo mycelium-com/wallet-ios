@@ -130,6 +130,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     if (!_btcFormatterNaked)
     {
         _btcFormatterNaked = [[BTCNumberFormatter alloc] initWithBitcoinUnit:self.bitcoinUnit symbolStyle:BTCNumberFormatterSymbolStyleNone];
+        _btcFormatterNaked.minimumFractionDigits = 0;
     }
     return _btcFormatterNaked;
 }
@@ -146,7 +147,6 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
         _fiatFormatter.groupingSize = 3;
         _fiatFormatter.currencySymbol = [NSLocalizedString(@"USD", @"") lowercaseString];
         _fiatFormatter.internationalCurrencySymbol = _fiatFormatter.currencySymbol;
-
         _fiatFormatter.positivePrefix = @"";
         _fiatFormatter.positiveSuffix = [@"\xE2\x80\xAF" stringByAppendingString:_fiatFormatter.currencySymbol];
         _fiatFormatter.negativeFormat = [_fiatFormatter.positiveFormat stringByReplacingCharactersInRange:[_fiatFormatter.positiveFormat rangeOfString:@"#"] withString:@"-#"];
@@ -164,6 +164,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
         _fiatFormatterNaked.internationalCurrencySymbol = @"";
         _fiatFormatterNaked.positivePrefix = @"";
         _fiatFormatterNaked.positiveSuffix = @"";
+        _fiatFormatterNaked.minimumFractionDigits = 0;
         _fiatFormatterNaked.negativeFormat = [_fiatFormatter.positiveFormat stringByReplacingCharactersInRange:[_fiatFormatter.positiveFormat rangeOfString:@"#"] withString:@"-#"];
     }
     return _fiatFormatterNaked;
@@ -183,7 +184,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
             _currencyConverter = [[BTCCurrencyConverter alloc] init];
             _currencyConverter.currencyCode = @"USD";
             _currencyConverter.marketName = @"Bitstamp";
-            _currencyConverter.averageRate = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+            _currencyConverter.averageRate = [NSDecimalNumber zero];
             _currencyConverter.date = [NSDate dateWithTimeIntervalSince1970:0];
         }
     }
