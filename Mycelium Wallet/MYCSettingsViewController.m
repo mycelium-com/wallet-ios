@@ -177,7 +177,7 @@
                     [weakself.tableView deselectRowAtIndexPath:[weakself.tableView indexPathForSelectedRow] animated:NO];
                     [weakself dismissViewControllerAnimated:YES completion:nil];
                 }]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+                [alert addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
                     // Erase database
                     [[MYCWallet currentWallet] resetDatabase];
