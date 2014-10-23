@@ -111,8 +111,8 @@
                         <constraint firstAttribute="height" constant="1" id="s1P-gH-wna"/>
                     </constraints>
                 </view>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="SampleQRCode" translatesAutoresizingMaskIntoConstraints="NO" id="5Sc-x8-LD5">
-                    <rect key="frame" x="93" y="116" width="133.5" height="134.5"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SampleQRCode" translatesAutoresizingMaskIntoConstraints="NO" id="5Sc-x8-LD5">
+                    <rect key="frame" x="92.5" y="116" width="134.5" height="134.5"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="5Sc-x8-LD5" secondAttribute="height" multiplier="1:1" id="w4t-h6-qMr"/>
                     </constraints>
@@ -142,7 +142,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E9X-Ob-kXK">
-                    <rect key="frame" x="76.5" y="390" width="166" height="20"/>
+                    <rect key="frame" x="77" y="390" width="166" height="20"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                     <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
                     <state key="normal" title="Backup your wallet"/>
@@ -151,7 +151,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Enb-d0-ZL3">
-                    <rect key="frame" x="109.5" y="260" width="101" height="33"/>
+                    <rect key="frame" x="109" y="260" width="101" height="33"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                     <state key="normal" title="Main Account">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -212,7 +212,7 @@
                     <exclude reference="H52-uF-Eer"/>
                 </mask>
             </variation>
-            <point key="canvasLocation" x="-2029" y="287"/>
+            <point key="canvasLocation" x="-1875" y="298"/>
         </view>
         <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.20000000000000001" id="qxa-GJ-bNm">
             <connections>
