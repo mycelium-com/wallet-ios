@@ -36,7 +36,9 @@
 
 @end
 
-@implementation MYCReceiveViewController
+@implementation MYCReceiveViewController {
+    BOOL _reformatInputField;
+}
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -233,13 +235,48 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-//    NSString* newValue = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    _reformatInputField = YES;
 
-    if (textField == self.btcField)
+    NSNumberFormatter* formatter = (textField == self.btcField) ? self.wallet.btcFormatterNaked : self.wallet.fiatFormatterNaked;
+    NSString* decimalSep = formatter.decimalSeparator;
+    NSUInteger decimalSepLocation = decimalSep.length > 0 ? [textField.text rangeOfString:decimalSep].location : NSNotFound;
+
+    // Allow entering one decimal separator
+    if ([string isEqualToString:decimalSep])
     {
+        // if no decimal separator there yet, allow one.
+        if (decimalSepLocation == NSNotFound)
+        {
+            _reformatInputField = NO;
+        }
+        else
+        {
+            // One more decimal separator would zero the entire thing, disallow that.
+            return NO;
+        }
     }
-    else
+    else if ([string isEqual:@""] && range.length > 0) // deleting.
     {
+        // If deleting after decimal separator, disallow formatting.
+        // Also disallow reformatting if deleting in the middle of the text to avoid cursor reset.
+        if ((decimalSepLocation != NSNotFound && range.location >= decimalSepLocation) ||
+            range.location != (textField.text.length - 1))
+        {
+            _reformatInputField = NO;
+        }
+    }
+    else if (string.length == 1 && range.length == 0 && range.location == textField.text.length) // entering one more number in the end
+    {
+        // Do not allow to enter more fractional digits than required by the number formatter.
+        if (decimalSepLocation != NSNotFound && (textField.text.length - 1 - decimalSepLocation) >= formatter.maximumFractionDigits)
+        {
+            return NO;
+        }
+        _reformatInputField = YES;
+    }
+    else // some weird copy-pasting - do not break user's input.
+    {
+        _reformatInputField = NO;
     }
 
     return YES;
@@ -271,6 +308,7 @@
 
 - (IBAction)didEditBtc:(id)sender
 {
+    NSNumber* num = [self.wallet.btcFormatter numberFromString:self.btcField.text];
     self.requestedAmount = [self.wallet.btcFormatter amountFromString:self.btcField.text];
     self.fiatField.text = [self.wallet.fiatFormatterNaked
                            stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:self.requestedAmount]];
@@ -279,9 +317,10 @@
     {
         self.fiatField.text = @"";
     }
-    else
+    else if (_reformatInputField)
     {
-//        self.btcField.text = [self.wallet.btcFormatterNaked stringFromAmount:self.requestedAmount];
+        //self.btcField.text = [self.wallet.btcFormatterNaked stringFromAmount:self.requestedAmount];
+        self.btcField.text = [self.wallet.btcFormatterNaked stringFromNumber:num];
     }
 }
 
@@ -295,9 +334,9 @@
     {
         self.btcField.text = @"";
     }
-    else
+    else if (_reformatInputField)
     {
-//        self.fiatField.text = [self.wallet.fiatFormatterNaked stringFromNumber:fiatAmount];
+        self.fiatField.text = [self.wallet.fiatFormatterNaked stringFromNumber:fiatAmount];
     }
 }
 

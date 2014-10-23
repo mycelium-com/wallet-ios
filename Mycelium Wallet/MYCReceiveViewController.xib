@@ -75,6 +75,7 @@
                             <connections>
                                 <action selector="didBeginEditingBtc:" destination="-1" eventType="editingDidBegin" id="1n2-b5-WJH"/>
                                 <action selector="didEditBtc:" destination="-1" eventType="editingChanged" id="1Xp-Go-dUs"/>
+                                <outlet property="delegate" destination="-1" id="OM1-kP-9Bn"/>
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3RM-6k-xvO">
@@ -95,6 +96,7 @@
                             <connections>
                                 <action selector="didBeginEditingFiat:" destination="-1" eventType="editingDidBegin" id="VJ9-KJ-xpI"/>
                                 <action selector="didEditFiat:" destination="-1" eventType="editingChanged" id="sqR-yt-KaW"/>
+                                <outlet property="delegate" destination="-1" id="86q-Ea-5Kv"/>
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LZw-UV-QNe">
@@ -180,7 +182,7 @@
                 <constraint firstAttribute="bottom" secondItem="MXC-lp-Lj8" secondAttribute="bottom" id="vhV-jV-n6p"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-106" y="369"/>
+            <point key="canvasLocation" x="-362" y="489"/>
         </view>
         <tapGestureRecognizer id="5sX-Ey-r1D">
             <connections>
