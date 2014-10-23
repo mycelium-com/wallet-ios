@@ -14,6 +14,7 @@ Todo:
 - sync: keep a reference to wallet.backend so if it changes from testnet to mainnet while in progress, it will connect to the same backend.
 - sync: switch to another hostname on timeout.
 - settings: show credits and other info.
+- update folder icon like in Health.app
 
 Notes from talk with Andreas:
 
