@@ -86,6 +86,7 @@
 // Returns YES if currently loading something.
 - (BOOL) isActive
 {
+    //MYCLog(@"isActive: tasks = %@", @(self.pendingTasksCount));
     return self.pendingTasksCount > 0;
 }
 

@@ -1,13 +1,19 @@
 Todo:
 
-- send: add address field and scan UI.
++ send: add address field and scan UI.
++ send: recognize bitcoin URI from QR code.
 - send: compose transactions for sending.
-- settings: show credits and other info.
 - settings: spend from WIF private key (fetch all unspents and spend them to current account's change address).
 - accounts: edit account label.
 - accounts: archive/unarchive accounts.
 - accounts: make account current.
 - handle bitcoin: URL when clicked in safari or elsewhere.
+- backup: when restoring allow entering a passphrase (to be compatible with Trezor)
+- receive: remember last used currency and focus in the text field.
+- send: remember last used currency
+- sync: keep a reference to wallet.backend so if it changes from testnet to mainnet while in progress, it will connect to the same backend.
+- sync: switch to another hostname on timeout.
+- settings: show credits and other info.
 
 Notes from talk with Andreas:
 

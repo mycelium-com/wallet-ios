@@ -531,8 +531,6 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
         }
     }
 
-    [self notifyNetworkActivity];
-
     _updatingExchangeRate++;
 
     [self.backend loadExchangeRateForCurrencyCode:self.currencyConverter.currencyCode
@@ -563,6 +561,9 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
                                             [self notifyNetworkActivity];
                                         }];
+
+    [self notifyNetworkActivity];
+
 }
 
 // Updates a given account.
@@ -599,6 +600,8 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
         [_accountUpdateOperations removeObject:op];
 
+        [self notifyNetworkActivity];
+
         if (success)
         {
             [self inDatabase:^(FMDatabase *db) {
@@ -619,6 +622,8 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
         [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:account];
     }];
+
+    [self notifyNetworkActivity];
 }
 
 

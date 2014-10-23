@@ -135,9 +135,11 @@
 
 - (void) verifyWords:(id)_
 {
-    NSArray* enteredWords = [[[[[[[self.verifyTextField.text lowercaseStringWithLocale:[NSLocale currentLocale]]
-                                  stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
-                                 stringByReplacingOccurrencesOfString:@"\n" withString:@" "]
+    NSArray* enteredWords = [[[[[[[[[self.verifyTextField.text lowercaseStringWithLocale:[NSLocale currentLocale]]
+                                    stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
+                                   stringByReplacingOccurrencesOfString:@"\n" withString:@" "]
+                                  stringByReplacingOccurrencesOfString:@"," withString:@" "]
+                                 stringByReplacingOccurrencesOfString:@"." withString:@" "]
                                 stringByReplacingOccurrencesOfString:@"  " withString:@" "]
                                stringByReplacingOccurrencesOfString:@"  " withString:@" "]
                               stringByReplacingOccurrencesOfString:@"  " withString:@" "]

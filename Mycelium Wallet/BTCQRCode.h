@@ -14,4 +14,13 @@
  */
 + (UIImage*) imageForURL:(NSURL*)url size:(CGSize)size scale:(CGFloat)scale;
 
+/*!
+ * Returns a scanning view and retains a detection block.
+ *
+ * Block is called for every QR code detected. To stop recognition, remove view from the window.
+ *
+ * Block is released when view is removed from window.
+ */
++ (UIView*) scannerViewWithBlock:(void(^)(NSString* message))detectionBlock;
+
 @end

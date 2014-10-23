@@ -270,13 +270,15 @@
 
 - (NSArray*) currentWords
 {
-    NSArray* words = [[[[[[[self.restoreTextView.text lowercaseStringWithLocale:[NSLocale currentLocale]]
-             stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
-              stringByReplacingOccurrencesOfString:@"\n" withString:@" "]
-               stringByReplacingOccurrencesOfString:@"  " withString:@" "]
-                stringByReplacingOccurrencesOfString:@"  " withString:@" "]
-                 stringByReplacingOccurrencesOfString:@"  " withString:@" "]
-            componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSArray* words = [[[[[[[[[self.restoreTextView.text lowercaseStringWithLocale:[NSLocale currentLocale]]
+                                    stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
+                                   stringByReplacingOccurrencesOfString:@"\n" withString:@" "]
+                                  stringByReplacingOccurrencesOfString:@"," withString:@" "]
+                                 stringByReplacingOccurrencesOfString:@"." withString:@" "]
+                                stringByReplacingOccurrencesOfString:@"  " withString:@" "]
+                               stringByReplacingOccurrencesOfString:@"  " withString:@" "]
+                              stringByReplacingOccurrencesOfString:@"  " withString:@" "]
+                             componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
     if (words.count == 1 && [words.firstObject isEqualToString:@""])
     {

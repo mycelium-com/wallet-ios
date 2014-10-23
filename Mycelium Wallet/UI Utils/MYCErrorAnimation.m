@@ -15,7 +15,7 @@
 {
     MYCErrorAnimation *animation = [MYCErrorAnimation animationWithKeyPath:@"transform.translation.x"];
     animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    const CGFloat speed = 20.0 / 0.6;
+    const CGFloat speed = 20.0 / 0.8;
     animation.duration = radius / speed;
     animation.removedOnCompletion = YES;
     animation.values = @[ @(-radius), @(radius), @(-radius*16.0/20.0), @(radius*16.0/20.0), @(-radius*10.0/20.0), @(radius*10.0/20.0), @(-radius*5.0/20.0), @(radius*5.0/20.0), @(0) ];

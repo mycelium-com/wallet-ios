@@ -13,10 +13,11 @@
         #import <MobileCoreServices/UTCoreTypes.h> // for UIMenu kUTTypeUTF8PlainText
 
         #import <CoreBitcoin/CoreBitcoin.h>
-        #import "BTCNumberFormatter.h"   // this will be in CoreBitcoin
-        #import "BTCQRCode.h"            // this will be in CoreBitcoin
-        #import "BTCCurrencyConverter.h" // this will be in CoreBitcoin
-        #import "BTCBitcoinURL.h"        // this will be in CoreBitcoin
+        #import "BTCNumberFormatter.h"    // this will be in CoreBitcoin
+        #import "BTCQRCode.h"             // this will be in CoreBitcoin
+        #import "BTCCurrencyConverter.h"  // this will be in CoreBitcoin
+        #import "BTCBitcoinURL.h"         // this will be in CoreBitcoin
+        #import "BTCTransactionBuilder.h" // this will be in CoreBitcoin
 
         #ifdef DEBUG
             #define MYCDebugHexDatabaseFields 1
