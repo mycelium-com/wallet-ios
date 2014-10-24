@@ -5,13 +5,13 @@ extern NSString* const BTCTransactionBuilderErrorDomain;
 typedef NS_ENUM(NSUInteger, BTCTransactionBuilderError) {
 
     // Change address is not specified.
-    BTCTransactionBuilderErrorChangeAddressMissing = 1,
+    BTCTransactionBuilderChangeAddressMissing = 1,
 
     // No unspent outputs were provided or found.
-    BTCTransactionBuilderErrorUnspentOutputsMissing = 2,
+    BTCTransactionBuilderUnspentOutputsMissing = 2,
 
     // Unspent outputs are not sufficient to build the transaction.
-    BTCTransactionBuilderErrorInsufficientFunds = 3,
+    BTCTransactionBuilderInsufficientFunds = 3,
 };
 
 @class BTCTransaction;
@@ -31,8 +31,17 @@ typedef NS_ENUM(NSUInteger, BTCTransactionBuilderError) {
 
 @optional
 
-// Called when attempts to sign the inputs. Return nil if key is not available.
-- (BTCKey*) transactionBuilder:(BTCTransactionBuilder*)txbuilder keyForInput:(BTCTransactionInput*)txin;
+// Called when attempts to sign the inputs.
+// Receiver should provide a key which will be used to create a proper signature script.
+// Transaction builder will sign the input if it spends from one of the standard single-key scripts (p2pkh or p2pk, with compressed or uncompressed pubkeys).
+// Hash type SIGHASH_ALL is used.
+// Return nil if key is not available, then input will be marked as unsigned (unless signed with the next method).
+- (BTCKey*) transactionBuilder:(BTCTransactionBuilder*)txbuilder keyForUnspentOutput:(BTCTransactionOutput*)txout;
+
+// If the previous method not implemented or returns nil, or output script is not supported,
+// then this method is called to allow data source to provide custom signature script.
+// If this method not implemented or returns nil, then input is marked as unsigned.
+- (BTCScript*) transactionBuilder:(BTCTransactionBuilder*)txbuilder signatureScriptForTransaction:(BTCTransaction*)tx script:(BTCScript*)outputScript inputIndex:(NSUInteger)inputIndex;
 
 @end
 
