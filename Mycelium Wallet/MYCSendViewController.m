@@ -183,9 +183,24 @@
 
 - (IBAction)useAllFunds:(id)sender
 {
-    // TODO: compute transaction with all available unspent outputs,
+    // Compute transaction with all available unspent outputs,
     // figure the required fees and put the difference as a spending amount.
 
+    // Address may not be entered yet, so use dummy address.
+    BTCAddress* address = self.spendingAddress ?: [BTCPublicKeyAddress addressWithData:BTCZero160()];
+
+    BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
+    builder.dataSource = self;
+    builder.changeAddress = address; // outputs is empty array, spending all to change address which must be destination address.
+
+    NSError* berror = nil;
+    BTCTransactionBuilderResult* result = [builder buildTransactionAndSign:NO error:&berror];
+    if (result)
+    {
+        self.spendingAmount = result.outputsAmount;
+        self.btcField.text = [self.wallet.btcFormatterNaked stringFromAmount:self.spendingAmount];
+        [self didEditBtc:nil];
+    }
 }
 
 - (IBAction)switchToBTC:(id)sender
@@ -307,7 +322,14 @@
 
 - (void) updateTotalBalance
 {
-    self.allFundsLabel.text = [self.wallet.btcFormatter stringFromAmount:self.account.spendableAmount];
+    if (self.fiatInput)
+    {
+        self.allFundsLabel.text = [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:self.account.spendableAmount]];
+    }
+    else
+    {
+        self.allFundsLabel.text = [self.wallet.btcFormatter stringFromAmount:self.account.spendableAmount];
+    }
     self.allFundsButton.enabled = (self.account.spendableAmount > 0);
 }
 
@@ -439,6 +461,7 @@
     self.fiatButton.titleLabel.font = btcButtonFont;
 
     [self updateAmounts];
+    [self updateTotalBalance];
 }
 
 - (IBAction)didBeginEditingBtc:(id)sender
