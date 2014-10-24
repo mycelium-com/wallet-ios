@@ -3,16 +3,22 @@ Todo:
 + send: add address field and scan UI.
 + send: recognize bitcoin URI from QR code.
 - send: compose transactions for sending.
+- sync: save all parent outputs (for transaction details), mark our parents as ours in DB to avoid repeating checks.
+- sync: keep a reference to wallet.backend so if it changes from testnet to mainnet while in progress, it will connect to the same backend.
+- sync: switch to another hostname on timeout.
 - settings: spend from WIF private key (fetch all unspents and spend them to current account's change address).
 - accounts: edit account label.
 - accounts: archive/unarchive accounts.
 - accounts: make account current.
+- transactions: show a list of transactions
+- transactions: details of a single transction
 - handle bitcoin: URL when clicked in safari or elsewhere.
 - backup: when restoring allow entering a passphrase (to be compatible with Trezor)
 - receive: remember last used currency and focus in the text field.
-- send: remember last used currency
-- sync: keep a reference to wallet.backend so if it changes from testnet to mainnet while in progress, it will connect to the same backend.
-- sync: switch to another hostname on timeout.
+- send: remember last used currency and enable it.
+- send: remember if scanned address last time to show scanner right away
+- balance: new layout to better show balance, buttons; less emphasis on QR code and address
+- send: align amount inputs to the left, with extra line separators.
 - settings: show credits and other info.
 - update folder icon like in Health.app
 
