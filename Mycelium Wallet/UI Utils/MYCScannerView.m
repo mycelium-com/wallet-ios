@@ -43,13 +43,14 @@
                           round(view.bounds.size.width * 0.8)));
 
     CGPoint finalCenter = CGPointMake(CGRectGetMidX(view.bounds), CGRectGetMidY(view.bounds));
-    CGRect finalRect = CGRectMake(finalCenter.x - side/2.0, finalCenter.y - side/2.0, side, side);
+    CGRect finalRect = CGRectMake(finalCenter.x - side/2.0, finalCenter.y - side/2.0 - 0.1*view.bounds.size.height, side, side);
 
-    [UIView animateWithDuration:0.25 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-
+    [UIView animateWithDuration:0.1 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         shadowView.alpha = 1.0;
-        scannerView.frame = finalRect;
+    } completion:^(BOOL finished) {}];
 
+    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        scannerView.frame = finalRect;
     } completion:^(BOOL finished) {}];
 
     UITapGestureRecognizer* tapGR = [[UITapGestureRecognizer alloc] initWithTarget:scannerView action:@selector(dismiss)];
