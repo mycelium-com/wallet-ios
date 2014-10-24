@@ -75,6 +75,14 @@ typedef NS_ENUM(NSUInteger, BTCTransactionBuilderError) {
 @property(nonatomic) BTCScript* changeScript;
 
 
+// Attempts to build and possibly sign a transaction (if sign = YES).
+// Returns a result object containing the transaction itself
+// and metadata about it (fee, input and output balances, indexes of unsigned inputs).
+// If failed to build a transaction, returns nil and sets error to one from BTCTransactionBuilderErrorDomain.
+- (BTCTransactionBuilderResult*) buildTransactionAndSign:(BOOL)sign error:(NSError**)errorOut;
+
+
+
 // Optional configuration properties
 // ---------------------------------
 
@@ -95,12 +103,6 @@ typedef NS_ENUM(NSUInteger, BTCTransactionBuilderError) {
 // find enough unspents for big enough change. In worst case (not enough unspent to bump change) it will forgo the change
 // as a part of the mining fee. Set to 0 to avoid forgoing a single satoshi.
 @property(nonatomic) BTCSatoshi dustChange;
-
-// Attempts to build and possibly sign a transaction.
-// Returns a result object containing the transaction itself
-// and metadata about it (fee, input and output balances, indexes of unsigned inputs).
-// If failed to build a transaction, returns nil and sets error to one from BTCTransactionBuilderErrorDomain.
-- (BTCTransactionBuilderResult*) buildTransaction:(NSError**)errorOut;
 
 @end
 

@@ -228,7 +228,7 @@
                 <constraint firstItem="2xo-SL-GVo" firstAttribute="top" secondItem="BDk-Vc-NZZ" secondAttribute="bottom" constant="10" id="xI9-dM-9fj"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-108" y="500.5"/>
+            <point key="canvasLocation" x="-445" y="443"/>
         </view>
     </objects>
 </document>

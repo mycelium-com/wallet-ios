@@ -437,9 +437,9 @@
 
                 MYCParentOutput* parent = [MYCParentOutput loadOutputForAccount:self.account.accountIndex hash:input.previousHash index:input.previousIndex database:db];
 
-                if (parent)
+                if (parent.change >= 0 && parent.keyIndex >= 0)
                 {
-                    // Have parent - we fund this transaction
+                    // Have parent with valid key path - we fund this transaction
                     pendingSending += parent.value;
                 }
             }
@@ -519,7 +519,7 @@
     {
         // We store only our parent outputs so here it's enough to just check if one exists.
         MYCParentOutput* parentOutput = [MYCParentOutput loadOutputForAccount:self.account.accountIndex hash:input.previousHash index:input.previousIndex database:db];
-        if (parentOutput)
+        if (parentOutput.change >= 0 && parentOutput.keyIndex >= 0)
         {
             return YES;
         }
@@ -794,19 +794,23 @@
                                 parentOutput.index = txin.previousIndex;
 
                                 // Check if this output actually belongs to this account.
-                                if ([self.account matchesScriptData:parentOutput.script.data change:NULL keyIndex:NULL])
+                                NSInteger change = -1;
+                                NSInteger keyIndex = -1;
+                                if ([self.account matchesScriptData:parentOutput.script.data change:&change keyIndex:&keyIndex])
                                 {
-                                    [outputsToSave addObject:parentOutput];
-
+                                    parentOutput.userInfo = @{@"change": @(change), @"keyIndex": @(keyIndex) };
                                     MYCLog(@"MYCUpdateAccountOperation: parent output %@:%@ is detected to be used in the account %@",
                                            BTCTransactionIDFromHash(parentOutput.transactionHash), @(parentOutput.index), @(accountIndex));
                                 }
                                 else
                                 {
+                                    parentOutput.userInfo = @{@"change": @(-1), @"keyIndex": @(-1) };
                                     MYCLog(@"MYCUpdateAccountOperation: parent output %@:%@ not used in the account %@",
                                            BTCTransactionIDFromHash(parentOutput.transactionHash), @(parentOutput.index), @(accountIndex));
                                 }
 
+                                // Save both ours and foreign parent outputs so we can show full details in transaction history.
+                                [outputsToSave addObject:parentOutput];
                             }
                             else
                             {
@@ -831,6 +835,8 @@
 
                             mpout.transactionOutput = txout;
                             mpout.accountIndex = accountIndex;
+                            mpout.change = [txout.userInfo[@"change"] integerValue];
+                            mpout.keyIndex = [txout.userInfo[@"keyIndex"] integerValue];
 
                             if (![mpout insertInDatabase:db error:&dberror])
                             {

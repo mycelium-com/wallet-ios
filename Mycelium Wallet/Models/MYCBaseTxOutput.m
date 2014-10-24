@@ -79,7 +79,7 @@
 
 + (NSArray*) loadOutputsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db
 {
-    return [self loadWithCondition:@"accountIndex = ?" params:@[@(accountIndex)] fromDatabase:db];
+    return [self loadWithCondition:@"accountIndex = ? ORDER BY blockHeight ASC" params:@[@(accountIndex)] fromDatabase:db];
 }
 
 

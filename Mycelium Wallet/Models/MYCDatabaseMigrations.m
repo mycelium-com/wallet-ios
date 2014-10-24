@@ -55,7 +55,7 @@
                     "keyIndex          INT  NOT NULL," // index of the address used in the keychain.
                     "PRIMARY KEY (outpointHash, outpointIndex, accountIndex) ON CONFLICT REPLACE"
                     ")", tableName]] &&
-            [db executeUpdate:[NSString stringWithFormat:@"CREATE INDEX %@_accountIndex ON %@ (accountIndex)", tableName, tableName]];
+            [db executeUpdate:[NSString stringWithFormat:@"CREATE INDEX %@_accountIndexBlockHeight ON %@ (accountIndex, blockHeight)", tableName, tableName]];
         }];
     }
 

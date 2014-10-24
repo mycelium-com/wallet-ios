@@ -27,10 +27,11 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
-#if DEBUG
+#if DEBUG && 0
 //  One-shot database removal when the stale schema does not even allow app to start.
-//    [[MYCWallet currentWallet] resetDatabase];
-//    exit(111);
+#warning DEBUG: RESETTING DATABASE ON LAUNCH
+    [[MYCWallet currentWallet] resetDatabase];
+    exit(111);
 #endif
 
 #if MYCTESTNET

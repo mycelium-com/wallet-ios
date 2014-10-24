@@ -12,13 +12,15 @@
 #import "MYCTextFieldLiveFormatter.h"
 #import "MYCErrorAnimation.h"
 #import "MYCScannerView.h"
+#import "MYCUnspentOutput.h"
 
-@interface MYCSendViewController () <UITextFieldDelegate>
+@interface MYCSendViewController () <UITextFieldDelegate, BTCTransactionBuilderDataSource>
 
 @property(nonatomic,readonly) MYCWallet* wallet;
 @property(nonatomic) MYCWalletAccount* account;
 
 @property(nonatomic) BTCSatoshi spendingAmount;
+@property(nonatomic) BTCAddress* spendingAddress;
 
 @property(nonatomic) BOOL addressValid;
 @property(nonatomic) BOOL amountValid;
@@ -166,6 +168,7 @@
 
     if (self.addressValid && self.amountValid)
     {
+        NSLog(@"TODO: sign the transaction and confirm sending, then show spinner and finish when done");
         [self complete:YES];
     }
 }
@@ -259,6 +262,46 @@
 
 
 
+
+#pragma mark - BTCTransactionBuilderDataSource
+
+
+- (NSEnumerator* /* [BTCTransactionOutput] */) unspentOutputsForTransactionBuilder:(BTCTransactionBuilder*)txbuilder
+{
+    __block NSArray* unspents = nil;
+    [self.wallet inDatabase:^(FMDatabase *db) {
+        unspents = [MYCUnspentOutput loadOutputsForAccount:self.account.accountIndex database:db];
+    }];
+
+    NSMutableArray* utxos = [NSMutableArray array];
+
+    for (MYCUnspentOutput* unspent in unspents)
+    {
+        //NSLog(@"unspent: %@: %@", @(unspent.blockHeight), @(unspent.value));
+        BTCTransactionOutput* utxo = unspent.transactionOutput;
+        utxo.userInfo = @{@"MYCUnspentOutput": unspent };
+        [utxos addObject:utxo];
+    }
+
+    return [utxos objectEnumerator];
+}
+
+- (BTCKey*) transactionBuilder:(BTCTransactionBuilder*)txbuilder keyForUnspentOutput:(BTCTransactionOutput*)txout
+{
+    MYCUnspentOutput* unspent = txout.userInfo[@"MYCUnspentOutput"];
+
+    // Find the key and return it.
+
+    return nil;
+}
+
+
+
+
+
+
+
+
 #pragma mark - Implementation
 
 
@@ -276,6 +319,7 @@
     self.addressField.textColor = [UIColor blackColor];
 
     self.addressValid = NO;
+    self.spendingAddress = nil;
 
     if (addrString.length > 0)
     {
@@ -288,18 +332,17 @@
             {
                 self.addressField.textColor = [UIColor redColor];
             }
-            self.addressValid = NO;
         }
         else
         {
             if (!!self.wallet.isTestnet == !!addr.isTestnet)
             {
                 self.addressValid = YES;
+                self.spendingAddress = addr;
             }
             else
             {
                 self.addressField.textColor = [UIColor orangeColor];
-                self.addressValid = NO;
             }
         }
     }
@@ -331,6 +374,36 @@
         // Update fee and color amounts.
         // Set self.amountValid to YES if everything is okay.
 
+        // Address may not be entered yet, so use dummy address.
+        BTCAddress* address = self.spendingAddress ?: [BTCPublicKeyAddress addressWithData:BTCZero160()];
+
+        BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
+        builder.dataSource = self;
+        builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:address] ];
+        builder.changeAddress = self.account.internalAddress;
+
+        NSError* berror = nil;
+        BTCTransactionBuilderResult* result = [builder buildTransactionAndSign:NO error:&berror];
+        if (!result)
+        {
+            self.btcField.textColor = [UIColor redColor];
+            self.fiatField.textColor = [UIColor redColor];
+            self.feeLabel.text = NSLocalizedString(@"Insufficient funds", @"");
+        }
+        else
+        {
+            self.amountValid = YES;
+            NSString* feeString = nil;
+            if (self.fiatInput)
+            {
+                feeString = [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:result.fee]];
+            }
+            else
+            {
+                feeString = [self.wallet.btcFormatter stringFromAmount:result.fee];
+            }
+            self.feeLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Fee: %@", @""), feeString];
+        }
     }
     [self updateSendButton];
     [self updateUnits];
@@ -364,6 +437,8 @@
 
     self.btcButton.titleLabel.font = fiatButtonFont;
     self.fiatButton.titleLabel.font = btcButtonFont;
+
+    [self updateAmounts];
 }
 
 - (IBAction)didBeginEditingBtc:(id)sender

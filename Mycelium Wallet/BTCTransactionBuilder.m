@@ -29,7 +29,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
     return self;
 }
 
-- (BTCTransactionBuilderResult*) buildTransaction:(NSError**)errorOut
+- (BTCTransactionBuilderResult*) buildTransactionAndSign:(BOOL)sign error:(NSError**)errorOut
 {
     if (!self.changeScript)
     {
@@ -85,7 +85,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
         // Set the output value as needed
         changeOutput.value = result.outputsAmount;
 
-        result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction error:errorOut];
+        result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction sign:sign error:errorOut];
         if (!result.unsignedInputsIndexes)
         {
             return nil;
@@ -144,7 +144,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
             result.outputsAmount += change;
             result.fee = fee;
 
-            result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction error:errorOut];
+            result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction sign:sign error:errorOut];
             if (!result.unsignedInputsIndexes)
             {
                 return nil;
@@ -165,7 +165,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
             [txoutputs removeObjectIdenticalTo:changeOutput];
             result.transaction.outputs = txoutputs;
             result.fee = fee;
-            result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction error:errorOut];
+            result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction sign:sign error:errorOut];
             if (!result.unsignedInputsIndexes)
             {
                 return nil;
@@ -233,7 +233,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
 
 
 // Tries to sign a transaction and returns index set of unsigned inputs.
-- (NSIndexSet*) attemptToSignTransaction:(BTCTransaction*)tx error:(NSError**)errorOut
+- (NSIndexSet*) attemptToSignTransaction:(BTCTransaction*)tx sign:(BOOL)reallySign error:(NSError**)errorOut
 {
     // By default, all inputs are marked to be signed.
     NSMutableIndexSet* unsignedIndexes = [NSMutableIndexSet indexSet];
@@ -243,7 +243,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
     }
 
     // Check if we can possibly sign anything. Otherwise return early.
-    if (tx.inputs.count == 0 || !self.dataSource)
+    if (!reallySign || tx.inputs.count == 0 || !self.dataSource)
     {
         return unsignedIndexes;
     }

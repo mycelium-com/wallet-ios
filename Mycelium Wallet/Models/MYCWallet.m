@@ -33,6 +33,8 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     MYCDatabase* _database;
     int _updatingExchangeRate;
     NSMutableArray* _accountUpdateOperations;
+
+    MYCUnlockedWallet* _unlockedWallet; // allows nesting calls with the same unlockedWallet.
 }
 
 + (instancetype) currentWallet
@@ -265,14 +267,22 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
 - (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason
 {
-    MYCUnlockedWallet* unlockedWallet = [[MYCUnlockedWallet alloc] init];
+    // If already within a context of unlocked wallet, reuse it.
+    if (_unlockedWallet)
+    {
+        block(_unlockedWallet);
+        return;
+    }
 
-    unlockedWallet.wallet = self;
-    unlockedWallet.reason = reason;
+    _unlockedWallet = [[MYCUnlockedWallet alloc] init];
 
-    block(unlockedWallet);
+    _unlockedWallet.wallet = self;
+    _unlockedWallet.reason = reason;
 
-    [unlockedWallet clear];
+    block(_unlockedWallet);
+
+    [_unlockedWallet clear];
+    _unlockedWallet = nil;
 }
 
 
