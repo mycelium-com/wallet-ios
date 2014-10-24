@@ -27,6 +27,8 @@ typedef NS_ENUM(NSUInteger, BTCTransactionBuilderError) {
 // Called when needs inputs to spend in a transaction.
 // BTCTransactionOutput instances must contain sensible `transactionHash` and `index` properties.
 // Reference of BTCTransactionOutput is assigned to BTCTransactionInput so you could access it to sign the inputs.
+// Unspent outputs are consumed in the same order as they are enumerated.
+// For BIP32 wallets it is recommended to sort unspents by block height (oldest first) to keep the scan window short.
 - (NSEnumerator* /* [BTCTransactionOutput] */) unspentOutputsForTransactionBuilder:(BTCTransactionBuilder*)txbuilder;
 
 @optional
@@ -50,10 +52,13 @@ typedef NS_ENUM(NSUInteger, BTCTransactionBuilderError) {
 @interface BTCTransactionBuilder : NSObject
 
 // Data source that provides inputs.
-// If you do not provide a dataSource, you should provide unspentOutputsEnumerator.
+// If you do not provide a dataSource, you should provide unspent outputs via `unspentOutputsEnumerator`.
 @property(weak,nonatomic) id<BTCTransactionBuilderDataSource> dataSource;
 
 // Instead of using data source, provide unspent outputs directly.
+// Unspent outputs are consumed in the same order as they are enumerated.
+// For BIP32 wallets it is recommended to sort unspents by block height (oldest first) to
+// keep the scan window short.
 @property(nonatomic) NSEnumerator* unspentOutputsEnumerator;
 
 // Optional list of outputs for which the transaction is intended.
@@ -62,8 +67,12 @@ typedef NS_ENUM(NSUInteger, BTCTransactionBuilderError) {
 @property(nonatomic) NSArray* outputs;
 
 // Change address where remaining funds should be sent.
-// Must not be nil.
+// Either `changeAddress` or `changeScript` must not be nil.
 @property(nonatomic) BTCAddress* changeAddress;
+
+// Change script where remaining funds should be sent.
+// Must not be nil. Default value is derived from `changeAddress`.
+@property(nonatomic) BTCScript* changeScript;
 
 
 // Optional configuration properties
