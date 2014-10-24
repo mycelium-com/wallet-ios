@@ -148,10 +148,10 @@ NSString* BTCTransactionIDFromHash(NSData* txhash)
     tx.lockTime = self.lockTime;
 
     // Copy informational properties as is.
-    tx.blockHeight   = self.blockHeight;
-    tx.blockDate     = self.blockDate;
-    tx.confirmations = self.confirmations;
-    tx.userInfo      = self.userInfo;
+    tx.blockHeight   = _blockHeight;
+    tx.blockDate     = _blockDate;
+    tx.confirmations = _confirmations;
+    tx.userInfo      = _userInfo;
 
     return tx;
 }
@@ -214,18 +214,6 @@ NSString* BTCTransactionIDFromHash(NSData* txhash)
     return payload;
 }
 
-- (void) invalidatePayload
-{
-    // obsolete method
-}
-
-- (void) setLockTime:(uint32_t)lockTime
-{
-    if (_lockTime == lockTime) return;
-    _lockTime = lockTime;
-    [self invalidatePayload];
-}
-
 
 #pragma mark - Methods
 
@@ -242,7 +230,6 @@ NSString* BTCTransactionIDFromHash(NSData* txhash)
     }
     input.transaction = self;
     _inputs = [_inputs arrayByAddingObject:input];
-    [self invalidatePayload];
 }
 
 // Adds output script
@@ -259,25 +246,24 @@ NSString* BTCTransactionIDFromHash(NSData* txhash)
     output.transactionHash = nil; // can't be reliably set here because transaction may get updated.
     output.transaction = self;
     _outputs = [_outputs arrayByAddingObject:output];
-    [self invalidatePayload];
 }
 
 - (void) removeAllInputs
 {
+    for (BTCTransactionInput* txin in _inputs)
+    {
+        txin.transaction = nil;
+    }
     _inputs = @[];
-    [self invalidatePayload];
 }
 
 - (void) removeAllOutputs
 {
     for (BTCTransactionOutput* txout in _outputs)
     {
-        txout.index = BTCTransactionOutputIndexUnknown;
-        txout.transactionHash = nil;
         txout.transaction = nil;
     }
     _outputs = @[];
-    [self invalidatePayload];
 }
 
 - (BOOL) isCoinbase
@@ -338,8 +324,6 @@ NSString* BTCTransactionIDFromHash(NSData* txhash)
     }
     
     if ([stream read:(uint8_t*)&_lockTime maxLength:sizeof(_lockTime)] != sizeof(_lockTime)) return NO;
-    
-    [self invalidatePayload];
     
     return YES;
 }
@@ -453,8 +437,6 @@ NSString* BTCTransactionIDFromHash(NSData* txhash)
         [tx addInput:input];
     }
     
-    [tx invalidatePayload];
-    
     // Important: we have to hash transaction together with its hash type.
     // Hash type is appended as little endian uint32 unlike 1-byte suffix of the signature.
     NSMutableData* fulldata = [tx.data mutableCopy];
@@ -476,6 +458,40 @@ NSString* BTCTransactionIDFromHash(NSData* txhash)
 
 
 #pragma mark - Fees
+
+
+
+// Computes estimated fee for this tx size using default fee rate.
+// @see BTCTransactionDefaultFeeRate.
+- (BTCSatoshi) estimatedFee
+{
+    return [self estimatedFeeWithRate:BTCTransactionDefaultFeeRate];
+}
+
+// Computes estimated fee for this tx size using specified fee rate (satoshis per 1000 bytes).
+- (BTCSatoshi) estimatedFeeWithRate:(BTCSatoshi)feePerK
+{
+    return [BTCTransaction estimateFeeForSize:self.data.length feeRate:feePerK];
+}
+
+// Computes estimated fee for the given tx size using specified fee rate (satoshis per 1000 bytes).
++ (BTCSatoshi) estimateFeeForSize:(NSInteger)txsize feeRate:(BTCSatoshi)feePerK
+{
+    if (feePerK <= 0) return 0;
+    BTCSatoshi fee = 0;
+    while (txsize > 0) // add fee rate for each (even incomplete) 1K byte chunk
+    {
+        txsize -= 1000;
+        fee += feePerK;
+    }
+    return fee;
+}
+
+
+
+
+// TO BE REVIEWED:
+
 
 
 // Minimum base fee to send a transaction.
