@@ -48,6 +48,7 @@
 
 @interface MYCUpdateAccountOperation ()
 @property(nonatomic, readwrite) MYCWalletAccount* account;
+@property(nonatomic, readwrite) MYCBackend* backend;
 
 // Latest used indices for invoices and change respectively.
 @property(nonatomic) NSInteger latestExternalIndex;
@@ -69,6 +70,7 @@
     {
         _account = account;
         _wallet = wallet;
+        _backend = wallet.backend;
         _externalAddressesLookAhead = 20;
         _internalAddressesLookAhead = 2;
         _discoveryEnabled = YES;
@@ -146,9 +148,8 @@
     }
 
     NSInteger accountIndex = self.account.accountIndex;
-    MYCWallet* wallet = self.wallet;
 
-    [wallet.backend loadUnspentOutputsForAddresses:addresses completion:^(NSArray *outputs, NSInteger height, NSError *error) {
+    [self.backend loadUnspentOutputsForAddresses:addresses completion:^(NSArray *outputs, NSInteger height, NSError *error) {
 
         if (!outputs)
         {
@@ -158,14 +159,14 @@
 
         // Update blockchain height for usage throughout the app.
         [self log:[NSString stringWithFormat:@"Updating blockchain height: %d", (int)height]];
-        wallet.blockchainHeight = height;
+        self.wallet.blockchainHeight = height;
 
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
 
             NSMutableSet* txidsToUpdate = [NSMutableSet set];
 
             __block NSError* dberror = nil;
-            [wallet inDatabase:^(FMDatabase *db) {
+            [self.wallet inDatabase:^(FMDatabase *db) {
 
                 NSArray* localMYCUnspents = [MYCUnspentOutput loadAllFromDatabase:db];
                 NSMutableDictionary* localMYCUnspentsByOutpoint = [NSMutableDictionary dictionary];
@@ -188,7 +189,7 @@
                     BTCOutpoint* outpoint = mout.outpoint;
                     if (!remoteBTCUnspentsByOutpoint[outpoint])
                     {
-#warning FIXME: cannot delete from DB because don't have a primary key.
+                        MYCLog(@"MYCUpdateAccountOperation: Removing unspent output from DB: %@", mout.transactionOutput);
                         if (![mout deleteFromDatabase:db error:&dberror])
                         {
                             dberror = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error when deleting unspent output"}];
@@ -231,6 +232,7 @@
                         // If we have a valid unspent output, save it and update its transaction.
                         if (mout)
                         {
+                            MYCLog(@"MYCUpdateAccountOperation: Adding new unspent output to DB: %@", txout);
                             // set latest version of unspent output.
                             mout.transactionOutput = txout;
 
@@ -260,14 +262,8 @@
                     return;
                 }
                 
-                // Will return early if input is empty list.
-                [self.wallet.backend loadTransactions:[txidsToUpdate allObjects] completion:^(NSArray *transactions, NSError *error) {
-
-                    if (!transactions)
-                    {
-                        if (completion) completion(NO, error);
-                        return;
-                    }
+                // Will return early if input is an empty list.
+                [self.backend loadTransactions:[txidsToUpdate allObjects] completion:^(NSArray *transactions, NSError *error) {
 
                     [self handleNewTransactions:transactions completion:^(BOOL success, NSError *error) {
                         // If we did not fail, then we have processed new transactions and foundAny = YES.
@@ -315,7 +311,7 @@
         // * `height` contains -1 for unconfirmed transaction and block height at which it is included.
         // * `date` contains time when transaction is recorded or noticed.
         // In case of error, `dicts` is nil and `error` contains NSError object.
-        [self.wallet.backend loadStatusForTransactions:txids completion:^(NSArray *dicts, NSError *error) {
+        [self.backend loadStatusForTransactions:txids completion:^(NSArray *dicts, NSError *error) {
 
             if (!dicts)
             {
@@ -431,17 +427,24 @@
 
             // For each input figure out if WE are sending it by fetching the
             // parent transaction and looking at the address
-            for (BTCTransactionInput* input in tx.inputs)
+            for (BTCTransactionInput* txin in tx.inputs)
             {
                 // Find the parent transaction
-                if (input.isCoinbase) continue;
+                if (txin.isCoinbase) continue;
 
-                MYCParentOutput* parent = [MYCParentOutput loadOutputForAccount:self.account.accountIndex hash:input.previousHash index:input.previousIndex database:db];
+                MYCParentOutput* parent = [MYCParentOutput loadOutputForAccount:self.account.accountIndex hash:txin.previousHash index:txin.previousIndex database:db];
 
-                if (parent.change >= 0 && parent.keyIndex >= 0)
+                if (parent)
                 {
-                    // Have parent with valid key path - we fund this transaction
-                    pendingSending += parent.value;
+                    if ((parent.change >= 0 && parent.keyIndex >= 0))
+                    {
+                        // Have parent with valid key path - we fund this transaction
+                        pendingSending += parent.value;
+                    }
+                }
+                else
+                {
+                    MYCError(@"No parent output for input %@:%@", txin.previousTransactionID, @(txin.previousIndex));
                 }
             }
 
@@ -462,6 +465,11 @@
                     {
                         // This output has been spent, subtract it from the amount sent.
                         pendingSending -= output.value;
+
+                        if (pendingSending < 0)
+                        {
+                            MYCError(@"OMG! pendingSending is below zero! %@", @(pendingSending));
+                        }
                     }
                 }
             }
@@ -601,7 +609,7 @@
     }
 
     // Load all known transactions for the given addresses.
-    [self.wallet.backend loadTransactionIDsForAddresses:addresses limit:1000 completion:^(NSArray *txids, NSInteger height, NSError *error) {
+    [self.backend loadTransactionIDsForAddresses:addresses limit:1000 completion:^(NSArray *txids, NSInteger height, NSError *error) {
 
         if (!txids)
         {
@@ -614,7 +622,7 @@
         self.wallet.blockchainHeight = height;
 
         // Will return early if input is empty list.
-        [self.wallet.backend loadTransactions:txids completion:^(NSArray *transactions, NSError *error) {
+        [self.backend loadTransactions:txids completion:^(NSArray *transactions, NSError *error) {
 
             if (!transactions)
             {
@@ -677,7 +685,7 @@
     NSInteger accountIndex = self.account.accountIndex;
     MYCWallet* wallet = self.wallet;
 
-    //MYCLog(@"DEBUG fetchRelevantParentOutputsFromTransactions: %@", [txs valueForKey:@"transactionID"]);
+    MYCLog(@"DEBUG fetchRelevantParentOutputsFromTransactions: %@", [txs valueForKey:@"transactionID"]);
 
     // Perform DB loads on background thread.
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
@@ -699,6 +707,7 @@
 
                 for (BTCTransactionInput* txin in tx.inputs)
                 {
+                    MYCLog(@"Checking parents for txin: %@:%@", txin.previousTransactionID, @(txin.previousIndex));
                     MYCParentOutput* parentOutput = [MYCParentOutput loadOutputForAccount:accountIndex hash:txin.previousHash index:txin.previousIndex database:db];
 
                     if (parentOutput)
@@ -732,21 +741,10 @@
         // Continue on main thread
         dispatch_async(dispatch_get_main_queue(), ^{
 
-            // Nothing to fetch - return successfully.
-            if (txidsToFetch.count == 0)
-            {
-                if (completion) completion(YES, nil);
-                return;
-            }
-
             // Fetch parent transactions and put them in parentTxsByHash.
-            [self.wallet.backend loadTransactions:[txidsToFetch allObjects] completion:^(NSArray *transactions, NSError *error) {
+            [self.backend loadTransactions:[txidsToFetch allObjects] completion:^(NSArray *transactions, NSError *error) {
 
-                if (!transactions)
-                {
-                    if (completion) completion(NO, error);
-                    return;
-                }
+                // Here we may get no new transactions, but we may have some in parentTxsByHash.
 
                 for (BTCTransaction* btctx in transactions)
                 {

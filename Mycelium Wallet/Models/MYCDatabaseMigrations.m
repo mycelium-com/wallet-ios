@@ -78,6 +78,19 @@
         [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (blockHeight, accountIndex, timestamp)"];
     }];
 
+    [mycdatabase registerMigration:@"Create MYCOutgoingTransactions" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
+        return [db executeUpdate:
+                @"CREATE TABLE MYCOutgoingTransactions("
+                "id                INTEGER PRIMARY KEY AUTOINCREMENT,"
+                "transactionHash   BLOB NOT NULL," // note: we allow duplicate txs if they happen to pay from one account to another.
+#if MYCDebugHexDatabaseFields
+                "transactionID     TEXT NOT NULL,"
+                "dataHex           TEXT NOT NULL,"
+#endif
+                "data              BLOB NOT NULL" // raw transaction in binary
+                ")"];
+    }];
+
 }
 
 @end

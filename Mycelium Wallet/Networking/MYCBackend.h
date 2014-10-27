@@ -11,7 +11,7 @@
 typedef NS_ENUM(NSInteger, MYCBroadcastStatus) {
     // Something went wrong with the server or internet connection.
     // Should try re-broadcasting again later.
-    MYCBroadcastStatusFailure = 0,
+    MYCBroadcastStatusNetworkFailure = 0,
 
     // Transaction is illformed or double-spend occured.
     // Should not try to re-broadcast this transaction.

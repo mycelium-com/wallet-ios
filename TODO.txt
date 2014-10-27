@@ -3,13 +3,15 @@ Todo:
 + send: add address field and scan UI.
 + send: recognize bitcoin URI from QR code.
 + sync: save all parent outputs (for transaction details), mark our parents as ours in DB to avoid repeating checks.
-- send: compose transactions for sending.
-- sync: keep a reference to wallet.backend so if it changes from testnet to mainnet while in progress, it will connect to the same backend.
++ send: compose transactions for sending.
++ sync: keep a reference to wallet.backend so if it changes from testnet to mainnet while in progress, it will connect to the same backend.
++ bug: not updating parent outputs correctly for just broadcasted transaction. Sync from scratch is correct, though.
 - sync: switch to another hostname on timeout.
 - settings: spend from WIF private key (fetch all unspents and spend them to current account's change address).
 - accounts: edit account label.
 - accounts: archive/unarchive accounts.
 - accounts: make account current.
+- builder: try to sign tx to compute fees to avoid simulation when not needed.
 - transactions: show a list of transactions
 - transactions: details of a single transction
 - handle bitcoin: URL when clicked in safari or elsewhere.

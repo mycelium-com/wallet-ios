@@ -82,7 +82,7 @@
 // Finds young transactions with a given height or newer (including unconfirmed ones).
 + (NSArray*) loadRecentTransactionsSinceHeight:(NSInteger)height account:(NSInteger)accountIndex database:(FMDatabase*)db
 {
-    return [self loadWithCondition:@"accountIndex = ? AND (blockHeight > ? || blockHeight == -1)"
+    return [self loadWithCondition:@"accountIndex = ? AND (blockHeight > ? OR blockHeight == -1)"
                              params:@[@(accountIndex), @(height) ]
                        fromDatabase:db];
 }
@@ -102,9 +102,10 @@
 
 
 
-+ (NSString *)primaryKeyName
++ (id) primaryKeyName
 {
-    return nil;
+    return @[MYCDatabaseColumn(transactionHash),
+             MYCDatabaseColumn(accountIndex)];
 }
 
 + (NSString *)tableName

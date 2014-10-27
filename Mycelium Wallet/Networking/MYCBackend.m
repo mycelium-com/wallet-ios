@@ -560,7 +560,7 @@
                            if (completion) completion(MYCBroadcastStatusBadTransaction, error);
                            return;
                        }
-                       if (completion) completion(MYCBroadcastStatusFailure, error);
+                       if (completion) completion(MYCBroadcastStatusNetworkFailure, error);
                        return;
                    }
 
@@ -569,7 +569,7 @@
                    if (!success)
                    {
                        // Unknown failure
-                       if (completion) completion(MYCBroadcastStatusFailure, error);
+                       if (completion) completion(MYCBroadcastStatusNetworkFailure, error);
                        return;
                    }
 

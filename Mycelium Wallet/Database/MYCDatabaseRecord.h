@@ -23,7 +23,7 @@ extern NSString* const MYCDatabaseRecordColumnKey;          // Defined for NSErr
  You may override those to get automatic saving. columns should include primaryKeyName if not nil.
  */
 + (NSString *)tableName;
-+ (NSString *)primaryKeyName;   // defaults to "id"
++ (id)primaryKeyName;   // defaults to "id", may contain an array of strings for multi-column primary keys.
 + (NSArray *)columnNames;
 
 /**
@@ -50,10 +50,11 @@ extern NSString* const MYCDatabaseRecordColumnKey;          // Defined for NSErr
  */
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
-/**
- * Returns a dictionary { primaryKey: instance }
- */
-+ (NSDictionary *)loadWithPrimaryKeys:(NSSet *)primaryKeys fromDatabase:(FMDatabase *)db;
+///**
+// * Returns a dictionary { primaryKey: instance }
+// * Each key could be a scalar string/number or an array of scalars (for multi-column primary keys).
+// */
+//+ (NSDictionary *)loadWithPrimaryKeys:(NSSet *)primaryKeys fromDatabase:(FMDatabase *)db;
 
 /**
  * Returns an object, or nil if it is not found.

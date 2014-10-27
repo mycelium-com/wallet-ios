@@ -36,4 +36,7 @@
 // Performs account update. Calls the completion block on success or failure.
 - (void) update:(void(^)(BOOL success, NSError* error))completion;
 
+// Updates local balance from known unspent outputs.
+- (void) updateLocalBalance:(void(^)(BOOL success, NSError* error))completion;
+
 @end

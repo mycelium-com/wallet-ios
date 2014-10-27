@@ -86,9 +86,11 @@
 #pragma mark - MYCDatabaseRecord
 
 
-+ (NSString *)primaryKeyName
++ (id) primaryKeyName
 {
-    return nil;
+    return @[MYCDatabaseColumn(outpointHash),
+             MYCDatabaseColumn(outpointIndex),
+             MYCDatabaseColumn(accountIndex)];
 }
 
 + (NSString *)tableName

@@ -28,6 +28,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *accountNameLabel;
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView* spinner;
 
 @property (weak, nonatomic) IBOutlet UITextField *addressField;
 @property (weak, nonatomic) IBOutlet UIButton *scanButton;
@@ -46,8 +47,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *allFundsButton;
 @property (weak, nonatomic) IBOutlet UILabel *allFundsLabel;
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *middleBorderHeightConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomBorderHeightConstraint;
+@property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint)  NSArray*borderHeightConstraints;
 
 @property(weak, nonatomic) MYCScannerView* scannerView;
 
@@ -62,8 +62,14 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         self.title = NSLocalizedString(@"Send Bitcoins", @"");
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidUpdateAccount:) name:MYCWalletDidUpdateAccountNotification object:nil];
     }
     return self;
+}
+
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void) viewDidLoad
@@ -75,8 +81,13 @@
     self.btcLiveFormatter  = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.btcField numberFormatter:self.wallet.btcFormatterNaked];
     self.fiatLiveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.fiatField numberFormatter:self.wallet.fiatFormatterNaked];
 
-    self.middleBorderHeightConstraint.constant =
-    self.bottomBorderHeightConstraint.constant = 1.0/[UIScreen mainScreen].nativeScale;
+    for (NSLayoutConstraint* c in self.borderHeightConstraints)
+    {
+        c.constant = 1.0/[UIScreen mainScreen].nativeScale;
+    }
+
+    [self.cancelButton setTitle:NSLocalizedString(@"Cancel", @"") forState:UIControlStateNormal];
+    [self.sendButton   setTitle:NSLocalizedString(@"Send", @"") forState:UIControlStateNormal];
 
     self.addressField.placeholder = NSLocalizedString(@"Recipient Address", @"");
     [self.scanButton setTitle:NSLocalizedString(@"Scan Address", @"") forState:UIControlStateNormal];
@@ -107,21 +118,41 @@
     //[self.btcField becomeFirstResponder];
 }
 
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    // If last time used QR code scanner, show it this time.
+
+}
+
 - (MYCWallet*) wallet
 {
     return [MYCWallet currentWallet];
 }
 
+- (void) walletDidUpdateAccount:(NSNotification*)notif
+{
+    MYCWalletAccount* wa = notif.object;
+    if ([wa isKindOfClass:[MYCWalletAccount class]] && wa.accountIndex == self.account.accountIndex)
+    {
+        [self reloadAccount];
+    }
+}
+
 - (void) reloadAccount
 {
+    __block MYCWalletAccount* acc = nil;
     [self.wallet inDatabase:^(FMDatabase *db) {
-        self.account = [MYCWalletAccount currentAccountFromDatabase:db];
+        acc = [MYCWalletAccount currentAccountFromDatabase:db];
     }];
+    self.account = acc;
 }
 
 - (void) setAccount:(MYCWalletAccount *)account
 {
     _account = account;
+    [self updateAmounts];
     [self updateTotalBalance];
 }
 
@@ -168,46 +199,171 @@
 
     if (self.addressValid && self.amountValid && self.spendingAddress && self.spendingAmount > 0)
     {
-        BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
-        builder.dataSource = self;
-        builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:self.spendingAddress] ];
-        builder.changeAddress = self.account.internalAddress;
+        [self updateAccountIfNeeded:^(BOOL success, BOOL updated, NSError *error) {
 
-        __block NSError* berror = nil;
-        __block BTCTransactionBuilderResult* result = nil;
+            // If actually updated account, re-check everything.
+            if (updated)
+            {
+                [self send:sender];
+                return;
+            }
 
-        NSString* authString = [NSString stringWithFormat:NSLocalizedString(@"Authorize spending %@", @""),
-                                [self formatAmountInSelectedCurrency:self.spendingAmount]];
+            if (!success)
+            {
+                MYCError(@"CANNOT SYNC ACCOUNT BEFORE SENDING: %@", error);
+                UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
+                                                                            message:NSLocalizedString(@"Can't synchronize the account. Try again later.", @"")
+                                                                     preferredStyle:UIAlertControllerStyleAlert];
+                [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"")
+                                                       style:UIAlertActionStyleCancel
+                                                     handler:^(UIAlertAction *action) {}]];
+                [self presentViewController:ac animated:YES completion:nil];
+            }
 
-        // Unlock wallet so builder can sign.
-        [self.wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
-            result = [builder buildTransactionAndSign:YES error:&berror];
-        } reason:authString];
 
-        if (result && result.unsignedInputsIndexes.count == 0)
-        {
-            NSLog(@"signed tx: %@", result.transaction);
-            NSLog(@"signed tx: %@", BTCHexStringFromData(result.transaction.data));
-            NSLog(@"signed tx base64: %@", [result.transaction.data base64EncodedStringWithOptions:0]);
+            BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
+            builder.dataSource = self;
+            builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:self.spendingAddress] ];
+            builder.changeAddress = self.account.internalAddress;
 
-            #warning TODO: show spinner
-            #warning TODO: fetch unspent outputs if they were not fetched sufficiently recently 
-            #warning TODO: broadcast transaction
+            __block NSError* berror = nil;
+            __block BTCTransactionBuilderResult* result = nil;
 
-            NSLog(@"OKAY TO SEND TX %@ TO %@?", [self formatAmountInSelectedCurrency:self.spendingAmount], self.spendingAddress.base58String);
+            NSString* authString = [NSString stringWithFormat:NSLocalizedString(@"Authorize spending %@", @""),
+                                    [self formatAmountInSelectedCurrency:self.spendingAmount]];
 
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            // Unlock wallet so builder can sign.
+            [self.wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
+                result = [builder buildTransactionAndSign:YES error:&berror];
+            } reason:authString];
 
-                [self complete:YES];
+            if (result && result.unsignedInputsIndexes.count == 0)
+            {
+                [self.view endEditing:YES];
 
-            });
-        }
-        else
-        {
-            NSLog(@"TX BUILDER ERROR: %@", berror);
-            [MYCErrorAnimation animateError:self.view radius:10.0];
-        }
+                NSLog(@"signed tx: %@", BTCHexStringFromData(result.transaction.data));
+                NSLog(@"signed tx base64: %@", [result.transaction.data base64EncodedStringWithOptions:0]);
+
+                [self beginSpinning];
+
+                UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm payment", @"")
+                                                                            message:[NSString stringWithFormat:NSLocalizedString(@"You are sending %@ to %@", @""),
+                                                                                     [self formatAmountInSelectedCurrency:self.spendingAmount],
+                                                                                     [self.spendingAddress base58String]
+                                                                                     ]
+                                                                     preferredStyle:UIAlertControllerStyleAlert];
+                [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"")
+                                                       style:UIAlertActionStyleCancel
+                                                     handler:^(UIAlertAction *action) {
+
+                                                         [self endSpinning];
+
+                                                     }]];
+                [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Send", @"")
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction *action) {
+
+                                                        [self broadcastTransaction:result.transaction];
+
+                                                     }]];
+
+                [self presentViewController:ac animated:YES completion:nil];
+            }
+            else
+            {
+                NSLog(@"TX BUILDER ERROR: %@", berror);
+                [MYCErrorAnimation animateError:self.view radius:10.0];
+            }
+        }];
     }
+}
+
+- (void) broadcastTransaction:(BTCTransaction*)tx
+{
+    [self.wallet broadcastTransaction:tx fromAccount:self.account completion:^(BOOL success, BOOL queued, NSError *error) {
+
+        [self endSpinning];
+
+        if (success)
+        {
+            [self complete:YES];
+            return;
+        }
+
+        // If failed, but queued, show alert and finish.
+        if (queued)
+        {
+            UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Connection failed", @"")
+                                                                        message:NSLocalizedString(@"Your payment can't be completed, please check your internet connection. Your payment will be completed automatically.", @"")
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                                   style:UIAlertActionStyleCancel
+                                                 handler:^(UIAlertAction *action) {
+                                                 }]];
+            [self presentViewController:ac animated:YES completion:nil];
+
+            [self complete:YES];
+            return;
+        }
+
+        // Failed and not queued.
+
+        // Force update account so we are up to date.
+        [self.wallet updateAccount:self.account force:YES completion:^(BOOL success, NSError *error) {
+        }];
+
+        // Tell the user that transaction failed and must be re-done.
+        UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Payment invalid", @"")
+                                                                    message:NSLocalizedString(@"Your payment was rejected. Please try to synchronize your account and try again.", @"")
+                                                             preferredStyle:UIAlertControllerStyleAlert];
+        [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                               style:UIAlertActionStyleCancel
+                                             handler:^(UIAlertAction *action) {
+                                             }]];
+        [self presentViewController:ac animated:YES completion:nil];
+    }];
+}
+
+- (void) updateAccountIfNeeded:(void(^)(BOOL success, BOOL updated, NSError* error))completion
+{
+    // If updated less than 5 minutes ago, keep it as is.
+    if ([self.account.syncDate timeIntervalSinceNow] > -5*60)
+    {
+        if (completion) completion(YES, NO, nil);
+        return;
+    }
+
+    [self beginSpinning];
+
+    [self.wallet updateAccount:self.account force:YES completion:^(BOOL success, NSError *error) {
+
+        [self endSpinning];
+        if (completion) completion(success, success, error);
+    }];
+}
+
+- (void) beginSpinning
+{
+    self.spinner.hidden = NO;
+    [self.spinner startAnimating];
+    self.sendButton.hidden = YES;
+    self.btcField.userInteractionEnabled = NO;
+    self.fiatField.userInteractionEnabled = NO;
+    self.allFundsButton.userInteractionEnabled = NO;
+    self.addressField.userInteractionEnabled = NO;
+    self.scanButton.userInteractionEnabled = NO;
+}
+
+- (void) endSpinning
+{
+    self.spinner.hidden = YES;
+    [self.spinner stopAnimating];
+    self.sendButton.hidden = NO;
+    self.btcField.userInteractionEnabled = YES;
+    self.fiatField.userInteractionEnabled = YES;
+    self.allFundsButton.userInteractionEnabled = YES;
+    self.addressField.userInteractionEnabled = YES;
+    self.scanButton.userInteractionEnabled = YES;
 }
 
 - (void) complete:(BOOL)sent

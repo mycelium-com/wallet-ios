@@ -134,4 +134,10 @@ extern NSString* const MYCWalletDidUpdateAccountNotification;
 // Update can be skipped when account was recently updated or when it's already being updated.
 - (void) updateAccount:(MYCWalletAccount*)account force:(BOOL)force completion:(void(^)(BOOL success, NSError *error))completion;
 
+// Publishes transaction for this account.
+// If transaction broadcast failed, but we can't be sure it didn't reach the server,
+// it will be queued and published later.
+// queued = YES if transaction was queued and should be broadcasted later.
+- (void) broadcastTransaction:(BTCTransaction*)tx fromAccount:(MYCWalletAccount*)account completion:(void(^)(BOOL success, BOOL queued, NSError *error))completion;
+
 @end

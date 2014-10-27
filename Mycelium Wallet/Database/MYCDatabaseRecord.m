@@ -25,9 +25,20 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     return nil;
 }
 
-+ (NSString*)primaryKeyName
++ (id) primaryKeyName
 {
     return @"id";
+}
+
++ (NSArray*) internalPrimaryKeyNames
+{
+    id pk = [self primaryKeyName];
+    if (!pk) return nil;
+    if ([pk isKindOfClass:[NSString class]])
+    {
+        return @[ pk ];
+    }
+    return pk;
 }
 
 + (NSArray*)columnNames
@@ -95,6 +106,65 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     return res;
 }
 
++ (NSString*) conditionForPrimaryKey:(NSArray*)pkNames
+{
+    NSMutableArray* arr = [NSMutableArray array];
+    for (NSString* pk in pkNames)
+    {
+        [arr addObject:[NSString stringWithFormat:@"%@ = :%@", pk, pk]];
+    }
+    return [arr componentsJoinedByString:@" AND "];
+}
+
+- (NSString*) conditionForPrimaryKey:(NSArray*)pkNames
+{
+    return [[self class] conditionForPrimaryKey:pkNames];
+}
+
+- (NSString*) setterForPrimaryKey:(NSArray*)pkNames
+{
+    NSMutableArray* arr = [NSMutableArray array];
+    for (NSString* pk in pkNames)
+    {
+        [arr addObject:[NSString stringWithFormat:@"%@ = :%@", pk, pk]];
+    }
+    return [arr componentsJoinedByString:@", "];
+}
+
+- (NSArray*) valuesForPrimaryKey:(NSArray*)pkNames
+{
+    NSMutableArray* arr = [NSMutableArray array];
+    for (NSString* pk in pkNames)
+    {
+        id val = [self valueForKey:pk];
+        if (!val)
+        {
+            [NSException raise:NSInternalInconsistencyException format:@"Primary key %@ is not set", pk];
+            return nil;
+        }
+        [arr addObject:val];
+    }
+    return arr;
+}
+
+- (NSDictionary*) valuesDictionaryForPrimaryKey:(NSArray*)pkNames
+{
+    NSMutableDictionary* dict = [NSMutableDictionary dictionary];
+    for (NSString* pk in pkNames)
+    {
+        id val = [self valueForKey:pk];
+        if (!val)
+        {
+            [NSException raise:NSInternalInconsistencyException format:@"Primary key %@ is not set", pk];
+            return nil;
+        }
+        dict[pk] = val;
+    }
+    return dict;
+}
+
+
+
 + (BOOL)deleteAllFromDatabase:(FMDatabase *)db error:(NSError **)outError
 {
     NSString* tableName = [[self class] tableName];
@@ -125,23 +195,17 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
 - (BOOL)deleteFromDatabase:(FMDatabase *)db error:(NSError **)outError
 {
     NSString* tableName = [[self class] tableName];
-    NSString* primaryKeyName = [[self class] primaryKeyName];
+    NSArray* primaryKey = [[self class] internalPrimaryKeyNames];
     
     if (!tableName) {
         [NSException raise:NSInvalidArgumentException format:@"Missing tableName for class %@", [self class]];
     }
-    if (!primaryKeyName) {
+    if (!primaryKey) {
         [NSException raise:NSInvalidArgumentException format:@"Missing primaryKeyName for class %@", [self class]];
     }
-    
-    id primaryKeyValue = [self valueForKey:primaryKeyName];
-    if (!primaryKeyValue)
-    {
-        [NSException raise:NSInternalInconsistencyException format:@"Primary key is not set"];
-        return NO;
-    }
-    
-    if ([db executeUpdate:[NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ = :%@", tableName, primaryKeyName, primaryKeyName] withParameterDictionary:@{primaryKeyName: primaryKeyValue}])
+
+    if ([db executeUpdate:[NSString stringWithFormat:@"DELETE FROM %@ WHERE %@", tableName, [self conditionForPrimaryKey:primaryKey]]
+                withParameterDictionary:[self valuesDictionaryForPrimaryKey:primaryKey]])
     {
         if (db.changes > 0) {
             [MYCDatabase tableDidChange:tableName];
@@ -214,11 +278,12 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     }
     
     NSString* tableName = [[self class] tableName];
-    NSString* primaryKeyName = [[self class] primaryKeyName];
+    NSArray* primaryKey = [[self class] internalPrimaryKeyNames];
+
     if (!tableName) {
         [NSException raise:NSInvalidArgumentException format:@"Missing tableName for class %@", [self class]];
     }
-    if (!primaryKeyName) {
+    if (!primaryKey) {
         [NSException raise:NSInvalidArgumentException format:@"Missing primaryKeyName for class %@", [self class]];
     }
     
@@ -234,7 +299,7 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     NSMutableString* updateStatement = [NSMutableString stringWithCapacity:256];
     for (NSString* key in columnNames)
     {
-        if (! [key isEqualToString:primaryKeyName])
+        if (![primaryKey containsObject:key])
             [updateStatement appendFormat:@"%@ = :%@, ", key, key];
     }
     if (updateStatement.length == 0) {
@@ -243,7 +308,7 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     }
     [updateStatement deleteCharactersInRange:NSMakeRange(updateStatement.length - 2, 2)];
     
-    if ([db executeUpdate:[NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE %@ = :%@", tableName, updateStatement, primaryKeyName, primaryKeyName] withParameterDictionary:row])
+    if ([db executeUpdate:[NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE %@", tableName, updateStatement, [self conditionForPrimaryKey:primaryKey]] withParameterDictionary:row])
     {
         if (db.changes > 0) {
             [MYCDatabase tableDidChange:tableName];
@@ -265,20 +330,20 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
 - (BOOL)saveInDatabase:(FMDatabase *)db error:(NSError **)outError
 {
     NSString* tableName = [[self class] tableName];
-    NSString* primaryKeyName = [[self class] primaryKeyName];
+    NSArray* primaryKey = [[self class] internalPrimaryKeyNames];
     
     if (!tableName) {
         [NSException raise:NSInvalidArgumentException format:@"Missing tableName for class %@", [self class]];
     }
-    if (!primaryKeyName) {
+    if (!primaryKey) {
         [NSException raise:NSInvalidArgumentException format:@"Missing primaryKeyName for class %@", [self class]];
     }
-    
+
     // search if we have an existing record
-    id primaryKeyValue = [self valueForKey:primaryKeyName];
-    if (primaryKeyValue)
+    if (_existingRecord)
     {
-        FMResultSet* rs = [db executeQuery:[NSString stringWithFormat:@"SELECT 1 FROM %@ WHERE %@ = :%@", tableName, primaryKeyName, primaryKeyName] withParameterDictionary:@{primaryKeyName: primaryKeyValue}];
+        FMResultSet* rs = [db executeQuery:[NSString stringWithFormat:@"SELECT 1 FROM %@ WHERE %@", tableName, [self conditionForPrimaryKey:primaryKey]]
+                   withParameterDictionary:[self valuesDictionaryForPrimaryKey:primaryKey]];
         if (!rs) {
             if (outError) {
                 *outError = db.lastError;
@@ -295,35 +360,36 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     return [self insertInDatabase:db error:outError];
 }
 
-+ (NSDictionary *)loadWithPrimaryKeys:(NSSet *)primaryKeys fromDatabase:(FMDatabase *)db
-{
-    NSString* tableName = [[self class] tableName];
-    NSString* primaryKeyName = [[self class] primaryKeyName];
-    
-    if (!tableName) {
-        [NSException raise:NSInvalidArgumentException format:@"Missing tableName for class %@", [self class]];
-    }
-    if (!primaryKeyName) {
-        [NSException raise:NSInvalidArgumentException format:@"Missing primaryKeyName for class %@", [self class]];
-    }
-    
-    NSMutableDictionary* res = [NSMutableDictionary dictionaryWithCapacity:256];
-    if ([primaryKeys count])
-    {
-        NSString* query = [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@ in (?)", tableName, primaryKeyName];
-        FMResultSet* rs = [db executeQuery:query withArgumentsInArray:@[[primaryKeys allObjects]]];
-        if (!rs) {
-            [NSException raise:NSInternalInconsistencyException format:@"Unexpected database error: %@", db.lastError];
-        }
-        while ([rs next]) {
-            MYCDatabaseRecord* mo = [[self alloc] init];
-            [mo updateFromDictionary:rs.resultDictionary];
-            id primaryKeyValue = [mo valueForKey:primaryKeyName];
-            res[primaryKeyValue] = mo;
-        }
-    }
-    return res;
-}
+//+ (NSDictionary *)loadWithPrimaryKeys:(NSSet *)primaryKeys fromDatabase:(FMDatabase *)db
+//{
+//    NSString* tableName = [[self class] tableName];
+//    NSArray* primaryKey = [[self class] internalPrimaryKeyNames];
+//    
+//    if (!tableName) {
+//        [NSException raise:NSInvalidArgumentException format:@"Missing tableName for class %@", [self class]];
+//    }
+//    if (!primaryKey) {
+//        [NSException raise:NSInvalidArgumentException format:@"Missing primaryKeyName for class %@", [self class]];
+//    }
+//    
+//    NSMutableDictionary* res = [NSMutableDictionary dictionaryWithCapacity:256];
+//    NSMutableArray* conditionsArray = [NSMutableArray array];
+//    if ([primaryKeys count] > 0)
+//    {
+//        NSString* query = [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@ in (?)", tableName, primaryKey];
+//        FMResultSet* rs = [db executeQuery:query withArgumentsInArray:@[[primaryKeys allObjects]]];
+//        if (!rs) {
+//            [NSException raise:NSInternalInconsistencyException format:@"Unexpected database error: %@", db.lastError];
+//        }
+//        while ([rs next]) {
+//            MYCDatabaseRecord* mo = [[self alloc] init];
+//            [mo updateFromDictionary:rs.resultDictionary];
+//            id primaryKeyValue = [mo valueForKey:primaryKey];
+//            res[primaryKeyValue] = mo;
+//        }
+//    }
+//    return res;
+//}
 
 
 // Array of dictionaries with given attributes
@@ -496,12 +562,49 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     return [super hash];
 }
 
-+ (instancetype)loadWithPrimaryKey:(id)primaryKey fromDatabase:(FMDatabase *)db
++ (instancetype)loadWithPrimaryKey:(id)primaryKeyValue fromDatabase:(FMDatabase *)db
 {
-    // lets hope a "… IN (?)" is not slower than a "… = ?"
-    NSDictionary* dict = [self loadWithPrimaryKeys:primaryKey ? [NSSet setWithObject:primaryKey] : [NSSet set] fromDatabase:db];
-    if ([dict count])
-        return [dict allValues][0];
+    if (!primaryKeyValue) return nil;
+
+    NSString* tableName = [[self class] tableName];
+    NSArray* primaryKey = [[self class] internalPrimaryKeyNames];
+
+    if (!tableName) {
+        [NSException raise:NSInvalidArgumentException format:@"Missing tableName for class %@", [self class]];
+    }
+    if (!primaryKey) {
+        [NSException raise:NSInvalidArgumentException format:@"Missing primaryKeyName for class %@", [self class]];
+    }
+
+    NSArray* primaryKeyValues = primaryKeyValue;
+    if ([primaryKeyValues isKindOfClass:[NSString class]])
+    {
+        primaryKeyValues = @[ primaryKeyValues ];
+    }
+
+    if (primaryKeyValues.count != primaryKey.count)
+    {
+        [NSException raise:NSInvalidArgumentException format:@"Primary key value must have the same number of items as primary key has columns (class %@)", [self class]];
+    }
+
+    NSString* query = [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@", tableName, [self conditionForPrimaryKey:primaryKey]];
+    NSMutableDictionary* params = [NSMutableDictionary dictionary];
+    for (NSUInteger i = 0; i < primaryKey.count; i++)
+    {
+        params[primaryKey[i]] = primaryKeyValues[i];
+    }
+    FMResultSet* rs = [db executeQuery:query withParameterDictionary:params];
+    if (!rs) {
+        [NSException raise:NSInternalInconsistencyException format:@"Unexpected database error: %@", db.lastError];
+    }
+    while ([rs next])
+    {
+        MYCDatabaseRecord* mo = [[self alloc] init];
+        [mo updateFromDictionary:rs.resultDictionary];
+        [rs close];
+        return mo;
+    }
+
     return nil;
 }
 

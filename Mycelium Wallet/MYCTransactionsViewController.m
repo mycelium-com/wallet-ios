@@ -16,6 +16,7 @@
 @property(nonatomic, weak) IBOutlet UITableView* tableView;
 @property(nonatomic) PTableViewSource* tableViewSource;
 @property(nonatomic) MYCWalletAccount* currentAccount;
+@property(nonatomic) NSArray* transactions;
 @end
 
 @implementation MYCTransactionsViewController
@@ -62,15 +63,17 @@
 {
     [super viewWillAppear:animated];
 
-    // Reload current account.
-    if (_currentAccount)
-    {
-        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
-            _currentAccount = [MYCWalletAccount currentAccountFromDatabase:db];
-        }];
-    }
+    // Reload account.
+    [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+        [self.account reloadFromDatabase:db];
+    }];
 
     [self.tableView reloadData];
+}
+
+- (void) updateTransactions
+{
+    self.transactions = @[];
 }
 
 #pragma mark - UITableView
@@ -83,7 +86,7 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    return self.transactions.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

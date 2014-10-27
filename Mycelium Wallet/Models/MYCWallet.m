@@ -13,6 +13,10 @@
 #import "MYCBackend.h"
 #import "MYCDatabaseMigrations.h"
 #import "MYCUpdateAccountOperation.h"
+#import "MYCOutgoingTransaction.h"
+#import "MYCTransaction.h"
+#import "MYCParentOutput.h"
+#import "MYCUnspentOutput.h"
 
 NSString* const MYCWalletFormatterDidUpdateNotification = @"MYCWalletFormatterDidUpdateNotification";
 NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCurrencyConverterDidUpdateNotification";
@@ -469,13 +473,13 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     return [self.database inTransaction:block];
 }
 
-- (void) asyncInDatabase:(id(^)(FMDatabase *db, NSError** dberrorOut))block completion:(void(^)(id result, NSError* dberror))completion
+- (void) asyncInDatabase:(id(^)(FMDatabase *db, NSError** dberrorOut))dbBlock completion:(void(^)(id result, NSError* dberror))completion
 {
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
         [self inDatabase:^(FMDatabase *db) {
 
             NSError* dberror = nil;
-            id result = block ? block(db, &dberror) : @YES;
+            id result = dbBlock ? dbBlock(db, &dberror) : @YES;
 
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completion) completion(result, dberror);
@@ -580,6 +584,9 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 // If update is skipped, completion block is called with (NO,nil).
 - (void) updateAccount:(MYCWalletAccount*)account force:(BOOL)force completion:(void(^)(BOOL success, NSError *error))completion
 {
+    // Broadcast pending txs if possible.
+    [self broadcastOutgoingTransactions:^(BOOL success, NSError *error) { }];
+
     if (!force)
     {
         // If synced less than 5 minutes ago, skip sync.
@@ -607,7 +614,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
     [op update:^(BOOL success, NSError *error) {
 
-        [_accountUpdateOperations removeObject:op];
+        [_accountUpdateOperations removeObjectIdenticalTo:op];
 
         [self notifyNetworkActivity];
 
@@ -635,6 +642,250 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
     [self notifyNetworkActivity];
 }
 
+
+- (void) broadcastTransaction:(BTCTransaction*)tx fromAccount:(MYCWalletAccount*)account completion:(void(^)(BOOL success, BOOL queued, NSError *error))completion
+{
+    if (!tx)
+    {
+        if (completion) completion(NO, NO, nil);
+        return;
+    }
+
+    // First, make sure all previous transactions are broadcasted.
+    // If broadcasting previous transactions fails, allow adding current one to the queue
+    // (so you can make multiple payments before all of them are sent to the network).
+    [self broadcastOutgoingTransactions:^(BOOL success, NSError *error) {
+        if (!success)
+        {
+            MYCError(@"Failed to broadcast previous pending transactions. Adding new tx %@ to queue. Error: %@", tx.transactionID, error);
+            [self asyncInDatabase:^id(FMDatabase *db, NSError *__autoreleasing *dberrorOut) {
+
+                MYCOutgoingTransaction* pendingTx = [[MYCOutgoingTransaction alloc] init];
+                pendingTx.transaction = tx;
+                return [pendingTx saveInDatabase:db error:dberrorOut] ? @YES : nil;
+
+            } completion:^(id result, NSError *dberror) {
+
+                if (result)
+                {
+                    [self markTransactionAsSpent:tx account:account error:NULL];
+                }
+
+                if (completion) completion(NO, !!result, error);
+                return;
+            }];
+
+            return;
+        }
+
+        // All txs broadcasted (or none are queued), try to broadcast our transaction.
+        [self.backend broadcastTransaction:tx completion:^(MYCBroadcastStatus status, NSError *error) {
+
+            // Bad transaction rejected. Return error and do nothing else.
+            if (status == MYCBroadcastStatusBadTransaction)
+            {
+                MYCError(@"Cannot broadcast transaction: %@. Error: %@. Raw hex: %@", tx.transactionID, error, BTCHexStringFromData(tx.data));
+                if (completion) completion(NO, NO, error);
+                return;
+            }
+
+            // Good transaction accepted. Update unspent outputs and return.
+            if (status == MYCBroadcastStatusSuccess)
+            {
+                [self markTransactionAsSpent:tx account:account error:NULL];
+                if (completion) completion(YES, NO, nil);
+                return;
+            }
+
+            // Failed to deliver the transaction.
+            MYCError(@"Connection error while broadcasting transaction %@. Adding it to outgoing queue. Error: %@", tx.transactionID, error);
+
+            __block NSError* dberror = nil;
+            [self inDatabase:^(FMDatabase *db) {
+                MYCOutgoingTransaction* pendingTx = [[MYCOutgoingTransaction alloc] init];
+                pendingTx.transaction = tx;
+                if (![pendingTx saveInDatabase:db error:&dberror])
+                {
+                    dberror = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error while saving MYCOutgoingTransaction"}];
+                }
+            }];
+
+            [self markTransactionAsSpent:tx account:account error:NULL];
+
+            if (completion) completion(NO, !dberror, dberror ?: error);
+        }];
+
+    }];
+}
+
+// Recursively cleans up broadcast queue.
+- (void) broadcastOutgoingTransactions:(void(^)(BOOL success, NSError*error))completion
+{
+    [self asyncInDatabase:^id(FMDatabase *db, NSError *__autoreleasing *dberrorOut) {
+
+        MYCOutgoingTransaction* pendingTx = [[MYCOutgoingTransaction loadWithCondition:@"1 ORDER BY id LIMIT 1" fromDatabase:db] firstObject];
+        return pendingTx;
+
+    } completion:^(MYCOutgoingTransaction* pendingTx, NSError *dberror) {
+
+        // No pending tx, nothing to broadcast.
+        if (!pendingTx)
+        {
+            if (completion) completion(YES, nil);
+            return;
+        }
+
+        [self.backend broadcastTransaction:pendingTx.transaction completion:^(MYCBroadcastStatus status, NSError *error) {
+
+            // If failed to broadcast, fail the entire process of broadcasting.
+            if (status == MYCBroadcastStatusNetworkFailure)
+            {
+                MYCError(@"Failed to broadcast pending transaction %@. Error: %@", pendingTx.transactionID, error);
+                if (completion) completion(NO, error);
+                return;
+            }
+
+            if (status == MYCBroadcastStatusBadTransaction)
+            {
+                MYCError(@"Outgoing transaction %@ rejected, removing from queue.", pendingTx.transactionID);
+            }
+            else
+            {
+                MYCError(@"Outgoing transaction %@ successfully broadcasted, removing from queue.", pendingTx.transactionID);
+            }
+
+            // Transaction is either rejected (invalid, doublespent) or accepted and broadcasted.
+            // If tx is rejected, coins spent in this tx will become available again after account sync.
+            [self inDatabase:^(FMDatabase *db) {
+                [pendingTx deleteFromDatabase:db error:NULL];
+            }];
+
+            [self broadcastOutgoingTransactions:completion];
+        }];
+    }];
+}
+
+// Marks transaction as spent so we don't accidentally double-spend it.
+- (BOOL) markTransactionAsSpent:(BTCTransaction*)tx account:(MYCWalletAccount*)account error:(NSError**)errorOut
+{
+    if (!tx) return NO;
+
+//    [self updateAccount:account force:YES completion:^(BOOL success, NSError *error) {
+//    }];
+    return YES;
+
+    __block BOOL succeeded = YES;
+    [self inTransaction:^(FMDatabase *db, BOOL *rollback) {
+
+        // Remove inputs from unspent, marking them as spent
+
+        for (BTCTransactionInput* txin in tx.inputs)
+        {
+            MYCUnspentOutput* mout = [MYCUnspentOutput loadOutputForAccount:account.accountIndex hash:txin.previousHash index:txin.previousIndex database:db];
+            if (mout)
+            {
+                NSError* dberror = nil;
+                if (![mout deleteFromDatabase:db error:&dberror])
+                {
+                    MYCError(@"Cannot remove unspent output linking to txin of the new transaction (%@:%@): %@", txin.previousTransactionID, @(txin.previousIndex), dberror);
+                    if (errorOut) *errorOut = dberror;
+                    succeeded = NO;
+                    return;
+                }
+                else
+                {
+                    MYCLog(@"MYCWallet: removed unspent output (now spent): %@:%@", BTCTransactionIDFromHash(mout.transactionOutput.transactionHash), @(mout.transactionOutput.index));
+                }
+            }
+        }
+
+        // See if any of the outputs are for ourselves and store them as unspent
+
+        for (NSInteger i = 0; i < tx.outputs.count; i++)
+        {
+            BTCTransactionOutput* txout = tx.outputs[i];
+
+            MYCUnspentOutput* mout = [[MYCUnspentOutput alloc] init];
+            mout.blockHeight = -1;
+            mout.transactionOutput = txout;
+            mout.accountIndex = account.accountIndex;
+
+            // Find which address is used on this output.
+            NSInteger change = 0;
+            NSInteger keyIndex = 0;
+            if ([account matchesScriptData:txout.script.data change:&change keyIndex:&keyIndex])
+            {
+                mout.change = change;
+                mout.keyIndex = keyIndex;
+                NSError* dberror = nil;
+                if (![mout insertInDatabase:db error:&dberror])
+                {
+                    dberror = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error when inserting new unspent output"}];
+                    if (errorOut) *errorOut = dberror;
+                    succeeded = NO;
+
+                    MYCError(@"MYCWallet: failed to save fresh unspent output %@ for account %d in database: %@", txout, (int)account.accountIndex, dberror);
+                    return;
+                }
+                else
+                {
+                    MYCLog(@"MYCWallet: added new unspent output (from new transaction): %@:%@", BTCTransactionIDFromHash(txout.transactionHash), @(txout.index));
+                }
+            }
+        }
+//
+//        // Store transaction locally, so we have it in our history and don't
+//        // need to fetch it in a minute
+//        MYCTransaction* mtx = [[MYCTransaction alloc] init];
+//
+//        mtx.transactionHash = tx.transactionHash;
+//        mtx.data            = tx.data;
+//        mtx.blockHeight     = 0;
+//        mtx.date            = nil;
+//        mtx.accountIndex    = account.accountIndex;
+//
+//        NSError* dberror = nil;
+//        if (![mtx insertInDatabase:db error:&dberror])
+//        {
+//            dberror = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error"}];
+//            succeeded = NO;
+//            if (errorOut) *errorOut = dberror;
+//            
+//            MYCError(@"MYCWallet: failed to save transaction %@ for account %d in database: %@", tx.transactionID, (int)account.accountIndex, dberror);
+//            return;
+//        }
+//        else
+//        {
+//            MYCLog(@"MYCUpdateAccountOperation: saved new transaction: %@", tx.transactionID);
+//        }
+    }];
+
+    if (!succeeded)
+    {
+        return NO;
+    }
+
+    // Calculate local balance cache. It has changed because we have done some spending.
+    [self updateAccount:account force:YES completion:^(BOOL success, NSError *error) {
+        if (success)
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:account];
+        }
+    }];
+
+//    MYCUpdateAccountOperation* op = [[MYCUpdateAccountOperation alloc] initWithAccount:account wallet:self];
+//    [_accountUpdateOperations addObject:op];
+//    [op updateLocalBalance:^(BOOL success, NSError *error) {
+//        [_accountUpdateOperations removeObjectIdenticalTo:op];
+//
+//        if (success)
+//        {
+//            [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:account];
+//        }
+//    }];
+
+    return YES;
+}
 
 - (void) notifyNetworkActivity
 {

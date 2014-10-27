@@ -133,7 +133,7 @@
 
     MYCWallet* wallet = self.wallet;
 
-    self.btcAmountLabel.text = [wallet.btcFormatter stringFromAmount:self.account.confirmedAmount];
+    self.btcAmountLabel.text = [wallet.btcFormatter stringFromAmount:self.account.spendableAmount];
 
     [self updateFiatAmount];
     [self updateRefreshControlAnimated:NO];

@@ -269,7 +269,7 @@
     return @"MYCWalletAccounts";
 }
 
-+ (NSString *)primaryKeyName
++ (id) primaryKeyName
 {
     return @"accountIndex";
 }
