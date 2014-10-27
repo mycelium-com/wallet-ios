@@ -225,7 +225,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
         BTCScript* txoutScript = txin.transactionOutput.script;
         txin.signatureScript = [txoutScript simulatedSignatureScriptWithOptions:BTCScriptSimulationMultisigP2SH];
 
-        // TODO: if cannot match the simulated signature, use data source to provide one. (If signing API available, then use it.)
+        #warning TODO: if cannot match the simulated signature, use data source to provide one. (If signing API available, then use it.)
         if (!txin.signatureScript) txin.signatureScript = txoutScript;
     }
     return [simtx estimatedFeeWithRate:self.feeRate];
@@ -271,7 +271,10 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
             BTCSignatureHashType hashtype = SIGHASH_ALL;
 
             NSData* sighash = [tx signatureHashForScript:[outputScript copy] inputIndex:i hashType:hashtype error:errorOut];
-            if (!sighash) return nil;
+            if (!sighash)
+            {
+                return nil;
+            }
 
             // Most common case: P2PKH with compressed pubkey (because of BIP32)
             BTCScript* p2cpkhScript = [[BTCScript alloc] initWithAddress:[BTCPublicKeyAddress addressWithData:BTCHash160(cpk)]];
@@ -324,7 +327,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
 
     } // each input
 
-    return nil;
+    return unsignedIndexes;
 }
 
 
