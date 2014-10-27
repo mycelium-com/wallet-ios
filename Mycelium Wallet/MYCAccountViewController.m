@@ -40,7 +40,7 @@
 
     self.title = [NSString stringWithFormat:NSLocalizedString(@"Account #%@", @""), @(self.account.accountIndex)];
 
-    // TODO: update this item when label is edited.
+    #warning TODO: update this item when label is edited.
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:self.account.label style:UIBarButtonItemStylePlain target:nil action:NULL];
 
     [self updateSections];

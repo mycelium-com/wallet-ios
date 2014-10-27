@@ -188,6 +188,7 @@
                     BTCOutpoint* outpoint = mout.outpoint;
                     if (!remoteBTCUnspentsByOutpoint[outpoint])
                     {
+#warning FIXME: cannot delete from DB because don't have a primary key.
                         if (![mout deleteFromDatabase:db error:&dberror])
                         {
                             dberror = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error when deleting unspent output"}];

@@ -305,7 +305,7 @@
 
         if (!success)
         {
-            // TODO: display an error if failed to connect or something.
+            #warning TODO: display an error if failed to connect or something.
         }
 
         [self.wallet updateExchangeRate:YES completion:^(BOOL success, NSError *error2) {

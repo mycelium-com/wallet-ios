@@ -166,10 +166,47 @@
         [MYCErrorAnimation animateError:self.scanButton radius:10.0];
     }
 
-    if (self.addressValid && self.amountValid)
+    if (self.addressValid && self.amountValid && self.spendingAddress && self.spendingAmount > 0)
     {
-        NSLog(@"TODO: sign the transaction and confirm sending, then show spinner and finish when done");
-        [self complete:YES];
+        BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
+        builder.dataSource = self;
+        builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:self.spendingAddress] ];
+        builder.changeAddress = self.account.internalAddress;
+
+        __block NSError* berror = nil;
+        __block BTCTransactionBuilderResult* result = nil;
+
+        NSString* authString = [NSString stringWithFormat:NSLocalizedString(@"Authorize spending %@", @""),
+                                [self formatAmountInSelectedCurrency:self.spendingAmount]];
+
+        // Unlock wallet so builder can sign.
+        [self.wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
+            result = [builder buildTransactionAndSign:YES error:&berror];
+        } reason:authString];
+
+        if (result && result.unsignedInputsIndexes.count == 0)
+        {
+            NSLog(@"signed tx: %@", result.transaction);
+            NSLog(@"signed tx: %@", BTCHexStringFromData(result.transaction.data));
+            NSLog(@"signed tx base64: %@", [result.transaction.data base64EncodedStringWithOptions:0]);
+
+            #warning TODO: show spinner
+            #warning TODO: fetch unspent outputs if they were not fetched sufficiently recently 
+            #warning TODO: broadcast transaction
+
+            NSLog(@"OKAY TO SEND TX %@ TO %@?", [self formatAmountInSelectedCurrency:self.spendingAmount], self.spendingAddress.base58String);
+
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+                [self complete:YES];
+
+            });
+        }
+        else
+        {
+            NSLog(@"TX BUILDER ERROR: %@", berror);
+            [MYCErrorAnimation animateError:self.view radius:10.0];
+        }
     }
 }
 
@@ -260,12 +297,12 @@
             }
             else
             {
-                // TODO: Report error to user "Address does not belong to a {testnet|mainnet}."
+                #warning TODO: Report error to user "Address does not belong to a {testnet|mainnet}."
             }
         }
         else
         {
-            // TODO: Report error to user - the scanned QR code is not a valid address or URL.
+            #warning TODO: Report error to user - the scanned QR code is not a valid address or URL.
         }
 
     }];
@@ -303,11 +340,25 @@
 
 - (BTCKey*) transactionBuilder:(BTCTransactionBuilder*)txbuilder keyForUnspentOutput:(BTCTransactionOutput*)txout
 {
+    // This userInfo key is set in previous call when we provide unspents to the builder.
     MYCUnspentOutput* unspent = txout.userInfo[@"MYCUnspentOutput"];
 
-    // Find the key and return it.
+    NSAssert(unspent, @"sanity check");
 
-    return nil;
+    __block BTCKey* key = nil;
+    [self.wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
+
+        BTCKeychain* accountKeychain = [unlockedWallet.keychain keychainForAccount:(uint32_t)self.account.accountIndex];
+
+        NSAssert(accountKeychain, @"sanity check");
+
+        key = [[accountKeychain derivedKeychainAtIndex:(uint32_t)unspent.change] keyAtIndex:(uint32_t)unspent.keyIndex];
+
+        NSAssert(key, @"sanity check");
+
+    } reason:nil]; // should be already unlocked
+
+    return key; // will clear on dealloc.
 }
 
 
@@ -320,16 +371,20 @@
 #pragma mark - Implementation
 
 
-- (void) updateTotalBalance
+
+- (NSString*) formatAmountInSelectedCurrency:(BTCSatoshi)amount
 {
     if (self.fiatInput)
     {
-        self.allFundsLabel.text = [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:self.account.spendableAmount]];
+        return [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:amount]];
     }
-    else
-    {
-        self.allFundsLabel.text = [self.wallet.btcFormatter stringFromAmount:self.account.spendableAmount];
-    }
+    return [self.wallet.btcFormatter stringFromAmount:amount];
+}
+
+
+- (void) updateTotalBalance
+{
+    self.allFundsLabel.text = [self formatAmountInSelectedCurrency:self.account.spendableAmount];
     self.allFundsButton.enabled = (self.account.spendableAmount > 0);
 }
 
@@ -415,15 +470,7 @@
         else
         {
             self.amountValid = YES;
-            NSString* feeString = nil;
-            if (self.fiatInput)
-            {
-                feeString = [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:result.fee]];
-            }
-            else
-            {
-                feeString = [self.wallet.btcFormatter stringFromAmount:result.fee];
-            }
+            NSString* feeString = [self formatAmountInSelectedCurrency:result.fee];
             self.feeLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Fee: %@", @""), feeString];
         }
     }

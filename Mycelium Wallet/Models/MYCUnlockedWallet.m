@@ -136,7 +136,7 @@
 {
     if (!_keychain)
     {
-        _keychain = [_mnemonic.keychain copy];
+        _keychain = (self.wallet.isTestnet ? [self.mnemonic.keychain bitcoinTestnetKeychain] : [self.mnemonic.keychain bitcoinMainnetKeychain]);
     }
     return _keychain;
 }
