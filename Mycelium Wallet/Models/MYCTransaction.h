@@ -39,18 +39,18 @@
 - (BOOL) loadFullDetailsFromDatabase:(FMDatabase*)db;
 
 // Finds a transaction in the database for a given hash. Returns nil if not found.
-+ (instancetype) loadTransactionWithHash:(NSData*)txhash account:(NSInteger)accountIndex database:(FMDatabase*)db;
++ (instancetype) loadTransactionWithHash:(NSData*)txhash account:(MYCWalletAccount*)account database:(FMDatabase*)db;
 
 // Finds young transactions with a given height or newer (including unconfirmed ones).
-+ (NSArray*) loadRecentTransactionsSinceHeight:(NSInteger)height account:(NSInteger)accountIndex database:(FMDatabase*)db;
++ (NSArray*) loadRecentTransactionsSinceHeight:(NSInteger)height account:(MYCWalletAccount*)account database:(FMDatabase*)db;
 
 // Finds unconfirmed transactions (with height = -1)
-+ (NSArray*) loadUnconfirmedTransactionsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db;
++ (NSArray*) loadUnconfirmedTransactionsForAccount:(MYCWalletAccount*)account database:(FMDatabase*)db;
 
 // Loads total number of transactions associated with this account
-+ (NSUInteger) countTransactionsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db;
++ (NSUInteger) countTransactionsForAccount:(MYCWalletAccount*)account database:(FMDatabase*)db;
 
 // Loads a transaction at index
-+ (MYCTransaction*) loadTransactionAtIndex:(NSUInteger)txindex account:(NSInteger)accountIndex database:(FMDatabase*)db;
++ (MYCTransaction*) loadTransactionAtIndex:(NSUInteger)txindex account:(MYCWalletAccount*)account database:(FMDatabase*)db;
 
 @end

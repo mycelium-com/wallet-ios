@@ -7,6 +7,7 @@
 //
 
 #import "MYCTransaction.h"
+#import "MYCWalletAccount.h"
 
 static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 
@@ -105,41 +106,52 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 
 
 // Finds a transaction in the database for a given hash. Returns nil if not found.
-+ (instancetype) loadTransactionWithHash:(NSData*)txhash account:(NSInteger)accountIndex database:(FMDatabase*)db
++ (instancetype) loadTransactionWithHash:(NSData*)txhash account:(MYCWalletAccount*)account database:(FMDatabase*)db
 {
-    return [[self loadWithCondition:@"accountIndex = ? AND transactionHash = ?"
-                             params:@[@(accountIndex), txhash ?: @"n/a" ]
+    MYCTransaction* tx = [[self loadWithCondition:@"accountIndex = ? AND transactionHash = ?"
+                             params:@[@(account.accountIndex), txhash ?: @"n/a" ]
                        fromDatabase:db] firstObject];
+    tx.account = account;
+    return tx;
 }
 
 
 // Finds young transactions with a given height or newer (including unconfirmed ones).
-+ (NSArray*) loadRecentTransactionsSinceHeight:(NSInteger)height account:(NSInteger)accountIndex database:(FMDatabase*)db
++ (NSArray*) loadRecentTransactionsSinceHeight:(NSInteger)height account:(MYCWalletAccount*)account database:(FMDatabase*)db
 {
-    return [self loadWithCondition:@"accountIndex = ? AND blockHeightExt > ?"
-                             params:@[@(accountIndex), @(height) ]
+    NSArray* txs = [self loadWithCondition:@"accountIndex = ? AND blockHeightExt > ?"
+                             params:@[@(account.accountIndex), @(height) ]
                        fromDatabase:db];
+
+    for (MYCTransaction* tx in txs) { tx.account = account; }
+    return txs;
 }
 
 // Finds unconfirmed transactions (with height = -1)
-+ (NSArray*) loadUnconfirmedTransactionsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db
++ (NSArray*) loadUnconfirmedTransactionsForAccount:(MYCWalletAccount*)account database:(FMDatabase*)db
 {
-    return [self loadWithCondition:@"accountIndex = ? AND blockHeightExt == ?"
-                            params:@[@(accountIndex), @(MYCTransactionBlockHeightUnconfirmed)]
+    NSArray* txs = [self loadWithCondition:@"accountIndex = ? AND blockHeightExt == ?"
+                            params:@[@(account.accountIndex), @(MYCTransactionBlockHeightUnconfirmed)]
                       fromDatabase:db];
+
+    for (MYCTransaction* tx in txs) { tx.account = account; }
+    return txs;
 }
 
 // Loads total number of transactions associated with this account
-+ (NSUInteger) countTransactionsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db
++ (NSUInteger) countTransactionsForAccount:(MYCWalletAccount*)account database:(FMDatabase*)db
 {
-    return [self countWithCondition:@"accountIndex = ?" params:@[ @(accountIndex) ] fromDatabase:db];
+    return [self countWithCondition:@"accountIndex = ?" params:@[ @(account.accountIndex) ] fromDatabase:db];
 }
 
 // Loads a transaction at index
-+ (MYCTransaction*) loadTransactionAtIndex:(NSUInteger)txindex account:(NSInteger)accountIndex database:(FMDatabase*)db
++ (MYCTransaction*) loadTransactionAtIndex:(NSUInteger)txindex account:(MYCWalletAccount*)account database:(FMDatabase*)db
 {
-    return [[self loadWithCondition:@"accountIndex = ? ORDER BY blockHeightExt DESC, timestamp DESC LIMIT 1 OFFSET ?"
-                             params:@[ @(accountIndex), @(txindex) ] fromDatabase:db] firstObject];
+    MYCTransaction* tx = [[self loadWithCondition:@"accountIndex = ? ORDER BY blockHeightExt DESC, timestamp DESC LIMIT 1 OFFSET ?"
+                             params:@[ @(account.accountIndex), @(txindex) ] fromDatabase:db] firstObject];
+
+    tx.account = account;
+    return tx;
 }
 
 

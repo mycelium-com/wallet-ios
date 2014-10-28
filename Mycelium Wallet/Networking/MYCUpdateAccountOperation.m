@@ -285,7 +285,7 @@
 
     [self.wallet asyncInDatabase:^id(FMDatabase *db, NSError **dberrorOut) {
 
-        return [MYCTransaction loadRecentTransactionsSinceHeight:height account:self.account.accountIndex database:db];
+        return [MYCTransaction loadRecentTransactionsSinceHeight:height account:self.account database:db];
 
     } completion:^(NSArray* recentTxs, NSError *dberror) {
 
@@ -421,7 +421,7 @@
 
 
         // Get the current set of unconfirmed transactions
-        for (MYCTransaction* unconfirmedMtx in [MYCTransaction loadUnconfirmedTransactionsForAccount:self.account.accountIndex database:db])
+        for (MYCTransaction* unconfirmedMtx in [MYCTransaction loadUnconfirmedTransactionsForAccount:self.account database:db])
         {
             BTCTransaction* tx = unconfirmedMtx.transaction;
 
@@ -520,7 +520,7 @@
 {
     if (!transactionHash) return NO;
 
-    MYCTransaction* tx = [MYCTransaction loadTransactionWithHash:transactionHash account:self.account.accountIndex database:db];
+    MYCTransaction* tx = [MYCTransaction loadTransactionWithHash:transactionHash account:self.account database:db];
 
     if (!tx) return NO;
 
@@ -718,7 +718,7 @@
                         continue;
                     }
 
-                    MYCTransaction* parentTx = [MYCTransaction loadTransactionWithHash:txin.previousHash account:accountIndex database:db];
+                    MYCTransaction* parentTx = [MYCTransaction loadTransactionWithHash:txin.previousHash account:self.account database:db];
 
                     if (parentTx)
                     {
