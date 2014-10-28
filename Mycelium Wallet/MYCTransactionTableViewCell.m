@@ -9,6 +9,7 @@
 #import "MYCTransactionTableViewCell.h"
 #import "MYCTransaction.h"
 #import "MYCWallet.h"
+#import "PColor.h"
 
 @interface MYCTransactionTableViewCell ()
 @property (weak, nonatomic) IBOutlet UILabel *btcLabel;
@@ -71,10 +72,19 @@
         {
             self.statusLabel.text = NSLocalizedString(@"1 confirmation", @"");
         }
-        else
+        else if (confirmations <= 100)
         {
             self.statusLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@ confirmations", @""), @(confirmations)];
         }
+    }
+
+    if ([self.transaction.date timeIntervalSinceNow] > -20*3600)
+    {
+        self.dateLabel.text = [wallet.compactTimeFormatter stringFromDate:self.transaction.date];
+    }
+    else
+    {
+        self.dateLabel.text = [wallet.compactDateFormatter stringFromDate:self.transaction.date];
     }
 }
 

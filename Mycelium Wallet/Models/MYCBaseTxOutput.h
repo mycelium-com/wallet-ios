@@ -29,4 +29,7 @@
 
 + (NSArray*) loadOutputsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db;
 
+// Returns YES if there is valid change and keyIndex values (not -1) which means this output belongs to its account.
+- (BOOL) isMyOutput;
+
 @end

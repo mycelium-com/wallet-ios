@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ekq-8v-A2d">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <scenes>
+        <!--Transaction Details View Controller-->
+        <scene sceneID="0eE-BU-hj1">
+            <objects>
+                <viewController id="ekq-8v-A2d" customClass="MYCTransactionDetailsViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="I1d-f9-cKc">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="0.96862745100000003" green="0.96470588239999999" blue="0.96078431369999995" alpha="1" colorSpace="calibratedRGB"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="txid" rowHeight="76" id="CLc-6h-8l5">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="CLc-6h-8l5" id="NAY-KM-cfh">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Transaction ID" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fDu-qn-dpb">
+                                            <rect key="frame" x="15" y="8" width="99.5" height="18"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="15"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="d21633ba23f70118185227be58a63527675641ad37967e2aa461559f577aec43" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UJV-aC-9M6">
+                                            <rect key="frame" x="15" y="30" width="297" height="37.5"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="fDu-qn-dpb" firstAttribute="top" secondItem="NAY-KM-cfh" secondAttribute="topMargin" id="JXW-SV-9cx"/>
+                                        <constraint firstItem="fDu-qn-dpb" firstAttribute="leading" secondItem="NAY-KM-cfh" secondAttribute="leadingMargin" constant="7" id="k9V-q1-Ayl"/>
+                                        <constraint firstItem="UJV-aC-9M6" firstAttribute="top" secondItem="fDu-qn-dpb" secondAttribute="bottom" constant="4" id="sHM-RU-SN8"/>
+                                        <constraint firstItem="fDu-qn-dpb" firstAttribute="leading" secondItem="UJV-aC-9M6" secondAttribute="leading" id="sxh-wM-COP"/>
+                                        <constraint firstItem="UJV-aC-9M6" firstAttribute="trailing" secondItem="NAY-KM-cfh" secondAttribute="trailingMargin" id="ute-mC-NS1"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell2" id="d8A-D1-5Oh">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="d8A-D1-5Oh" id="DNr-Oz-XOl">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="ekq-8v-A2d" id="MSu-sW-Nbp"/>
+                            <outlet property="delegate" destination="ekq-8v-A2d" id="1r2-Jy-E8Q"/>
+                        </connections>
+                    </tableView>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="667"/>
+                    <connections>
+                        <outlet property="tableView" destination="I1d-f9-cKc" id="FTH-g1-MZM"/>
+                        <outlet property="view" destination="I1d-f9-cKc" id="KGg-Pk-3AL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MFn-DZ-t8w" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="424" y="221.5"/>
+        </scene>
+    </scenes>
+</document>

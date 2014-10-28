@@ -7,7 +7,9 @@
 //
 
 #import "MYCTransaction.h"
+#import "MYCWallet.h"
 #import "MYCWalletAccount.h"
+#import "MYCParentOutput.h"
 
 static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 
@@ -84,7 +86,7 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 #pragma mark - Transaction Details
 
 
-- (MYCWalletAccount*) ensureAccount:(FMDatabase*)db
+- (MYCWalletAccount*) getAccount:(FMDatabase*)db
 {
     if (!_account)
     {
@@ -96,7 +98,72 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 // Loads basic details about transaction from database (label, amountTransferred).
 - (BOOL) loadBasicDetailsFromDatabase:(FMDatabase*)db
 {
-    
+    BTCTransaction* tx = self.transaction;
+    MYCWalletAccount* account = [self getAccount:db];
+
+    BTCSatoshi amount = 0;
+
+    BTCScript* ourDestinationScript = nil;
+    BTCScript* destinationScript = nil;
+    BTCScript* changeScript = nil;
+
+    // 1. For each of our outputs, increment amount.
+    // 2. For each of our inputs, decrement amount.
+    for (BTCTransactionOutput* txout in tx.outputs)
+    {
+        NSInteger change = 0;
+        if ([account matchesScriptData:txout.script.data change:&change keyIndex:NULL])
+        {
+            amount += txout.value;
+            if (change == 1)
+            {
+                changeScript = txout.script;
+            }
+            else
+            {
+                ourDestinationScript = txout.script;
+            }
+        }
+        else // not our address.
+        {
+            destinationScript = txout.script;
+        }
+    }
+
+    if (!tx.isCoinbase)
+    {
+        for (BTCTransactionInput* txin in tx.inputs)
+        {
+            MYCParentOutput* mout = [MYCParentOutput loadOutputForAccount:account.accountIndex hash:txin.previousHash index:txin.previousIndex database:db];
+            if ([mout isMyOutput])
+            {
+                amount -= mout.value;
+            }
+        }
+    }
+
+    self.amountTransferred = amount;
+
+    // Normally we'll have one of these transactions:
+    // 1. We are paying: one output is change, another is destination (which can be our external address or change address).
+    // 2. We are receiving: one output is ours, others could be anything.
+
+    BTCScript* script = nil;
+    if (amount > 0)
+    {
+        // Getting money, prefer our address.
+        script = ourDestinationScript ?: changeScript ?: destinationScript;
+    }
+    else
+    {
+        script = destinationScript ?: ourDestinationScript ?: changeScript;
+    }
+
+    // Convert to Testnet/Mainnet as needed.
+    BTCAddress* address = [[MYCWallet currentWallet] addressForAddress:script.standardAddress];
+
+    self.label = address.base58String;
+    self.label = self.label ?: @"—";
     return YES;
 }
 

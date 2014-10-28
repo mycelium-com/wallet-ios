@@ -21,6 +21,26 @@
     NSMutableDictionary* _internalScriptSearchCache; // [ index NSNumber : script NSData ]
 }
 
+- (id) init
+{
+    if (self = [super init])
+    {
+        _externalScriptSearchCache = [NSMutableDictionary dictionary];
+        _internalScriptSearchCache = [NSMutableDictionary dictionary];
+    }
+    return self;
+}
+
+- (id) initWithDictionary:(NSDictionary *)dict
+{
+    if (self = [super initWithDictionary:dict])
+    {
+        _externalScriptSearchCache = [NSMutableDictionary dictionary];
+        _internalScriptSearchCache = [NSMutableDictionary dictionary];
+    }
+    return self;
+}
+
 - (id) initWithKeychain:(BTCKeychain*)keychain
 {
     // Sanity check.
@@ -191,6 +211,11 @@
                 // Cache this value to avoid computing again.
                 ithData = script.data;
                 searchCache[j] = ithData;
+                //NSLog(@"cache miss: %@ (%p)", j, self);
+            }
+            else
+            {
+                //NSLog(@"cache hit:  %@", j);
             }
 
             if ([ithData isEqual:data])

@@ -66,6 +66,10 @@
     return [[[MYCWallet currentWallet] addressForAddress:self.script.standardAddress] base58String];
 }
 
+- (BOOL) isMyOutput
+{
+    return self.accountIndex >= 0 && self.change >= 0 && self.keyIndex >= 0;
+}
 
 #pragma mark - Database Access
 

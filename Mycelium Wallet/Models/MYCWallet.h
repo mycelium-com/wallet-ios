@@ -63,6 +63,10 @@ extern NSString* const MYCWalletDidUpdateAccountNotification;
 // View controllers post MYCWalletCurrencyConverterDidUpdateNotification when updating this property.
 @property(nonatomic) BTCCurrencyConverter* currencyConverter;
 
+// Date formatters
+@property(nonatomic) NSDateFormatter* compactDateFormatter;
+@property(nonatomic) NSDateFormatter* compactTimeFormatter;
+
 // Client to Mycelium backend to update state of the wallet.
 @property(nonatomic) MYCBackend* backend;
 

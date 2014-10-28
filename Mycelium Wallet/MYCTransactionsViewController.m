@@ -6,16 +6,16 @@
 //  Copyright (c) 2014 Mycelium. All rights reserved.
 //
 
-#import "MYCTransactionsViewController.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
+#import "MYCTransaction.h"
 
-#import "PTableViewSource.h"
+#import "MYCTransactionsViewController.h"
+#import "MYCTransactionTableViewCell.h"
+#import "MYCTransactionDetailsViewController.h"
 
 @interface MYCTransactionsViewController () <UITableViewDelegate, UITableViewDataSource>
 @property(nonatomic, weak) IBOutlet UITableView* tableView;
-@property(nonatomic) PTableViewSource* tableViewSource;
-@property(nonatomic) NSArray* transactions;
 @property(nonatomic) MYCWalletAccount* currentAccount;
 @end
 
@@ -26,15 +26,20 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         self.title = NSLocalizedString(@"Transactions", @"");
-        self.tintColor = [UIColor colorWithHue:41.0f/360.0f saturation:1.0f brightness:1.0f alpha:1.0f];
+        self.tintColor = [UIColor colorWithHue:13.0f/360.0f saturation:0.79f brightness:1.00f alpha:1.0f];
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Transactions", @"") image:[UIImage imageNamed:@"TabTransactions"] selectedImage:[UIImage imageNamed:@"TabTransactionsSelected"]];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidReload:) name:MYCWalletDidReloadNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletExchangeRateDidUpdate:) name:MYCWalletCurrencyConverterDidUpdateNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidUpdateAccount:) name:MYCWalletDidUpdateAccountNotification object:nil];
     }
     return self;
 }
 
-- (void)viewDidLoad
+- (void) dealloc
 {
-    [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (BOOL) shouldOverrideTintColor
@@ -48,9 +53,53 @@
     return _account ?: _currentAccount;
 }
 
+
+
+#pragma mark - Wallet Notifications
+
+
+- (void) formattersDidUpdate:(NSNotification*)notif
+{
+    [self.tableView reloadData];
+}
+
+- (void) walletDidReload:(NSNotification*)notif
+{
+    [self.tableView reloadData];
+}
+
+- (void) walletExchangeRateDidUpdate:(NSNotification*)notif
+{
+    [self.tableView reloadData];
+}
+
+- (void) walletDidUpdateNetworkActivity:(NSNotification*)notif
+{
+    [self updateRefreshControl];
+}
+
+- (void) walletDidUpdateAccount:(NSNotification*)notif
+{
+    [self.tableView reloadData];
+}
+
+
+
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    [self.tableView registerNib:[UINib nibWithNibName:@"MYCTransactionTableViewCell" bundle:nil] forCellReuseIdentifier:@"cell"];
+}
+
+
 - (void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
+    // Deselect current row.
+    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:animated];
 
     // If no account at all, load currentAccount.
     if (!self.account)
@@ -68,9 +117,9 @@
     [self.tableView reloadData];
 }
 
-- (void) updateTransactions
+- (void) updateRefreshControl
 {
-    self.transactions = @[];
+    
 }
 
 #pragma mark - UITableView
@@ -83,13 +132,37 @@
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.transactions.count;
+    __block NSInteger count = 0;
+    [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+        count = [MYCTransaction countTransactionsForAccount:self.account database:db];
+    }];
+    return count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return nil;
+    MYCTransactionTableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+    __block MYCTransaction* tx = nil;
+    [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+        tx = [MYCTransaction loadTransactionAtIndex:indexPath.row account:self.account database:db];
+        [tx loadBasicDetailsFromDatabase:db];
+    }];
+    cell.transaction = tx;
+    return cell;
 }
 
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    __block MYCTransaction* tx = nil;
+    [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+        tx = [MYCTransaction loadTransactionAtIndex:indexPath.row account:self.account database:db];
+        [tx loadFullDetailsFromDatabase:db];
+    }];
+
+    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"MYCTransactionDetails" bundle:nil];
+    MYCTransactionDetailsViewController* vc = [sb instantiateInitialViewController];
+    vc.transaction = tx;
+    [self.navigationController pushViewController:vc animated:YES];
+}
 
 @end

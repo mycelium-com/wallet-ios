@@ -436,7 +436,7 @@
 
                 if (parent)
                 {
-                    if ((parent.change >= 0 && parent.keyIndex >= 0))
+                    if ([parent isMyOutput])
                     {
                         // Have parent with valid key path - we fund this transaction
                         pendingSending += parent.value;
@@ -528,7 +528,7 @@
     {
         // We store only our parent outputs so here it's enough to just check if one exists.
         MYCParentOutput* parentOutput = [MYCParentOutput loadOutputForAccount:self.account.accountIndex hash:input.previousHash index:input.previousIndex database:db];
-        if (parentOutput.change >= 0 && parentOutput.keyIndex >= 0)
+        if ([parentOutput isMyOutput])
         {
             return YES;
         }

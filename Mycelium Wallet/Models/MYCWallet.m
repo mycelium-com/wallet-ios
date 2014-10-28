@@ -55,6 +55,13 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 {
     if (self = [super init])
     {
+        self.compactDateFormatter = [[NSDateFormatter alloc] init];
+        self.compactDateFormatter.dateStyle = NSDateFormatterLongStyle;
+        self.compactDateFormatter.timeStyle = NSDateFormatterNoStyle;
+
+        self.compactTimeFormatter = [[NSDateFormatter alloc] init];
+        self.compactTimeFormatter.dateStyle = NSDateFormatterNoStyle;
+        self.compactTimeFormatter.timeStyle = NSDateFormatterShortStyle;
     }
     return self;
 }
