@@ -8,8 +8,11 @@
 
 #import "MYCTransaction.h"
 
+static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
+
 @interface MYCTransaction ()
 @property(nonatomic) NSTimeInterval timestamp;
+@property(nonatomic) NSInteger blockHeightExt; // -1 converted to MYCTransactionBlockHeightUnconfirmed and vice versa
 @property(nonatomic) NSString* dataHex; // MYCDebugHexDatabaseFields
 @end
 
@@ -59,10 +62,41 @@
     }
 }
 
+- (NSInteger) blockHeight
+{
+    if (_blockHeightExt == MYCTransactionBlockHeightUnconfirmed) return -1;
+    return _blockHeightExt;
+}
+
+- (void) setBlockHeight:(NSInteger)blockHeight
+{
+    _blockHeightExt = (blockHeight == -1) ? MYCTransactionBlockHeightUnconfirmed : blockHeight;
+}
+
 - (NSString*) dataHex
 {
     return BTCHexStringFromData(self.data);
 }
+
+
+
+#pragma mark - Transaction Details
+
+
+// Loads basic details about transaction from database (label, amountTransferred).
+- (BOOL) loadBasicDetailsFromDatabase:(FMDatabase*)db
+{
+    
+    return YES;
+}
+
+// Loads all details about transaction: inputs, outputs etc.
+- (BOOL) loadFullDetailsFromDatabase:(FMDatabase*)db
+{
+
+    return YES;
+}
+
 
 
 
@@ -82,7 +116,7 @@
 // Finds young transactions with a given height or newer (including unconfirmed ones).
 + (NSArray*) loadRecentTransactionsSinceHeight:(NSInteger)height account:(NSInteger)accountIndex database:(FMDatabase*)db
 {
-    return [self loadWithCondition:@"accountIndex = ? AND (blockHeight > ? OR blockHeight == -1)"
+    return [self loadWithCondition:@"accountIndex = ? AND blockHeightExt > ?"
                              params:@[@(accountIndex), @(height) ]
                        fromDatabase:db];
 }
@@ -90,12 +124,23 @@
 // Finds unconfirmed transactions (with height = -1)
 + (NSArray*) loadUnconfirmedTransactionsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db
 {
-    return [self loadWithCondition:@"accountIndex = ? AND blockHeight == -1"
-                            params:@[@(accountIndex)]
+    return [self loadWithCondition:@"accountIndex = ? AND blockHeightExt == ?"
+                            params:@[@(accountIndex), @(MYCTransactionBlockHeightUnconfirmed)]
                       fromDatabase:db];
 }
 
+// Loads total number of transactions associated with this account
++ (NSUInteger) countTransactionsForAccount:(NSInteger)accountIndex database:(FMDatabase*)db
+{
+    return [self countWithCondition:@"accountIndex = ?" params:@[ @(accountIndex) ] fromDatabase:db];
+}
 
+// Loads a transaction at index
++ (MYCTransaction*) loadTransactionAtIndex:(NSUInteger)txindex account:(NSInteger)accountIndex database:(FMDatabase*)db
+{
+    return [[self loadWithCondition:@"accountIndex = ? ORDER BY blockHeightExt DESC, timestamp DESC LIMIT 1 OFFSET ?"
+                             params:@[ @(accountIndex), @(txindex) ] fromDatabase:db] firstObject];
+}
 
 
 #pragma mark - MYCDatabaseRecord
@@ -123,7 +168,7 @@
 #if MYCDebugHexDatabaseFields
              MYCDatabaseColumn(dataHex),
 #endif
-             MYCDatabaseColumn(blockHeight),
+             MYCDatabaseColumn(blockHeightExt),
              MYCDatabaseColumn(timestamp),
              MYCDatabaseColumn(accountIndex),
              ];

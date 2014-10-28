@@ -533,34 +533,6 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     return YES;
 }
 
-- (BOOL)isEqual:(id)object
-{
-    if (object == self) return YES;
-    
-    NSString* primaryKeyName = [[self class] primaryKeyName];
-    if (primaryKeyName)
-    {
-        // If class B is a subclass of class A,
-        // [a isEqual:b] must return the same result as [b isEqual:a]
-        if ([object isKindOfClass:[self class]] || [self isKindOfClass:[object class]])
-        {
-            id selfPKValue = [self valueForKey:primaryKeyName];
-            id otherPKValue = [object valueForKey:primaryKeyName];
-            return [selfPKValue isEqual:otherPKValue];
-        }
-    }
-    return NO;
-}
-
-- (NSUInteger)hash
-{
-    NSString* primaryKeyName = [[self class] primaryKeyName];
-    if (primaryKeyName)
-    {
-        return [[self valueForKey:primaryKeyName] hash];
-    }
-    return [super hash];
-}
 
 + (instancetype)loadWithPrimaryKey:(id)primaryKeyValue fromDatabase:(FMDatabase *)db
 {
@@ -608,6 +580,73 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     return nil;
 }
 
+
+
+
+
+
+#pragma mark - Counting
+
+
+
++ (NSUInteger)countAllFromDatabase:(FMDatabase*)db
+{
+    return [self countWithCondition:nil params:nil fromDatabase:db];
+}
+
++ (NSUInteger)countWithCondition:(NSString*)condition fromDatabase:(FMDatabase*)db
+{
+    return [self countWithCondition:condition params:nil fromDatabase:db];
+}
+
++ (NSUInteger)countWithCondition:(NSString*)condition params:(id)params fromDatabase:(FMDatabase*)db
+{
+    NSString* tableName = [self tableName];
+
+    if (tableName)
+    {
+        if (!condition) condition = @"1";
+
+        NSString* query = [NSString stringWithFormat:@"SELECT COUNT(*) AS c FROM %@ WHERE %@", tableName, condition];
+
+        FMResultSet* fmresults = nil;
+
+        if (!params) params = @[];
+
+        if ([params isKindOfClass:[NSArray class]])
+        {
+            fmresults = [db executeQuery:query withArgumentsInArray:params];
+        }
+        else if ([params isKindOfClass:[NSDictionary class]])
+        {
+            fmresults = [db executeQuery:query withParameterDictionary:params];
+        }
+
+        if ([fmresults next])
+        {
+            NSUInteger res = [fmresults.resultDictionary[@"c"] unsignedIntegerValue];
+            [fmresults close];
+            return res;
+        }
+        return 0;
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+
+#pragma mark - Validation
+
+
+
+
+
+
 - (BOOL)validateColumnNames:(NSArray*)columnNames returningError:(NSError **)outError
 {
     for (NSString* columnName in columnNames)
@@ -648,5 +687,46 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
 {
     return [NSError errorWithDomain:MYCDatabaseRecordErrorDomain code:MYCDatabaseRecordValidationErrorCode userInfo:@{NSLocalizedDescriptionKey:message, MYCDatabaseRecordColumnKey:column}];
 }
+
+
+
+#pragma mark - NSObject
+
+
+
+- (BOOL)isEqual:(id)object
+{
+    if (object == self) return YES;
+
+    NSArray* pks = [[self class] internalPrimaryKeyNames];
+
+    if (pks.count == 0) return NO;
+
+    // If class B is a subclass of class A,
+    // [a isEqual:b] must return the same result as [b isEqual:a]
+    if ([object isKindOfClass:[self class]] || [self isKindOfClass:[object class]])
+    {
+        for (id pk in pks)
+        {
+            id a = [self valueForKey:pk];
+            id b = [object valueForKey:pk];
+            if (![a isEqual:b]) return NO;
+        }
+        return YES;
+    }
+    return NO;
+}
+
+- (NSUInteger)hash
+{
+    NSString* primaryKeyName = [[self class] primaryKeyName];
+    if (primaryKeyName)
+    {
+        return [[self valueForKey:primaryKeyName] hash];
+    }
+    return [super hash];
+}
+
+
 
 @end

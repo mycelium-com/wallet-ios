@@ -15,8 +15,8 @@
 @interface MYCTransactionsViewController () <UITableViewDelegate, UITableViewDataSource>
 @property(nonatomic, weak) IBOutlet UITableView* tableView;
 @property(nonatomic) PTableViewSource* tableViewSource;
-@property(nonatomic) MYCWalletAccount* currentAccount;
 @property(nonatomic) NSArray* transactions;
+@property(nonatomic) MYCWalletAccount* currentAccount;
 @end
 
 @implementation MYCTransactionsViewController
@@ -45,23 +45,20 @@
 
 - (MYCWalletAccount*) account
 {
-    return _account ?: self.currentAccount;
-}
-
-- (MYCWalletAccount*) currentAccount
-{
-    if (!_currentAccount)
-    {
-        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
-            _currentAccount = [MYCWalletAccount currentAccountFromDatabase:db];
-        }];
-    }
-    return _currentAccount;
+    return _account ?: _currentAccount;
 }
 
 - (void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
+    // If no account at all, load currentAccount.
+    if (!self.account)
+    {
+        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+            self.currentAccount = [MYCWalletAccount currentAccountFromDatabase:db];
+        }];
+    }
 
     // Reload account.
     [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {

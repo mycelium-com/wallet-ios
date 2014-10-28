@@ -168,16 +168,16 @@
         }];
 
         [section item:^(PTableViewSourceItem *item) {
-            item.title = NSLocalizedString(@"Reset Database", @"");
+            item.title = NSLocalizedString(@"Clear Database", @"");
             item.selectionStyle = UITableViewCellSelectionStyleDefault;
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
-                UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Reset Database?", @"")
+                UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Clear Database?", @"")
                                                                                message:NSLocalizedString(@"History of all transactions will be removed. Master key will be preserved.", @"") preferredStyle:UIAlertControllerStyleAlert];
                 [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
                     [weakself.tableView deselectRowAtIndexPath:[weakself.tableView indexPathForSelectedRow] animated:NO];
                     [weakself dismissViewControllerAnimated:YES completion:nil];
                 }]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [alert addAction:[UIAlertAction actionWithTitle:@"Clear" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
                     // Erase database
                     [[MYCWallet currentWallet] resetDatabase];

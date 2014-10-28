@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="100" id="KGk-i7-Jjw" customClass="MYCTransactionTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="100"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="800" text="1 234 567,89 bits" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FOT-vB-4xF">
+                        <rect key="frame" x="8" y="8" width="163" height="24.5"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="21"/>
+                        <color key="textColor" red="0.18524641112075912" green="0.68927105402542377" blue="0.11287817479686739" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Payment for Alpaca Socks" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DN7-9C-xfo">
+                        <rect key="frame" x="8" y="56" width="304" height="19"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2 confirmations" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wN7-9T-Okm">
+                        <rect key="frame" x="8" y="78" width="225" height="18"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="October 28, 2014" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pzG-aA-dZ8">
+                        <rect key="frame" x="196" y="13" width="115.5" height="18"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="800" text="400 usd" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kWr-4h-De1">
+                        <rect key="frame" x="8" y="35" width="51.5" height="17"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="14"/>
+                        <color key="textColor" red="0.93390823622881358" green="0.0" blue="0.12997544007911813" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="FOT-vB-4xF" firstAttribute="top" secondItem="kWr-4h-De1" secondAttribute="top" constant="-27" id="1yr-az-l4t"/>
+                    <constraint firstItem="FOT-vB-4xF" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="AVG-TU-Uew"/>
+                    <constraint firstItem="pzG-aA-dZ8" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="COR-f5-62Y"/>
+                    <constraint firstItem="FOT-vB-4xF" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="EYr-Qt-Z8N"/>
+                    <constraint firstItem="pzG-aA-dZ8" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="FOT-vB-4xF" secondAttribute="trailing" constant="10" id="IGj-dw-9Pe"/>
+                    <constraint firstItem="DN7-9C-xfo" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="Lbn-cq-THw"/>
+                    <constraint firstItem="FOT-vB-4xF" firstAttribute="baseline" secondItem="pzG-aA-dZ8" secondAttribute="baseline" id="MbY-Bq-hcR"/>
+                    <constraint firstItem="wN7-9T-Okm" firstAttribute="top" secondItem="DN7-9C-xfo" secondAttribute="bottom" constant="3" id="NzM-un-6Cj"/>
+                    <constraint firstItem="wN7-9T-Okm" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="csg-9E-QNA"/>
+                    <constraint firstItem="DN7-9C-xfo" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="edB-Ap-ASy"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="wN7-9T-Okm" secondAttribute="trailing" constant="79" id="hrw-DD-By1"/>
+                    <constraint firstItem="FOT-vB-4xF" firstAttribute="leading" secondItem="kWr-4h-De1" secondAttribute="leading" id="qgi-xj-Uyt"/>
+                    <constraint firstItem="DN7-9C-xfo" firstAttribute="top" secondItem="kWr-4h-De1" secondAttribute="bottom" constant="4" id="rMu-As-ngh"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="addressLabel" destination="DN7-9C-xfo" id="nYN-Ip-rpz"/>
+                <outlet property="btcLabel" destination="FOT-vB-4xF" id="w4L-wB-tag"/>
+                <outlet property="dateLabel" destination="pzG-aA-dZ8" id="Wz9-lI-FSs"/>
+                <outlet property="fiatLabel" destination="kWr-4h-De1" id="tNa-Gi-lwd"/>
+                <outlet property="statusLabel" destination="wN7-9T-Okm" id="JNa-th-jWt"/>
+            </connections>
+            <point key="canvasLocation" x="33" y="241"/>
+        </tableViewCell>
+    </objects>
+</document>

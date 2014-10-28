@@ -232,7 +232,7 @@
                         // If we have a valid unspent output, save it and update its transaction.
                         if (mout)
                         {
-                            MYCLog(@"MYCUpdateAccountOperation: Adding new unspent output to DB: %@", txout);
+                            //MYCLog(@"MYCUpdateAccountOperation: Adding new unspent output to DB: %@", txout);
                             // set latest version of unspent output.
                             mout.transactionOutput = txout;
 
@@ -247,7 +247,7 @@
                             }
                             else
                             {
-                                MYCLog(@"MYCUpdateAccountOperation: saved unspent output %@:%@", BTCTransactionIDFromHash(txout.transactionHash), @(txout.index));
+                                //MYCLog(@"MYCUpdateAccountOperation: saved unspent output %@:%@", BTCTransactionIDFromHash(txout.transactionHash), @(txout.index));
                             }
                         }
                     }
@@ -707,7 +707,7 @@
 
                 for (BTCTransactionInput* txin in tx.inputs)
                 {
-                    MYCLog(@"Checking parents for txin: %@:%@", txin.previousTransactionID, @(txin.previousIndex));
+                    //MYCLog(@"Checking parents for txin: %@:%@", txin.previousTransactionID, @(txin.previousIndex));
                     MYCParentOutput* parentOutput = [MYCParentOutput loadOutputForAccount:accountIndex hash:txin.previousHash index:txin.previousIndex database:db];
 
                     if (parentOutput)
@@ -775,8 +775,8 @@
                         if (txout)
                         {
                             // We have it already
-                            MYCLog(@"MYCUpdateAccountOperation: parent output %@:%@ already found for this account %@",
-                                   txin.previousTransactionID, @(txin.previousIndex), @(accountIndex));
+                            //MYCLog(@"MYCUpdateAccountOperation: parent output %@:%@ already found for this account %@",
+                            //       txin.previousTransactionID, @(txin.previousIndex), @(accountIndex));
                             continue;
                         }
                         BTCTransaction* parentTx = parentTxsByHash[txin.previousHash];

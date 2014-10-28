@@ -45,6 +45,8 @@
 		208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFBC219D984E700D4C159 /* MYCTabBarController.m */; };
 		208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBC319D984E700D4C159 /* MYCTabBarController.xib */; };
 		2095C44819FE779900635C85 /* MYCOutgoingTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2095C44719FE779900635C85 /* MYCOutgoingTransaction.m */; };
+		2095C44C19FF985100635C85 /* MYCTransactionTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2095C44A19FF985100635C85 /* MYCTransactionTableViewCell.m */; };
+		2095C44D19FF985100635C85 /* MYCTransactionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2095C44B19FF985100635C85 /* MYCTransactionTableViewCell.xib */; };
 		20A9C06E19F50CBF00AF61DE /* MYCUpdateAccountOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 20A9C06D19F50CBF00AF61DE /* MYCUpdateAccountOperation.m */; };
 		20A9C07119F5349500AF61DE /* MYCTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 20A9C07019F5349500AF61DE /* MYCTransaction.m */; };
 		20A9C07419F534AB00AF61DE /* MYCUnspentOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 20A9C07319F534AB00AF61DE /* MYCUnspentOutput.m */; };
@@ -141,6 +143,9 @@
 		208FFBC319D984E700D4C159 /* MYCTabBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCTabBarController.xib; sourceTree = "<group>"; };
 		2095C44619FE779900635C85 /* MYCOutgoingTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCOutgoingTransaction.h; path = Models/MYCOutgoingTransaction.h; sourceTree = "<group>"; };
 		2095C44719FE779900635C85 /* MYCOutgoingTransaction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCOutgoingTransaction.m; path = Models/MYCOutgoingTransaction.m; sourceTree = "<group>"; };
+		2095C44919FF985100635C85 /* MYCTransactionTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCTransactionTableViewCell.h; sourceTree = "<group>"; };
+		2095C44A19FF985100635C85 /* MYCTransactionTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCTransactionTableViewCell.m; sourceTree = "<group>"; };
+		2095C44B19FF985100635C85 /* MYCTransactionTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCTransactionTableViewCell.xib; sourceTree = "<group>"; };
 		20A9C06C19F50CBF00AF61DE /* MYCUpdateAccountOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCUpdateAccountOperation.h; path = Networking/MYCUpdateAccountOperation.h; sourceTree = "<group>"; };
 		20A9C06D19F50CBF00AF61DE /* MYCUpdateAccountOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCUpdateAccountOperation.m; path = Networking/MYCUpdateAccountOperation.m; sourceTree = "<group>"; };
 		20A9C06F19F5349500AF61DE /* MYCTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCTransaction.h; path = Models/MYCTransaction.h; sourceTree = "<group>"; };
@@ -233,6 +238,9 @@
 				2064E38919D9A0F200CD81B8 /* MYCTransactionsViewController.h */,
 				2064E38A19D9A0F200CD81B8 /* MYCTransactionsViewController.m */,
 				2064E38B19D9A0F200CD81B8 /* MYCTransactionsViewController.xib */,
+				2095C44919FF985100635C85 /* MYCTransactionTableViewCell.h */,
+				2095C44A19FF985100635C85 /* MYCTransactionTableViewCell.m */,
+				2095C44B19FF985100635C85 /* MYCTransactionTableViewCell.xib */,
 			);
 			name = "Transactions Tab";
 			sourceTree = "<group>";
@@ -574,6 +582,7 @@
 				2064E38319D9A0D000CD81B8 /* MYCBalanceViewController.xib in Resources */,
 				20C0F70519EEB37D00DD0748 /* MYCAccountViewController.xib in Resources */,
 				2064E39219D9A10400CD81B8 /* MYCSettingsViewController.xib in Resources */,
+				2095C44D19FF985100635C85 /* MYCTransactionTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,6 +659,7 @@
 				203AA4B919DC53C900572BD9 /* MYCBackupViewController.m in Sources */,
 				2064E38719D9A0E400CD81B8 /* MYCAccountsViewController.m in Sources */,
 				203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */,
+				2095C44C19FF985100635C85 /* MYCTransactionTableViewCell.m in Sources */,
 				20C2D81B19E5961C0022CAAC /* BTCQRCode.m in Sources */,
 				200AAE3719F91EE50004F908 /* MYCTextFieldLiveFormatter.m in Sources */,
 				20C0F70419EEB37D00DD0748 /* MYCAccountViewController.m in Sources */,

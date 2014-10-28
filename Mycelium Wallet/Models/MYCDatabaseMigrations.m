@@ -70,12 +70,12 @@
 #if MYCDebugHexDatabaseFields
                 "dataHex           TEXT NOT NULL,"
 #endif
-                "blockHeight       INT  NOT NULL," // equals -1 if not confirmed yet.
+                "blockHeightExt    INT  NOT NULL," // equals big integer if not confirmed yet. (blockHeight property converts that to -1)
                 "timestamp         INT  NOT NULL," // timestamp.
                 "accountIndex      INT  NOT NULL," // index of an account to which this tx belongs.
                 "PRIMARY KEY (transactionHash, accountIndex) ON CONFLICT REPLACE"  // note: we allow duplicate txs if they happen to pay from one account to another.
                 ")"]  &&
-        [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (blockHeight, accountIndex, timestamp)"];
+        [db executeUpdate:@"CREATE INDEX MYCTransactions_accountIndex ON MYCTransactions (blockHeightExt, timestamp, accountIndex)"];
     }];
 
     [mycdatabase registerMigration:@"Create MYCOutgoingTransactions" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {

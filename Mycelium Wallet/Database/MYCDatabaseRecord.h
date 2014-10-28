@@ -91,6 +91,15 @@ extern NSString* const MYCDatabaseRecordColumnKey;          // Defined for NSErr
 - (void) didLoadFromDatabase:(FMDatabase*)db;
 
 
+/**
+ Similar to load* methods, but only performs counting.
+ */
++ (NSUInteger)countAllFromDatabase:(FMDatabase*)db;
++ (NSUInteger)countWithCondition:(NSString*)condition fromDatabase:(FMDatabase*)db;
++ (NSUInteger)countWithCondition:(NSString*)condition params:(id)params fromDatabase:(FMDatabase*)db;
+
+
+
 
 #pragma mark - Modifying, Saving & Deleting
 
