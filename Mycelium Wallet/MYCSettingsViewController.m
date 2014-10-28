@@ -61,7 +61,7 @@
 {
     __block MYCWalletAccount* currentAccount = nil;
     [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
-        currentAccount = [MYCWalletAccount currentAccountFromDatabase:db];
+        currentAccount = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
     }];
 
     self.tableViewSource = [[PTableViewSource alloc] init];

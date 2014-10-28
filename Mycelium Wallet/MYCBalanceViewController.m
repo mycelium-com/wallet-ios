@@ -117,7 +117,7 @@
 - (void) reloadAccount
 {
     [self.wallet inDatabase:^(FMDatabase *db) {
-        self.account = [MYCWalletAccount currentAccountFromDatabase:db];
+        self.account = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
     }];
 }
 

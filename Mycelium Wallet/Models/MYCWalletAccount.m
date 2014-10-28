@@ -237,20 +237,20 @@
 
 
 // Loads current active account from database.
-+ (MYCWalletAccount*) currentAccountFromDatabase:(FMDatabase*)db
++ (MYCWalletAccount*) loadCurrentAccountFromDatabase:(FMDatabase*)db
 {
     return [[self loadWithCondition:@"current = 1 LIMIT 1" fromDatabase:db] firstObject];
 }
 
 // Loads all accounts from database.
-+ (NSArray*) accountsFromDatabase:(FMDatabase*)db
++ (NSArray*) loadAccountsFromDatabase:(FMDatabase*)db
 {
     return [self loadWithCondition:@"1 ORDER BY accountIndex" fromDatabase:db];
 }
 
 // Loads a specific account at index from database.
 // If account does not exist, returns nil.
-+ (MYCWalletAccount*) accountAtIndex:(uint32_t)index fromDatabase:(FMDatabase*)db
++ (MYCWalletAccount*) loadAccountAtIndex:(NSInteger)index fromDatabase:(FMDatabase*)db
 {
     return [self loadWithPrimaryKey:@(index) fromDatabase:db];
 }

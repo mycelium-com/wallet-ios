@@ -91,14 +91,14 @@
 - (BOOL) matchesScriptData:(NSData*)scriptData change:(NSInteger*)changeOut keyIndex:(NSInteger*)keyIndexOut;
 
 // Loads current active account from database.
-+ (MYCWalletAccount*) currentAccountFromDatabase:(FMDatabase*)db;
++ (MYCWalletAccount*) loadCurrentAccountFromDatabase:(FMDatabase*)db;
 
 // Loads all accounts from database.
-+ (NSArray*) accountsFromDatabase:(FMDatabase*)db;
++ (NSArray*) loadAccountsFromDatabase:(FMDatabase*)db;
 
 // Loads a specific account at index from database.
 // If account does not exist, returns nil.
-+ (MYCWalletAccount*) accountAtIndex:(uint32_t)index fromDatabase:(FMDatabase*)db;
++ (MYCWalletAccount*) loadAccountAtIndex:(NSInteger)index fromDatabase:(FMDatabase*)db;
 
 
 @end

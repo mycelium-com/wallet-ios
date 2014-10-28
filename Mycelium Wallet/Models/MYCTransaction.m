@@ -84,6 +84,15 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 #pragma mark - Transaction Details
 
 
+- (MYCWalletAccount*) ensureAccount:(FMDatabase*)db
+{
+    if (!_account)
+    {
+        _account = [MYCWalletAccount loadAccountAtIndex:_accountIndex fromDatabase:db];
+    }
+    return _account;
+}
+
 // Loads basic details about transaction from database (label, amountTransferred).
 - (BOOL) loadBasicDetailsFromDatabase:(FMDatabase*)db
 {

@@ -56,7 +56,7 @@
     if (!self.account)
     {
         [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
-            self.currentAccount = [MYCWalletAccount currentAccountFromDatabase:db];
+            self.currentAccount = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
         }];
     }
 

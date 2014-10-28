@@ -770,10 +770,6 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 {
     if (!tx) return NO;
 
-//    [self updateAccount:account force:YES completion:^(BOOL success, NSError *error) {
-//    }];
-    return YES;
-
     __block BOOL succeeded = YES;
     [self inTransaction:^(FMDatabase *db, BOOL *rollback) {
 
@@ -833,31 +829,31 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
                 }
             }
         }
-//
-//        // Store transaction locally, so we have it in our history and don't
-//        // need to fetch it in a minute
-//        MYCTransaction* mtx = [[MYCTransaction alloc] init];
-//
-//        mtx.transactionHash = tx.transactionHash;
-//        mtx.data            = tx.data;
-//        mtx.blockHeight     = 0;
-//        mtx.date            = nil;
-//        mtx.accountIndex    = account.accountIndex;
-//
-//        NSError* dberror = nil;
-//        if (![mtx insertInDatabase:db error:&dberror])
-//        {
-//            dberror = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error"}];
-//            succeeded = NO;
-//            if (errorOut) *errorOut = dberror;
-//            
-//            MYCError(@"MYCWallet: failed to save transaction %@ for account %d in database: %@", tx.transactionID, (int)account.accountIndex, dberror);
-//            return;
-//        }
-//        else
-//        {
-//            MYCLog(@"MYCUpdateAccountOperation: saved new transaction: %@", tx.transactionID);
-//        }
+
+        // Store transaction locally, so we have it in our history and don't
+        // need to fetch it in a minute
+        MYCTransaction* mtx = [[MYCTransaction alloc] init];
+
+        mtx.transactionHash = tx.transactionHash;
+        mtx.data            = tx.data;
+        mtx.blockHeight     = 0;
+        mtx.date            = nil;
+        mtx.accountIndex    = account.accountIndex;
+
+        NSError* dberror = nil;
+        if (![mtx insertInDatabase:db error:&dberror])
+        {
+            dberror = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error"}];
+            succeeded = NO;
+            if (errorOut) *errorOut = dberror;
+            
+            MYCError(@"MYCWallet: failed to save transaction %@ for account %d in database: %@", tx.transactionID, (int)account.accountIndex, dberror);
+            return;
+        }
+        else
+        {
+            MYCLog(@"MYCUpdateAccountOperation: saved new transaction: %@", tx.transactionID);
+        }
     }];
 
     if (!succeeded)

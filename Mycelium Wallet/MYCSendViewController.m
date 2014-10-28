@@ -144,7 +144,7 @@
 {
     __block MYCWalletAccount* acc = nil;
     [self.wallet inDatabase:^(FMDatabase *db) {
-        acc = [MYCWalletAccount currentAccountFromDatabase:db];
+        acc = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
     }];
     self.account = acc;
 }
