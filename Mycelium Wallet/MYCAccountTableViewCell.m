@@ -48,7 +48,7 @@
     _account = account;
 
     self.nameLabel.text = account.label;
-    self.statusLabel.text = @"";
+    self.statusLabel.text = @" ";
     if (self.account.isCurrent)
     {
         self.statusLabel.text = [NSLocalizedString(@"Current", @"") uppercaseString];
@@ -56,9 +56,9 @@
 
     MYCWallet* wallet = [MYCWallet currentWallet];
 
-    self.btcLabel.text = [wallet.btcFormatter stringFromAmount:account.confirmedAmount];
+    self.btcLabel.text = [wallet.btcFormatter stringFromAmount:account.spendableAmount];
 
-    NSNumber* fiatAmount = [wallet.currencyConverter fiatFromBitcoin:account.confirmedAmount];
+    NSNumber* fiatAmount = [wallet.currencyConverter fiatFromBitcoin:account.spendableAmount];
     self.fiatLabel.text = [wallet.fiatFormatter stringFromNumber:fiatAmount];
 }
 

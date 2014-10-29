@@ -32,7 +32,9 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         self.title = NSLocalizedString(@"Accounts", @"");
-        self.tintColor = [UIColor colorWithHue:38.0f/360.0f saturation:1.0f brightness:0.97f alpha:1.0f];
+        //self.tintColor = [UIColor colorWithHue:38.0f/360.0f saturation:1.0f brightness:0.97f alpha:1.0f];
+        //self.tintColor = [UIColor colorWithHue:24.0f/360.0f saturation:0.9f brightness:1.00f alpha:1.0f];
+        self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:0.7f brightness:0.65f alpha:1.0];
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Accounts", @"") image:[UIImage imageNamed:@"TabAccounts"] selectedImage:[UIImage imageNamed:@"TabAccountsSelected"]];
 
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
@@ -205,6 +207,7 @@
     MYCAccountViewController* vc = [[MYCAccountViewController alloc] initWithNibName:nil bundle:nil];
     vc.account = acc;
     vc.canArchive = self.activeAccounts.count > 1;
+    vc.view.tintColor = self.tintColor;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -237,13 +240,70 @@
     }
 }
 
+// NSArray* remainingAccounts = [self.activeAccounts arrayByAddingObjectsFromArray:self.archivedAccounts];
+- (void) recursivelyUpdateAccounts:(NSArray*)accs
+{
+    if (accs.count == 0) return;
+
+    MYCWalletAccount* acc = [accs firstObject];
+
+    // Make requests to synchronize active accounts.
+    [[MYCWallet currentWallet] updateAccount:acc force:!acc.isArchived completion:^(BOOL success, NSError *error) {
+        if (!success)
+        {
+            // TODO: show error. Make sure to coalesce similar errors in one.
+            return;
+        }
+        [self recursivelyUpdateAccounts:[accs subarrayWithRange:NSMakeRange(1, accs.count - 1)]];
+    }];
+}
+
 - (void) addAccount:(id)_
 {
     // Add another account if the last one is not empty.
     // Show alert if trying to add more.
     // Push the view with account options.
-}
 
+    __block MYCWalletAccount* lastAccount = nil;
+    [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+        lastAccount = [[MYCWalletAccount loadAccountsFromDatabase:db] lastObject];
+    }];
+
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"New Account", @"")
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.text = [NSString stringWithFormat:NSLocalizedString(@"Account %@", @""), @(lastAccount.accountIndex + 1)];
+    }];
+
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    }]];
+
+    __typeof(alert) __weak weakalert = alert;
+    [alert addAction:[UIAlertAction actionWithTitle:@"Add" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+
+        __block MYCWalletAccount* acc = nil;
+        [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
+
+            BTCKeychain* bitcoinKeychain = uw.keychain;
+            acc = [[MYCWalletAccount alloc] initWithKeychain:[bitcoinKeychain keychainForAccount:(uint32_t)lastAccount.accountIndex + 1]];
+
+        } reason:NSLocalizedString(@"Authorize new account", @"")];
+
+        acc.label = [weakalert.textFields.firstObject text];
+
+        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+            [acc saveInDatabase:db error:NULL];
+        }];
+
+        [self updateSections];
+        [self.tableView reloadData];
+
+        [self selectAccount:acc];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
 
 #pragma mark - UITableView
 

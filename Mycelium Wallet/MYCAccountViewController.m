@@ -38,10 +38,7 @@
 {
     [super viewWillAppear:animated];
 
-    self.title = [NSString stringWithFormat:NSLocalizedString(@"Account #%@", @""), @(self.account.accountIndex)];
-
-    #warning TODO: update this item when label is edited.
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:self.account.label style:UIBarButtonItemStylePlain target:nil action:NULL];
+    self.title = NSLocalizedString(@"Account Details", @"");
 
     [self updateSections];
 
@@ -50,21 +47,50 @@
 
 - (void) updateSections
 {
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:self.account.label style:UIBarButtonItemStylePlain target:nil action:NULL];
+
     self.tableViewSource = [[PTableViewSource alloc] init];
 
     __typeof(self) __weak weakself = self;
 
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
-        section.headerTitle = NSLocalizedString(@"Label", @"");
+
+        section.setupAction = ^(PTableViewSourceItem* item, NSIndexPath* indexPath, UITableViewCell* cell) {
+            [item setupCell:cell atIndexPath:indexPath];
+            cell.detailTextLabel.textColor = weakself.view.tintColor;
+        };
+
+        section.headerTitle = [NSString stringWithFormat:NSLocalizedString(@"Account #%03d", @""), (int)self.account.accountIndex];
         [section item:^(PTableViewSourceItem *item) {
-            item.title = self.account.label;
+            item.title = NSLocalizedString(@"Label", @"");
+            item.detailTitle = self.account.label;
+            item.cellStyle = UITableViewCellStyleValue1;
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                [weakself editLabel];
+                [weakself.tableView deselectRowAtIndexPath:[weakself.tableView indexPathForSelectedRow] animated:YES];
+            };
+        }];
+        [section item:^(PTableViewSourceItem *item) {
+            item.title = NSLocalizedString(@"Public key", @"");
+            item.detailTitle = self.account.externalKeychain.extendedPublicKey;
+            item.cellStyle = UITableViewCellStyleValue1;
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                [weakself copyPubKeyAtIndexPath:indexPath];
+            };
+        }];
+        [section item:^(PTableViewSourceItem *item) {
+            item.title = NSLocalizedString(@"View Transactions", @"");
+            item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                [weakself openTransactions];
+            };
         }];
     }];
 
     if (!self.account.isCurrent)
     {
         [self.tableViewSource section:^(PTableViewSourceSection *section) {
-            section.footerTitle = NSLocalizedString(@"Archived account will not be regularly updated", @"");
+            section.footerTitle = NSLocalizedString(@"Current account is used to send and receive funds.", @"");
             [section item:^(PTableViewSourceItem *item) {
                 item.title = NSLocalizedString(@"Make Current", @"");
                 item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
@@ -104,42 +130,167 @@
         }];
     }
 
-    [self.tableViewSource section:^(PTableViewSourceSection *section) {
-        section.headerTitle = NSLocalizedString(@"Transaction History", @"");
-        [section item:^(PTableViewSourceItem *item) {
-            item.title = NSLocalizedString(@"View Transactions", @"");
-            item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
-                [weakself openTransactions];
-            };
-        }];
+}
+
+
+
+
+
+#pragma mark - Actions
+
+
+
+- (void) editLabel
+{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Account Label", @"")
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.text = self.account.label;
     }];
 
-    [self.tableViewSource section:^(PTableViewSourceSection *section) {
-        section.headerTitle = NSLocalizedString(@"External Public Key", @"");
-        [section item:^(PTableViewSourceItem *item) {
-            item.title = self.account.externalKeychain.extendedPublicKey;
-            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
-                [weakself copyPubKeyAtIndexPath:indexPath];
-            };
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    }]];
+
+    __typeof(alert) __weak weakalert = alert;
+    [alert addAction:[UIAlertAction actionWithTitle:@"Save" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        self.account.label = [weakalert.textFields.firstObject text];
+        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+            [self.account saveInDatabase:db error:NULL];
         }];
-    }];
-    
+        [self updateSections];
+        [self.tableView reloadData];
+        [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:self.account];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (void) makeCurrent
 {
+    // If archived, make not archived.
+    // If other account is current, unset it.
 
+    [[MYCWallet currentWallet] inTransaction:^(FMDatabase *db, BOOL *rollback) {
+
+        NSError* dberror = nil;
+        NSArray* allAccounts = [MYCWalletAccount loadAccountsFromDatabase:db];
+
+        for (MYCWalletAccount* acc in allAccounts)
+        {
+            if (acc.accountIndex != self.account.accountIndex && acc.isCurrent)
+            {
+                acc.current = NO;
+                if (![acc saveInDatabase:db error:&dberror])
+                {
+                    MYCError(@"Failed to unset current flag for account %@: %@", @(acc.accountIndex), dberror);
+                    *rollback = YES;
+                    return;
+                }
+            }
+        }
+
+        self.account.current = YES;
+        self.account.archived = NO;
+
+        if (![self.account saveInDatabase:db error:&dberror])
+        {
+            MYCError(@"Failed to make account %@ current: %@", @(self.account.accountIndex), dberror);
+            *rollback = YES;
+            return;
+        }
+    }];
+
+    [self updateSections];
+    [self.tableView reloadData];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:self.account];
 }
 
 - (void) archiveAccount
 {
-    
+    // If this account is current, pick another account as a current one.
+    // If there is only one non-archived account (this one), do nothing.
+
+    [[MYCWallet currentWallet] inTransaction:^(FMDatabase *db, BOOL *rollback) {
+
+        NSError* dberror = nil;
+
+        // If current, find another account to currentize.
+        if (self.account.current)
+        {
+            NSArray* allAccounts = [MYCWalletAccount loadAccountsFromDatabase:db];
+
+            MYCWalletAccount* anotherAccount = nil;
+            for (MYCWalletAccount* acc in allAccounts)
+            {
+                if (acc.accountIndex != self.account.accountIndex)
+                {
+                    // Prefer non-archived accounts, but if there are none, use an archived one.
+                    if (!anotherAccount || anotherAccount.isArchived)
+                    {
+                        anotherAccount = acc;
+                    }
+                }
+            }
+
+            if (anotherAccount)
+            {
+                anotherAccount.current = YES;
+                anotherAccount.archived = NO;
+                if (![anotherAccount saveInDatabase:db error:&dberror])
+                {
+                    MYCError(@"Failed to currentize account %@: %@", @(anotherAccount.accountIndex), dberror);
+                    *rollback = YES;
+                    return;
+                }
+            }
+            else
+            {
+                MYCError(@"Cannot archive an account when there is no other candidate for archiving");
+                *rollback = YES;
+                return;
+            }
+        }
+
+        self.account.current = NO;
+        self.account.archived = YES;
+
+        if (![self.account saveInDatabase:db error:&dberror])
+        {
+            MYCError(@"Failed to archive account %@: %@", @(self.account.accountIndex), dberror);
+            *rollback = YES;
+            return;
+        }
+    }];
+
+    [self updateSections];
+    [self.tableView reloadData];
+
+    [self.navigationController popViewControllerAnimated:YES];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:self.account];
 }
 
 - (void) unarchiveAccount
 {
+    [[MYCWallet currentWallet] inTransaction:^(FMDatabase *db, BOOL *rollback) {
 
+        self.account.archived = NO;
+
+        NSError* dberror = nil;
+        if (![self.account saveInDatabase:db error:&dberror])
+        {
+            MYCError(@"Failed to unarchive account %@: %@", @(self.account.accountIndex), dberror);
+            *rollback = YES;
+            return;
+        }
+    }];
+    
+    [self updateSections];
+    [self.tableView reloadData];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:self.account];
 }
 
 - (void) openTransactions

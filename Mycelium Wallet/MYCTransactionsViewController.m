@@ -26,7 +26,11 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         self.title = NSLocalizedString(@"Transactions", @"");
-        self.tintColor = [UIColor colorWithHue:13.0f/360.0f saturation:0.79f brightness:1.00f alpha:1.0f];
+        //self.tintColor = [UIColor colorWithHue:13.0f/360.0f saturation:0.79f brightness:1.00f alpha:1.0f];
+        //self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:0.7f brightness:0.65f alpha:1.0];
+        //self.tintColor = [UIColor colorWithHue:28.0f/360.0f saturation:0.8f brightness:0.9f alpha:1.0f];
+        self.tintColor = [UIColor colorWithHue:34.0f/360.0f saturation:0.8f brightness:0.96f alpha:1.0f];
+
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Transactions", @"") image:[UIImage imageNamed:@"TabTransactions"] selectedImage:[UIImage imageNamed:@"TabTransactionsSelected"]];
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
@@ -145,7 +149,7 @@
     __block MYCTransaction* tx = nil;
     [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
         tx = [MYCTransaction loadTransactionAtIndex:indexPath.row account:self.account database:db];
-        [tx loadBasicDetailsFromDatabase:db];
+        [tx loadDetailsFromDatabase:db];
     }];
     cell.transaction = tx;
     return cell;
@@ -156,12 +160,17 @@
     __block MYCTransaction* tx = nil;
     [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
         tx = [MYCTransaction loadTransactionAtIndex:indexPath.row account:self.account database:db];
-        [tx loadFullDetailsFromDatabase:db];
+        [tx loadDetailsFromDatabase:db];
     }];
+
+    MYCTransactionTableViewCell* cell = (id)[tableView cellForRowAtIndexPath:indexPath];
 
     UIStoryboard* sb = [UIStoryboard storyboardWithName:@"MYCTransactionDetails" bundle:nil];
     MYCTransactionDetailsViewController* vc = [sb instantiateInitialViewController];
     vc.transaction = tx;
+    vc.tintColor = self.tintColor;
+    vc.redColor = cell.redColor;
+    vc.greenColor = cell.greenColor;
     [self.navigationController pushViewController:vc animated:YES];
 }
 

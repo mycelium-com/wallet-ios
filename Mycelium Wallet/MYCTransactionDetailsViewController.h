@@ -6,11 +6,13 @@
 //  Copyright (c) 2014 Mycelium. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "MYCTabBarController.h"
 
 @class MYCTransaction;
-@interface MYCTransactionDetailsViewController : UIViewController
+@interface MYCTransactionDetailsViewController : MYCTabViewController
 
+@property(nonatomic) UIColor* redColor;
+@property(nonatomic) UIColor* greenColor;
 @property(nonatomic) MYCTransaction* transaction;
 
 @end

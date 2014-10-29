@@ -20,8 +20,6 @@
 @end
 
 @implementation MYCTransactionTableViewCell {
-    UIColor* _greenColor;
-    UIColor* _redColor;
 }
 
 - (void) awakeFromNib
@@ -49,6 +47,14 @@
 
     BTCSatoshi amount = self.transaction.amountTransferred;
     self.btcLabel.text = [wallet.btcFormatter stringFromAmount:ABS(amount)];
+    if (amount >= 0)
+    {
+        self.btcLabel.text = [@"+ " stringByAppendingString:self.btcLabel.text];
+    }
+    else
+    {
+        self.btcLabel.text = [@"– " stringByAppendingString:self.btcLabel.text];
+    }
     self.fiatLabel.text = [wallet.fiatFormatter stringFromNumber:[wallet.currencyConverter fiatFromBitcoin:ABS(amount)]];
 
     UIColor* amountColor = (amount > 0 ? _greenColor : _redColor);

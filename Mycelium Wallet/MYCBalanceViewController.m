@@ -105,11 +105,7 @@
 
 - (void) walletDidUpdateAccount:(NSNotification*)notif
 {
-    MYCWalletAccount* acc = notif.object;
-    if ([acc isKindOfClass:[MYCWalletAccount class]] && [self.account isEqual:acc])
-    {
-        [self reloadAccount];
-    }
+    [self reloadAccount];
 }
 
 // Update methods

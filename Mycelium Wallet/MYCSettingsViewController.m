@@ -25,7 +25,8 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         self.title = NSLocalizedString(@"Settings", @"");
-        self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:1.0f brightness:0.77f alpha:1.0];
+        self.tintColor = [UIColor colorWithHue:280.0f/360.0f saturation:0.8f brightness:0.97f alpha:1.0];
+        //self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:1.0f brightness:0.77f alpha:1.0];
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Settings", @"") image:[UIImage imageNamed:@"TabSettings"] selectedImage:[UIImage imageNamed:@"TabSettingsSelected"]];
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
@@ -162,6 +163,7 @@
                 [item_ setupCell:cell atIndexPath:indexPath];
                 UISwitch* switchControl = [[UISwitch alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
                 switchControl.on = [MYCWallet currentWallet].isTestnet;
+                switchControl.onTintColor = self.tintColor;
                 [switchControl addTarget:self action:@selector(switchTestnet:) forControlEvents:UIControlEventValueChanged];
                 cell.accessoryView = switchControl;
             };

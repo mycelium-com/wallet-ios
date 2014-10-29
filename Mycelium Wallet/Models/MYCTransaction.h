@@ -25,18 +25,18 @@
 @property(nonatomic) BTCTransaction* transaction;
 @property(nonatomic) NSString* transactionID;
 
-// Label or address.
-
-@property(nonatomic) NSString* label;
-
-// Negative if spent, positive if received.
-@property(nonatomic) BTCSatoshi amountTransferred;
+// Details (see `-loadDetailsFromDatabase:`)
+@property(nonatomic) NSString* label; // Label or address.
+@property(nonatomic) BTCSatoshi amountTransferred; // Negative if spent
+@property(nonatomic) BTCSatoshi inputsAmount;
+@property(nonatomic) BTCSatoshi outputsAmount;
+@property(nonatomic) BTCSatoshi fee; // Mining fee spent by this transaction
+@property(nonatomic) NSArray* transactionInputs; // BTCTransactionInput instances with userInfo @"value" and @"address"
+@property(nonatomic) NSArray* transactionOutputs; // BTCTransactionOutput instances directly from `-transaction`.
 
 // Loads basic details about transaction from database (label, amountTransferred).
-- (BOOL) loadBasicDetailsFromDatabase:(FMDatabase*)db;
+- (BOOL) loadDetailsFromDatabase:(FMDatabase*)db;
 
-// Loads all details about transaction: inputs, outputs etc.
-- (BOOL) loadFullDetailsFromDatabase:(FMDatabase*)db;
 
 // Finds a transaction in the database for a given hash. Returns nil if not found.
 + (instancetype) loadTransactionWithHash:(NSData*)txhash account:(MYCWalletAccount*)account database:(FMDatabase*)db;

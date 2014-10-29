@@ -96,12 +96,15 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 }
 
 // Loads basic details about transaction from database (label, amountTransferred).
-- (BOOL) loadBasicDetailsFromDatabase:(FMDatabase*)db
+- (BOOL) loadDetailsFromDatabase:(FMDatabase*)db
 {
     BTCTransaction* tx = self.transaction;
     MYCWalletAccount* account = [self getAccount:db];
 
-    BTCSatoshi amount = 0;
+    self.amountTransferred = 0;
+    self.inputsAmount = 0;
+    self.outputsAmount = 0;
+    self.fee = 0;
 
     BTCScript* ourDestinationScript = nil;
     BTCScript* destinationScript = nil;
@@ -111,11 +114,12 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
     // 2. For each of our inputs, decrement amount.
     for (BTCTransactionOutput* txout in tx.outputs)
     {
-        NSInteger change = 0;
-        if ([account matchesScriptData:txout.script.data change:&change keyIndex:NULL])
+        self.outputsAmount += txout.value;
+        NSInteger changeIndex = 0;
+        if ([account matchesScriptData:txout.script.data change:&changeIndex keyIndex:NULL])
         {
-            amount += txout.value;
-            if (change == 1)
+            self.amountTransferred += txout.value;
+            if (changeIndex == 1)
             {
                 changeScript = txout.script;
             }
@@ -130,26 +134,33 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
         }
     }
 
+    self.transactionOutputs = tx.outputs;
+
     if (!tx.isCoinbase)
     {
         for (BTCTransactionInput* txin in tx.inputs)
         {
             MYCParentOutput* mout = [MYCParentOutput loadOutputForAccount:account.accountIndex hash:txin.previousHash index:txin.previousIndex database:db];
+            self.inputsAmount += mout.value;
             if ([mout isMyOutput])
             {
-                amount -= mout.value;
+                self.amountTransferred  -= mout.value;
             }
+            txin.userInfo = @{@"value": @(mout.value),
+                              @"address": [[MYCWallet currentWallet] addressForAddress:mout.script.standardAddress],
+                              @"script": mout.script};
         }
     }
 
-    self.amountTransferred = amount;
+    self.transactionInputs = tx.inputs;
+    self.fee = self.inputsAmount - self.outputsAmount;
 
     // Normally we'll have one of these transactions:
     // 1. We are paying: one output is change, another is destination (which can be our external address or change address).
     // 2. We are receiving: one output is ours, others could be anything.
 
     BTCScript* script = nil;
-    if (amount > 0)
+    if (self.amountTransferred  > 0)
     {
         // Getting money, prefer our address.
         script = ourDestinationScript ?: changeScript ?: destinationScript;
@@ -167,12 +178,6 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
     return YES;
 }
 
-// Loads all details about transaction: inputs, outputs etc.
-- (BOOL) loadFullDetailsFromDatabase:(FMDatabase*)db
-{
-
-    return YES;
-}
 
 
 

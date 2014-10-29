@@ -11,6 +11,9 @@
 @class MYCTransaction;
 @interface MYCTransactionTableViewCell : UITableViewCell
 
+@property(nonatomic) UIColor* greenColor;
+@property(nonatomic) UIColor* redColor;
+
 @property(nonatomic) MYCTransaction* transaction;
 
 @end

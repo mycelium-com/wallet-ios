@@ -1,28 +1,24 @@
 Todo:
 
-+ send: add address field and scan UI.
-+ send: recognize bitcoin URI from QR code.
-+ sync: save all parent outputs (for transaction details), mark our parents as ours in DB to avoid repeating checks.
-+ send: compose transactions for sending.
-+ sync: keep a reference to wallet.backend so if it changes from testnet to mainnet while in progress, it will connect to the same backend.
-+ bug: not updating parent outputs correctly for just broadcasted transaction. Sync from scratch is correct, though.
-- sync: switch to another hostname on timeout.
 - settings: spend from WIF private key (fetch all unspents and spend them to current account's change address).
-- accounts: edit account label.
-- accounts: archive/unarchive accounts.
-- accounts: make account current.
+- sync: preform automatic sync of the active accounts
+- sync: discover accounts by scanning first 20 addresses for each unknown account index within.
 - builder: try to sign tx to compute fees to avoid simulation when not needed.
-- transactions: show a list of transactions
-- transactions: details of a single transction
+- builder: randomize inputs and outputs when given a key or a specific random seed.
 - handle bitcoin: URL when clicked in safari or elsewhere.
 - backup: when restoring allow entering a passphrase (to be compatible with Trezor)
+- move "use all funds" into account details and/or settings.
+
+- settings: show credits and other info.
+- sync: switch to another hostname on timeout.
+
+
 - receive: remember last used currency and focus in the text field.
 - send: remember last used currency and enable it.
 - send: remember if scanned address last time to show scanner right away
 - balance: new layout to better show balance, buttons; less emphasis on QR code and address
-- send: align amount inputs to the left, with extra line separators.
-- settings: show credits and other info.
 - update folder icon like in Health.app
+
 
 Notes from talk with Andreas:
 
@@ -34,6 +30,21 @@ Notes from talk with Andreas:
 
 
 Done:
+
+
++ send: add address field and scan UI.
++ send: recognize bitcoin URI from QR code.
++ sync: save all parent outputs (for transaction details), mark our parents as ours in DB to avoid repeating checks.
++ send: compose transactions for sending.
++ sync: keep a reference to wallet.backend so if it changes from testnet to mainnet while in progress, it will connect to the same backend.
++ bug: not updating parent outputs correctly for just broadcasted transaction. Sync from scratch is correct, though.
++ transactions: show a list of transactions
++ transactions: details of a single transction
++ send: align amount inputs to the left, with extra line separators.
++ accounts: add account.
++ accounts: edit account label.
++ accounts: archive/unarchive accounts.
++ accounts: make account current.
 
 + receive: generate proper QR code for "bitcoin:..." url.
 ≠ receive: show tip to tap to dismiss. Simply tap the QR code to dismiss.

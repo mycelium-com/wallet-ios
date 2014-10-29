@@ -168,7 +168,7 @@
             __block NSError* dberror = nil;
             [self.wallet inDatabase:^(FMDatabase *db) {
 
-                NSArray* localMYCUnspents = [MYCUnspentOutput loadAllFromDatabase:db];
+                NSArray* localMYCUnspents = [MYCUnspentOutput loadOutputsForAccount:accountIndex database:db];
                 NSMutableDictionary* localMYCUnspentsByOutpoint = [NSMutableDictionary dictionary];
                 for (MYCUnspentOutput* mout in localMYCUnspents)
                 {
