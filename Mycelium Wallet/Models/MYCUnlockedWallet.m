@@ -45,6 +45,8 @@
         }
         else
         {
+            // if status == -34018, add proper Shared Keychain entitlements
+            // http://stackoverflow.com/questions/20344255/secitemadd-and-secitemcopymatching-returns-error-code-34018-errsecmissingentit
             MYCError(@"MYCUnlockedWallet: failed searching iOS keychain (getting mnemonic): %d", (int)status);
         }
     }

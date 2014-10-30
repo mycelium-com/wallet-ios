@@ -132,6 +132,7 @@
 		207646A01A0249FF000F00F2 /* MYCScanPrivateKeyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCScanPrivateKeyViewController.h; sourceTree = "<group>"; };
 		207646A11A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCScanPrivateKeyViewController.m; sourceTree = "<group>"; };
 		207646A21A0249FF000F00F2 /* MYCScanPrivateKeyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCScanPrivateKeyViewController.xib; sourceTree = "<group>"; };
+		207646D71A02905D000F00F2 /* Mycelium Wallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Mycelium Wallet.entitlements"; sourceTree = "<group>"; };
 		208FFB8F19D9802000D4C159 /* Mycelium Wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mycelium Wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		208FFB9319D9802000D4C159 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		208FFB9419D9802000D4C159 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -355,6 +356,7 @@
 		208FFB9119D9802000D4C159 /* Mycelium Wallet */ = {
 			isa = PBXGroup;
 			children = (
+				207646D71A02905D000F00F2 /* Mycelium Wallet.entitlements */,
 				208FFB9619D9802000D4C159 /* MYCAppDelegate.h */,
 				208FFB9719D9802000D4C159 /* MYCAppDelegate.m */,
 				208FFBBF19D984A100D4C159 /* Models */,
@@ -561,6 +563,12 @@
 				TargetAttributes = {
 					208FFB8E19D9802000D4C159 = {
 						CreatedOnToolsVersion = 6.0.1;
+						DevelopmentTeam = K7DPJ7B9P6;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 					208FFBA719D9802000D4C159 = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -817,6 +825,9 @@
 			baseConfigurationReference = FAB8F4EBE2F75284722E9193 /* Pods-Mycelium Wallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Mycelium Wallet/Mycelium Wallet.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mycelium Wallet/MYCPrefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -828,7 +839,7 @@
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "2ef9ec64-d8be-4d22-a733-d64d052824d1";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -837,6 +848,9 @@
 			baseConfigurationReference = 677B515CE201D7130F53029B /* Pods-Mycelium Wallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Mycelium Wallet/Mycelium Wallet.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mycelium Wallet/MYCPrefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -848,7 +862,7 @@
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "2ef9ec64-d8be-4d22-a733-d64d052824d1";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

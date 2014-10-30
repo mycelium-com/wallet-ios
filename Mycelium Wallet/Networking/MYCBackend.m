@@ -114,7 +114,8 @@
 //            },
 
     [self makeJSONRequest:@"queryExchangeRates"
-                  payload:@{ @"version": self.version, @"currency": currencyCode ?: @"USD" }
+                  payload:@{ @"version": self.version,
+                             @"currency": currencyCode ?: @"USD" }
                  template:@{@"currency": @"USD",
                             @"exchangeRates": @[@{
                                 @"name":     @"Bitstamp",
@@ -184,7 +185,7 @@
     //}
 
     [self makeJSONRequest:@"queryUnspentOutputs"
-                  payload:@{ @"version": self.version,
+                  payload:@{// @"version": self.version,
                              @"addresses": [addresses valueForKeyPath:@"publicAddress.base58String"] }
                  template:@{
                             @"height": @300825,
@@ -286,7 +287,7 @@
     //  }
 
     [self makeJSONRequest:@"queryTransactionInventory"
-                  payload:@{ @"version": self.version,
+                  payload:@{// @"version": self.version,
                              @"addresses": [addresses valueForKeyPath:@"publicAddress.base58String"],
                              @"limit": @(limit)}
                  template:@{@"height": @301943,
@@ -377,7 +378,7 @@
     //    }}
 
     [self makeJSONRequest:@"checkTransactions"
-                  payload:@{ @"version": self.version,
+                  payload:@{// @"version": self.version,
                              @"txIds": txids }
                  template:@{
                             @"transactions":@[
@@ -441,7 +442,7 @@
     // }}
 
     [self makeJSONRequest:@"getTransactions"
-                  payload:@{ @"version": self.version,
+                  payload:@{// @"version": self.version,
                              @"txIds": txids }
                  template:@{
                             @"transactions":@[
@@ -544,7 +545,7 @@
     }
 
     [self makeJSONRequest:@"broadcastTransaction"
-                  payload:@{ @"version": self.version,
+                  payload:@{// @"version": self.version,
                              @"rawTransaction": base64tx }
                  template:@{
                             @"success":@YES,
@@ -744,7 +745,7 @@
     {
         // Check if response is correctly formatted with "errorCode" and "r" slots present.
         NSError* formatError = nil;
-        BOOL validFormat = [self validatePlist:dict matchingTemplate:@{@"errorCode": @0, @"r": @{ }} error:&formatError];
+        BOOL validFormat = [self validatePlist:dict matchingTemplate:@{@"errorCode": @0, @"r": @{ }, @"message": @""} error:&formatError];
         if (!validFormat)
         {
             failureBlock(formatError);
@@ -769,13 +770,13 @@
         }
     }
 
-    MYCLog(@"MYCBackend: received HTTP code %ld: %@", (long)httpResponse.statusCode, dict[@"localizedError"] ?: dict[@"error"] ?: @"Server Error");
+    MYCLog(@"MYCBackend: received HTTP code %ld: %@", (long)httpResponse.statusCode, dict[@"localizedError"] ?: dict[@"error"] ?: dict[@"message"] ?: @"Server Error");
 
     NSError* httpError = [NSError errorWithDomain:NSURLErrorDomain
                                             code:httpResponse.statusCode
                                         userInfo:@{
-                                                   NSLocalizedDescriptionKey: dict[@"localizedError"] ?: dict[@"error"] ?: @"Server Error",
-                                                   @"debugMessage": dict[@"error"] ?: @"unknown error from backend",
+                                                   NSLocalizedDescriptionKey: dict[@"localizedError"] ?: dict[@"error"] ?: dict[@"message"] ?: @"Server Error",
+                                                   @"debugMessage": dict[@"error"] ?: dict[@"message"] ?: @"unknown error from backend",
                                                    }];
 
     failureBlock(httpError);

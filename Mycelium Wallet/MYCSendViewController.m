@@ -17,7 +17,6 @@
 @interface MYCSendViewController () <UITextFieldDelegate, BTCTransactionBuilderDataSource>
 
 @property(nonatomic,readonly) MYCWallet* wallet;
-@property(nonatomic) MYCWalletAccount* account;
 
 @property(nonatomic) BTCSatoshi spendingAmount;
 @property(nonatomic) BTCAddress* spendingAddress;
@@ -76,6 +75,8 @@
 {
     [super viewDidLoad];
 
+    self.accountNameLabel.text = NSLocalizedString(@"Send", @"");
+
     [self reloadAccount];
 
     self.btcLiveFormatter  = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.btcField numberFormatter:self.wallet.btcFormatterNaked];
@@ -94,6 +95,12 @@
 
     [self.allFundsButton setTitle:NSLocalizedString(@"Use all funds", @"") forState:UIControlStateNormal];
 
+    if (self.defaultAddress)
+    {
+        self.addressField.text = self.defaultAddressLabel ?: self.defaultAddress.base58String;
+        self.spendingAddress = self.defaultAddress;
+    }
+
     [self updateAmounts];
     [self updateTotalBalance];
 }
@@ -103,17 +110,32 @@
     [super viewWillAppear:animated];
 
     // Make sure we have the latest unspent outputs.
-    [self.wallet updateAccount:self.account force:YES completion:^(BOOL success, NSError *error) {
+    if (self.account)
+    {
+        [self.wallet updateAccount:self.account force:YES completion:^(BOOL success, NSError *error) {
 
-        if (!success)
-        {
-            // TODO: show error.
-        }
+            if (!success)
+            {
+                // TODO: show error.
+            }
 
-        [self reloadAccount];
+            [self reloadAccount];
+            [self updateAmounts];
+            [self updateAddressView];
+            [self updateTotalBalance];
+        }];
+    }
+    else
+    {
         [self updateAmounts];
+        [self updateAddressView];
         [self updateTotalBalance];
-    }];
+    }
+
+    if (self.prefillAllFunds)
+    {
+        [self useAllFunds:nil];
+    }
 
     //[self.btcField becomeFirstResponder];
 }
@@ -123,7 +145,6 @@
     [super viewDidAppear:animated];
 
     // If last time used QR code scanner, show it this time.
-
 }
 
 - (MYCWallet*) wallet
@@ -133,6 +154,8 @@
 
 - (void) walletDidUpdateAccount:(NSNotification*)notif
 {
+    if (!self.account) return;
+
     MYCWalletAccount* wa = notif.object;
     if ([wa isKindOfClass:[MYCWalletAccount class]] && wa.accountIndex == self.account.accountIndex)
     {
@@ -142,19 +165,24 @@
 
 - (void) reloadAccount
 {
-    __block MYCWalletAccount* acc = nil;
+    if (!_account) return;
+
     [self.wallet inDatabase:^(FMDatabase *db) {
-        acc = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
+        [_account reloadFromDatabase:db];
     }];
-    self.account = acc;
+    self.account = _account;
 }
 
 - (void) setAccount:(MYCWalletAccount *)account
 {
     _account = account;
-    self.accountNameLabel.text = _account.label;
-    [self updateAmounts];
-    [self updateTotalBalance];
+
+    if (self.isViewLoaded && account)
+    {
+        self.accountNameLabel.text = _account.label;
+        [self updateAmounts];
+        [self updateTotalBalance];
+    }
 }
 
 - (void) setSpendingAmount:(BTCSatoshi)spendingAmount
@@ -225,7 +253,7 @@
             BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
             builder.dataSource = self;
             builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:self.spendingAddress] ];
-            builder.changeAddress = self.account.internalAddress;
+            builder.changeAddress = self.changeAddress ?: self.account.internalAddress;
 
             __block NSError* berror = nil;
             __block BTCTransactionBuilderResult* result = nil;
@@ -310,8 +338,11 @@
         // Failed and not queued.
 
         // Force update account so we are up to date.
-        [self.wallet updateAccount:self.account force:YES completion:^(BOOL success, NSError *error) {
-        }];
+        if (self.account)
+        {
+            [self.wallet updateAccount:self.account force:YES completion:^(BOOL success, NSError *error) {
+            }];
+        }
 
         // Tell the user that transaction failed and must be re-done.
         UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Payment invalid", @"")
@@ -328,7 +359,7 @@
 - (void) updateAccountIfNeeded:(void(^)(BOOL success, BOOL updated, NSError* error))completion
 {
     // If updated less than 5 minutes ago, keep it as is.
-    if ([self.account.syncDate timeIntervalSinceNow] > -5*60)
+    if (!self.account || [self.account.syncDate timeIntervalSinceNow] > -5*60)
     {
         if (completion) completion(YES, NO, nil);
         return;
@@ -454,12 +485,12 @@
             }
             else
             {
-                #warning TODO: Report error to user "Address does not belong to a {testnet|mainnet}."
+                self.scannerView.errorMessage = NSLocalizedString(@"Address does not belong to Bitcoin network", @"");
             }
         }
         else
         {
-            #warning TODO: Report error to user - the scanned QR code is not a valid address or URL.
+            self.scannerView.errorMessage = NSLocalizedString(@"Not a valid Bitcoin address or payment request", @"");
         }
 
     }];
@@ -477,22 +508,29 @@
 
 - (NSEnumerator* /* [BTCTransactionOutput] */) unspentOutputsForTransactionBuilder:(BTCTransactionBuilder*)txbuilder
 {
-    __block NSArray* unspents = nil;
-    [self.wallet inDatabase:^(FMDatabase *db) {
-        unspents = [MYCUnspentOutput loadOutputsForAccount:self.account.accountIndex database:db];
-    }];
-
-    NSMutableArray* utxos = [NSMutableArray array];
-
-    for (MYCUnspentOutput* unspent in unspents)
+    if (self.account)
     {
-        //NSLog(@"unspent: %@: %@", @(unspent.blockHeight), @(unspent.value));
-        BTCTransactionOutput* utxo = unspent.transactionOutput;
-        utxo.userInfo = @{@"MYCUnspentOutput": unspent };
-        [utxos addObject:utxo];
-    }
+        __block NSArray* unspents = nil;
+        [self.wallet inDatabase:^(FMDatabase *db) {
+            unspents = [MYCUnspentOutput loadOutputsForAccount:self.account.accountIndex database:db];
+        }];
 
-    return [utxos objectEnumerator];
+        NSMutableArray* utxos = [NSMutableArray array];
+
+        for (MYCUnspentOutput* unspent in unspents)
+        {
+            //NSLog(@"unspent: %@: %@", @(unspent.blockHeight), @(unspent.value));
+            BTCTransactionOutput* utxo = unspent.transactionOutput;
+            utxo.userInfo = @{@"MYCUnspentOutput": unspent };
+            [utxos addObject:utxo];
+        }
+
+        return [utxos objectEnumerator];
+    }
+    else
+    {
+        return [self.unspentOutputs objectEnumerator];
+    }
 }
 
 - (BTCKey*) transactionBuilder:(BTCTransactionBuilder*)txbuilder keyForUnspentOutput:(BTCTransactionOutput*)txout
@@ -500,22 +538,29 @@
     // This userInfo key is set in previous call when we provide unspents to the builder.
     MYCUnspentOutput* unspent = txout.userInfo[@"MYCUnspentOutput"];
 
-    NSAssert(unspent, @"sanity check");
+    if (unspent)
+    {
+        NSAssert(unspent, @"sanity check");
 
-    __block BTCKey* key = nil;
-    [self.wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
+        __block BTCKey* key = nil;
+        [self.wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
 
-        BTCKeychain* accountKeychain = [unlockedWallet.keychain keychainForAccount:(uint32_t)self.account.accountIndex];
+            BTCKeychain* accountKeychain = [unlockedWallet.keychain keychainForAccount:(uint32_t)self.account.accountIndex];
 
-        NSAssert(accountKeychain, @"sanity check");
+            NSAssert(accountKeychain, @"sanity check");
 
-        key = [[accountKeychain derivedKeychainAtIndex:(uint32_t)unspent.change] keyAtIndex:(uint32_t)unspent.keyIndex];
+            key = [[accountKeychain derivedKeychainAtIndex:(uint32_t)unspent.change] keyAtIndex:(uint32_t)unspent.keyIndex];
 
-        NSAssert(key, @"sanity check");
+            NSAssert(key, @"sanity check");
 
-    } reason:nil]; // should be already unlocked
+        } reason:nil]; // should be already unlocked
 
-    return key; // will clear on dealloc.
+        return key; // will clear on dealloc.
+    }
+    else
+    {
+        return self.key;
+    }
 }
 
 
@@ -541,13 +586,53 @@
 
 - (void) updateTotalBalance
 {
-    self.allFundsLabel.text = [self formatAmountInSelectedCurrency:self.account.spendableAmount];
-    self.allFundsButton.enabled = (self.account.spendableAmount > 0);
+    BTCSatoshi spendableAmount = [self spendableAmount];
+    self.allFundsLabel.text = [self formatAmountInSelectedCurrency:spendableAmount];
+    self.allFundsButton.enabled = (spendableAmount > 0);
+}
+
+- (BTCSatoshi) spendableAmount
+{
+    if (self.account)
+    {
+        return self.account.spendableAmount;
+    }
+    else if (self.unspentOutputs)
+    {
+        BTCSatoshi balance = 0;
+        for (BTCTransactionOutput* txout in self.unspentOutputs)
+        {
+            balance += txout.value;
+        }
+        return balance;
+    }
+    return 0;
 }
 
 - (void) updateAddressView
 {
     NSString* addrString = self.addressField.text;
+
+    if (self.defaultAddress && self.defaultAddressLabel &&
+        ([addrString isEqualToString:self.defaultAddressLabel] || [addrString isEqualToString:@""]))
+    {
+        if (self.addressField.isFirstResponder)
+        {
+            self.addressField.text = @"";
+            addrString = @"";
+        }
+        else
+        {
+            self.scanButton.hidden = NO;
+            self.addressField.text = self.defaultAddressLabel;
+            self.addressField.textColor = [UIColor blackColor];
+            self.addressValid = YES;
+            self.spendingAddress = self.defaultAddress;
+            [self updateSendButton];
+            return;
+        }
+    }
+
     self.scanButton.hidden = (addrString.length > 0);
 
     self.addressField.textColor = [UIColor blackColor];
@@ -614,7 +699,7 @@
         BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
         builder.dataSource = self;
         builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:address] ];
-        builder.changeAddress = self.account.internalAddress;
+        builder.changeAddress = self.changeAddress ?: self.account.internalAddress;
 
         NSError* berror = nil;
         BTCTransactionBuilderResult* result = [builder buildTransactionAndSign:NO error:&berror];

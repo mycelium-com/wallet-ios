@@ -699,7 +699,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
             // Good transaction accepted. Update unspent outputs and return.
             if (status == MYCBroadcastStatusSuccess)
             {
-                [self markTransactionAsSpent:tx account:account error:NULL];
+                if (account) [self markTransactionAsSpent:tx account:account error:NULL];
                 if (completion) completion(YES, NO, nil);
                 return;
             }
@@ -717,7 +717,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
                 }
             }];
 
-            [self markTransactionAsSpent:tx account:account error:NULL];
+            if (account) [self markTransactionAsSpent:tx account:account error:NULL];
 
             if (completion) completion(NO, !dberror, dberror ?: error);
         }];
@@ -776,6 +776,8 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 - (BOOL) markTransactionAsSpent:(BTCTransaction*)tx account:(MYCWalletAccount*)account error:(NSError**)errorOut
 {
     if (!tx) return NO;
+
+    if (!account) return NO;
 
     __block BOOL succeeded = YES;
     [self inTransaction:^(FMDatabase *db, BOOL *rollback) {

@@ -84,6 +84,15 @@
     self.layer.masksToBounds = YES;
 }
 
+// placeholder position
+- (CGRect)textRectForBounds:(CGRect)bounds {
+    return CGRectInset(bounds, 2*MYCRoundingRadius, MYCRoundingRadius);
+}
+
+// text position
+- (CGRect)editingRectForBounds:(CGRect)bounds {
+    return CGRectInset(bounds, 2*MYCRoundingRadius, MYCRoundingRadius);
+}
 @end
 
 @implementation MYCRoundedTextView

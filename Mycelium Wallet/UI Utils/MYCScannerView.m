@@ -10,7 +10,8 @@
 
 @interface MYCScannerView ()
 @property(nonatomic, weak) UIView* shadowView;
-@property(nonatomic, weak) UIView* videoView;
+@property(nonatomic, strong) UIView* videoView;
+@property(nonatomic, strong) UILabel* messageLabel;
 @property(nonatomic) CGRect initialRect;
 @end
 
@@ -30,6 +31,8 @@
 
     scannerView.shadowView = shadowView;
     scannerView.detectionBlock = detectionBlock;
+
+
 
     [view addSubview:shadowView];
     [view addSubview:scannerView];
@@ -71,6 +74,16 @@
             if (weakself.detectionBlock) weakself.detectionBlock(message);
         }];
 
+        self.messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 10)];
+        self.messageLabel.numberOfLines = 0;
+        self.messageLabel.textAlignment = NSTextAlignmentCenter;
+        self.messageLabel.font = [UIFont systemFontOfSize:17];
+        self.messageLabel.adjustsFontSizeToFitWidth = YES;
+        self.messageLabel.minimumScaleFactor = 0.5;
+        self.messageLabel.text = @""; //@"Very long text to test multiline message around QR code. Really long and wide text.";
+        self.messageLabel.textColor = [UIColor whiteColor];
+        [self addSubview:self.messageLabel];
+
         self.backgroundColor = [UIColor blackColor];
         self.videoView.backgroundColor = [UIColor blackColor];
         [self addSubview:self.videoView];
@@ -83,6 +96,46 @@
     [super layoutSubviews];
 
     self.videoView.frame = [self convertRect:self.superview.bounds fromView:self.superview];
+
+    if (self.messageLabel.superview != self.superview)
+    {
+        [self.superview addSubview:self.messageLabel];
+    }
+    CGRect fr = CGRectZero;
+    fr.size = [self.messageLabel sizeThatFits:CGSizeMake(self.superview.bounds.size.width - 40.0, 200)];
+    self.messageLabel.frame = fr;
+    self.messageLabel.center = CGPointMake(self.center.x, CGRectGetMaxY(self.frame) + 20 + self.messageLabel.frame.size.height);
+}
+
+- (void) setErrorMessage:(NSString *)errorMessage
+{
+    _errorMessage = errorMessage;
+    self.messageLabel.text = errorMessage ?: @"";
+    self.messageLabel.textColor = [UIColor colorWithHue:0.0 saturation:0.7 brightness:1.0 alpha:1.0];
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    [self resetErrorLater];
+}
+
+- (void) setMessage:(NSString *)message
+{
+    _message = message;
+    self.messageLabel.text = message ?: @"";
+    self.messageLabel.textColor = [UIColor whiteColor];
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    [self resetErrorLater];
+}
+
+- (void) resetErrorLater
+{
+    static int i = 0;
+    i++;
+    int j = i;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (j != i) return;
+        self.message = nil;
+    });
 }
 
 - (void) didMoveToWindow
@@ -103,6 +156,8 @@
 - (void) dismiss
 {
     self.detectionBlock = nil;
+
+    self.messageLabel.hidden = YES;
 
     [UIView animateWithDuration:0.20 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
 

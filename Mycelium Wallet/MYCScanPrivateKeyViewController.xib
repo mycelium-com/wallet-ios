@@ -53,6 +53,9 @@
                     <state key="normal" title="Scan QR code">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
+                    <connections>
+                        <action selector="scanPrivateKey:" destination="-1" eventType="touchUpInside" id="ClQ-zd-ZHR"/>
+                    </connections>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Locating funds..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="na5-MM-aHe">
                     <rect key="frame" x="103" y="232" width="115" height="18"/>

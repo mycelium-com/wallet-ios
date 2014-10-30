@@ -335,6 +335,7 @@
 - (IBAction) send:(id)sender
 {
     MYCSendViewController* vc = [[MYCSendViewController alloc] initWithNibName:nil bundle:nil];
+    vc.account = self.account;
     vc.completionBlock = ^(BOOL sent){
         [self dismissViewControllerAnimated:YES completion:nil];
     };

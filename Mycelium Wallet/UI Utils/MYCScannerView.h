@@ -10,12 +10,14 @@
 
 @interface MYCScannerView : UIView
 
+@property(nonatomic) NSString* errorMessage;
+@property(nonatomic) NSString* message;
+
 @property(nonatomic, copy) void(^detectionBlock)(NSString* message);
 
 // Animates the view from a given rect and displays over the entire view.
 + (MYCScannerView*) presentFromRect:(CGRect)rect inView:(UIView*)view detection:(void(^)(NSString* message))detectionBlock;
 
 - (void) dismiss;
-
 
 @end

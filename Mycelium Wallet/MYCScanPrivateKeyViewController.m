@@ -8,11 +8,12 @@
 
 #import "MYCScanPrivateKeyViewController.h"
 #import "MYCWallet.h"
+#import "MYCWalletAccount.h"
 #import "MYCBackend.h"
 #import "MYCTextFieldLiveFormatter.h"
 #import "MYCErrorAnimation.h"
 #import "MYCScannerView.h"
-
+#import "MYCSendViewController.h"
 
 @interface MYCScanPrivateKeyViewController () <UITextFieldDelegate>
 
@@ -24,9 +25,11 @@
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 
 @property(nonatomic) BTCPrivateKeyAddress* privateAddress;
+@property(nonatomic) NSArray* unspentOutputs;
 @property(nonatomic) BTCAddress* publicAddress;
 
 @property(nonatomic) int checkingBalance;
+@property(nonatomic) MYCScannerView* scannerView;
 @end
 
 @implementation MYCScanPrivateKeyViewController
@@ -123,46 +126,87 @@
 
     [self.spinner startAnimating];
 
-    [self.wallet.backend loadUnspentOutputsForAddresses:@[ self.publicAddress ] completion:^(NSArray *outputs, NSInteger height, NSError *error) {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
-        // Another operation was launched, ignore this one.
+        if (!self.publicAddress) return;
         if (myCounter != self.checkingBalance) return;
 
-        [self.spinner stopAnimating];
+        [self.wallet.backend loadUnspentOutputsForAddresses:@[ self.publicAddress ] completion:^(NSArray *outputs, NSInteger height, NSError *error) {
 
-        if (!outputs)
-        {
-            MYCError(@"Cold Storage: Failed importing coins: %@", error);
-            self.statusLabel.text = NSLocalizedString(@"Failed to load coins. Please try again.", @"");
-            return;
-        }
+            // Another operation was launched, ignore this one.
+            if (myCounter != self.checkingBalance) return;
 
-        BTCSatoshi balance = 0;
-        for (BTCTransactionOutput* txout in outputs)
-        {
-            balance += txout.value;
-        }
+            [self.spinner stopAnimating];
 
-        self.statusLabel.text = [NSString stringWithFormat:@"%@ (%@)",
-                                 [self.wallet.btcFormatter stringFromAmount:balance],
-                                 [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:balance]]
-                                 ];
+            if (!outputs)
+            {
+                MYCError(@"Cold Storage: Failed importing coins: %@", error);
+                self.statusLabel.text = NSLocalizedString(@"Failed to load coins. Please try again.", @"");
+                return;
+            }
 
-        if (self.privateAddress && balance > 0)
-        {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            BTCSatoshi balance = 0;
+            for (BTCTransactionOutput* txout in outputs)
+            {
+                balance += txout.value;
+            }
 
+            self.unspentOutputs = outputs;
 
-                [self openSendView];
+            self.statusLabel.text = [NSString stringWithFormat:@"%@ (%@)",
+                                     [self.wallet.btcFormatter stringFromAmount:balance],
+                                     [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:balance]]
+                                     ];
 
-            });
-        }
-    }];
+            if (self.privateAddress && balance > 0)
+            {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+                    [self openSendView];
+
+                });
+            }
+        }];
+    });
 }
 
 - (void) openSendView
 {
+    MYCSendViewController* vc = [[MYCSendViewController alloc] initWithNibName:nil bundle:nil];
+    vc.key = self.privateAddress.key;
+    vc.unspentOutputs = self.unspentOutputs;
+    vc.changeAddress = self.privateAddress.publicAddress; // send change back to that scanned address
+    vc.prefillAllFunds = YES;
 
+    __block MYCWalletAccount* account = nil;
+    [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+        account = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
+        vc.defaultAddress = account.internalAddress; // using internal address for better privacy.
+        vc.defaultAddressLabel = account.label;
+    }];
+
+    __weak __typeof(self) weakself = self;
+    vc.completionBlock = ^(BOOL finished) {
+
+        if (finished)
+        {
+            if (weakself.completionBlock) weakself.completionBlock(finished);
+        }
+        else
+        {
+            [weakself.navigationController popViewControllerAnimated:YES];
+            [self.navigationController setNavigationBarHidden:NO animated:YES];
+        }
+
+        // make sure tx is visible on this account if it received cash.
+        [[MYCWallet currentWallet] updateAccount:account force:YES completion:^(BOOL success, NSError *error) {
+        }];
+    };
+    if (vc.key)
+    {
+        [self.navigationController setNavigationBarHidden:YES animated:YES];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 - (void) cancel:(id)_
@@ -170,6 +214,63 @@
     [self.view endEditing:YES];
     if (self.completionBlock) self.completionBlock(NO);
 }
+
+- (IBAction)scanPrivateKey:(id)sender
+{
+    UIView* targetView = self.navigationController.view;
+    CGRect rect = [targetView convertRect:self.privkeyField.bounds fromView:self.privkeyField];
+
+    self.scannerView = [MYCScannerView presentFromRect:rect inView:targetView detection:^(NSString *message) {
+        BTCAddress* address = [BTCAddress addressWithBase58String:message];
+
+        if (!address)
+        {
+            self.scannerView.errorMessage = NSLocalizedString(@"Not a valid Bitcoin address or payment request", @"");
+            return;
+        }
+
+        if (!!address.isTestnet != !!self.wallet.isTestnet)
+        {
+            self.scannerView.errorMessage = NSLocalizedString(@"Key does not belong to Bitcoin network", @"");
+            return;
+        }
+
+        if ([address isKindOfClass:[BTCPrivateKeyAddress class]])
+        {
+            [self.scannerView dismiss];
+            self.scannerView = nil;
+
+            self.privkeyField.text = address.base58String;
+            [self updateAddressView];
+        }
+        else
+        {
+            [self.wallet.backend loadUnspentOutputsForAddresses:@[ address ] completion:^(NSArray *outputs, NSInteger height, NSError *error) {
+
+                if (!outputs)
+                {
+                    return;
+                }
+
+                BTCSatoshi balance = 0;
+                for (BTCTransactionOutput* txout in outputs)
+                {
+                    balance += txout.value;
+                }
+
+                NSString* balanceString = [NSString stringWithFormat:@"%@ (%@)",
+                                         [self.wallet.btcFormatter stringFromAmount:balance],
+                                         [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:balance]]
+                                         ];
+
+                self.scannerView.message = [NSString stringWithFormat:NSLocalizedString(@"This is a public address with %@", @""), balanceString];
+            }];
+        }
+    }];
+}
+
+
+
 
 - (IBAction)didBeginEditingAddress:(id)sender
 {
