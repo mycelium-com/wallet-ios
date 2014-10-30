@@ -60,7 +60,7 @@
             cell.detailTextLabel.textColor = weakself.view.tintColor;
         };
 
-        section.headerTitle = [NSString stringWithFormat:NSLocalizedString(@"Account #%03d", @""), (int)self.account.accountIndex];
+        section.headerTitle = [NSString stringWithFormat:NSLocalizedString(@"Account #%02d", @""), (int)self.account.accountIndex];
         [section item:^(PTableViewSourceItem *item) {
             item.title = NSLocalizedString(@"Label", @"");
             item.detailTitle = self.account.label;
@@ -204,6 +204,8 @@
     [self updateSections];
     [self.tableView reloadData];
 
+    [self.navigationController popViewControllerAnimated:YES];
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:self.account];
 }
 

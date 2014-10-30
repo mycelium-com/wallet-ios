@@ -141,14 +141,16 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
         for (BTCTransactionInput* txin in tx.inputs)
         {
             MYCParentOutput* mout = [MYCParentOutput loadOutputForAccount:account.accountIndex hash:txin.previousHash index:txin.previousIndex database:db];
-            self.inputsAmount += mout.value;
-            if ([mout isMyOutput])
-            {
-                self.amountTransferred  -= mout.value;
+            if (mout) {
+                self.inputsAmount += mout.value;
+                if ([mout isMyOutput])
+                {
+                    self.amountTransferred  -= mout.value;
+                }
+                txin.userInfo = @{@"value": @(mout.value),
+                                  @"address": [[MYCWallet currentWallet] addressForAddress:mout.script.standardAddress],
+                                  @"script": mout.script};
             }
-            txin.userInfo = @{@"value": @(mout.value),
-                              @"address": [[MYCWallet currentWallet] addressForAddress:mout.script.standardAddress],
-                              @"script": mout.script};
         }
     }
 

@@ -1,14 +1,17 @@
 Todo:
 
 - settings: spend from WIF private key (fetch all unspents and spend them to current account's change address).
-- sync: preform automatic sync of the active accounts
-- sync: discover accounts by scanning first 20 addresses for each unknown account index within.
-- builder: try to sign tx to compute fees to avoid simulation when not needed.
-- builder: randomize inputs and outputs when given a key or a specific random seed.
 - handle bitcoin: URL when clicked in safari or elsewhere.
 - backup: when restoring allow entering a passphrase (to be compatible with Trezor)
+
+- builder: try to sign tx to compute fees to avoid simulation when not needed.
+- builder: randomize inputs and outputs when given a key or a specific random seed.
 - move "use all funds" into account details and/or settings.
 
+- sync: preform automatic sync of the active accounts
+- sync: discover accounts by scanning first 20 addresses for each unknown account index within.
++ bug: when spending all funds, tx was not saved with -1 height and its parents were not properly fetched.
++ bug: stress-test when sync fails mid-way. Should display incomplete data without crashes and sync cleanly.
 - settings: show credits and other info.
 - sync: switch to another hostname on timeout.
 

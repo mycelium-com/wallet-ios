@@ -843,7 +843,7 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
         mtx.transactionHash = tx.transactionHash;
         mtx.data            = tx.data;
-        mtx.blockHeight     = 0;
+        mtx.blockHeight     = -1;
         mtx.date            = nil;
         mtx.accountIndex    = account.accountIndex;
 

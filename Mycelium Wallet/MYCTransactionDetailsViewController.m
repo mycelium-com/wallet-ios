@@ -152,9 +152,12 @@
                 item.cellIdentifier = @"keyvalue2";
                 item.key = [[MYCWallet currentWallet].btcFormatter stringFromAmount:[txin.userInfo[@"value"] longLongValue]];
                 item.value = [txin.userInfo[@"address"] base58String];
-                item.userInfo = @{@"path": [@"/address/" stringByAppendingString:item.value],
-                                  @"pathtestnet": [@"/addresses/" stringByAppendingString:item.value],
-                                  @"myinput": @([self.transaction.account matchesScriptData:[(BTCScript*)txin.userInfo[@"script"] data] change:NULL keyIndex:NULL])};
+                if (item.value)
+                {
+                    item.userInfo = @{@"path": [@"/address/" stringByAppendingString:item.value],
+                                      @"pathtestnet": [@"/addresses/" stringByAppendingString:item.value],
+                                      @"myinput": @([self.transaction.account matchesScriptData:[(BTCScript*)txin.userInfo[@"script"] data] change:NULL keyIndex:NULL])};
+                }
             }];
         }
     }];

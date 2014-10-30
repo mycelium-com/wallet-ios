@@ -638,6 +638,8 @@
             // Generic errors are already handled and reported above.
             if (!result) return;
 
+            //MYCLog(@"API CALL: %@\nResult: %@", curlCommand, result);
+
             NSError* formatError = nil;
             BOOL valid = NO;
 

@@ -319,6 +319,9 @@
                 return;
             }
 
+            // For all unconfirmed txs we want to make sure to fetch all necessary outputs.
+            NSMutableArray* unconfirmedTxs = [NSMutableArray array];
+
             for (NSDictionary* dict in dicts)
             {
                 BOOL found = [dict[@"found"] boolValue];
@@ -348,6 +351,11 @@
                     continue;
                 }
 
+                if (mtx.blockHeight == -1 || height == -1)
+                {
+                    [unconfirmedTxs addObject:mtx.transaction];
+                }
+
                 // If height or time differs, update the stored transaction.
                 if (mtx.blockHeight != height || ABS([date timeIntervalSinceDate:mtx.date]) >= 1.0)
                 {
@@ -371,8 +379,11 @@
                 } // if tx is updated
             } // foreach status dict.
 
+            // When we send a new transaction, it's unconfirmed, but if it's spending all coins, we'll have no chance other than here to fetch parent outputs.
+            [self fetchRelevantParentOutputsFromTransactions:unconfirmedTxs completion:^(BOOL success, NSError *error) {
+                if (completion) completion(success, error);
+            }];
 
-            if (completion) completion(YES, nil);
         }];
     }];
 }
