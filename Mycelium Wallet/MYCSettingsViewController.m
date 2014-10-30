@@ -8,6 +8,7 @@
 
 #import "MYCSettingsViewController.h"
 #import "MYCBackupViewController.h"
+#import "MYCScanPrivateKeyViewController.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "PTableViewSource.h"
@@ -25,8 +26,8 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         self.title = NSLocalizedString(@"Settings", @"");
-        self.tintColor = [UIColor colorWithHue:280.0f/360.0f saturation:0.8f brightness:0.97f alpha:1.0];
-        //self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:1.0f brightness:0.77f alpha:1.0];
+        //self.tintColor = [UIColor colorWithHue:280.0f/360.0f saturation:0.8f brightness:0.97f alpha:1.0];
+        self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:1.0f brightness:0.77f alpha:1.0];
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Settings", @"") image:[UIImage imageNamed:@"TabSettings"] selectedImage:[UIImage imageNamed:@"TabSettingsSelected"]];
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
@@ -113,6 +114,16 @@
         [section item:^(PTableViewSourceItem *item) {
             item.title = NSLocalizedString(@"Import Private Key", @"");
             item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+
+                MYCScanPrivateKeyViewController* vc = [[MYCScanPrivateKeyViewController alloc] initWithNibName:nil bundle:nil];
+                vc.completionBlock = ^(BOOL finished){
+                    [weakself dismissViewControllerAnimated:YES completion:nil];
+                };
+                UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
+                [weakself presentViewController:navc animated:YES completion:nil];
+
+            };
         }];
     }];
 
@@ -121,15 +132,15 @@
 
         [section item:^(PTableViewSourceItem *item) {
             item.title = NSLocalizedString(@"Export Wallet Master Key", @"");
-            item.accessoryType = UITableViewCellAccessoryNone;
+            item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
 
                 MYCBackupViewController* vc = [[MYCBackupViewController alloc] initWithNibName:nil bundle:nil];
                 vc.completionBlock = ^(BOOL finished){
-                    [self dismissViewControllerAnimated:YES completion:nil];
+                    [weakself dismissViewControllerAnimated:YES completion:nil];
                 };
                 UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
-                [self presentViewController:navc animated:YES completion:nil];
+                [weakself presentViewController:navc animated:YES completion:nil];
 
             };
         }];

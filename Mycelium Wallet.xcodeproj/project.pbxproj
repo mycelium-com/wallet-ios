@@ -35,6 +35,8 @@
 		2064E38D19D9A0F200CD81B8 /* MYCTransactionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E38B19D9A0F200CD81B8 /* MYCTransactionsViewController.xib */; };
 		2064E39119D9A10400CD81B8 /* MYCSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38F19D9A10400CD81B8 /* MYCSettingsViewController.m */; };
 		2064E39219D9A10400CD81B8 /* MYCSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E39019D9A10400CD81B8 /* MYCSettingsViewController.xib */; };
+		207646A31A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 207646A11A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m */; };
+		207646A41A0249FF000F00F2 /* MYCScanPrivateKeyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 207646A21A0249FF000F00F2 /* MYCScanPrivateKeyViewController.xib */; };
 		208FFB9519D9802000D4C159 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9419D9802000D4C159 /* main.m */; };
 		208FFB9819D9802000D4C159 /* MYCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9719D9802000D4C159 /* MYCAppDelegate.m */; };
 		208FFBA019D9802000D4C159 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 208FFB9F19D9802000D4C159 /* Images.xcassets */; };
@@ -127,6 +129,9 @@
 		2064E38F19D9A10400CD81B8 /* MYCSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCSettingsViewController.m; sourceTree = "<group>"; };
 		2064E39019D9A10400CD81B8 /* MYCSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCSettingsViewController.xib; sourceTree = "<group>"; };
 		2064E39319D9AE1C00CD81B8 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; fileEncoding = 4; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		207646A01A0249FF000F00F2 /* MYCScanPrivateKeyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCScanPrivateKeyViewController.h; sourceTree = "<group>"; };
+		207646A11A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCScanPrivateKeyViewController.m; sourceTree = "<group>"; };
+		207646A21A0249FF000F00F2 /* MYCScanPrivateKeyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCScanPrivateKeyViewController.xib; sourceTree = "<group>"; };
 		208FFB8F19D9802000D4C159 /* Mycelium Wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mycelium Wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		208FFB9319D9802000D4C159 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		208FFB9419D9802000D4C159 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -315,6 +320,16 @@
 			name = Backup;
 			sourceTree = "<group>";
 		};
+		2076469F1A024948000F00F2 /* Cold Storage */ = {
+			isa = PBXGroup;
+			children = (
+				207646A01A0249FF000F00F2 /* MYCScanPrivateKeyViewController.h */,
+				207646A11A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m */,
+				207646A21A0249FF000F00F2 /* MYCScanPrivateKeyViewController.xib */,
+			);
+			name = "Cold Storage";
+			sourceTree = "<group>";
+		};
 		208FFB8619D9802000D4C159 = {
 			isa = PBXGroup;
 			children = (
@@ -350,6 +365,7 @@
 				203AA4A919DC514C00572BD9 /* Send View */,
 				203AA4AF19DC523100572BD9 /* Receive View */,
 				203AA4B519DC53B200572BD9 /* Backup */,
+				2076469F1A024948000F00F2 /* Cold Storage */,
 				203AA49C19DC3C4500572BD9 /* UI Utils */,
 				20C2D81819E595E60022CAAC /* CoreBitcoin Spinoffs */,
 				208FFB9219D9802000D4C159 /* Other */,
@@ -587,6 +603,7 @@
 				2095C44F19FFF50A00635C85 /* MYCTransactionDetails.storyboard in Resources */,
 				2064E38D19D9A0F200CD81B8 /* MYCTransactionsViewController.xib in Resources */,
 				208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */,
+				207646A41A0249FF000F00F2 /* MYCScanPrivateKeyViewController.xib in Resources */,
 				20C2D7F419E290830022CAAC /* MYCBackupPageView.xib in Resources */,
 				2064E38319D9A0D000CD81B8 /* MYCBalanceViewController.xib in Resources */,
 				20C0F70519EEB37D00DD0748 /* MYCAccountViewController.xib in Resources */,
@@ -649,6 +666,7 @@
 				20A9C07119F5349500AF61DE /* MYCTransaction.m in Sources */,
 				208FFB9819D9802000D4C159 /* MYCAppDelegate.m in Sources */,
 				20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */,
+				207646A31A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m in Sources */,
 				203AA49819DC365D00572BD9 /* MYCBackend.m in Sources */,
 				203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */,
 				20203AE019F7F8A90085C01F /* BTCBitcoinURL.m in Sources */,

@@ -3,19 +3,16 @@ Todo:
 - settings: spend from WIF private key (fetch all unspents and spend them to current account's change address).
 - handle bitcoin: URL when clicked in safari or elsewhere.
 - backup: when restoring allow entering a passphrase (to be compatible with Trezor)
-
 - builder: try to sign tx to compute fees to avoid simulation when not needed.
 - builder: randomize inputs and outputs when given a key or a specific random seed.
-- move "use all funds" into account details and/or settings.
-
+- show various errors when scanning QR codes
 - sync: preform automatic sync of the active accounts
 - sync: discover accounts by scanning first 20 addresses for each unknown account index within.
-+ bug: when spending all funds, tx was not saved with -1 height and its parents were not properly fetched.
-+ bug: stress-test when sync fails mid-way. Should display incomplete data without crashes and sync cleanly.
 - settings: show credits and other info.
 - sync: switch to another hostname on timeout.
 
-
+Nice to have:
+- move "use all funds" into account details and/or settings.
 - receive: remember last used currency and focus in the text field.
 - send: remember last used currency and enable it.
 - send: remember if scanned address last time to show scanner right away
@@ -24,7 +21,6 @@ Todo:
 
 
 Notes from talk with Andreas:
-
 - testnet is poorly-connected to show unconfirmed txs, but quick to mine them.
 - parent outputs are fetched to check amounts
 - support entering password on init, but not on export
@@ -34,6 +30,8 @@ Notes from talk with Andreas:
 
 Done:
 
++ bug: when spending all funds, tx was not saved with -1 height and its parents were not properly fetched.
++ bug: stress-test when sync fails mid-way. Should display incomplete data without crashes and sync cleanly.
 
 + send: add address field and scan UI.
 + send: recognize bitcoin URI from QR code.

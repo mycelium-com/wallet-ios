@@ -380,10 +380,16 @@
             } // foreach status dict.
 
             // When we send a new transaction, it's unconfirmed, but if it's spending all coins, we'll have no chance other than here to fetch parent outputs.
-            [self fetchRelevantParentOutputsFromTransactions:unconfirmedTxs completion:^(BOOL success, NSError *error) {
-                if (completion) completion(success, error);
-            }];
-
+            if (unconfirmedTxs.count == 0)
+            {
+                if (completion) completion(YES, nil);
+            }
+            else
+            {
+                [self fetchRelevantParentOutputsFromTransactions:unconfirmedTxs completion:^(BOOL success, NSError *error) {
+                    if (completion) completion(success, error);
+                }];
+            }
         }];
     }];
 }

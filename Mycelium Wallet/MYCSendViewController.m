@@ -152,6 +152,7 @@
 - (void) setAccount:(MYCWalletAccount *)account
 {
     _account = account;
+    self.accountNameLabel.text = _account.label;
     [self updateAmounts];
     [self updateTotalBalance];
 }

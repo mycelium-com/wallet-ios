@@ -34,7 +34,9 @@
         self.title = NSLocalizedString(@"Accounts", @"");
         //self.tintColor = [UIColor colorWithHue:38.0f/360.0f saturation:1.0f brightness:0.97f alpha:1.0f];
         //self.tintColor = [UIColor colorWithHue:24.0f/360.0f saturation:0.9f brightness:1.00f alpha:1.0f];
-        self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:0.7f brightness:0.65f alpha:1.0];
+        //self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:0.7f brightness:0.65f alpha:1.0];
+        self.tintColor = [UIColor colorWithHue:208.0f/360.0f saturation:1.0f brightness:1.0f alpha:1.0f];
+
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Accounts", @"") image:[UIImage imageNamed:@"TabAccounts"] selectedImage:[UIImage imageNamed:@"TabAccountsSelected"]];
 
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd

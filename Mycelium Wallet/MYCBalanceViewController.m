@@ -73,6 +73,11 @@
 {
     [super viewDidLoad];
     self.borderHeightConstraint.constant = 1.0/[UIScreen mainScreen].nativeScale;
+
+    self.sendButton.backgroundColor = self.tintColor;
+    self.receiveButton.backgroundColor = self.tintColor;
+    [self.backupButton setTitleColor:self.tintColor forState:UIControlStateNormal];
+
     [self reloadAccount];
 }
 
