@@ -17,6 +17,7 @@
 @interface MYCAppDelegate ()
 @property(nonatomic) MYCWelcomeViewController* welcomeViewController;
 @property(nonatomic) MYCTabBarController* mainController;
+@property(nonatomic) NSNumber* previousSystemBrightness;
 @end
 
 @implementation MYCAppDelegate
@@ -95,6 +96,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    self.previousSystemBrightness = @([UIScreen mainScreen].brightness);
     if ([[MYCWallet currentWallet] isStored])
     {
         [[MYCWallet currentWallet] updateActiveAccounts:^(BOOL success, NSError *error) {
@@ -103,6 +105,14 @@
                 MYCError(@"MYCAppDelegate: Automatic update of active accounts failed: %@", error);
             }
         }];
+    }
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+    if (self.previousSystemBrightness)
+    {
+        [UIScreen mainScreen].brightness = self.previousSystemBrightness.doubleValue;
     }
 }
 

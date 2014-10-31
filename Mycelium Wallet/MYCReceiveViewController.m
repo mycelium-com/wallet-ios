@@ -38,11 +38,11 @@
 
 @property(nonatomic) BOOL fiatInput;
 
+@property(nonatomic) NSNumber* previousBrightness;
+
 @end
 
-@implementation MYCReceiveViewController {
-//    BOOL _reformatInputField;
-}
+@implementation MYCReceiveViewController
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -62,6 +62,13 @@
 
     self.borderHeightConstraint.constant = 1.0/[UIScreen mainScreen].nativeScale;
     [self reloadAccount];
+}
+
+- (void) viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
+    [self restoreBrightness];
 }
 
 
@@ -199,6 +206,34 @@
     }
 }
 
+- (IBAction)tapQRCode:(id)sender
+{
+    if (!self.previousBrightness)
+    {
+        self.previousBrightness = @([UIScreen mainScreen].brightness);
+    }
+
+    // If too low, restore brightness.
+    if (([UIScreen mainScreen].brightness / self.previousBrightness.doubleValue) <= 0.251)
+    {
+        [UIScreen mainScreen].brightness = self.previousBrightness.doubleValue;
+        self.previousBrightness = nil;
+    }
+    else
+    {
+        [UIScreen mainScreen].brightness = 0.5 * [UIScreen mainScreen].brightness;
+    }
+}
+
+- (void) restoreBrightness
+{
+    if (self.previousBrightness)
+    {
+        [UIScreen mainScreen].brightness = self.previousBrightness.doubleValue;
+        self.previousBrightness = nil;
+    }
+}
+
 - (BOOL)canBecomeFirstResponder
 {
     // To support UIMenuController.
@@ -248,6 +283,8 @@
     self.fiatInput = !self.fiatInput;
     if (self.fiatInput) [self.fiatField becomeFirstResponder];
     else [self.btcField becomeFirstResponder];
+
+    [self restoreBrightness];
 }
 
 - (IBAction)switchToFiat:(id)sender
@@ -259,12 +296,14 @@
 {
     self.fiatInput = NO;
     [self setEditing:YES animated:YES];
+    [self restoreBrightness];
 }
 
 - (IBAction)didBeginEditingFiat:(id)sender
 {
     self.fiatInput = YES;
     [self setEditing:YES animated:YES];
+    [self restoreBrightness];
 }
 
 - (IBAction)didEditBtc:(id)sender
@@ -277,6 +316,7 @@
     {
         self.fiatField.text = @"";
     }
+    [self restoreBrightness];
 }
 
 - (IBAction)didEditFiat:(id)sender
@@ -289,6 +329,7 @@
     {
         self.btcField.text = @"";
     }
+    [self restoreBrightness];
 }
 
 

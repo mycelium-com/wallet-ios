@@ -50,11 +50,15 @@
                         <outletCollection property="gestureRecognizers" destination="Rbv-SM-BOE" appends="YES" id="kdu-jv-sbL"/>
                     </connections>
                 </label>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SampleQRCode" translatesAutoresizingMaskIntoConstraints="NO" id="qKL-wx-tqI">
+                <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SampleQRCode" translatesAutoresizingMaskIntoConstraints="NO" id="qKL-wx-tqI">
                     <rect key="frame" x="64" y="155" width="192" height="191.5"/>
+                    <gestureRecognizers/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="qKL-wx-tqI" secondAttribute="height" multiplier="1:1" id="OBh-gp-1mO"/>
                     </constraints>
+                    <connections>
+                        <outletCollection property="gestureRecognizers" destination="HNk-yi-8He" appends="YES" id="tKq-Dw-JRO"/>
+                    </connections>
                 </imageView>
                 <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kos-8N-C97" userLabel="Editing Overlay">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
@@ -199,6 +203,11 @@
                 <action selector="tapAddress:" destination="-1" id="ect-sd-M9d"/>
             </connections>
         </pongPressGestureRecognizer>
+        <tapGestureRecognizer id="HNk-yi-8He">
+            <connections>
+                <action selector="tapQRCode:" destination="-1" id="Mu7-JF-zqy"/>
+            </connections>
+        </tapGestureRecognizer>
     </objects>
     <resources>
         <image name="SampleQRCode" width="512" height="512"/>
