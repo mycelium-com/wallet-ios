@@ -92,6 +92,20 @@
     return NO;
 }
 
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+    if ([[MYCWallet currentWallet] isStored])
+    {
+        [[MYCWallet currentWallet] updateActiveAccounts:^(BOOL success, NSError *error) {
+            if (!success && error)
+            {
+                MYCError(@"MYCAppDelegate: Automatic update of active accounts failed: %@", error);
+            }
+        }];
+    }
+}
+
 - (void) displayMainView
 {
     if (!self.mainController)

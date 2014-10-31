@@ -302,7 +302,7 @@
         }
 
         NSArray* txids = [mtxByTxID allKeys];
-        MYCLog(@"MYCUpdateAccountOperation: updating young transactions (%@): %@", @(txids.count), txids);
+        //MYCLog(@"MYCUpdateAccountOperation: updating young transactions (%@): %@", @(txids.count), txids);
 
         // Checks status of the given transaction IDs and returns an array of dictionaries.
         // Each dictionary is of this format: {@"txid": @"...", @"found": @YES/@NO, @"height": @123, @"date": NSDate }.
@@ -702,7 +702,7 @@
     NSInteger accountIndex = self.account.accountIndex;
     MYCWallet* wallet = self.wallet;
 
-    MYCLog(@"DEBUG fetchRelevantParentOutputsFromTransactions: %@", [txs valueForKey:@"transactionID"]);
+    //MYCLog(@"DEBUG fetchRelevantParentOutputsFromTransactions: %@", [txs valueForKey:@"transactionID"]);
 
     // Perform DB loads on background thread.
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
@@ -815,14 +815,14 @@
                                 if ([self.account matchesScriptData:parentOutput.script.data change:&change keyIndex:&keyIndex])
                                 {
                                     parentOutput.userInfo = @{@"change": @(change), @"keyIndex": @(keyIndex) };
-                                    MYCLog(@"MYCUpdateAccountOperation: parent output %@:%@ is detected to be used in the account %@",
-                                           BTCTransactionIDFromHash(parentOutput.transactionHash), @(parentOutput.index), @(accountIndex));
+                                    //MYCLog(@"MYCUpdateAccountOperation: parent output %@:%@ is detected to be used in the account %@",
+                                    //       BTCTransactionIDFromHash(parentOutput.transactionHash), @(parentOutput.index), @(accountIndex));
                                 }
                                 else
                                 {
                                     parentOutput.userInfo = @{@"change": @(-1), @"keyIndex": @(-1) };
-                                    MYCLog(@"MYCUpdateAccountOperation: parent output %@:%@ not used in the account %@",
-                                           BTCTransactionIDFromHash(parentOutput.transactionHash), @(parentOutput.index), @(accountIndex));
+                                    //MYCLog(@"MYCUpdateAccountOperation: parent output %@:%@ not used in the account %@",
+                                    //       BTCTransactionIDFromHash(parentOutput.transactionHash), @(parentOutput.index), @(accountIndex));
                                 }
 
                                 // Save both ours and foreign parent outputs so we can show full details in transaction history.
@@ -862,7 +862,7 @@
                             }
                             else
                             {
-                                MYCLog(@"MYCUpdateAccountOperation: saved parent output %@:%d", BTCTransactionIDFromHash(txout.transactionHash), (int)txout.index);
+                                //MYCLog(@"MYCUpdateAccountOperation: saved parent output %@:%d", BTCTransactionIDFromHash(txout.transactionHash), (int)txout.index);
                             }
                         }
                     }];
@@ -931,7 +931,7 @@
                 }
                 else
                 {
-                    MYCLog(@"MYCUpdateAccountOperation: saved transaction: %@", tx.transactionID);
+                    //MYCLog(@"MYCUpdateAccountOperation: saved transaction: %@", tx.transactionID);
                 }
 
                 for (BTCTransactionOutput* txout in tx.outputs)

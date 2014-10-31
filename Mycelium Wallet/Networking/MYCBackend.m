@@ -93,6 +93,7 @@
 - (void) loadExchangeRateForCurrencyCode:(NSString*)currencyCode
                                completion:(void(^)(NSDecimalNumber* btcPrice, NSString* marketName, NSDate* date, NSString* nativeCurrencyCode, NSError* error))completion
 {
+    NSAssert([NSThread isMainThread], @"Must be on main thread");
     NSParameterAssert(currencyCode);
 
 //    curl  -k -X POST -H "Content-Type: application/json" -d '{"version":1,"currency":"USD"}' https://144.76.165.115/wapitestnet/wapi/queryExchangeRates
@@ -152,6 +153,7 @@
 // Fetches unspent outputs (BTCTransactionOutput) for given addresses (BTCAddress instances).
 - (void) loadUnspentOutputsForAddresses:(NSArray*)addresses completion:(void(^)(NSArray* outputs, NSInteger height, NSError* error))completion
 {
+    NSAssert([NSThread isMainThread], @"Must be on main thread");
     NSParameterAssert(addresses);
 
     if (addresses.count == 0)
@@ -262,6 +264,7 @@
 // Results include both transactions spending and receiving to the given addresses.
 - (void) loadTransactionIDsForAddresses:(NSArray*)addresses limit:(NSInteger)limit completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion
 {
+    NSAssert([NSThread isMainThread], @"Must be on main thread");
     NSParameterAssert(addresses);
 
     if (addresses.count == 0)
@@ -315,6 +318,7 @@
 
 - (void) loadTransactionsForAddresses:(NSArray*)addresses limit:(NSInteger)limit completion:(void(^)(NSArray* txs, NSInteger height, NSError* error))completion
 {
+    NSAssert([NSThread isMainThread], @"Must be on main thread");
     NSParameterAssert(addresses);
 
     if (addresses.count == 0)
@@ -358,6 +362,7 @@
 // In case of error, `dicts` is nil and `error` contains NSError object.
 - (void) loadStatusForTransactions:(NSArray*)txids completion:(void(^)(NSArray* dicts, NSError* error))completion
 {
+    NSAssert([NSThread isMainThread], @"Must be on main thread");
     NSParameterAssert(txids);
 
     if (txids.count == 0)
@@ -422,6 +427,7 @@
 // See WapiResponse<GetTransactionsResponse> getTransactions(GetTransactionsRequest request);
 - (void) loadTransactions:(NSArray*)txids completion:(void(^)(NSArray* dicts, NSError* error))completion
 {
+    NSAssert([NSThread isMainThread], @"Must be on main thread");
     NSParameterAssert(txids);
 
     if (txids.count == 0)
@@ -524,6 +530,7 @@
 // WapiResponse<BroadcastTransactionResponse> broadcastTransaction(BroadcastTransactionRequest request);
 - (void) broadcastTransaction:(BTCTransaction*)tx completion:(void(^)(MYCBroadcastStatus status, NSError* error))completion
 {
+    NSAssert([NSThread isMainThread], @"Must be on main thread");
     NSParameterAssert(tx);
 
     // curl  -k -X POST -H "Content-Type: application/json" -d '{"version":1,"rawTransaction":"AQAAAAHqHGsQSIun5hjDDWm7iFMwm85xNLt+HBfI3LS3uQHnSQEAAABrSDBFAiEA6rlGk4wgIL3TvC2YHK4XiBW2vPYg82iCgnQi+YOUwqACIBpzVk756/07SRORT50iRZvEGUIn3Lh3bhaRE1aUMgZZASECDFl9wEYDCvB1cJY6MbsakfKQ9tbQhn0eH9C//RI2iE//////ApHwGgAAAAAAGXapFIzWtPXZR7lk8RtvE0FDMHaLtsLCiKyghgEAAAAAABl2qRSuzci59wapXUEzwDzqKV9nIaqwz4isAAAAAA=="}' https://144.76.165.115/wapitestnet/wapi/broadcastTransaction
@@ -589,6 +596,8 @@
 
 - (void) makeJSONRequest:(NSString*)name payload:(NSDictionary*)payload template:(id)template completion:(void(^)(NSDictionary* result, NSString* curlCommand, NSError* error))completion
 {
+    NSAssert([NSThread isMainThread], @"Must be on main thread");
+    //NSLog(@">>> INCREASING COUNT: %@", name);
     self.pendingTasksCount++;
 
     self.currentEndpointURL = self.endpointURLs.firstObject;
@@ -606,6 +615,7 @@
             NSData* jsonPayload = [NSJSONSerialization dataWithJSONObject:payload options:0 error:&jsonerror];
             if (!jsonPayload)
             {
+                //NSLog(@"<<< DECREASING COUNT: %@ (json failure)", name);
                 self.pendingTasksCount--;
                 if (completion) completion(nil, nil, jsonerror);
                 return;
@@ -630,6 +640,7 @@
 
             NSDictionary* result = [self handleReceivedJSON:data response:response error:networkError failure:^(NSError* jsonError){
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    //NSLog(@"<<< DECREASING COUNT: %@ (format failure)", name);
                     self.pendingTasksCount--;
                     MYCLog(@"MYCBackend: REQUEST FAILED: %@ ERROR: %@", curlCommand, jsonError);
                     if (completion) completion(nil, nil, jsonError);
@@ -649,6 +660,8 @@
             if (!valid) result = nil;
 
             dispatch_async(dispatch_get_main_queue(), ^{
+
+                //NSLog(@"<<< DECREASING COUNT: %@ (load finished)", name);
                 self.pendingTasksCount--;
 
                 if (!result)

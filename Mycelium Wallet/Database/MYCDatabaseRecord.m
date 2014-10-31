@@ -256,6 +256,7 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
         if (db.changes > 0) {
             [MYCDatabase tableDidChange:tableName];
         }
+        _existingRecord = YES;
         return YES;
     }
     else
@@ -313,6 +314,7 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
         if (db.changes > 0) {
             [MYCDatabase tableDidChange:tableName];
         }
+        _existingRecord = YES;
         return YES;
     }
     else
@@ -357,7 +359,12 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
         }
     }
 
-    return [self insertInDatabase:db error:outError];
+    if ([self insertInDatabase:db error:outError])
+    {
+        _existingRecord = YES;
+        return YES;
+    }
+    return NO;
 }
 
 //+ (NSDictionary *)loadWithPrimaryKeys:(NSSet *)primaryKeys fromDatabase:(FMDatabase *)db

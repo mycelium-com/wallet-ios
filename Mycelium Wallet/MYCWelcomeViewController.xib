@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
@@ -16,6 +16,11 @@
                 <outlet property="restoreCancelButton" destination="vrQ-D3-ash" id="6Vu-ue-2wT"/>
                 <outlet property="restoreCompleteButton" destination="UaT-Wz-zig" id="mkq-fk-Vco"/>
                 <outlet property="restoreLabel" destination="vIh-qV-MuP" id="Kaa-dM-cFR"/>
+                <outlet property="restorePassphraseCancelButton" destination="UBb-ZW-0gm" id="SgK-d6-G6x"/>
+                <outlet property="restorePassphraseCompleteButton" destination="BTE-2P-Whg" id="AiZ-m6-5is"/>
+                <outlet property="restorePassphraseLabel" destination="8sj-xI-gox" id="ksu-cH-Ska"/>
+                <outlet property="restorePassphraseTextView" destination="RI8-vZ-RIs" id="ePr-8L-H7o"/>
+                <outlet property="restorePassphraseWalletView" destination="wRK-st-fjA" id="MDF-2u-iag"/>
                 <outlet property="restoreTextView" destination="ZaI-mu-D2p" id="MPr-zV-uGA"/>
                 <outlet property="restoreWalletView" destination="ZEF-I3-YbT" id="Tf7-j8-qz6"/>
                 <outlet property="scrollView" destination="tNr-Sz-zeI" id="gR1-eG-Rlw"/>
@@ -206,19 +211,19 @@
                     </connections>
                 </textView>
                 <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UaT-Wz-zig">
-                    <rect key="frame" x="129" y="431" width="62" height="33"/>
+                    <rect key="frame" x="141" y="431" width="37" height="33"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
-                    <state key="normal" title="Restore">
+                    <state key="normal" title="Next">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
-                        <action selector="finishRestore:" destination="-1" eventType="touchUpInside" id="0i4-U1-1mf"/>
+                        <action selector="goToPassphrase:" destination="-1" eventType="touchUpInside" id="sRd-0v-tZc"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vrQ-D3-ash">
-                    <rect key="frame" x="20" y="431" width="53" height="32"/>
+                    <rect key="frame" x="20" y="431" width="39" height="32"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
-                    <state key="normal" title="Cancel">
+                    <state key="normal" title="Back">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
@@ -248,7 +253,87 @@
             <nil key="simulatedStatusBarMetrics"/>
             <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="182" y="268"/>
+            <point key="canvasLocation" x="181" y="268"/>
+        </view>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="wRK-st-fjA" userLabel="Restore Passphrase View">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="Hgs-yE-agU">
+                    <rect key="frame" x="60" y="8" width="200" height="200"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="Hgs-yE-agU" secondAttribute="height" multiplier="1:1" id="Ak7-Ac-Win"/>
+                        <constraint firstAttribute="width" constant="200" id="GBW-CB-4A3"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="mycelium" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ucd-ar-xew">
+                    <rect key="frame" x="94" y="178" width="132.5" height="41"/>
+                    <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="30"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter a passphrase (skip this if you did not use passphrase when generating a wallet)" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="8sj-xI-gox">
+                    <rect key="frame" x="20" y="235" width="280" height="60.5"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="passphrase" translatesAutoresizingMaskIntoConstraints="NO" id="RI8-vZ-RIs" customClass="MYCRoundedTextView">
+                    <rect key="frame" x="20" y="315.5" width="280" height="52"/>
+                    <color key="backgroundColor" red="0.96999999999999997" green="0.96999999999999997" blue="0.96999999999999997" alpha="1" colorSpace="deviceRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="52" id="bqe-rb-uCP"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="done"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="ABz-xx-b0M"/>
+                    </connections>
+                </textView>
+                <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BTE-2P-Whg">
+                    <rect key="frame" x="129" y="431" width="62" height="33"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
+                    <state key="normal" title="Restore">
+                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="finishRestore:" destination="-1" eventType="touchUpInside" id="ZUx-Zt-i8c"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UBb-ZW-0gm">
+                    <rect key="frame" x="20" y="431" width="39" height="32"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                    <state key="normal" title="Back">
+                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="cancelRestorePassphrase:" destination="-1" eventType="touchUpInside" id="BeL-tK-R5J"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="8sj-xI-gox" secondAttribute="trailing" constant="20" id="5vj-Da-h1x"/>
+                <constraint firstItem="ucd-ar-xew" firstAttribute="top" secondItem="Hgs-yE-agU" secondAttribute="bottom" constant="-30" id="8Ym-Ok-kPj"/>
+                <constraint firstItem="BTE-2P-Whg" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="UBb-ZW-0gm" secondAttribute="trailing" constant="20" id="BBA-Ae-sEQ"/>
+                <constraint firstAttribute="centerX" secondItem="BTE-2P-Whg" secondAttribute="centerX" priority="999" id="Cfa-9A-0Jp"/>
+                <constraint firstItem="UBb-ZW-0gm" firstAttribute="baseline" secondItem="BTE-2P-Whg" secondAttribute="baseline" constant="-1" id="Goa-ae-7LY"/>
+                <constraint firstAttribute="bottom" secondItem="BTE-2P-Whg" secondAttribute="bottom" constant="16" id="Gwp-J8-6oZ"/>
+                <constraint firstItem="RI8-vZ-RIs" firstAttribute="leading" secondItem="wRK-st-fjA" secondAttribute="leading" constant="20" id="Lc6-sh-xcD"/>
+                <constraint firstAttribute="centerX" secondItem="Hgs-yE-agU" secondAttribute="centerX" id="Qst-C8-TfE"/>
+                <constraint firstItem="BTE-2P-Whg" firstAttribute="top" relation="greaterThanOrEqual" secondItem="RI8-vZ-RIs" secondAttribute="bottom" constant="16" id="bAm-dk-Y1S"/>
+                <constraint firstItem="Hgs-yE-agU" firstAttribute="top" secondItem="wRK-st-fjA" secondAttribute="top" constant="8" id="bAq-ST-iEG"/>
+                <constraint firstAttribute="trailing" secondItem="RI8-vZ-RIs" secondAttribute="trailing" constant="20" id="iZh-Qy-qK7"/>
+                <constraint firstItem="RI8-vZ-RIs" firstAttribute="top" secondItem="8sj-xI-gox" secondAttribute="bottom" constant="20" id="kW6-sJ-5g4"/>
+                <constraint firstItem="8sj-xI-gox" firstAttribute="top" secondItem="ucd-ar-xew" secondAttribute="bottom" constant="16" id="pVK-I7-BBt"/>
+                <constraint firstItem="8sj-xI-gox" firstAttribute="leading" secondItem="wRK-st-fjA" secondAttribute="leading" constant="20" id="sja-Gn-rsH"/>
+                <constraint firstItem="UBb-ZW-0gm" firstAttribute="leading" secondItem="RI8-vZ-RIs" secondAttribute="leading" id="v0X-KF-QiN"/>
+                <constraint firstItem="Hgs-yE-agU" firstAttribute="centerX" secondItem="ucd-ar-xew" secondAttribute="centerX" constant="-0.5" id="wk8-nl-A2X"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="555" y="268"/>
         </view>
     </objects>
     <resources>

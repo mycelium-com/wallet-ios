@@ -24,6 +24,8 @@ NSString* const MYCWalletDidReloadNotification = @"MYCWalletDidReloadNotificatio
 NSString* const MYCWalletDidUpdateNetworkActivityNotification = @"MYCWalletDidUpdateNetworkActivityNotification";
 NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAccountNotification";
 
+const NSUInteger MYCAccountDiscoveryWindow = 3;
+
 @interface MYCWallet ()
 @property(nonatomic) NSURL* databaseURL;
 
@@ -591,9 +593,6 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 // If update is skipped, completion block is called with (NO,nil).
 - (void) updateAccount:(MYCWalletAccount*)account force:(BOOL)force completion:(void(^)(BOOL success, NSError *error))completion
 {
-    // Broadcast pending txs if possible.
-    [self broadcastOutgoingTransactions:^(BOOL success, NSError *error) { }];
-
     if (!force)
     {
         // If synced less than 5 minutes ago, skip sync.
@@ -616,10 +615,15 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
         }
     }
 
+    // Broadcast pending txs if needed.
+    [self broadcastOutgoingTransactions:^(BOOL success, NSError *error) { }];
+
     MYCUpdateAccountOperation* op = [[MYCUpdateAccountOperation alloc] initWithAccount:account wallet:self];
     [_accountUpdateOperations addObject:op];
 
     [op update:^(BOOL success, NSError *error) {
+
+        NSAssert([NSThread mainThread], @"Must be on main thread");
 
         [_accountUpdateOperations removeObjectIdenticalTo:op];
 
@@ -627,18 +631,23 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
         if (success)
         {
+            __block NSError* dberror = nil;
             [self inDatabase:^(FMDatabase *db) {
                 // Make sure we use the latest data and update the sync date.
                 [account reloadFromDatabase:db];
                 account.syncDate = [NSDate date];
-                NSError* dberror = nil;
                 if (![account saveInDatabase:db error:&dberror])
                 {
+                    dberror = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error when updating account sync date."}];
                     MYCError(@"MYCWallet: failed to save account with bumped syncDate in database: %@", dberror);
-                    if (completion) completion(NO, error);
-                    return;
                 }
             }];
+
+            if (dberror)
+            {
+                if (completion) completion(NO, dberror);
+                return;
+            }
         }
 
         if (completion) completion(success, error);
@@ -891,6 +900,154 @@ NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAcco
 
     return YES;
 }
+
+// Update all active accounts.
+- (void) updateActiveAccounts:(void(^)(BOOL success, NSError *error))completion
+{
+    [self asyncInDatabase:^id(FMDatabase *db, NSError *__autoreleasing *dberrorOut) {
+        return [MYCWalletAccount loadWithCondition:@"archived = 0" fromDatabase:db];
+    } completion:^(NSArray* accs, NSError *dberror) {
+        if (!accs)
+        {
+            if (completion) completion(nil, dberror);
+            return;
+        }
+        [self recursivelyUpdateAccounts:accs force:NO completion:completion];
+    }];
+}
+
+// NSArray* remainingAccounts = [self.activeAccounts arrayByAddingObjectsFromArray:self.archivedAccounts];
+- (void) recursivelyUpdateAccounts:(NSArray*)accs force:(BOOL)force completion:(void(^)(BOOL success, NSError *error))completion
+{
+    if (accs.count == 0)
+    {
+        if (completion) completion(YES, nil);
+        return;
+    }
+
+    MYCWalletAccount* acc = [accs firstObject];
+
+    // Make requests to synchronize active accounts.
+    [self updateAccount:acc force:force completion:^(BOOL success, NSError *error) {
+        if (!success && error)
+        {
+            if (completion) completion(success, error);
+            return;
+        }
+        [self recursivelyUpdateAccounts:[accs subarrayWithRange:NSMakeRange(1, accs.count - 1)] force:force completion:completion];
+    }];
+}
+
+
+// Discover accounts with a sliding window. Since accounts' keychains are derived in a hardened mode,
+// we need a root keychain with private key to derive accounts' addresses.
+// Newly discovered accounts are created automatically with default names.
+- (void) discoverAccounts:(BTCKeychain*)rootKeychain completion:(void(^)(BOOL success, NSError *error))completion
+{
+#if 0
+#warning DEBUG: disabled discovery of accounts
+    if (completion) completion(YES, nil);
+    return;
+#endif
+    
+    __block NSInteger lastAccountIndex = 0;
+    [self inDatabase:^(FMDatabase *db) {
+        MYCWalletAccount* acc = [[MYCWalletAccount loadWithCondition:@"1 ORDER BY accountIndex DESC LIMIT 1" fromDatabase:db] firstObject];
+        lastAccountIndex = acc.accountIndex;
+    }];
+
+    MYCLog(@"MYCWallet: discovering accounts starting at index %@", @(lastAccountIndex));
+
+    __block int total = 0;
+    __block int discoveredAccounts = 0;
+    for (NSInteger accountIndex = lastAccountIndex + 1; accountIndex <= lastAccountIndex + MYCAccountDiscoveryWindow; accountIndex++)
+    {
+        BTCKeychain* accKeychain = [[rootKeychain keychainForAccount:(uint32_t)accountIndex] publicKeychain];
+
+        // Scan 20 external address and 2 internal ones.
+
+        NSMutableArray* addrs = [NSMutableArray array];
+
+        for (uint32_t j = 0; j < 20; j++)
+        {
+            BTCAddress* addr = [self addressForAddress:[BTCPublicKeyAddress addressWithData:BTCHash160([accKeychain externalKeyAtIndex:j].publicKey)]];
+            [addrs addObject:addr];
+        }
+        for (uint32_t j = 0; j < 2; j++)
+        {
+            BTCAddress* addr = [self addressForAddress:[BTCPublicKeyAddress addressWithData:BTCHash160([accKeychain changeKeyAtIndex:j].publicKey)]];
+            [addrs addObject:addr];
+        }
+
+        NSMutableArray* previousAccounts = [NSMutableArray array];
+
+        total++;
+
+        [self.backend loadTransactionsForAddresses:addrs limit:2 completion:^(NSArray *txs, NSInteger height, NSError *error) {
+
+            total--;
+
+            MYCWalletAccount* thisAcc = [[MYCWalletAccount alloc] initWithKeychain:accKeychain];
+            [previousAccounts addObject:thisAcc];
+
+            if (txs && txs.count > 0)
+            {
+                discoveredAccounts++;
+                MYCLog(@"Discovered account: %@", @(accountIndex));
+                [self inDatabase:^(FMDatabase *db) {
+                    // Save this and all preceding empty accounts.
+                    for (MYCWalletAccount* acc in previousAccounts)
+                    {
+                        [acc saveInDatabase:db error:NULL];
+                    }
+                    [previousAccounts removeAllObjects];
+                }];
+            }
+
+            if (total == 0)
+            {
+                if (discoveredAccounts > 0)
+                {
+                    MYCLog(@"MYCWallet discovered %@ new accounts, scanning again...", @(discoveredAccounts));
+                    [self discoverAccounts:rootKeychain completion:completion];
+                }
+                else
+                {
+                    MYCLog(@"MYCWallet finished discovering accounts.");
+                    if (completion) completion(!!txs, error);
+                }
+            }
+        }];
+    }
+}
+
+// Returns YES if this new account if within a window of empty accounts.
+- (BOOL) canAddAccount
+{
+    // check how many accounts are empty and return NO if outside the search window
+    __block BOOL result = NO;
+    [self inDatabase:^(FMDatabase *db) {
+        NSArray* accs = [MYCWalletAccount loadWithCondition:[NSString stringWithFormat:@"1 ORDER BY accountIndex DESC LIMIT %@", @(MYCAccountDiscoveryWindow)] fromDatabase:db];
+
+        if (accs.count < MYCAccountDiscoveryWindow)
+        {
+            result = YES;
+            return;
+        }
+
+        for (MYCWalletAccount* acc in accs)
+        {
+            if (acc.spendableAmount > 0)
+            {
+                result = YES;
+                return;
+            }
+        }
+    }];
+
+    return result;
+}
+
 
 - (void) notifyNetworkActivity
 {

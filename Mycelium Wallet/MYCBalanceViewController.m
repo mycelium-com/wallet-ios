@@ -198,6 +198,9 @@
         return; // will be up to date when animation finishes.
     }
 
+    // I give up, to animate it correctly i need a more proper state machine.
+    animated = NO;
+    
     if (!animated)
     {
         self.refreshButton.hidden = _refreshing;
@@ -268,6 +271,15 @@
                 [self setRefreshing:_refreshing animated:YES];
             }
         }];
+
+        static int x = 0;
+        x++;
+        int x2 = x;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (x != x2) return;
+            self.refreshButton.tag = 0;
+            [self updateRefreshControlAnimated:NO];
+        });
     }
 }
 

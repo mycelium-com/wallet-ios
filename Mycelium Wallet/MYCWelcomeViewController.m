@@ -34,6 +34,12 @@
 @property (weak, nonatomic) IBOutlet UIButton* restoreCancelButton;
 @property (weak, nonatomic) IBOutlet UIButton* restoreCompleteButton;
 
+@property (strong, nonatomic) IBOutlet UIView *restorePassphraseWalletView;
+@property (weak, nonatomic) IBOutlet UILabel *restorePassphraseLabel;
+@property (weak, nonatomic) IBOutlet UITextView *restorePassphraseTextView;
+@property (weak, nonatomic) IBOutlet UIButton* restorePassphraseCancelButton;
+@property (weak, nonatomic) IBOutlet UIButton* restorePassphraseCompleteButton;
+
 @end
 
 @interface MYCEntropyMeter : NSObject
@@ -97,8 +103,22 @@
 
         // This will write the mnemonic to iOS keychain.
         unlockedWallet.mnemonic = mnemonic;
+        
+        [wallet discoverAccounts:unlockedWallet.keychain completion:^(BOOL success, NSError *error) {
+            if (!success)
+            {
+                MYCError(@"MYCWelcomeViewController: failed to discover accounts. Please add them manually. %@", error);
+            }
+            else
+            {
+                [wallet updateActiveAccounts:^(BOOL success, NSError *error) {
+                }];
+            }
+        }];
 
     } reason:NSLocalizedString(@"Authenticate to store master key on the device", @"")];
+
+
 }
 
 - (IBAction)createNewWallet:(id)sender
@@ -135,8 +155,9 @@
     self.restoreWalletView.translatesAutoresizingMaskIntoConstraints = YES;
     [self.containerView addSubview:self.restoreWalletView];
 
-    [self.restoreCancelButton setTitle:NSLocalizedString(@"Cancel", @"") forState:UIControlStateNormal];
-    [self.restoreCompleteButton setTitle:NSLocalizedString(@"Continue", @"") forState:UIControlStateNormal];
+    self.restoreLabel.text = NSLocalizedString(@"Type in your 12-word master seed (separated by spaces)", @"");
+    [self.restoreCancelButton setTitle:NSLocalizedString(@"Back", @"") forState:UIControlStateNormal];
+    [self.restoreCompleteButton setTitle:NSLocalizedString(@"Next", @"") forState:UIControlStateNormal];
 
     self.restoreTextView.text = @"";
 
@@ -149,11 +170,35 @@
     [self.restoreWalletView removeFromSuperview];
 }
 
+- (IBAction)cancelRestorePassphrase:(id)sender
+{
+    [self.restorePassphraseWalletView removeFromSuperview];
+}
+
+- (IBAction)goToPassphrase:(id)sender
+{
+    self.restorePassphraseWalletView.frame = self.containerView.bounds;
+    self.restorePassphraseWalletView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    self.restorePassphraseWalletView.translatesAutoresizingMaskIntoConstraints = YES;
+    [self.containerView addSubview:self.restorePassphraseWalletView];
+
+    self.restorePassphraseLabel.text = NSLocalizedString(@"Enter a passphrase\n(omit passphrase if you did not use it when creating a wallet)", @"");
+    [self.restorePassphraseCancelButton setTitle:NSLocalizedString(@"Back", @"") forState:UIControlStateNormal];
+    [self.restorePassphraseCompleteButton setTitle:NSLocalizedString(@"Continue", @"") forState:UIControlStateNormal];
+
+    self.restorePassphraseTextView.text = @"";
+
+    [self updateRestoreUI];
+    [self updateRestorePlaceholder];
+}
+
 - (IBAction)finishRestore:(id)sender
 {
     [self.view endEditing:YES];
 
-    BTCMnemonic* mnemonic = [[BTCMnemonic alloc] initWithWords:[self currentWords] password:nil wordListType:BTCMnemonicWordListTypeEnglish];
+    BTCMnemonic* mnemonic = [[BTCMnemonic alloc] initWithWords:[self currentWords]
+                                                      password:self.restorePassphraseTextView.text
+                                                  wordListType:BTCMnemonicWordListTypeEnglish];
 
     if (mnemonic && mnemonic.keychain)
     {

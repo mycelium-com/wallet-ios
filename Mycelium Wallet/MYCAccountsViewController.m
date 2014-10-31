@@ -266,6 +266,18 @@
     // Show alert if trying to add more.
     // Push the view with account options.
 
+    if (![[MYCWallet currentWallet] canAddAccount])
+    {
+        UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Attention", @"")
+                                                                    message:NSLocalizedString(@"Can't add an account because you have too many empty accounts.", @"")
+                                                             preferredStyle:UIAlertControllerStyleAlert];
+        [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                               style:UIAlertActionStyleCancel
+                                             handler:^(UIAlertAction *action) {}]];
+        [self presentViewController:ac animated:YES completion:nil];
+        return;
+    }
+
     __block MYCWalletAccount* lastAccount = nil;
     [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
         lastAccount = [[MYCWalletAccount loadAccountsFromDatabase:db] lastObject];
@@ -297,6 +309,9 @@
 
         [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
             [acc saveInDatabase:db error:NULL];
+        }];
+
+        [[MYCWallet currentWallet] updateAccount:acc force:YES completion:^(BOOL success, NSError *error) {
         }];
 
         [self updateSections];

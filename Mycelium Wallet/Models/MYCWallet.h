@@ -144,4 +144,15 @@ extern NSString* const MYCWalletDidUpdateAccountNotification;
 // queued = YES if transaction was queued and should be broadcasted later.
 - (void) broadcastTransaction:(BTCTransaction*)tx fromAccount:(MYCWalletAccount*)account completion:(void(^)(BOOL success, BOOL queued, NSError *error))completion;
 
+// Update all active accounts.
+- (void) updateActiveAccounts:(void(^)(BOOL success, NSError *error))completion;
+
+// Discover accounts with a sliding window. Since accounts' keychains are derived in a hardened mode,
+// we need a root keychain with private key to derive accounts' addresses.
+// Newly discovered accounts are created automatically with default names.
+- (void) discoverAccounts:(BTCKeychain*)rootKeychain completion:(void(^)(BOOL success, NSError *error))completion;
+
+// Returns YES if this new account if within a window of empty accounts.
+- (BOOL) canAddAccount;
+
 @end

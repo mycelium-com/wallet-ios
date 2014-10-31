@@ -49,7 +49,7 @@
 
     if (self = [super init])
     {
-        NSLog(@"NEW ACCOUNT WITH KEYCHAIN: account:%d first address: %@  extpubkey: %@", (int)keychain.index, [[MYCWallet currentWallet] addressForKey:[keychain externalKeyAtIndex:0]].base58String, keychain);
+        //NSLog(@"NEW ACCOUNT WITH KEYCHAIN: account:%d first address: %@  extpubkey: %@", (int)keychain.index, [[MYCWallet currentWallet] addressForKey:[keychain externalKeyAtIndex:0]].base58String, keychain);
         _accountIndex = keychain.index;
         _extendedPublicKey = keychain.extendedPublicKey;
         _label = [NSString stringWithFormat:NSLocalizedString(@"Account %@", @""), @(_accountIndex)];
