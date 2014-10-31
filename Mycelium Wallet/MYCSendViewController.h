@@ -23,14 +23,19 @@
 // Label to explain this address.
 @property(nonatomic) NSString* defaultAddressLabel;
 
+// If not zero, placed as a default amount in the amount field.
+@property(nonatomic) BTCSatoshi defaultAmount;
+
+// If YES, default amount is set to use all funds.
+@property(nonatomic) BOOL prefillAllFunds;
+
+
+
 // Either set the account, or...
 @property(nonatomic) MYCWalletAccount* account;
 
 // ... a list of utxos and a single private key to sign them.
 @property(nonatomic) NSArray* unspentOutputs;
 @property(nonatomic) BTCKey* key;
-
-// If YES, default amount is set to use all funds.
-@property(nonatomic) BOOL prefillAllFunds;
 
 @end

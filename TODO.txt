@@ -1,15 +1,22 @@
 Todo:
 
-- handle bitcoin: URL when clicked in safari or elsewhere.
+from slides:
 - backup: when restoring allow entering a passphrase (to be compatible with Trezor)
+- sync: preform automatic sync when app goes active (on active accounts only)
+- accounts: do not allow another empty account (or more than the scan window)
+- tap QR code to reduce brightness
+
 - builder: try to sign tx to compute fees to avoid simulation when not needed.
 - builder: randomize inputs and outputs when given a key or a specific random seed.
+- sync after backup restore.
+- sync after adding an account.
 - sync: preform automatic sync of the active accounts
 - sync: discover accounts by scanning first 20 addresses for each unknown account index within.
 - settings: show credits and other info.
 - sync: switch to another hostname on timeout.
 
 Nice to have:
+- accounts: show sending/receiving status too
 - move "use all funds" into account details and/or settings.
 - receive: remember last used currency and focus in the text field.
 - send: remember last used currency and enable it.
@@ -28,6 +35,8 @@ Notes from talk with Andreas:
 
 Done:
 
++ handle bitcoin: URL when clicked in safari or elsewhere.
++ send: auto-jump to btc field after scanning QR
 + settings: spend from WIF private key (fetch all unspents and spend them to current account's change address).
 + show various errors when scanning QR codes
 

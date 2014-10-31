@@ -99,6 +99,14 @@
     {
         self.addressField.text = self.defaultAddressLabel ?: self.defaultAddress.base58String;
         self.spendingAddress = self.defaultAddress;
+        [self updateAddressView];
+    }
+
+    if (self.defaultAmount > 0)
+    {
+        self.spendingAmount = self.defaultAmount;
+        self.btcField.text = [self.wallet.btcFormatterNaked stringFromAmount:self.defaultAmount];
+        [self didEditBtc:nil];
     }
 
     [self updateAmounts];
@@ -480,6 +488,9 @@
                     [self updateAmounts];
                 }
 
+                // Jump in amount field.
+                [(self.fiatInput ? self.fiatField : self.btcField) becomeFirstResponder];
+
                 [self.scannerView dismiss];
                 self.scannerView = nil;
             }
@@ -661,7 +672,7 @@
             }
             else
             {
-                self.addressField.textColor = [UIColor orangeColor];
+                self.addressField.textColor = [UIColor redColor];
             }
         }
     }

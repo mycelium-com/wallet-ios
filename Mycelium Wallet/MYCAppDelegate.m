@@ -9,7 +9,10 @@
 #import "MYCAppDelegate.h"
 #import "MYCWelcomeViewController.h"
 #import "MYCTabBarController.h"
+#import "MYCSendViewController.h"
 #import "MYCWallet.h"
+#import "MYCWalletAccount.h"
+#import "BTCBitcoinURL.h"
 
 @interface MYCAppDelegate ()
 @property(nonatomic) MYCWelcomeViewController* welcomeViewController;
@@ -56,6 +59,37 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidUpdateNetworkActivity:) name:MYCWalletDidUpdateNetworkActivityNotification object:nil];
 
     return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    // Handle bitcoin: url if possible.
+    BTCBitcoinURL* btcURL = [[BTCBitcoinURL alloc] initWithURL:url];
+    if (btcURL && btcURL.address)
+    {
+        if (self.mainController)
+        {
+            [self.mainController dismissViewControllerAnimated:YES completion:^{ }];
+            MYCSendViewController* vc = [[MYCSendViewController alloc] initWithNibName:nil bundle:nil];
+
+            __block MYCWalletAccount* acc = nil;
+            [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+                acc = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
+            }];
+
+            vc.account = acc;
+            vc.defaultAddress = btcURL.address;
+            vc.defaultAmount = btcURL.amount;
+
+            vc.completionBlock = ^(BOOL sent){
+                [self.mainController dismissViewControllerAnimated:YES completion:nil];
+            };
+            
+            [self.mainController presentViewController:vc animated:YES completion:nil];
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (void) displayMainView
