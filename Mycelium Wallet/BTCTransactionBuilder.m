@@ -25,11 +25,13 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
         _feeRate = BTCTransactionDefaultFeeRate;
         _minimumChange = -1; // so it picks feeRate at runtime.
         _dustChange = -1; // so it picks minimumChange at runtime.
+        _shouldSign = YES;
+        _shouldShuffle = YES;
     }
     return self;
 }
 
-- (BTCTransactionBuilderResult*) buildTransactionAndSign:(BOOL)sign error:(NSError**)errorOut
+- (BTCTransactionBuilderResult*) buildTransaction:(NSError**)errorOut
 {
     if (!self.changeScript)
     {
@@ -85,7 +87,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
         // Set the output value as needed
         changeOutput.value = result.outputsAmount;
 
-        result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction sign:sign error:errorOut];
+        result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction error:errorOut];
         if (!result.unsignedInputsIndexes)
         {
             return nil;
@@ -144,7 +146,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
             result.outputsAmount += change;
             result.fee = fee;
 
-            result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction sign:sign error:errorOut];
+            result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction error:errorOut];
             if (!result.unsignedInputsIndexes)
             {
                 return nil;
@@ -165,7 +167,7 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
             [txoutputs removeObjectIdenticalTo:changeOutput];
             result.transaction.outputs = txoutputs;
             result.fee = fee;
-            result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction sign:sign error:errorOut];
+            result.unsignedInputsIndexes = [self attemptToSignTransaction:result.transaction error:errorOut];
             if (!result.unsignedInputsIndexes)
             {
                 return nil;
@@ -219,21 +221,28 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
 {
     // Compute fees for this tx by composing a tx with properly sized dummy signatures.
     BTCTransaction* simtx = [tx copy];
+    uint32_t i = 0;
     for (BTCTransactionInput* txin in simtx.inputs)
     {
         NSAssert(!!txin.transactionOutput, @"must have transactionOutput");
         BTCScript* txoutScript = txin.transactionOutput.script;
-        txin.signatureScript = [txoutScript simulatedSignatureScriptWithOptions:BTCScriptSimulationMultisigP2SH];
 
-        #warning TODO: if cannot match the simulated signature, use data source to provide one. (If signing API available, then use it.)
+        if (![self attemptToSignTransactionInput:txin tx:simtx inputIndex:i error:NULL])
+        {
+            // TODO: if cannot match the simulated signature, use data source to provide one. (If signing API available, then use it.)
+            txin.signatureScript = [txoutScript simulatedSignatureScriptWithOptions:BTCScriptSimulationMultisigP2SH];
+        }
+
         if (!txin.signatureScript) txin.signatureScript = txoutScript;
+
+        i++;
     }
     return [simtx estimatedFeeWithRate:self.feeRate];
 }
 
 
 // Tries to sign a transaction and returns index set of unsigned inputs.
-- (NSIndexSet*) attemptToSignTransaction:(BTCTransaction*)tx sign:(BOOL)reallySign error:(NSError**)errorOut
+- (NSIndexSet*) attemptToSignTransaction:(BTCTransaction*)tx error:(NSError**)errorOut
 {
     // By default, all inputs are marked to be signed.
     NSMutableIndexSet* unsignedIndexes = [NSMutableIndexSet indexSet];
@@ -243,9 +252,38 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
     }
 
     // Check if we can possibly sign anything. Otherwise return early.
-    if (!reallySign || tx.inputs.count == 0 || !self.dataSource)
+    if (!_shouldSign || tx.inputs.count == 0 || !self.dataSource)
     {
         return unsignedIndexes;
+    }
+
+    if (_shouldShuffle && _shouldSign)
+    {
+        // Shuffle both the inputs and outputs.
+        NSData* seed = nil;
+
+        if ([self.dataSource respondsToSelector:@selector(shuffleSeedForTransactionBuilder:)])
+        {
+            seed = [self.dataSource shuffleSeedForTransactionBuilder:self];
+        }
+
+        if (!seed && [self.dataSource respondsToSelector:@selector(transactionBuilder:keyForUnspentOutput:)])
+        {
+            // find the first key
+            for (BTCTransactionInput* txin in tx.inputs)
+            {
+                BTCKey* k = [self.dataSource transactionBuilder:self keyForUnspentOutput:txin.transactionOutput];
+                seed = k.privateKey;
+                if (seed) break;
+            }
+        }
+
+        // If finally have something as a seed, shuffle
+        if (seed)
+        {
+            tx.inputs = [self shuffleInputs:tx.inputs withSeed:seed];
+            tx.outputs = [self shuffleOutputs:tx.outputs withSeed:seed];
+        }
     }
 
     // Try to sign each input.
@@ -254,81 +292,106 @@ NSString* const BTCTransactionBuilderErrorDomain = @"com.oleganza.CoreBitcoin.Tr
         // We support two kinds of scripts: p2pkh (modern style) and p2pk (old style)
         // For each of these we support compressed and uncompressed pubkeys.
         BTCTransactionInput* txin = tx.inputs[i];
-        BTCScript* outputScript = txin.signatureScript;
-        BTCKey* key = nil;
 
-        if ([self.dataSource respondsToSelector:@selector(transactionBuilder:keyForUnspentOutput:)])
+        if ([self attemptToSignTransactionInput:txin tx:tx inputIndex:i error:errorOut])
         {
-            key = [self.dataSource transactionBuilder:self keyForUnspentOutput:txin.transactionOutput];
+            [unsignedIndexes removeIndex:i];
         }
-
-        BOOL didSign = NO;
-        if (key)
-        {
-            NSData* cpk = key.compressedPublicKey;
-            NSData* ucpk = key.uncompressedPublicKey;
-
-            BTCSignatureHashType hashtype = SIGHASH_ALL;
-
-            NSData* sighash = [tx signatureHashForScript:[outputScript copy] inputIndex:i hashType:hashtype error:errorOut];
-            if (!sighash)
-            {
-                return nil;
-            }
-
-            // Most common case: P2PKH with compressed pubkey (because of BIP32)
-            BTCScript* p2cpkhScript = [[BTCScript alloc] initWithAddress:[BTCPublicKeyAddress addressWithData:BTCHash160(cpk)]];
-            if ([outputScript.data isEqual:p2cpkhScript.data])
-            {
-                txin.signatureScript = [[[BTCScript new] appendData:[key signatureForHash:sighash withHashType:hashtype]] appendData:cpk];
-                [unsignedIndexes removeIndex:i];
-                didSign = YES;
-            }
-            else
-            {
-                // Less common case: P2PKH with uncompressed pubkey (when not using BIP32)
-                BTCScript* p2ucpkhScript = [[BTCScript alloc] initWithAddress:[BTCPublicKeyAddress addressWithData:BTCHash160(ucpk)]];
-                if ([outputScript.data isEqual:p2ucpkhScript.data])
-                {
-                    txin.signatureScript = [[[BTCScript new] appendData:[key signatureForHash:sighash withHashType:hashtype]] appendData:ucpk];
-                    [unsignedIndexes removeIndex:i];
-                    didSign = YES;
-                }
-                else
-                {
-                    BTCScript* p2cpkScript = [[[BTCScript new] appendData:cpk] appendOpcode:OP_CHECKSIG];
-                    BTCScript* p2ucpkScript = [[[BTCScript new] appendData:ucpk] appendOpcode:OP_CHECKSIG];
-
-                    if ([outputScript.data isEqual:p2cpkScript] ||
-                        [outputScript.data isEqual:p2ucpkScript])
-                    {
-                        txin.signatureScript = [[BTCScript new] appendData:[key signatureForHash:sighash withHashType:hashtype]];
-                        [unsignedIndexes removeIndex:i];
-                        didSign = YES;
-                    }
-                    else
-                    {
-                        // Not supported script type.
-                    }
-                }
-            }
-        }
-
-        // Ask to sign the transaction input to sign this if that's some kind of special input or script.
-        if (!didSign && [self.dataSource respondsToSelector:@selector(transactionBuilder:signatureScriptForTransaction:script:inputIndex:)])
-        {
-            BTCScript* sigScript = [self.dataSource transactionBuilder:self signatureScriptForTransaction:tx script:outputScript inputIndex:i];
-            if (sigScript)
-            {
-                txin.signatureScript = sigScript;
-                [unsignedIndexes removeIndex:i];
-            }
-        }
-
     } // each input
 
     return unsignedIndexes;
 }
+
+- (NSArray*) shuffleInputs:(NSArray*)txins withSeed:(NSData*)seed
+{
+    return [txins sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult(BTCTransactionInput* a, BTCTransactionInput* b) {
+        NSData* d1 = BTCHash256Concat(a.data, seed);
+        NSData* d2 = BTCHash256Concat(b.data, seed);
+        return [d1.description compare:d2.description];
+    }];
+}
+
+- (NSArray*) shuffleOutputs:(NSArray*)txouts withSeed:(NSData*)seed
+{
+    return [txouts sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult(BTCTransactionOutput* a, BTCTransactionOutput* b) {
+        NSData* d1 = BTCHash256Concat(a.data, seed);
+        NSData* d2 = BTCHash256Concat(b.data, seed);
+        return [d1.description compare:d2.description];
+    }];
+}
+
+- (BOOL) attemptToSignTransactionInput:(BTCTransactionInput*)txin tx:(BTCTransaction*)tx inputIndex:(uint32_t)i error:(NSError**)errorOut
+{
+    if (!_shouldSign) return NO;
+
+    // We stored output script here earlier.
+    BTCScript* outputScript = txin.signatureScript;
+    BTCKey* key = nil;
+
+    if ([self.dataSource respondsToSelector:@selector(transactionBuilder:keyForUnspentOutput:)])
+    {
+        key = [self.dataSource transactionBuilder:self keyForUnspentOutput:txin.transactionOutput];
+    }
+
+    if (key)
+    {
+        NSData* cpk = key.compressedPublicKey;
+        NSData* ucpk = key.uncompressedPublicKey;
+
+        BTCSignatureHashType hashtype = SIGHASH_ALL;
+
+        NSData* sighash = [tx signatureHashForScript:[outputScript copy] inputIndex:i hashType:hashtype error:errorOut];
+        if (!sighash)
+        {
+            return NO;
+        }
+
+        // Most common case: P2PKH with compressed pubkey (because of BIP32)
+        BTCScript* p2cpkhScript = [[BTCScript alloc] initWithAddress:[BTCPublicKeyAddress addressWithData:BTCHash160(cpk)]];
+        if ([outputScript.data isEqual:p2cpkhScript.data])
+        {
+            txin.signatureScript = [[[BTCScript new] appendData:[key signatureForHash:sighash withHashType:hashtype]] appendData:cpk];
+            return YES;
+        }
+
+        // Less common case: P2PKH with uncompressed pubkey (when not using BIP32)
+        BTCScript* p2ucpkhScript = [[BTCScript alloc] initWithAddress:[BTCPublicKeyAddress addressWithData:BTCHash160(ucpk)]];
+        if ([outputScript.data isEqual:p2ucpkhScript.data])
+        {
+            txin.signatureScript = [[[BTCScript new] appendData:[key signatureForHash:sighash withHashType:hashtype]] appendData:ucpk];
+            return YES;
+        }
+
+        BTCScript* p2cpkScript = [[[BTCScript new] appendData:cpk] appendOpcode:OP_CHECKSIG];
+        BTCScript* p2ucpkScript = [[[BTCScript new] appendData:ucpk] appendOpcode:OP_CHECKSIG];
+
+        if ([outputScript.data isEqual:p2cpkScript] ||
+            [outputScript.data isEqual:p2ucpkScript])
+        {
+            txin.signatureScript = [[BTCScript new] appendData:[key signatureForHash:sighash withHashType:hashtype]];
+            return YES;
+        }
+        else
+        {
+            // Not supported script type.
+            // Try custom signature.
+        }
+    } // if key
+
+    // Ask to sign the transaction input to sign this if that's some kind of special input or script.
+    if ([self.dataSource respondsToSelector:@selector(transactionBuilder:signatureScriptForTransaction:script:inputIndex:)])
+    {
+        BTCScript* sigScript = [self.dataSource transactionBuilder:self signatureScriptForTransaction:tx script:outputScript inputIndex:i];
+        if (sigScript)
+        {
+            txin.signatureScript = sigScript;
+            return YES;
+        }
+    }
+
+    return NO;
+}
+
 
 
 

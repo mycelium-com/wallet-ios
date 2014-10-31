@@ -271,7 +271,7 @@
 
             // Unlock wallet so builder can sign.
             [self.wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
-                result = [builder buildTransactionAndSign:YES error:&berror];
+                result = [builder buildTransaction:&berror];
             } reason:authString];
 
             if (result && result.unsignedInputsIndexes.count == 0)
@@ -425,9 +425,10 @@
     BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
     builder.dataSource = self;
     builder.changeAddress = address; // outputs is empty array, spending all to change address which must be destination address.
+    builder.shouldSign = NO;
 
     NSError* berror = nil;
-    BTCTransactionBuilderResult* result = [builder buildTransactionAndSign:NO error:&berror];
+    BTCTransactionBuilderResult* result = [builder buildTransaction:&berror];
     if (result)
     {
         self.spendingAmount = result.outputsAmount;
@@ -711,9 +712,10 @@
         builder.dataSource = self;
         builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:address] ];
         builder.changeAddress = self.changeAddress ?: self.account.internalAddress;
+        builder.shouldSign = NO;
 
         NSError* berror = nil;
-        BTCTransactionBuilderResult* result = [builder buildTransactionAndSign:NO error:&berror];
+        BTCTransactionBuilderResult* result = [builder buildTransaction:&berror];
         if (!result)
         {
             self.btcField.textColor = [UIColor redColor];

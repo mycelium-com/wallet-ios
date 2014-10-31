@@ -45,6 +45,12 @@ typedef NS_ENUM(NSUInteger, BTCTransactionBuilderError) {
 // If this method not implemented or returns nil, then input is marked as unsigned.
 - (BTCScript*) transactionBuilder:(BTCTransactionBuilder*)txbuilder signatureScriptForTransaction:(BTCTransaction*)tx script:(BTCScript*)outputScript inputIndex:(NSUInteger)inputIndex;
 
+// Arbitrary data that acts as a random seed to shuffle inputs and outputs.
+// If this method returns nil, private key (if available) will be used.
+// If seed cannot be determined, then inputs and outputs are not shuffled at all to avoid matching transaction
+// with this particular application ("default order" is used).
+- (NSData*) shuffleSeedForTransactionBuilder:(BTCTransactionBuilder*)txbuilder;
+
 @end
 
 // Transaction builder allows you to compose a transaction with necessary parameters.
@@ -79,7 +85,7 @@ typedef NS_ENUM(NSUInteger, BTCTransactionBuilderError) {
 // Returns a result object containing the transaction itself
 // and metadata about it (fee, input and output balances, indexes of unsigned inputs).
 // If failed to build a transaction, returns nil and sets error to one from BTCTransactionBuilderErrorDomain.
-- (BTCTransactionBuilderResult*) buildTransactionAndSign:(BOOL)sign error:(NSError**)errorOut;
+- (BTCTransactionBuilderResult*) buildTransaction:(NSError**)errorOut;
 
 
 
@@ -103,6 +109,18 @@ typedef NS_ENUM(NSUInteger, BTCTransactionBuilderError) {
 // find enough unspents for big enough change. In worst case (not enough unspent to bump change) it will forgo the change
 // as a part of the mining fee. Set to 0 to avoid forgoing a single satoshi.
 @property(nonatomic) BTCSatoshi dustChange;
+
+// Whether this builder should even attempt to sign transaction.
+// Set to NO if you want a lightweight decision if there are enough funds etc
+// (e.g. when doing on-the-fly calculation as user edits payment details).
+// Default is YES.
+@property(nonatomic) BOOL shouldSign;
+
+// Flag determining whether builder should attempt to shuffle inputs and outputs.
+// If shuffle seed is not available or private key is not provided by data source,
+// then inputs/outputs will not be shuffled to avoid matching with this app's algorithm.
+// Default is YES.
+@property(nonatomic) BOOL shouldShuffle;
 
 @end
 
