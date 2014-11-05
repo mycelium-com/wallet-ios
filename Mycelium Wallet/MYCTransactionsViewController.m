@@ -116,6 +116,10 @@
 
     // Reload account.
     [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+        if (_currentAccount)
+        {
+            self.currentAccount = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
+        }
         [self.account reloadFromDatabase:db];
     }];
 

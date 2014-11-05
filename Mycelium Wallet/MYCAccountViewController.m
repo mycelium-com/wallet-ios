@@ -150,11 +150,11 @@
         textField.text = self.account.label;
     }];
 
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel",@"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
     }]];
 
     __typeof(alert) __weak weakalert = alert;
-    [alert addAction:[UIAlertAction actionWithTitle:@"Save" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Save", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         self.account.label = [weakalert.textFields.firstObject text];
         [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
             [self.account saveInDatabase:db error:NULL];
