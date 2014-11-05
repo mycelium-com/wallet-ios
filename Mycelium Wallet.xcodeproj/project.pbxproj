@@ -8,13 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		13DC93D53302498C84E6F0E9 /* libPods-Mycelium Wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */; };
-		200AAE3419F91DAF0004F908 /* BTCTransactionBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 200AAE3319F91DAE0004F908 /* BTCTransactionBuilder.m */; };
 		200AAE3719F91EE50004F908 /* MYCTextFieldLiveFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 200AAE3619F91EE50004F908 /* MYCTextFieldLiveFormatter.m */; };
 		200AAE3919F93FFB0004F908 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 200AAE3819F93FFB0004F908 /* AVFoundation.framework */; };
 		200AAE3C19F9440C0004F908 /* MYCScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 200AAE3B19F9440C0004F908 /* MYCScannerView.m */; };
 		20203AD619F65E290085C01F /* MYCBaseTxOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 20203AD519F65E290085C01F /* MYCBaseTxOutput.m */; };
 		20203ADC19F665F80085C01F /* MYCDatabaseMigrations.m in Sources */ = {isa = PBXBuildFile; fileRef = 20203ADB19F665F80085C01F /* MYCDatabaseMigrations.m */; };
-		20203AE019F7F8A90085C01F /* BTCBitcoinURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 20203ADF19F7F8A90085C01F /* BTCBitcoinURL.m */; };
 		203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49419DC364200572BD9 /* MYCWalletAccount.m */; };
 		203AA49819DC365D00572BD9 /* MYCBackend.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49719DC365D00572BD9 /* MYCBackend.m */; };
 		203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A019DC3C4500572BD9 /* MYCRoundedView.m */; };
@@ -64,9 +62,6 @@
 		20C2D81219E3EDB10022CAAC /* MYCDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D80F19E3EDB10022CAAC /* MYCDatabase.m */; };
 		20C2D81319E3EDB10022CAAC /* MYCDatabaseRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81119E3EDB10022CAAC /* MYCDatabaseRecord.m */; };
 		20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */; };
-		20C2D81B19E5961C0022CAAC /* BTCQRCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81A19E5961C0022CAAC /* BTCQRCode.m */; };
-		20C2D82219E7CDD70022CAAC /* BTCNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82119E7CDD70022CAAC /* BTCNumberFormatter.m */; };
-		20C2D82619E82B780022CAAC /* BTCCurrencyConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82519E82B780022CAAC /* BTCCurrencyConverter.m */; };
 		20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */; };
 		20C2D82C19EBD6CB0022CAAC /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82B19EBD6CB0022CAAC /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
@@ -82,8 +77,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		200AAE3219F91DAE0004F908 /* BTCTransactionBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCTransactionBuilder.h; sourceTree = "<group>"; };
-		200AAE3319F91DAE0004F908 /* BTCTransactionBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCTransactionBuilder.m; sourceTree = "<group>"; };
 		200AAE3519F91EE50004F908 /* MYCTextFieldLiveFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCTextFieldLiveFormatter.h; sourceTree = "<group>"; };
 		200AAE3619F91EE50004F908 /* MYCTextFieldLiveFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCTextFieldLiveFormatter.m; sourceTree = "<group>"; };
 		200AAE3819F93FFB0004F908 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -93,8 +86,6 @@
 		20203AD519F65E290085C01F /* MYCBaseTxOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCBaseTxOutput.m; path = Models/MYCBaseTxOutput.m; sourceTree = "<group>"; };
 		20203ADA19F665F80085C01F /* MYCDatabaseMigrations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCDatabaseMigrations.h; path = Models/MYCDatabaseMigrations.h; sourceTree = "<group>"; };
 		20203ADB19F665F80085C01F /* MYCDatabaseMigrations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCDatabaseMigrations.m; path = Models/MYCDatabaseMigrations.m; sourceTree = "<group>"; };
-		20203ADE19F7F8A90085C01F /* BTCBitcoinURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCBitcoinURL.h; sourceTree = "<group>"; };
-		20203ADF19F7F8A90085C01F /* BTCBitcoinURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCBitcoinURL.m; sourceTree = "<group>"; };
 		203AA49319DC364200572BD9 /* MYCWalletAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCWalletAccount.h; path = Models/MYCWalletAccount.h; sourceTree = "<group>"; };
 		203AA49419DC364200572BD9 /* MYCWalletAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWalletAccount.m; path = Models/MYCWalletAccount.m; sourceTree = "<group>"; };
 		203AA49619DC365D00572BD9 /* MYCBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCBackend.h; path = Networking/MYCBackend.h; sourceTree = "<group>"; };
@@ -181,13 +172,7 @@
 		20C2D81419E5713A0022CAAC /* MYCPrefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MYCPrefix.pch; sourceTree = "<group>"; };
 		20C2D81519E573B00022CAAC /* MYCUnlockedWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCUnlockedWallet.h; path = Models/MYCUnlockedWallet.h; sourceTree = "<group>"; };
 		20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCUnlockedWallet.m; path = Models/MYCUnlockedWallet.m; sourceTree = "<group>"; };
-		20C2D81919E5961C0022CAAC /* BTCQRCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCQRCode.h; sourceTree = "<group>"; };
-		20C2D81A19E5961C0022CAAC /* BTCQRCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCQRCode.m; sourceTree = "<group>"; };
 		20C2D81E19E7CBE30022CAAC /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
-		20C2D82019E7CDD70022CAAC /* BTCNumberFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCNumberFormatter.h; sourceTree = "<group>"; };
-		20C2D82119E7CDD70022CAAC /* BTCNumberFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCNumberFormatter.m; sourceTree = "<group>"; };
-		20C2D82419E82B780022CAAC /* BTCCurrencyConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCCurrencyConverter.h; sourceTree = "<group>"; };
-		20C2D82519E82B780022CAAC /* BTCCurrencyConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCCurrencyConverter.m; sourceTree = "<group>"; };
 		20C2D82719EBC7680022CAAC /* MYCErrorAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCErrorAnimation.h; sourceTree = "<group>"; };
 		20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCErrorAnimation.m; sourceTree = "<group>"; };
 		20C2D82A19EBD6CB0022CAAC /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
@@ -480,16 +465,6 @@
 		20C2D81819E595E60022CAAC /* CoreBitcoin Spinoffs */ = {
 			isa = PBXGroup;
 			children = (
-				20C2D81919E5961C0022CAAC /* BTCQRCode.h */,
-				20C2D81A19E5961C0022CAAC /* BTCQRCode.m */,
-				20C2D82019E7CDD70022CAAC /* BTCNumberFormatter.h */,
-				20C2D82119E7CDD70022CAAC /* BTCNumberFormatter.m */,
-				20C2D82419E82B780022CAAC /* BTCCurrencyConverter.h */,
-				20C2D82519E82B780022CAAC /* BTCCurrencyConverter.m */,
-				20203ADE19F7F8A90085C01F /* BTCBitcoinURL.h */,
-				20203ADF19F7F8A90085C01F /* BTCBitcoinURL.m */,
-				200AAE3219F91DAE0004F908 /* BTCTransactionBuilder.h */,
-				200AAE3319F91DAE0004F908 /* BTCTransactionBuilder.m */,
 			);
 			name = "CoreBitcoin Spinoffs";
 			sourceTree = "<group>";
@@ -667,7 +642,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				200AAE3419F91DAF0004F908 /* BTCTransactionBuilder.m in Sources */,
 				2095C45219FFF52400635C85 /* MYCTransactionDetailsViewController.m in Sources */,
 				20C0F6FF19EEAF7300DD0748 /* MYCAccountTableViewCell.m in Sources */,
 				20C2D82C19EBD6CB0022CAAC /* Reachability.m in Sources */,
@@ -677,7 +651,6 @@
 				207646A31A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m in Sources */,
 				203AA49819DC365D00572BD9 /* MYCBackend.m in Sources */,
 				203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */,
-				20203AE019F7F8A90085C01F /* BTCBitcoinURL.m in Sources */,
 				2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */,
 				20203AD619F65E290085C01F /* MYCBaseTxOutput.m in Sources */,
 				200AAE3C19F9440C0004F908 /* MYCScannerView.m in Sources */,
@@ -687,7 +660,6 @@
 				2095C44819FE779900635C85 /* MYCOutgoingTransaction.m in Sources */,
 				20203ADC19F665F80085C01F /* MYCDatabaseMigrations.m in Sources */,
 				20C2D81319E3EDB10022CAAC /* MYCDatabaseRecord.m in Sources */,
-				20C2D82219E7CDD70022CAAC /* BTCNumberFormatter.m in Sources */,
 				203AA4AD19DC517200572BD9 /* MYCSendViewController.m in Sources */,
 				2064E39119D9A10400CD81B8 /* MYCSettingsViewController.m in Sources */,
 				208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */,
@@ -696,7 +668,6 @@
 				2064E38719D9A0E400CD81B8 /* MYCAccountsViewController.m in Sources */,
 				203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */,
 				2095C44C19FF985100635C85 /* MYCTransactionTableViewCell.m in Sources */,
-				20C2D81B19E5961C0022CAAC /* BTCQRCode.m in Sources */,
 				200AAE3719F91EE50004F908 /* MYCTextFieldLiveFormatter.m in Sources */,
 				20C0F70419EEB37D00DD0748 /* MYCAccountViewController.m in Sources */,
 				20C2D7F719E292F80022CAAC /* MYCBackupPageView.m in Sources */,
@@ -705,7 +676,6 @@
 				203AA4A519DC3C4500572BD9 /* PTableViewSource.m in Sources */,
 				2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */,
 				20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */,
-				20C2D82619E82B780022CAAC /* BTCCurrencyConverter.m in Sources */,
 				203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */,
 				20A9C07419F534AB00AF61DE /* MYCUnspentOutput.m in Sources */,
 				203AA4A819DC4A2600572BD9 /* PColor.m in Sources */,
