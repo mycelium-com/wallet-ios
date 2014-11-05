@@ -6,7 +6,7 @@ This application makes use of the following third party libraries:
            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
                    Version 2, December 2004
 
-Copyright (C) 2013 Oleg Andreev <oleganza@gmail.com>
+Copyright (C) 2014 Oleg Andreev <oleganza@gmail.com>
 
 Everyone is permitted to copy and distribute verbatim or modified
 copies of this license document, and changing it is allowed as long

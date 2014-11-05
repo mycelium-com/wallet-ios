@@ -14,9 +14,14 @@ Features
 --------
 
 - EC keys and signatures for binary and Bitcoin text messages.
-- Addresses
-- Transactions
-- Scripts
+- Addresses: P2PK, P2PKH, P2SH, WIF format.
+- Transaction building blocks: inputs, outputs, scripts.
+- Script evaluation machine to actually validate individual transactions.
+- Convenient and safe transaction builder to fetch inputs, compute fees and change and sign transactions easily.
+- Utils to parse and compose bitcoin URL and payment requests.
+- Flexible bitcoin currency formatter with support for BTC, mBTC, bits, satoshis.
+- Flexible currency converter (not linked to any exchange) with support for various methods to calculate exchange rate.
+- QR Code generator and scanner in a unified API (iOS only for now).
 - Blockchain.info and Chain.com API to fetch unspent outputs and broadcast transactions.
 - BIP32 hierarchical deterministic wallets (BTCKeychain).
 - BIP39 implementation (BTCMnemonic).
@@ -134,6 +139,6 @@ You can also donate to a specific bounty. The amount will be reserved for that b
 License
 -------
 
-Released under the [WTFPL](http://www.wtfpl.net) except for OpenSSL. No contributor to CoreBitcoin will ever be able to drag you in court if you do not mention CoreBitcoin in your legalese. Crediting authors or contributing improvements is voluntary and would be appreciated. Have a nice day.
+Released under the [WTFPL](http://www.wtfpl.net) except for OpenSSL. No contributor to CoreBitcoin will ever be able to drag you in court if you do not mention CoreBitcoin in your legalese. Crediting authors and improving library is voluntary and highly appreciated. Have a nice day.
 
 

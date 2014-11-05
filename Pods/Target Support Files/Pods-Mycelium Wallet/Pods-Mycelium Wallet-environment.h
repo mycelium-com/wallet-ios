@@ -9,7 +9,7 @@
 // CoreBitcoin
 #define COCOAPODS_POD_AVAILABLE_CoreBitcoin
 #define COCOAPODS_VERSION_MAJOR_CoreBitcoin 0
-#define COCOAPODS_VERSION_MINOR_CoreBitcoin 4
+#define COCOAPODS_VERSION_MINOR_CoreBitcoin 5
 #define COCOAPODS_VERSION_PATCH_CoreBitcoin 0
 
 // FMDB
