@@ -1,7 +1,6 @@
 Todo:
 
 - settings: show credits and other info.
-- tx list: main tab does not change tx list when account is switched.
 - sync: switch to another hostname on timeout.
 
 Nice to have:
@@ -24,6 +23,7 @@ Notes from talk with Andreas:
 
 Done:
 
++ tx list: main tab does not change tx list when account is switched.
 + builder: randomize inputs and outputs when given a key or a specific random seed.
 + builder: try to sign tx to compute fees to avoid simulation when not needed.
 + tap QR code to reduce brightness
