@@ -24,13 +24,10 @@
 // IBOutlets
 @property (weak, nonatomic) IBOutlet UIButton *refreshButton;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* refreshActivityIndicator;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *borderHeightConstraint;
 @property (weak, nonatomic) IBOutlet UILabel *btcAmountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *fiatAmountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
-@property (weak, nonatomic) IBOutlet UIImageView *qrcodeView;
 @property (weak, nonatomic) IBOutlet UIButton* accountButton;
-@property (weak, nonatomic) IBOutlet UILabel* addressLabel;
 
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
 @property (weak, nonatomic) IBOutlet UIButton *receiveButton;
@@ -72,7 +69,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.borderHeightConstraint.constant = 1.0/[UIScreen mainScreen].nativeScale;
+    //self.borderHeightConstraint.constant = 1.0/[UIScreen mainScreen].nativeScale;
 
     self.sendButton.backgroundColor = self.tintColor;
     self.receiveButton.backgroundColor = self.tintColor;
@@ -141,9 +138,9 @@
 
     [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
 
-    NSString* address = self.account.externalAddress.base58String;
-    self.addressLabel.text = address;
-    self.qrcodeView.image = [BTCQRCode imageForString:address size:self.qrcodeView.bounds.size scale:[UIScreen mainScreen].scale];
+//    NSString* address = self.account.externalAddress.base58String;
+//    self.addressLabel.text = address;
+//    self.qrcodeView.image = [BTCQRCode imageForString:address size:self.qrcodeView.bounds.size scale:[UIScreen mainScreen].scale];
 
     // Backup button must be visible only when it has > 0 btc and was never backed up.
     self.backupButton.hidden = !(!wallet.isBackedUp && self.account.unconfirmedAmount > 0);
@@ -159,22 +156,28 @@
 
 - (void) updateStatusLabel
 {
+    NSMutableArray* strings = [NSMutableArray array];
+
     if (self.account.sendingAmount > 0)
     {
-        self.statusLabel.text = [NSString stringWithFormat:[NSLocalizedString(@"  Sending %@...", @"") lowercaseString],
-                                 [self.wallet.btcFormatter stringFromAmount:self.account.sendingAmount]];
+        [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"  Sending %@...", @"") lowercaseString],
+                            [self.wallet.btcFormatter stringFromAmount:self.account.sendingAmount]]];
+
     }
-    else if (self.account.receivingAmount > 0)
+
+    if (self.account.receivingAmount > 0)
     {
-        self.statusLabel.text = [NSString stringWithFormat:[NSLocalizedString(@"  Receiving %@...", @"") lowercaseString],
-                                 [self.wallet.btcFormatter stringFromAmount:self.account.receivingAmount]];
+        [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"  Receiving %@...", @"") lowercaseString],
+                            [self.wallet.btcFormatter stringFromAmount:self.account.receivingAmount]]];
     }
-    else
+    
     {
-        self.statusLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@: %@", @""),
+        [strings addObject:[NSString stringWithFormat:NSLocalizedString(@"%@: %@", @""),
                                  self.wallet.currencyConverter.marketName,
-                                 [self.wallet.fiatFormatter stringFromNumber:self.wallet.currencyConverter.averageRate]];
+                            [self.wallet.fiatFormatter stringFromNumber:self.wallet.currencyConverter.averageRate]]];
     }
+
+    self.statusLabel.text = [strings componentsJoinedByString:@"\n"];
 }
 
 - (void) updateRefreshControlAnimated:(BOOL)animated
@@ -297,8 +300,8 @@
 
 - (void) copy:(id)_
 {
-    [[UIPasteboard generalPasteboard] setValue:self.addressLabel.text
-                             forPasteboardType:(id)kUTTypeUTF8PlainText];
+//    [[UIPasteboard generalPasteboard] setValue:self.addressLabel.text
+//                             forPasteboardType:(id)kUTTypeUTF8PlainText];
 }
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
@@ -328,16 +331,16 @@
     }];
 }
 
-- (IBAction)tapAddress:(UILongPressGestureRecognizer*)gr
-{
-    if (gr.state == UIGestureRecognizerStateBegan)
-    {
-        [self becomeFirstResponder];
-        UIMenuController* menu = [UIMenuController sharedMenuController];
-        [menu setTargetRect:CGRectInset(self.addressLabel.bounds, 0, self.addressLabel.bounds.size.height/3.0) inView:self.addressLabel];
-        [menu setMenuVisible:YES animated:YES];
-    }
-}
+//- (IBAction)tapAddress:(UILongPressGestureRecognizer*)gr
+//{
+//    if (gr.state == UIGestureRecognizerStateBegan)
+//    {
+//        [self becomeFirstResponder];
+//        UIMenuController* menu = [UIMenuController sharedMenuController];
+//        [menu setTargetRect:CGRectInset(self.addressLabel.bounds, 0, self.addressLabel.bounds.size.height/3.0) inView:self.addressLabel];
+//        [menu setMenuVisible:YES animated:YES];
+//    }
+//}
 
 - (IBAction)selectAccount:(id)sender
 {
