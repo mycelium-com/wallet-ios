@@ -203,6 +203,9 @@
     if (mnemonic && mnemonic.keychain)
     {
         [self setupWalletWithMnemonic:mnemonic];
+        
+        // Remember that the wallet is backed up now.
+        [MYCWallet currentWallet].backedUp = YES;
 
         [[MYCAppDelegate sharedInstance] displayMainView];
     }

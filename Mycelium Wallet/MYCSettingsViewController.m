@@ -195,6 +195,22 @@
                     // Erase database
                     [[MYCWallet currentWallet] resetDatabase];
 
+                    [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
+
+                        [[MYCWallet currentWallet] discoverAccounts:unlockedWallet.keychain completion:^(BOOL success, NSError *error) {
+                            if (!success)
+                            {
+                                MYCError(@"MYCWelcomeViewController: failed to discover accounts. Please add them manually. %@", error);
+                            }
+                            else
+                            {
+                                [[MYCWallet currentWallet] updateActiveAccounts:^(BOOL success, NSError *error) {
+                                }];
+                            }
+                        }];
+                        
+                    } reason:NSLocalizedString(@"Authenticate to store master key on the device", @"")];
+
                     [weakself dismissViewControllerAnimated:YES completion:nil];
 
                     [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidReloadNotification object:self];

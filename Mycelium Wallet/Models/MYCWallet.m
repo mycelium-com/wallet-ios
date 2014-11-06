@@ -24,7 +24,7 @@ NSString* const MYCWalletDidReloadNotification = @"MYCWalletDidReloadNotificatio
 NSString* const MYCWalletDidUpdateNetworkActivityNotification = @"MYCWalletDidUpdateNetworkActivityNotification";
 NSString* const MYCWalletDidUpdateAccountNotification = @"MYCWalletDidUpdateAccountNotification";
 
-const NSUInteger MYCAccountDiscoveryWindow = 3;
+const NSUInteger MYCAccountDiscoveryWindow = 10;
 
 @interface MYCWallet ()
 @property(nonatomic) NSURL* databaseURL;
@@ -950,75 +950,100 @@ const NSUInteger MYCAccountDiscoveryWindow = 3;
     return;
 #endif
     
-    __block NSInteger lastAccountIndex = 0;
+    __block NSInteger nextAccountIndex = 0;
     [self inDatabase:^(FMDatabase *db) {
         MYCWalletAccount* acc = [[MYCWalletAccount loadWithCondition:@"1 ORDER BY accountIndex DESC LIMIT 1" fromDatabase:db] firstObject];
-        lastAccountIndex = acc.accountIndex;
+        nextAccountIndex = acc ? (acc.accountIndex + 1) : 0;
     }];
 
-    MYCLog(@"MYCWallet: discovering accounts starting at index %@", @(lastAccountIndex));
+    // Original will be cleared and this one will be used in async fashion.
+    // This will be cleaned when discovery is over.
+    rootKeychain = [rootKeychain copy];
 
-    __block int total = 0;
-    __block int discoveredAccounts = 0;
-    for (NSInteger accountIndex = lastAccountIndex + 1; accountIndex <= lastAccountIndex + MYCAccountDiscoveryWindow; accountIndex++)
+    // Recursively discover accounts
+    [self discoverAccounts:rootKeychain accountIndex:nextAccountIndex window:MYCAccountDiscoveryWindow completion:completion];
+}
+
+// Tries to discover while window is > 0. Resets window to MYCAccountDiscoveryWindow when something is discovered and creates intermediate accounts.
+- (void) discoverAccounts:(BTCKeychain*)rootKeychain accountIndex:(NSInteger)accountIndex window:(NSInteger)window completion:(void(^)(BOOL success, NSError *error))completion
+{
+    if (window == 0)
     {
-        BTCKeychain* accKeychain = [[rootKeychain keychainForAccount:(uint32_t)accountIndex] publicKeychain];
-
-        // Scan 20 external address and 2 internal ones.
-
-        NSMutableArray* addrs = [NSMutableArray array];
-
-        for (uint32_t j = 0; j < 20; j++)
-        {
-            BTCAddress* addr = [self addressForAddress:[BTCPublicKeyAddress addressWithData:BTCHash160([accKeychain externalKeyAtIndex:j].publicKey)]];
-            [addrs addObject:addr];
-        }
-        for (uint32_t j = 0; j < 2; j++)
-        {
-            BTCAddress* addr = [self addressForAddress:[BTCPublicKeyAddress addressWithData:BTCHash160([accKeychain changeKeyAtIndex:j].publicKey)]];
-            [addrs addObject:addr];
-        }
-
-        NSMutableArray* previousAccounts = [NSMutableArray array];
-
-        total++;
-
-        [self.backend loadTransactionsForAddresses:addrs limit:2 completion:^(NSArray *txs, NSInteger height, NSError *error) {
-
-            total--;
-
-            MYCWalletAccount* thisAcc = [[MYCWalletAccount alloc] initWithKeychain:accKeychain];
-            [previousAccounts addObject:thisAcc];
-
-            if (txs && txs.count > 0)
-            {
-                discoveredAccounts++;
-                MYCLog(@"Discovered account: %@", @(accountIndex));
-                [self inDatabase:^(FMDatabase *db) {
-                    // Save this and all preceding empty accounts.
-                    for (MYCWalletAccount* acc in previousAccounts)
-                    {
-                        [acc saveInDatabase:db error:NULL];
-                    }
-                    [previousAccounts removeAllObjects];
-                }];
-            }
-
-            if (total == 0)
-            {
-                if (discoveredAccounts > 0)
-                {
-                    MYCLog(@"MYCWallet discovered %@ new accounts, scanning again...", @(discoveredAccounts));
-                    [self discoverAccounts:rootKeychain completion:completion];
-                }
-                else
-                {
-                    MYCLog(@"MYCWallet finished discovering accounts.");
-                    if (completion) completion(!!txs, error);
-                }
-            }
-        }];
+        MYCLog(@"MYCWallet: Finished discovering accounts.");
+        [rootKeychain clear];
+        if (completion) completion(YES, nil);
+        return;
     }
+
+    BTCKeychain* accKeychain = [[rootKeychain keychainForAccount:(uint32_t)accountIndex] publicKeychain];
+
+    // Scan 20 external address and 2 internal ones.
+    NSMutableArray* addrs = [NSMutableArray array];
+    for (uint32_t j = 0; j < 2; j++) {
+        BTCAddress* addr = [self addressForAddress:[BTCPublicKeyAddress addressWithData:BTCHash160([accKeychain externalKeyAtIndex:j].publicKey)]];
+        [addrs addObject:addr];
+    }
+    for (uint32_t j = 0; j < 2; j++) {
+        BTCAddress* addr = [self addressForAddress:[BTCPublicKeyAddress addressWithData:BTCHash160([accKeychain changeKeyAtIndex:j].publicKey)]];
+        [addrs addObject:addr];
+    }
+
+    MYCLog(@"MYCWallet: Discovering account %@ (%@ accounts left; addresses: %@, acc keychain: %@)...",
+           @(accountIndex), @(window - 1), [addrs valueForKey:@"base58String"], accKeychain.extendedPublicKey);
+
+    [self.backend loadTransactionsForAddresses:addrs limit:2 completion:^(NSArray *txs, NSInteger height, NSError *error) {
+
+        if (txs && txs.count > 0)
+        {
+            MYCLog(@"MYCWallet: Discovered account: %@", @(accountIndex));
+            __block BOOL dbresult = NO;
+            __block NSError* dberror = nil;
+            [self inDatabase:^(FMDatabase *db) {
+
+                // Figure which is the latest existing account and create all intermediate ones
+                MYCWalletAccount* lastAccount = [[MYCWalletAccount loadWithCondition:@"1 ORDER BY accountIndex DESC LIMIT 1" fromDatabase:db] firstObject];
+                NSInteger nextAccountIndex = lastAccount ? (lastAccount.accountIndex + 1) : 0;
+
+                // Save this and all preceding empty accounts.
+                for (NSInteger i = nextAccountIndex; i <= accountIndex; i++)
+                {
+                    MYCLog(@"MYCWallet: Saving account %@", @(i));
+                    BTCKeychain* kc = [[rootKeychain keychainForAccount:(uint32_t)i] publicKeychain];
+                    MYCWalletAccount* acc = [[MYCWalletAccount alloc] initWithKeychain:kc];
+                    if (![acc saveInDatabase:db error:&dberror])
+                    {
+                        MYCLog(@"MYCWallet: Failed to save account %@. Error: %@", @(i), dberror);
+                        dbresult = NO;
+                        return;
+                    }
+                }
+                dbresult = YES;
+            }];
+
+            if (!dbresult)
+            {
+                [rootKeychain clear];
+                if (completion) completion(NO, dberror);
+                return;
+            }
+
+            // Continue discovering with a big window
+            [self discoverAccounts:rootKeychain accountIndex:accountIndex + 1 window:MYCAccountDiscoveryWindow completion:completion];
+        }
+        else if (txs && txs.count == 0)
+        {
+            MYCLog(@"MYCWallet: no transactions on addresses for account %@: %@", @(accountIndex), [addrs valueForKey:@"base58String"]);
+            // Continue discovering
+            [self discoverAccounts:rootKeychain accountIndex:accountIndex + 1 window:window - 1 completion:completion];
+        }
+        else
+        {
+            // Failed to load transactions
+            MYCLog(@"MYCWallet: Failed to load transactions for account %@. Error: %@", @(accountIndex), error);
+            [rootKeychain clear];
+            if (completion) completion(NO, error);
+        }
+    }];
 }
 
 // Returns YES if this new account if within a window of empty accounts.
