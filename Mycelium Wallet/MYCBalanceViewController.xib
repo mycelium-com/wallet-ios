@@ -212,7 +212,7 @@
                     <exclude reference="H52-uF-Eer"/>
                 </mask>
             </variation>
-            <point key="canvasLocation" x="-1875" y="298"/>
+            <point key="canvasLocation" x="-2387" y="261"/>
         </view>
         <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.20000000000000001" id="qxa-GJ-bNm">
             <connections>
