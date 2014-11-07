@@ -6,13 +6,11 @@ PODS:
   - FMDB/common (2.1)
   - FMDB/standard (2.1):
     - FMDB/common
-  - MBProgressHUD (0.9)
   - OpenSSL-Universal (1.0.1.h)
 
 DEPENDENCIES:
   - CoreBitcoin (from `https://github.com/oleganza/CoreBitcoin.git`)
   - FMDB (from `https://github.com/pierlis/fmdb.git`, commit `9264dec1133c646af5c59ed8ad12a647599a99be`)
-  - MBProgressHUD
 
 EXTERNAL SOURCES:
   CoreBitcoin:
@@ -24,7 +22,6 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   CoreBitcoin: 86d60942a5a9063b664d728c9a6b712745dec1d7
   FMDB: 3fd5aaf632ca4ed39e3f101e0398504e6d5b0918
-  MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
   OpenSSL-Universal: 9c112508615ed33bb35f730eed820e93175a9dec
 
 COCOAPODS: 0.34.2

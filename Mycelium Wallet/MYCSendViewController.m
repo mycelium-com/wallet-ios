@@ -14,7 +14,7 @@
 #import "MYCScannerView.h"
 #import "MYCUnspentOutput.h"
 
-#if 1 && DEBUG
+#if 0 && DEBUG
 #warning DEBUG: Zero fees
 static BTCSatoshi MYCFeeRate = 0;
 #else
