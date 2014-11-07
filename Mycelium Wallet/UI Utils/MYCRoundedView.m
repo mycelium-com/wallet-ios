@@ -9,8 +9,6 @@
 #import "MYCRoundedView.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define MYCRoundingRadius 3.0
-
 @implementation MYCRoundedView
 
 - (void) awakeFromNib
@@ -28,9 +26,27 @@
     return self;
 }
 
+- (void) setBorderRadius:(CGFloat)borderRadius
+{
+    _borderRadius = borderRadius;
+    self.layer.cornerRadius = _borderRadius;
+}
+
+- (void) setBorderColor:(UIColor *)borderColor
+{
+    _borderColor = borderColor;
+    self.layer.borderColor = _borderColor.CGColor;
+}
+
+- (void) setBorderWidth:(CGFloat)borderWidth
+{
+    _borderWidth = borderWidth;
+    self.layer.borderWidth = _borderWidth;
+}
+
 - (void) setMYCRoundedCorners
 {
-    self.layer.cornerRadius = MYCRoundingRadius;
+    self.borderRadius = MYCRoundingDefaultRadius;
     self.layer.masksToBounds = YES;
 }
 
@@ -53,9 +69,27 @@
     return self;
 }
 
+- (void) setBorderRadius:(CGFloat)borderRadius
+{
+    _borderRadius = borderRadius;
+    self.layer.cornerRadius = _borderRadius;
+}
+
+- (void) setBorderColor:(UIColor *)borderColor
+{
+    _borderColor = borderColor;
+    self.layer.borderColor = _borderColor.CGColor;
+}
+
+- (void) setBorderWidth:(CGFloat)borderWidth
+{
+    _borderWidth = borderWidth;
+    self.layer.borderWidth = _borderWidth;
+}
+
 - (void) setMYCRoundedCorners
 {
-    self.layer.cornerRadius = MYCRoundingRadius;
+    self.borderRadius = MYCRoundingDefaultRadius;
     self.layer.masksToBounds = YES;
 }
 
@@ -78,20 +112,38 @@
     return self;
 }
 
+- (void) setBorderRadius:(CGFloat)borderRadius
+{
+    _borderRadius = borderRadius;
+    self.layer.cornerRadius = _borderRadius;
+}
+
+- (void) setBorderColor:(UIColor *)borderColor
+{
+    _borderColor = borderColor;
+    self.layer.borderColor = _borderColor.CGColor;
+}
+
+- (void) setBorderWidth:(CGFloat)borderWidth
+{
+    _borderWidth = borderWidth;
+    self.layer.borderWidth = _borderWidth;
+}
+
 - (void) setMYCRoundedCorners
 {
-    self.layer.cornerRadius = MYCRoundingRadius;
+    self.borderRadius = MYCRoundingDefaultRadius;
     self.layer.masksToBounds = YES;
 }
 
 // placeholder position
 - (CGRect)textRectForBounds:(CGRect)bounds {
-    return CGRectInset(bounds, 2*MYCRoundingRadius, MYCRoundingRadius);
+    return CGRectInset(bounds, 2*self.borderRadius, self.borderRadius);
 }
 
 // text position
 - (CGRect)editingRectForBounds:(CGRect)bounds {
-    return CGRectInset(bounds, 2*MYCRoundingRadius, MYCRoundingRadius);
+    return CGRectInset(bounds, 2*self.borderRadius, self.borderRadius);
 }
 @end
 
@@ -112,9 +164,27 @@
     return self;
 }
 
+- (void) setBorderRadius:(CGFloat)borderRadius
+{
+    _borderRadius = borderRadius;
+    self.layer.cornerRadius = _borderRadius;
+}
+
+- (void) setBorderColor:(UIColor *)borderColor
+{
+    _borderColor = borderColor;
+    self.layer.borderColor = _borderColor.CGColor;
+}
+
+- (void) setBorderWidth:(CGFloat)borderWidth
+{
+    _borderWidth = borderWidth;
+    self.layer.borderWidth = _borderWidth;
+}
+
 - (void) setMYCRoundedCorners
 {
-    self.layer.cornerRadius = MYCRoundingRadius;
+    self.borderRadius = MYCRoundingDefaultRadius;
     self.layer.masksToBounds = YES;
 }
 
