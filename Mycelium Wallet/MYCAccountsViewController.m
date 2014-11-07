@@ -220,12 +220,23 @@
     [self.tableView reloadData];
 
     // Make requests to synchronize active accounts.
+    __block BOOL didDisplayError = NO;
     for (MYCWalletAccount* acc in self.activeAccounts)
     {
         [[MYCWallet currentWallet] updateAccount:acc force:YES completion:^(BOOL success, NSError *error) {
             if (!success)
             {
-                // TODO: show error. Make sure to coalesce similar errors in one.
+                if (!didDisplayError)
+                {
+                    didDisplayError = YES;
+                    UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
+                                                                                message:NSLocalizedString(@"Can't synchronize accounts. Try again later.", @"")
+                                                                         preferredStyle:UIAlertControllerStyleAlert];
+                    [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction *action) {}]];
+                    [self presentViewController:ac animated:YES completion:nil];
+                }
             }
         }];
     }
@@ -236,7 +247,17 @@
         [[MYCWallet currentWallet] updateAccount:acc force:NO completion:^(BOOL success, NSError *error) {
             if (!success)
             {
-                // TODO: show error. Make sure to coalesce similar errors in one.
+                if (!didDisplayError)
+                {
+                    didDisplayError = YES;
+                    UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
+                                                                                message:NSLocalizedString(@"Can't synchronize accounts. Try again later.", @"")
+                                                                         preferredStyle:UIAlertControllerStyleAlert];
+                    [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction *action) {}]];
+                    [self presentViewController:ac animated:YES completion:nil];
+                }
             }
         }];
     }
@@ -253,7 +274,13 @@
     [[MYCWallet currentWallet] updateAccount:acc force:!acc.isArchived completion:^(BOOL success, NSError *error) {
         if (!success)
         {
-            // TODO: show error. Make sure to coalesce similar errors in one.
+            UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
+                                                                        message:NSLocalizedString(@"Can't synchronize accounts. Try again later.", @"")
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                                   style:UIAlertActionStyleCancel
+                                                 handler:^(UIAlertAction *action) {}]];
+            [self presentViewController:ac animated:YES completion:nil];
             return;
         }
         [self recursivelyUpdateAccounts:[accs subarrayWithRange:NSMakeRange(1, accs.count - 1)]];

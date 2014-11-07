@@ -321,7 +321,13 @@
 
         if (!success)
         {
-            #warning TODO: display an error if failed to connect or something.
+            UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
+                                                                        message:NSLocalizedString(@"Can't synchronize the account. Try again later.", @"")
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                                   style:UIAlertActionStyleCancel
+                                                 handler:^(UIAlertAction *action) {}]];
+            [self presentViewController:ac animated:YES completion:nil];
         }
 
         [self.wallet updateExchangeRate:YES completion:^(BOOL success, NSError *error2) {

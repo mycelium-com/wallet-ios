@@ -268,7 +268,7 @@ static BTCSatoshi MYCFeeRate = 10000;
                 UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
                                                                             message:NSLocalizedString(@"Can't synchronize the account. Try again later.", @"")
                                                                      preferredStyle:UIAlertControllerStyleAlert];
-                [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"")
+                [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
                                                        style:UIAlertActionStyleCancel
                                                      handler:^(UIAlertAction *action) {}]];
                 [self presentViewController:ac animated:YES completion:nil];

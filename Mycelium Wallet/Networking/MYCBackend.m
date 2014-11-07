@@ -728,7 +728,7 @@
     if (data.length == 0 && response == nil && error)
     {
         MYCLog(@"Timeout-like error: %@", error);
-#warning TODO: should switch to another hostname after timeout error.
+    // TODO: should switch to another hostname after timeout error.
         failureBlock(error);
         return nil;
     }
