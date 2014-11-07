@@ -296,8 +296,8 @@ static BTCSatoshi MYCFeeRate = 10000;
             {
                 [self.view endEditing:YES];
 
-                NSLog(@"signed tx: %@", BTCHexStringFromData(result.transaction.data));
-                NSLog(@"signed tx base64: %@", [result.transaction.data base64EncodedStringWithOptions:0]);
+                MYCLog(@"signed tx: %@", BTCHexStringFromData(result.transaction.data));
+                MYCLog(@"signed tx base64: %@", [result.transaction.data base64EncodedStringWithOptions:0]);
 
                 [self beginSpinning];
 
@@ -326,7 +326,7 @@ static BTCSatoshi MYCFeeRate = 10000;
             }
             else
             {
-                NSLog(@"TX BUILDER ERROR: %@", berror);
+                MYCLog(@"TX BUILDER ERROR: %@", berror);
                 [MYCErrorAnimation animateError:self.view radius:10.0];
             }
         }];
@@ -552,7 +552,7 @@ static BTCSatoshi MYCFeeRate = 10000;
 
         for (MYCUnspentOutput* unspent in unspents)
         {
-            //NSLog(@"unspent: %@: %@", @(unspent.blockHeight), @(unspent.value));
+            //MYCLog(@"unspent: %@: %@", @(unspent.blockHeight), @(unspent.value));
             BTCTransactionOutput* utxo = unspent.transactionOutput;
             utxo.userInfo = @{@"MYCUnspentOutput": unspent };
             [utxos addObject:utxo];

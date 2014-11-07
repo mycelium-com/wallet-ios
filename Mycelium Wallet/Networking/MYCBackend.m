@@ -597,7 +597,7 @@
 - (void) makeJSONRequest:(NSString*)name payload:(NSDictionary*)payload template:(id)template completion:(void(^)(NSDictionary* result, NSString* curlCommand, NSError* error))completion
 {
     NSAssert([NSThread isMainThread], @"Must be on main thread");
-    //NSLog(@">>> INCREASING COUNT: %@", name);
+    //MYCLog(@">>> INCREASING COUNT: %@", name);
     self.pendingTasksCount++;
 
     self.currentEndpointURL = self.endpointURLs.firstObject;
@@ -615,7 +615,7 @@
             NSData* jsonPayload = [NSJSONSerialization dataWithJSONObject:payload options:0 error:&jsonerror];
             if (!jsonPayload)
             {
-                //NSLog(@"<<< DECREASING COUNT: %@ (json failure)", name);
+                //MYCLog(@"<<< DECREASING COUNT: %@ (json failure)", name);
                 self.pendingTasksCount--;
                 if (completion) completion(nil, nil, jsonerror);
                 return;
@@ -640,7 +640,7 @@
 
             NSDictionary* result = [self handleReceivedJSON:data response:response error:networkError failure:^(NSError* jsonError){
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    //NSLog(@"<<< DECREASING COUNT: %@ (format failure)", name);
+                    //MYCLog(@"<<< DECREASING COUNT: %@ (format failure)", name);
                     self.pendingTasksCount--;
                     MYCLog(@"MYCBackend: REQUEST FAILED: %@ ERROR: %@", curlCommand, jsonError);
                     if (completion) completion(nil, nil, jsonError);
@@ -661,7 +661,7 @@
 
             dispatch_async(dispatch_get_main_queue(), ^{
 
-                //NSLog(@"<<< DECREASING COUNT: %@ (load finished)", name);
+                //MYCLog(@"<<< DECREASING COUNT: %@ (load finished)", name);
                 self.pendingTasksCount--;
 
                 if (!result)

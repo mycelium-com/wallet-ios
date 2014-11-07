@@ -332,7 +332,7 @@
 
         [self.wallet updateExchangeRate:YES completion:^(BOOL success, NSError *error2) {
 
-            //NSLog(@"currency updated: %@", error2);
+            //MYCLog(@"currency updated: %@", error2);
         }];
     }];
 }

@@ -49,7 +49,7 @@
 
     if (self = [super init])
     {
-        //NSLog(@"NEW ACCOUNT WITH KEYCHAIN: account:%d first address: %@  extpubkey: %@", (int)keychain.index, [[MYCWallet currentWallet] addressForKey:[keychain externalKeyAtIndex:0]].base58String, keychain);
+        //MYCLog(@"NEW ACCOUNT WITH KEYCHAIN: account:%d first address: %@  extpubkey: %@", (int)keychain.index, [[MYCWallet currentWallet] addressForKey:[keychain externalKeyAtIndex:0]].base58String, keychain);
         _accountIndex = keychain.index;
         _extendedPublicKey = keychain.extendedPublicKey;
         _label = [NSString stringWithFormat:NSLocalizedString(@"Account %@", @""), @(_accountIndex)];
@@ -211,11 +211,11 @@
                 // Cache this value to avoid computing again.
                 ithData = script.data;
                 searchCache[j] = ithData;
-                //NSLog(@"cache miss: %@ (%p)", j, self);
+                //MYCLog(@"cache miss: %@ (%p)", j, self);
             }
             else
             {
-                //NSLog(@"cache hit:  %@", j);
+                //MYCLog(@"cache hit:  %@", j);
             }
 
             if ([ithData isEqual:data])

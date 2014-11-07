@@ -432,8 +432,6 @@
 
             CC_SHA256_Update(&_shaCTX, &acc, sizeof(acc));
 
-            //NSLog(@"data: %@ (%f)", accelerometerData, entropy);
-
             if (entropy <= 1.005)
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
