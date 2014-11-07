@@ -212,6 +212,17 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (MYCWalletPreferredCurrency) preferredCurrency
+{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:@"MYCWalletPreferredCurrency"];
+}
+
+- (void) setPreferredCurrency:(MYCWalletPreferredCurrency)pc
+{
+    [[NSUserDefaults standardUserDefaults] setInteger:pc forKey:@"MYCWalletPreferredCurrency"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 // Returns YES if wallet is fully initialized and stored on disk.
 - (BOOL) isStored
 {
@@ -909,7 +920,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     } completion:^(NSArray* accs, NSError *dberror) {
         if (!accs)
         {
-            if (completion) completion(nil, dberror);
+            if (completion) completion(NO, dberror);
             return;
         }
         [self recursivelyUpdateAccounts:accs force:NO completion:completion];

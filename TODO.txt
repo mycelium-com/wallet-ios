@@ -5,26 +5,28 @@ Todo:
 + fix a bug during account discovery when empty accounts in the middle are not added.
   + bug: restore: discovered accounts #0, #1, #3 but did not create intermediate empty account #2.
 + mark wallet as "already backed up" when restored from backup, not only after backed up correctly.
-- change the balance view to only show the balance and buttons, no QR code or address.
-    - balance: new layout to better show balance, buttons; less emphasis on QR code and address
-    - okay for not having a QR code on the face, but big balance and two buttons.
++ change the balance view to only show the balance and buttons, no QR code or address.
+    + balance: new layout to better show balance, buttons; less emphasis on QR code and address
+    + okay for not having a QR code on the face, but big balance and two buttons.
++ txs:
+    + show date bigger (and maybe denser) on the right
+    + show amounts bigger on the left, aligned and padded
+    + show currency switch on the top (BTC / USD)
+    + show address and status smaller and less highlighted.
++ receive: remember last used currency and focus in the text field.
++ send: remember last used currency and enable it.
++ send: remember if scanned address last time to show scanner right away
+
 - show credits, legal and help screens in the settings.
     - settings: show credits and other info.
+
 - sync: switch to another hostname on timeout.
-- txs:
-    - show date bigger (and maybe denser) on the right
-    - show amounts bigger on the left, aligned and padded
-    - show currency switch on the top (BTC / USD)
-    - show address and status smaller and less highlighted.
 
 
 Nice to have:
 
 - accounts: show sending/receiving status too
 - move "use all funds" into account details and/or settings.
-- receive: remember last used currency and focus in the text field.
-- send: remember last used currency and enable it.
-- send: remember if scanned address last time to show scanner right away
 - update folder icon like in Health.app
 
 

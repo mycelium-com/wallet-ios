@@ -12,10 +12,8 @@
 #import "PColor.h"
 
 @interface MYCTransactionTableViewCell ()
-@property (weak, nonatomic) IBOutlet UILabel *btcLabel;
-@property (weak, nonatomic) IBOutlet UILabel *fiatLabel;
+@property (weak, nonatomic) IBOutlet UILabel *amountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *dateLabel;
-@property (weak, nonatomic) IBOutlet UILabel *addressLabel;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @end
 
@@ -25,8 +23,9 @@
 - (void) awakeFromNib
 {
     [super awakeFromNib];
-    _greenColor = self.btcLabel.textColor;
-    _redColor = self.fiatLabel.textColor;
+    _greenColor = self.amountLabel.textColor;
+    _redColor = self.dateLabel.textColor;
+    self.dateLabel.textColor = [UIColor blackColor];
 }
 
 - (void) prepareForReuse
@@ -41,34 +40,39 @@
     [self updateViews];
 }
 
+- (void) setFormattedAmount:(NSString *)formattedAmount
+{
+    _formattedAmount = formattedAmount;
+    [self updateViews];
+}
+
 - (void) updateViews
 {
     MYCWallet* wallet = [MYCWallet currentWallet];
 
+    self.amountLabel.text = _formattedAmount ?: @"0.00";
     BTCSatoshi amount = self.transaction.amountTransferred;
-    self.btcLabel.text = [wallet.btcFormatter stringFromAmount:ABS(amount)];
-    if (amount >= 0)
-    {
-        self.btcLabel.text = [@"+ " stringByAppendingString:self.btcLabel.text];
-    }
-    else
-    {
-        self.btcLabel.text = [@"– " stringByAppendingString:self.btcLabel.text];
-    }
-    self.fiatLabel.text = [wallet.fiatFormatter stringFromNumber:[wallet.currencyConverter fiatFromBitcoin:ABS(amount)]];
-
     UIColor* amountColor = (amount > 0 ? _greenColor : _redColor);
+    self.amountLabel.textColor = amountColor;
 
-    self.btcLabel.textColor = amountColor;
-    self.fiatLabel.textColor = amountColor;
+//    self.btcLabel.text = [wallet.btcFormatter stringFromAmount:ABS(amount)];
+//    if (amount >= 0)
+//    {
+//        self.btcLabel.text = [@"+ " stringByAppendingString:self.btcLabel.text];
+//    }
+//    else
+//    {
+//        self.btcLabel.text = [@"– " stringByAppendingString:self.btcLabel.text];
+//    }
+//    self.fiatLabel.text = [wallet.fiatFormatter stringFromNumber:[wallet.currencyConverter fiatFromBitcoin:ABS(amount)]];
 
-    self.addressLabel.text = self.transaction.label;
-
-    self.statusLabel.text = @"";
+    self.statusLabel.text = self.transaction.label ?: @"";
 
     if (self.transaction.blockHeight == -1)
     {
-        self.statusLabel.text = NSLocalizedString(@"Not confirmed yet", @"");
+        self.statusLabel.text = [NSString stringWithFormat:@"%@\n%@",
+                                 self.statusLabel.text,
+                                 NSLocalizedString(@"Not confirmed yet", @"")];
     }
     else
     {
@@ -76,11 +80,15 @@
 
         if (confirmations == 1)
         {
-            self.statusLabel.text = NSLocalizedString(@"1 confirmation", @"");
+            self.statusLabel.text = [NSString stringWithFormat:@"%@\n%@",
+                                     self.statusLabel.text,
+                                     NSLocalizedString(@"1 confirmation", @"")];
         }
         else if (confirmations <= 100)
         {
-            self.statusLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@ confirmations", @""), @(confirmations)];
+            self.statusLabel.text = [NSString stringWithFormat:@"%@\n%@",
+                                     self.statusLabel.text,
+                                     [NSString stringWithFormat:NSLocalizedString(@"%@ confirmations", @""), @(confirmations)]];
         }
     }
 

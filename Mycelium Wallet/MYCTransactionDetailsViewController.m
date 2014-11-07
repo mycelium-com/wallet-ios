@@ -52,6 +52,9 @@
 {
     self.tableViewSource = [[PTableViewSource alloc] init];
 
+    BTCNumberFormatter* btcfmt = [[MYCWallet currentWallet].btcFormatter copy];
+    btcfmt.minimumFractionDigits = btcfmt.maximumFractionDigits;
+
     // Fill in data for every cell.
     __typeof(self) __weak weakself = self;
     self.tableViewSource.setupAction = ^(PTableViewSourceItem* item, NSIndexPath* indexPath, UITableViewCell* cell) {
@@ -59,7 +62,7 @@
         UILabel* valueLabel = (id)[cell viewWithTag:2];
         keyLabel.text = item.key ?: @"";
         valueLabel.text = item.value ?: @"";
-        keyLabel.textColor = weakself.tintColor;
+        //keyLabel.textColor = weakself.tintColor;
         if ([item.userInfo[@"myinput"] boolValue])
         {
             keyLabel.textColor = weakself.redColor;
@@ -81,7 +84,7 @@
 
         [section item:^(PTableViewSourceItem *item) {
             item.cellIdentifier = @"txid";
-            item.key = NSLocalizedString(@"Transaction ID", @"");
+            item.key = [NSLocalizedString(@"Transaction ID", @"") uppercaseString];
             item.value = self.transaction.transactionID;
             item.userInfo = @{
                               @"path": [@"/tx/" stringByAppendingString:self.transaction.transactionID],
@@ -91,7 +94,7 @@
 
         [section item:^(PTableViewSourceItem *item) {
             item.cellIdentifier = @"keyvalue";
-            item.key = NSLocalizedString(@"Block", @"");
+            item.key = [NSLocalizedString(@"Block", @"") uppercaseString];
             if (self.transaction.blockHeight > -1) {
                 item.value = @(self.transaction.blockHeight).stringValue;
                 item.userInfo = @{
@@ -105,7 +108,7 @@
 
         [section item:^(PTableViewSourceItem *item) {
             item.cellIdentifier = @"keyvalue";
-            item.key = NSLocalizedString(@"Confirmations", @"");
+            item.key = [NSLocalizedString(@"Confirmations", @"") uppercaseString];
             if (self.transaction.blockHeight > -1) {
                 item.value = @([MYCWallet currentWallet].blockchainHeight - self.transaction.blockHeight + 1).stringValue;
             } else {
@@ -115,7 +118,7 @@
 
         [section item:^(PTableViewSourceItem *item) {
             item.cellIdentifier = @"keyvalue";
-            item.key = NSLocalizedString(@"Date", @"");
+            item.key = [NSLocalizedString(@"Date", @"") uppercaseString];
 
             NSDateFormatter* df = [[NSDateFormatter alloc] init];
             df.dateStyle = NSDateFormatterLongStyle;
@@ -125,7 +128,7 @@
 
         [section item:^(PTableViewSourceItem *item) {
             item.cellIdentifier = @"keyvalue";
-            item.key = NSLocalizedString(@"Size", @"");
+            item.key = [NSLocalizedString(@"Size", @"") uppercaseString];
             NSByteCountFormatter* bf = [[NSByteCountFormatter alloc] init];
             bf.allowedUnits = NSByteCountFormatterUseBytes;
             bf.countStyle = NSByteCountFormatterCountStyleDecimal;
@@ -135,8 +138,8 @@
 
         [section item:^(PTableViewSourceItem *item) {
             item.cellIdentifier = @"keyvalue";
-            item.key = NSLocalizedString(@"Fee", @"");
-            item.value = [[MYCWallet currentWallet].btcFormatter stringFromAmount:self.transaction.fee];
+            item.key = [NSLocalizedString(@"Fee", @"") uppercaseString];
+            item.value = [btcfmt stringFromAmount:self.transaction.fee];
         }];
     }];
 
@@ -150,7 +153,7 @@
         {
             [section item:^(PTableViewSourceItem *item) {
                 item.cellIdentifier = @"keyvalue2";
-                item.key = [[MYCWallet currentWallet].btcFormatter stringFromAmount:[txin.userInfo[@"value"] longLongValue]];
+                item.key = [btcfmt stringFromAmount:[txin.userInfo[@"value"] longLongValue]];
                 item.value = [txin.userInfo[@"address"] base58String];
                 if (item.value)
                 {
@@ -172,7 +175,7 @@
         {
             [section item:^(PTableViewSourceItem *item) {
                 item.cellIdentifier = @"keyvalue2";
-                item.key = [[MYCWallet currentWallet].btcFormatter stringFromAmount:txout.value];
+                item.key = [btcfmt stringFromAmount:txout.value];
                 item.value = [[[MYCWallet currentWallet] addressForAddress:txout.script.standardAddress] base58String];
                 item.userInfo = @{@"path": [@"/address/" stringByAppendingString:item.value],
                                   @"pathtestnet": [@"/addresses/" stringByAppendingString:item.value],

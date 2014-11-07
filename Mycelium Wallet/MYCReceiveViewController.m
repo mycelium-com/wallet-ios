@@ -61,6 +61,9 @@
     self.fiatLiveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.fiatField numberFormatter:self.wallet.fiatFormatterNaked];
 
     self.borderHeightConstraint.constant = 1.0/[UIScreen mainScreen].nativeScale;
+
+    self.fiatInput = ([MYCWallet currentWallet].preferredCurrency == MYCWalletPreferredCurrencyFiat);
+
     [self reloadAccount];
 }
 
@@ -69,6 +72,14 @@
     [super viewWillDisappear:animated];
 
     [self restoreBrightness];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    if (self.fiatInput) [self.fiatField becomeFirstResponder];
+    else [self.btcField becomeFirstResponder];
 }
 
 
@@ -261,6 +272,8 @@
     if (_fiatInput == fiatInput) return;
 
     _fiatInput = fiatInput;
+
+    [MYCWallet currentWallet].preferredCurrency = _fiatInput ? MYCWalletPreferredCurrencyFiat : MYCWalletPreferredCurrencyBTC;
 
     // Exchange fonts
 

@@ -13,7 +13,7 @@
 
 @property(nonatomic) UIColor* greenColor;
 @property(nonatomic) UIColor* redColor;
-
+@property(nonatomic) NSString* formattedAmount;
 @property(nonatomic) MYCTransaction* transaction;
 
 @end

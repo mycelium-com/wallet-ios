@@ -237,9 +237,9 @@
 				2095C44919FF985100635C85 /* MYCTransactionTableViewCell.h */,
 				2095C44A19FF985100635C85 /* MYCTransactionTableViewCell.m */,
 				2095C44B19FF985100635C85 /* MYCTransactionTableViewCell.xib */,
-				2095C44E19FFF50A00635C85 /* MYCTransactionDetails.storyboard */,
 				2095C45019FFF52400635C85 /* MYCTransactionDetailsViewController.h */,
 				2095C45119FFF52400635C85 /* MYCTransactionDetailsViewController.m */,
+				2095C44E19FFF50A00635C85 /* MYCTransactionDetails.storyboard */,
 			);
 			name = "Transactions Tab";
 			sourceTree = "<group>";

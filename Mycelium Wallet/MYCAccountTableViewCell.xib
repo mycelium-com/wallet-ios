@@ -26,13 +26,13 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1.0234 BTC" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.90000000000000002" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vz1-L9-Me9">
-                        <rect key="frame" x="209" y="11" width="95" height="21.5"/>
+                        <rect key="frame" x="221" y="11" width="95" height="21.5"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="18"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="409 USD" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Azo-0v-eXD">
-                        <rect key="frame" x="251" y="38" width="52.5" height="15.5"/>
+                        <rect key="frame" x="263" y="38" width="52.5" height="15.5"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
                         <color key="textColor" red="0.0603582114" green="0.50324159859999995" blue="0.94218349459999995" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
@@ -43,7 +43,7 @@
                     <constraint firstItem="vz1-L9-Me9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="vam-GQ-l2V" secondAttribute="trailing" constant="8" id="4g3-F2-pfL"/>
                     <constraint firstItem="GTW-0t-OrN" firstAttribute="leading" secondItem="vam-GQ-l2V" secondAttribute="leading" id="F2o-wX-Tj8"/>
                     <constraint firstItem="vz1-L9-Me9" firstAttribute="baseline" secondItem="vam-GQ-l2V" secondAttribute="baseline" id="Rtp-2a-vy2"/>
-                    <constraint firstAttribute="trailing" secondItem="vz1-L9-Me9" secondAttribute="trailing" constant="16" id="Ykg-BP-neG"/>
+                    <constraint firstAttribute="trailing" secondItem="vz1-L9-Me9" secondAttribute="trailing" constant="4" id="Ykg-BP-neG"/>
                     <constraint firstItem="Azo-0v-eXD" firstAttribute="baseline" secondItem="GTW-0t-OrN" secondAttribute="baseline" id="dYG-Co-mmG"/>
                     <constraint firstItem="Azo-0v-eXD" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="GTW-0t-OrN" secondAttribute="trailing" constant="8" id="hdJ-RZ-r2q"/>
                     <constraint firstItem="Azo-0v-eXD" firstAttribute="trailing" secondItem="vz1-L9-Me9" secondAttribute="trailing" id="kRN-14-59j"/>

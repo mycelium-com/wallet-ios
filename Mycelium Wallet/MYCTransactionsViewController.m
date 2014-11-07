@@ -17,6 +17,11 @@
 @interface MYCTransactionsViewController () <UITableViewDelegate, UITableViewDataSource>
 @property(nonatomic, weak) IBOutlet UITableView* tableView;
 @property(nonatomic) MYCWalletAccount* currentAccount;
+
+@property(nonatomic) BTCNumberFormatter* btcFormatter;
+@property(nonatomic) NSNumberFormatter* fiatFormatter;
+
+@property(nonatomic) UISegmentedControl* currencyControl;
 @end
 
 @implementation MYCTransactionsViewController
@@ -65,6 +70,7 @@
 
 - (void) formattersDidUpdate:(NSNotification*)notif
 {
+    [self updateFormatters];
     [self.tableView reloadData];
 }
 
@@ -103,6 +109,8 @@
 {
     [super viewWillAppear:animated];
 
+    [self updateFormatters];
+
     // Deselect current row.
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:animated];
 
@@ -126,9 +134,67 @@
     [self.tableView reloadData];
 }
 
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.currencyControl];
+    self.navigationItem.titleView = self.currencyControl;
+}
+
 - (void) updateRefreshControl
 {
     
+}
+
+- (void) updateFormatters
+{
+    self.btcFormatter = [[MYCWallet currentWallet].btcFormatter copy];
+    self.btcFormatter.symbolStyle = BTCNumberFormatterSymbolStyleNone;
+    self.btcFormatter.minimumFractionDigits = self.btcFormatter.maximumFractionDigits;
+
+    self.fiatFormatter = [[MYCWallet currentWallet].fiatFormatter copy];
+    self.fiatFormatter.minimumFractionDigits = self.fiatFormatter.maximumFractionDigits;
+    self.fiatFormatter.currencySymbol = @"";
+    self.fiatFormatter.positiveSuffix = @"";
+    self.fiatFormatter.negativeSuffix = @"";
+
+    self.currencyControl = [[UISegmentedControl alloc] initWithItems:@[
+      [MYCWallet currentWallet].btcFormatter.currencySymbol ?: @"BTC",
+      [MYCWallet currentWallet].fiatFormatter.currencySymbol ?: @"USD"]];
+
+    [self.currencyControl setWidth:60 forSegmentAtIndex:0];
+    [self.currencyControl setWidth:60 forSegmentAtIndex:1];
+
+    [self.currencyControl addTarget:self action:@selector(currencyDidChange:) forControlEvents:UIControlEventValueChanged];
+    self.currencyControl.tintColor = self.tintColor;
+    [self updateCurrencyControl];
+}
+
+- (void) updateCurrencyControl
+{
+    switch ([MYCWallet currentWallet].preferredCurrency)
+    {
+        case MYCWalletPreferredCurrencyBTC:
+            self.currencyControl.selectedSegmentIndex = 0;
+            break;
+        case MYCWalletPreferredCurrencyFiat:
+            self.currencyControl.selectedSegmentIndex = 1;
+            break;
+    }
+}
+
+- (void) currencyDidChange:(id)_
+{
+    if (self.currencyControl.selectedSegmentIndex == 0)
+    {
+        [MYCWallet currentWallet].preferredCurrency = MYCWalletPreferredCurrencyBTC;
+    }
+    else if (self.currencyControl.selectedSegmentIndex == 1)
+    {
+        [MYCWallet currentWallet].preferredCurrency = MYCWalletPreferredCurrencyFiat;
+    }
+    [self.tableView reloadData];
 }
 
 #pragma mark - UITableView
@@ -157,6 +223,24 @@
         [tx loadDetailsFromDatabase:db];
     }];
     cell.transaction = tx;
+
+    NSString* amountString = @"";
+    if ([MYCWallet currentWallet].preferredCurrency == MYCWalletPreferredCurrencyBTC) {
+        amountString = [self.btcFormatter stringFromAmount:ABS(tx.amountTransferred)];
+    }
+    else {
+        amountString = [self.fiatFormatter stringFromNumber:[[MYCWallet currentWallet].currencyConverter fiatFromBitcoin:ABS(tx.amountTransferred)]];
+    }
+
+    if (tx.amountTransferred > 0) {
+        amountString = [@"+ " stringByAppendingString:amountString];
+    }
+    else if (tx.amountTransferred < 0) {
+        amountString = [@"– " stringByAppendingString:amountString];
+    }
+
+    cell.formattedAmount = amountString;
+
     return cell;
 }
 

@@ -23,6 +23,13 @@ extern NSString* const MYCWalletDidUpdateNetworkActivityNotification;
 // Posted when account was updated. Object is MYCWalletAccount.
 extern NSString* const MYCWalletDidUpdateAccountNotification;
 
+// Switches between fiat or bitcoin.
+// If BTC selected, uses separately selected units.
+// If fiat selected, uses the fiat currency selected in settings.
+typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
+    MYCWalletPreferredCurrencyBTC = 0,
+    MYCWalletPreferredCurrencyFiat = 1,
+};
 
 @class MYCBackend;
 @class MYCWalletAccount;
@@ -62,6 +69,9 @@ extern NSString* const MYCWalletDidUpdateAccountNotification;
 // Currency converter for currently used fiat currency.
 // View controllers post MYCWalletCurrencyConverterDidUpdateNotification when updating this property.
 @property(nonatomic) BTCCurrencyConverter* currencyConverter;
+
+// User-selected BTC-or-Fiat.
+@property(nonatomic) MYCWalletPreferredCurrency preferredCurrency;
 
 // Date formatters
 @property(nonatomic) NSDateFormatter* compactDateFormatter;

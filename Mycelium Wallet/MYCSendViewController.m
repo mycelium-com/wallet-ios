@@ -82,6 +82,8 @@
     self.btcLiveFormatter  = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.btcField numberFormatter:self.wallet.btcFormatterNaked];
     self.fiatLiveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.fiatField numberFormatter:self.wallet.fiatFormatterNaked];
 
+    self.fiatInput = ([MYCWallet currentWallet].preferredCurrency == MYCWalletPreferredCurrencyFiat);
+
     for (NSLayoutConstraint* c in self.borderHeightConstraints)
     {
         c.constant = 1.0/[UIScreen mainScreen].nativeScale;
@@ -153,6 +155,10 @@
     [super viewDidAppear:animated];
 
     // If last time used QR code scanner, show it this time.
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"MYCSendWithScanner"])
+    {
+        [self scan:nil];
+    }
 }
 
 - (MYCWallet*) wallet
@@ -451,6 +457,8 @@
 
 - (IBAction)scan:(id)sender
 {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MYCSendWithScanner"];
+
     UIView* targetView = self.view;
     CGRect rect = [targetView convertRect:self.addressField.bounds fromView:self.addressField];
     
@@ -748,6 +756,8 @@
 
     _fiatInput = fiatInput;
 
+    [MYCWallet currentWallet].preferredCurrency = _fiatInput ? MYCWalletPreferredCurrencyFiat : MYCWalletPreferredCurrencyBTC;
+
     // Exchange fonts
 
     UIFont* btcFieldFont = self.btcField.font;
@@ -810,6 +820,7 @@
 
 - (IBAction)didEditAddress:(id)sender
 {
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"MYCSendWithScanner"];
     [self updateAddressView];
 }
 
