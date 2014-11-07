@@ -1,11 +1,15 @@
 Todo:
 
-- bug: when both sending and receiving coins, does not show separate sending and receiving status correctly.
-- sync: switch to another hostname on timeout.
+
+- balance: do not show main account if only one account is there
+- send: crash when entering USD value when exchange rate is 0 or never updated.
 
 
 Future todo:
 
+
+- bug: when both sending and receiving coins, does not show separate sending and receiving status correctly.
+- sync: switch to another hostname on timeout.
 - accounts: show sending/receiving status too
 - move "use all funds" into account details and/or settings.
 - update folder icon like in Health.app
