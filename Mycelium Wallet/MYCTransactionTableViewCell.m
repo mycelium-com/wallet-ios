@@ -84,7 +84,7 @@
                                      self.statusLabel.text,
                                      NSLocalizedString(@"1 confirmation", @"")];
         }
-        else if (confirmations <= 100)
+        else if (confirmations <= 999)
         {
             self.statusLabel.text = [NSString stringWithFormat:@"%@\n%@",
                                      self.statusLabel.text,

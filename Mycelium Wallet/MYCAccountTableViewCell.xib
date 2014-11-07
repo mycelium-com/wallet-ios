@@ -14,13 +14,13 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Main Account" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.90000000000000002" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vam-GQ-l2V">
-                        <rect key="frame" x="16" y="12" width="111.5" height="21"/>
+                        <rect key="frame" x="20" y="12" width="111.5" height="21"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CURRENT" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GTW-0t-OrN">
-                        <rect key="frame" x="16" y="38" width="61.5" height="15.5"/>
+                        <rect key="frame" x="20" y="38" width="61.5" height="15.5"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
                         <color key="textColor" red="0.0603582114" green="0.50324159859999995" blue="0.94218349459999995" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
@@ -39,7 +39,7 @@
                     </label>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="vam-GQ-l2V" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="3sC-Uq-JdR"/>
+                    <constraint firstItem="vam-GQ-l2V" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="3sC-Uq-JdR"/>
                     <constraint firstItem="vz1-L9-Me9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="vam-GQ-l2V" secondAttribute="trailing" constant="8" id="4g3-F2-pfL"/>
                     <constraint firstItem="GTW-0t-OrN" firstAttribute="leading" secondItem="vam-GQ-l2V" secondAttribute="leading" id="F2o-wX-Tj8"/>
                     <constraint firstItem="vz1-L9-Me9" firstAttribute="baseline" secondItem="vam-GQ-l2V" secondAttribute="baseline" id="Rtp-2a-vy2"/>

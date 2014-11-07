@@ -14,6 +14,13 @@
 #import "MYCScannerView.h"
 #import "MYCUnspentOutput.h"
 
+#if 1 && DEBUG
+#warning DEBUG: Zero fees
+static BTCSatoshi MYCFeeRate = 0;
+#else
+static BTCSatoshi MYCFeeRate = 10000;
+#endif
+
 @interface MYCSendViewController () <UITextFieldDelegate, BTCTransactionBuilderDataSource>
 
 @property(nonatomic,readonly) MYCWallet* wallet;
@@ -155,9 +162,13 @@
     [super viewDidAppear:animated];
 
     // If last time used QR code scanner, show it this time.
+    // Do not show if we have some default address already.
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"MYCSendWithScanner"])
     {
-        [self scan:nil];
+        if (!self.defaultAddress)
+        {
+            [self scan:nil];
+        }
     }
 }
 
@@ -268,6 +279,7 @@
             builder.dataSource = self;
             builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:self.spendingAddress] ];
             builder.changeAddress = self.changeAddress ?: self.account.internalAddress;
+            builder.feeRate = MYCFeeRate;
 
             __block NSError* berror = nil;
             __block BTCTransactionBuilderResult* result = nil;
@@ -432,6 +444,7 @@
     builder.dataSource = self;
     builder.changeAddress = address; // outputs is empty array, spending all to change address which must be destination address.
     builder.shouldSign = NO;
+    builder.feeRate = MYCFeeRate;
 
     NSError* berror = nil;
     BTCTransactionBuilderResult* result = [builder buildTransaction:&berror];
@@ -721,6 +734,7 @@
         builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:address] ];
         builder.changeAddress = self.changeAddress ?: self.account.internalAddress;
         builder.shouldSign = NO;
+        builder.feeRate = MYCFeeRate;
 
         NSError* berror = nil;
         BTCTransactionBuilderResult* result = [builder buildTransaction:&berror];

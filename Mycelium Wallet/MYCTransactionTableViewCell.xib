@@ -15,19 +15,19 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="800" text="+1 234 567,89" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FOT-vB-4xF">
-                        <rect key="frame" x="200" y="10" width="109.5" height="20.5"/>
+                        <rect key="frame" x="190.5" y="10" width="109.5" height="20.5"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
                         <color key="textColor" red="0.11398790102517316" green="0.61852820444915257" blue="0.16996326382269497" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="740" text="Oct 11, 2014" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pzG-aA-dZ8">
-                        <rect key="frame" x="16" y="10" width="98.5" height="20"/>
+                        <rect key="frame" x="20" y="10" width="98.5" height="20"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                         <color key="textColor" red="0.92005670070648193" green="0.20382490754127502" blue="0.025508658960461617" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="240" verticalCompressionResistancePriority="740" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wN7-9T-Okm">
-                        <rect key="frame" x="16" y="36" width="294" height="33.5"/>
+                        <rect key="frame" x="20" y="36" width="280.5" height="33.5"/>
                         <string key="text">1CBtc456gSGiK348gf2ks4ldqf8ds0gds
 2 confirmations</string>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
@@ -38,11 +38,11 @@
                 <constraints>
                     <constraint firstItem="FOT-vB-4xF" firstAttribute="trailing" secondItem="wN7-9T-Okm" secondAttribute="trailing" id="6TL-OX-Uzr"/>
                     <constraint firstItem="FOT-vB-4xF" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="2" id="RI4-Mc-Kyi"/>
-                    <constraint firstItem="pzG-aA-dZ8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="SzY-da-PxM"/>
+                    <constraint firstItem="pzG-aA-dZ8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="SzY-da-PxM"/>
                     <constraint firstItem="pzG-aA-dZ8" firstAttribute="leading" secondItem="wN7-9T-Okm" secondAttribute="leading" id="XXg-NW-zDQ"/>
                     <constraint firstItem="pzG-aA-dZ8" firstAttribute="baseline" secondItem="FOT-vB-4xF" secondAttribute="baseline" id="bvn-2a-3u3"/>
                     <constraint firstItem="wN7-9T-Okm" firstAttribute="top" secondItem="pzG-aA-dZ8" secondAttribute="bottom" constant="6" id="cqs-Wh-ndE"/>
-                    <constraint firstAttribute="trailing" secondItem="FOT-vB-4xF" secondAttribute="trailing" constant="10" id="ky0-LI-778"/>
+                    <constraint firstAttribute="trailing" secondItem="FOT-vB-4xF" secondAttribute="trailing" constant="20" id="ky0-LI-778"/>
                     <constraint firstItem="FOT-vB-4xF" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="pzG-aA-dZ8" secondAttribute="trailing" constant="10" id="lcO-17-cZN"/>
                     <constraint firstAttribute="bottom" secondItem="wN7-9T-Okm" secondAttribute="bottom" constant="8" id="moe-cH-Rad"/>
                 </constraints>

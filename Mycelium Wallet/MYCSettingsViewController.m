@@ -9,6 +9,7 @@
 #import "MYCSettingsViewController.h"
 #import "MYCBackupViewController.h"
 #import "MYCScanPrivateKeyViewController.h"
+#import "MYCWebViewController.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "PTableViewSource.h"
@@ -27,7 +28,8 @@
     {
         self.title = NSLocalizedString(@"Settings", @"");
         //self.tintColor = [UIColor colorWithHue:280.0f/360.0f saturation:0.8f brightness:0.97f alpha:1.0];
-        self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:1.0f brightness:0.77f alpha:1.0];
+        //self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:1.0f brightness:0.77f alpha:1.0];
+        self.tintColor = [UIColor colorWithHue:208.0f/360.0f saturation:1.0f brightness:1.0f alpha:1.0f];
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Settings", @"") image:[UIImage imageNamed:@"TabSettings"] selectedImage:[UIImage imageNamed:@"TabSettingsSelected"]];
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
@@ -148,18 +150,39 @@
 
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
 
-        section.headerTitle = [NSString stringWithFormat:@"%@ v%@",
-                               [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleNameKey],
-                               [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]
-                               ];
+        section.headerTitle =
+
+        section.headerTitle = NSLocalizedString(@"About", @"");
 
         section.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
+
+        [section item:^(PTableViewSourceItem *item) {
+            item.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleNameKey];
+            item.detailTitle = [NSString stringWithFormat:NSLocalizedString(@"version %@", @""), [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]];
+            item.cellStyle = UITableViewCellStyleValue1;
+            item.accessoryType = UITableViewCellAccessoryNone;
+            item.detailTextColor = [UIColor grayColor];
+        }];
+
         [section item:^(PTableViewSourceItem *item) {
             item.title = NSLocalizedString(@"Credits", @"");
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                MYCWebViewController* vc = [[MYCWebViewController alloc] initWithNibName:nil bundle:nil];
+                vc.title = NSLocalizedString(@"Credits", @"");
+                vc.URL = [[NSBundle mainBundle] URLForResource:@"Credits" withExtension:@"html"];
+                [weakself.navigationController pushViewController:vc animated:YES];
+            };
         }];
         [section item:^(PTableViewSourceItem *item) {
-            item.title = NSLocalizedString(@"Legal Mentions", @"");
+            item.title = NSLocalizedString(@"Legal", @"");
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                MYCWebViewController* vc = [[MYCWebViewController alloc] initWithNibName:nil bundle:nil];
+                vc.title = NSLocalizedString(@"Legal", @"");
+                vc.URL = [[NSBundle mainBundle] URLForResource:@"Legal" withExtension:@"html"];
+                [weakself.navigationController pushViewController:vc animated:YES];
+            };
+
         }];
     }];
 

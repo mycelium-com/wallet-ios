@@ -408,6 +408,8 @@
 
         NSArray* /* [MYCUnspentOutput] */ unspentOutputs = [MYCUnspentOutput loadOutputsForAccount:self.account.accountIndex database:db];
 
+        //NSArray* unconfirmedTransaction
+
         // 1. Determine the value we are receiving and create a set of outpoints for fast lookup
 
         NSMutableSet* unspentOutpoints = [NSMutableSet set];
