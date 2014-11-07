@@ -18,6 +18,8 @@
 // Animates the view from a given rect and displays over the entire view.
 + (MYCScannerView*) presentFromRect:(CGRect)rect inView:(UIView*)view detection:(void(^)(NSString* message))detectionBlock;
 
++ (void) checkPermissionToUseCamera:(void(^)(BOOL granted))completion;
+
 - (void) dismiss;
 
 @end

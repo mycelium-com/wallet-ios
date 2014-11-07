@@ -474,58 +474,74 @@ static BTCSatoshi MYCFeeRate = 10000;
 
     UIView* targetView = self.view;
     CGRect rect = [targetView convertRect:self.addressField.bounds fromView:self.addressField];
-    
-    self.scannerView = [MYCScannerView presentFromRect:rect inView:targetView detection:^(NSString *message) {
 
-        // 1. Try to read a valid address.
-        BTCAddress* address = [[BTCAddress addressWithBase58String:message] publicAddress];
-        BTCSatoshi amount = -1;
+    [MYCScannerView checkPermissionToUseCamera:^(BOOL granted) {
 
-        if (!address)
+        if (!granted)
         {
-            // 2. Try to read a valid 'bitcoin:' URL.
-            NSURL* url = [NSURL URLWithString:message];
+            UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Camera Access", @"")
+                                                                        message:NSLocalizedString(@"Please allow camera access in system settings.", @"")
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                                   style:UIAlertActionStyleCancel
+                                                 handler:^(UIAlertAction *action) {}]];
+            [self presentViewController:ac animated:YES completion:nil];
 
-            BTCBitcoinURL* bitcoinURL = [[BTCBitcoinURL alloc] initWithURL:url];
-
-            if (bitcoinURL)
-            {
-                address = [bitcoinURL.address publicAddress];
-                amount = bitcoinURL.amount;
-            }
+            return;
         }
 
-        if (address)
-        {
-            if (!!address.isTestnet == !!self.wallet.isTestnet)
+        self.scannerView = [MYCScannerView presentFromRect:rect inView:targetView detection:^(NSString *message) {
+
+            // 1. Try to read a valid address.
+            BTCAddress* address = [[BTCAddress addressWithBase58String:message] publicAddress];
+            BTCSatoshi amount = -1;
+
+            if (!address)
             {
-                self.addressField.text = address.base58String;
-                [self updateAddressView];
+                // 2. Try to read a valid 'bitcoin:' URL.
+                NSURL* url = [NSURL URLWithString:message];
 
-                if (amount >= 0)
+                BTCBitcoinURL* bitcoinURL = [[BTCBitcoinURL alloc] initWithURL:url];
+
+                if (bitcoinURL)
                 {
-                    self.spendingAmount = amount;
-                    self.btcField.text = [self.wallet.btcFormatterNaked stringFromAmount:self.spendingAmount];
-                    [self didEditBtc:nil];
-                    [self updateAmounts];
+                    address = [bitcoinURL.address publicAddress];
+                    amount = bitcoinURL.amount;
                 }
+            }
 
-                // Jump in amount field.
-                [(self.fiatInput ? self.fiatField : self.btcField) becomeFirstResponder];
+            if (address)
+            {
+                if (!!address.isTestnet == !!self.wallet.isTestnet)
+                {
+                    self.addressField.text = address.base58String;
+                    [self updateAddressView];
 
-                [self.scannerView dismiss];
-                self.scannerView = nil;
+                    if (amount >= 0)
+                    {
+                        self.spendingAmount = amount;
+                        self.btcField.text = [self.wallet.btcFormatterNaked stringFromAmount:self.spendingAmount];
+                        [self didEditBtc:nil];
+                        [self updateAmounts];
+                    }
+
+                    // Jump in amount field.
+                    [(self.fiatInput ? self.fiatField : self.btcField) becomeFirstResponder];
+
+                    [self.scannerView dismiss];
+                    self.scannerView = nil;
+                }
+                else
+                {
+                    self.scannerView.errorMessage = NSLocalizedString(@"Address does not belong to Bitcoin network", @"");
+                }
             }
             else
             {
-                self.scannerView.errorMessage = NSLocalizedString(@"Address does not belong to Bitcoin network", @"");
+                self.scannerView.errorMessage = NSLocalizedString(@"Not a valid Bitcoin address or payment request", @"");
             }
-        }
-        else
-        {
-            self.scannerView.errorMessage = NSLocalizedString(@"Not a valid Bitcoin address or payment request", @"");
-        }
 
+        }];
     }];
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import "MYCScannerView.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface MYCScannerView ()
 @property(nonatomic, weak) UIView* shadowView;
@@ -42,8 +43,8 @@
 
     CGFloat margin = 10.0;
     CGFloat side = MIN(view.bounds.size.width - margin*2,
-                      MIN(view.bounds.size.height - margin*2,
-                          round(view.bounds.size.width * 0.8)));
+                       MIN(view.bounds.size.height - margin*2,
+                           round(view.bounds.size.width * 0.8)));
 
     CGPoint finalCenter = CGPointMake(CGRectGetMidX(view.bounds), CGRectGetMidY(view.bounds));
     CGRect finalRect = CGRectMake(finalCenter.x - side/2.0, finalCenter.y - side/2.0 - 0.1*view.bounds.size.height, side, side);
@@ -60,7 +61,34 @@
     shadowView.userInteractionEnabled = YES;
     [shadowView addGestureRecognizer:tapGR];
 
+//    if ([AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == AVAuthorizationStatusDenied)
+//    {
+//        scannerView.errorMessage = NSLocalizedString(@"Please allow camera access in system settings.", @"");
+//    }
+
     return scannerView;
+}
+
++ (void) checkPermissionToUseCamera:(void(^)(BOOL granted))completion
+{
+    if ([AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == AVAuthorizationStatusAuthorized)
+    {
+        completion(YES);
+    }
+    else
+    {
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            if (granted)
+            {
+                completion(YES);
+            }
+            else
+            {
+                completion(NO);
+                return;
+            }
+        }];
+    }
 }
 
 - (id) initWithFrame:(CGRect)frame
@@ -145,6 +173,8 @@
     if (self.window)
     {
         self.videoView.frame = [self convertRect:self.superview.bounds fromView:self.superview];
+        if (self.errorMessage) self.errorMessage = self.errorMessage;
+        if (self.message) self.message = self.message;
     }
     else
     {

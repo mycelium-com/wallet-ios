@@ -220,52 +220,68 @@
     UIView* targetView = self.navigationController.view;
     CGRect rect = [targetView convertRect:self.privkeyField.bounds fromView:self.privkeyField];
 
-    self.scannerView = [MYCScannerView presentFromRect:rect inView:targetView detection:^(NSString *message) {
-        BTCAddress* address = [BTCAddress addressWithBase58String:message];
+    [MYCScannerView checkPermissionToUseCamera:^(BOOL granted) {
 
-        if (!address)
+        if (!granted)
         {
-            self.scannerView.errorMessage = NSLocalizedString(@"Not a valid Bitcoin address or payment request", @"");
+            UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Camera Access", @"")
+                                                                        message:NSLocalizedString(@"Please allow camera access in system settings.", @"")
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                                   style:UIAlertActionStyleCancel
+                                                 handler:^(UIAlertAction *action) {}]];
+            [self presentViewController:ac animated:YES completion:nil];
+
             return;
         }
 
-        if (!!address.isTestnet != !!self.wallet.isTestnet)
-        {
-            self.scannerView.errorMessage = NSLocalizedString(@"Key does not belong to Bitcoin network", @"");
-            return;
-        }
+        self.scannerView = [MYCScannerView presentFromRect:rect inView:targetView detection:^(NSString *message) {
+            BTCAddress* address = [BTCAddress addressWithBase58String:message];
 
-        if ([address isKindOfClass:[BTCPrivateKeyAddress class]])
-        {
-            [self.scannerView dismiss];
-            self.scannerView = nil;
+            if (!address)
+            {
+                self.scannerView.errorMessage = NSLocalizedString(@"Not a valid Bitcoin address or payment request", @"");
+                return;
+            }
 
-            self.privkeyField.text = address.base58String;
-            [self updateAddressView];
-        }
-        else
-        {
-            [self.wallet.backend loadUnspentOutputsForAddresses:@[ address ] completion:^(NSArray *outputs, NSInteger height, NSError *error) {
+            if (!!address.isTestnet != !!self.wallet.isTestnet)
+            {
+                self.scannerView.errorMessage = NSLocalizedString(@"Key does not belong to Bitcoin network", @"");
+                return;
+            }
 
-                if (!outputs)
-                {
-                    return;
-                }
+            if ([address isKindOfClass:[BTCPrivateKeyAddress class]])
+            {
+                [self.scannerView dismiss];
+                self.scannerView = nil;
 
-                BTCSatoshi balance = 0;
-                for (BTCTransactionOutput* txout in outputs)
-                {
-                    balance += txout.value;
-                }
+                self.privkeyField.text = address.base58String;
+                [self updateAddressView];
+            }
+            else
+            {
+                [self.wallet.backend loadUnspentOutputsForAddresses:@[ address ] completion:^(NSArray *outputs, NSInteger height, NSError *error) {
 
-                NSString* balanceString = [NSString stringWithFormat:@"%@ (%@)",
-                                         [self.wallet.btcFormatter stringFromAmount:balance],
-                                         [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:balance]]
-                                         ];
+                    if (!outputs)
+                    {
+                        return;
+                    }
 
-                self.scannerView.message = [NSString stringWithFormat:NSLocalizedString(@"This is a public address with %@", @""), balanceString];
-            }];
-        }
+                    BTCSatoshi balance = 0;
+                    for (BTCTransactionOutput* txout in outputs)
+                    {
+                        balance += txout.value;
+                    }
+
+                    NSString* balanceString = [NSString stringWithFormat:@"%@ (%@)",
+                                               [self.wallet.btcFormatter stringFromAmount:balance],
+                                               [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:balance]]
+                                               ];
+                    
+                    self.scannerView.message = [NSString stringWithFormat:NSLocalizedString(@"This is a public address with %@", @""), balanceString];
+                }];
+            }
+        }];
     }];
 }
 

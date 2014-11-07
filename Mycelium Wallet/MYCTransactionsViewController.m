@@ -150,13 +150,14 @@
 - (void) updateFormatters
 {
     self.btcFormatter = [[MYCWallet currentWallet].btcFormatter copy];
-    self.btcFormatter.symbolStyle = BTCNumberFormatterSymbolStyleNone;
+    self.btcFormatter.symbolStyle = BTCNumberFormatterSymbolStyleSymbol;
     self.btcFormatter.minimumFractionDigits = self.btcFormatter.maximumFractionDigits;
 
     self.fiatFormatter = [[MYCWallet currentWallet].fiatFormatter copy];
     self.fiatFormatter.minimumFractionDigits = self.fiatFormatter.maximumFractionDigits;
     self.fiatFormatter.currencySymbol = @"";
     self.fiatFormatter.positiveSuffix = @"";
+    self.fiatFormatter.positivePrefix = NSLocalizedString(@"$", @"");
     self.fiatFormatter.negativeSuffix = @"";
 
     self.currencyControl = [[UISegmentedControl alloc] initWithItems:@[
