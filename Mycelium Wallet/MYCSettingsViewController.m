@@ -48,9 +48,9 @@
     [self.tableView reloadData];
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [super viewWillAppear:animated];
 
     [self updateSections];
     [self.tableView reloadData];

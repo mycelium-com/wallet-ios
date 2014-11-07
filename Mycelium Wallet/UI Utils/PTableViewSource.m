@@ -55,6 +55,7 @@
 {
     if (self = [super init])
     {
+        self.rowHeight = UITableViewAutomaticDimension;
         self.selectionStyle = UITableViewCellSelectionStyleDefault; // default is iOS7-only.
     }
     return self;
@@ -131,7 +132,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self itemAtIndexPath:indexPath].rowHeight ?: tableView.rowHeight ?: 44.0;
+    return [self itemAtIndexPath:indexPath].rowHeight ?: tableView.rowHeight ?: UITableViewAutomaticDimension;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section    // fixed font style. use custom view (UILabel) if you want something different

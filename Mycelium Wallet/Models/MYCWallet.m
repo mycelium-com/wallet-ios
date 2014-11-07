@@ -118,7 +118,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 - (BTCNumberFormatterUnit) bitcoinUnit
 {
     NSNumber* num = [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletBitcoinUnit"];
-    if (!num) return BTCNumberFormatterUnitBit;
+    if (!num) return BTCNumberFormatterUnitBTC;
     return [num unsignedIntegerValue];
 }
 
@@ -135,7 +135,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 {
     if (!_btcFormatter)
     {
-        _btcFormatter = [[BTCNumberFormatter alloc] initWithBitcoinUnit:self.bitcoinUnit symbolStyle:BTCNumberFormatterSymbolStyleLowercase];
+        _btcFormatter = [[BTCNumberFormatter alloc] initWithBitcoinUnit:self.bitcoinUnit symbolStyle:BTCNumberFormatterSymbolStyleCode];
     }
     return _btcFormatter;
 }
@@ -159,7 +159,11 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         _fiatFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
         _fiatFormatter.currencyCode = @"USD";
         _fiatFormatter.groupingSize = 3;
-        _fiatFormatter.currencySymbol = [NSLocalizedString(@"USD", @"") lowercaseString];
+
+        // [[NSLocale currentLocale] displayNameForKey:NSLocaleCurrencySymbol value:@"USD"];
+        // Returns "$US" for symbol and "dollar des etats unis" for code.
+
+        _fiatFormatter.currencySymbol = NSLocalizedString(@"USD", @"");
         _fiatFormatter.internationalCurrencySymbol = _fiatFormatter.currencySymbol;
         _fiatFormatter.positivePrefix = @"";
         _fiatFormatter.positiveSuffix = [@"\xE2\x80\xAF" stringByAppendingString:_fiatFormatter.currencySymbol];

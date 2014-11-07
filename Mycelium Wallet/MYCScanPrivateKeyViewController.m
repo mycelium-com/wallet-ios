@@ -38,7 +38,7 @@
 {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
-        self.title = NSLocalizedString(@"Cold Storage Spending", @"");
+        self.title = NSLocalizedString(@"Cold Storage", @"");
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
     }
     return self;
