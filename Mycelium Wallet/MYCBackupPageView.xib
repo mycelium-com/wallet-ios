@@ -12,7 +12,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="You will see a list of words, one by one. Write them down and store in a safe place." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.29999999999999999" translatesAutoresizingMaskIntoConstraints="NO" id="K0x-4q-p1g">
-                    <rect key="frame" x="20" y="150" width="280" height="59.5"/>
+                    <rect key="frame" x="20" y="95.5" width="280" height="59.5"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="lessThanOrEqual" constant="160" id="1rF-vL-Yjx"/>
@@ -22,20 +22,20 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" tag="200" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GDd-qc-sbh">
-                    <rect key="frame" x="140" y="308" width="41" height="35"/>
+                    <rect key="frame" x="140" y="247.5" width="41" height="35"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="19"/>
                     <state key="normal" title="Start">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qtG-f3-3YQ" customClass="MYCRoundedTextField">
-                    <rect key="frame" x="20" y="230" width="280" height="30"/>
+                    <rect key="frame" x="20" y="175.5" width="280" height="30"/>
                     <color key="backgroundColor" red="0.96999999999999997" green="0.96999999999999997" blue="0.96999999999999997" alpha="1" colorSpace="deviceRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="T87-9X-AJc"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="done"/>
+                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="next"/>
                     <connections>
                         <outlet property="delegate" destination="-1" id="dMp-BH-byo"/>
                     </connections>
@@ -51,9 +51,10 @@
                 <constraint firstItem="qtG-f3-3YQ" firstAttribute="leading" secondItem="vxf-g5-QaA" secondAttribute="leading" constant="20" id="klA-Ha-iri"/>
                 <constraint firstItem="GDd-qc-sbh" firstAttribute="top" relation="greaterThanOrEqual" secondItem="qtG-f3-3YQ" secondAttribute="bottom" constant="20" id="mHM-Ii-iV1"/>
                 <constraint firstItem="K0x-4q-p1g" firstAttribute="leading" secondItem="vxf-g5-QaA" secondAttribute="leading" constant="20" id="nj0-mp-cX1"/>
-                <constraint firstAttribute="bottom" secondItem="GDd-qc-sbh" secondAttribute="bottom" multiplier="1.4" priority="999" id="oJP-fH-XsH"/>
+                <constraint firstAttribute="bottom" secondItem="GDd-qc-sbh" secondAttribute="bottom" multiplier="1.7" priority="690" id="oJP-fH-XsH"/>
                 <constraint firstAttribute="trailing" secondItem="qtG-f3-3YQ" secondAttribute="trailing" constant="20" id="obL-mx-etv"/>
-                <constraint firstAttribute="centerY" secondItem="K0x-4q-p1g" secondAttribute="centerY" multiplier="1.333" id="xY9-aC-KVU"/>
+                <constraint firstItem="K0x-4q-p1g" firstAttribute="top" relation="greaterThanOrEqual" secondItem="vxf-g5-QaA" secondAttribute="top" constant="20" id="qsG-i2-6R2"/>
+                <constraint firstAttribute="centerY" secondItem="K0x-4q-p1g" secondAttribute="centerY" multiplier="1.6" priority="700" constant="40" id="xY9-aC-KVU"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>

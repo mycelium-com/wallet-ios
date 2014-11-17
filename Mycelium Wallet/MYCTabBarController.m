@@ -45,6 +45,11 @@
     UINavigationController* settingsNVC = [[UINavigationController alloc] initWithRootViewController:self.settingsController];
 
     self.viewControllers = @[ self.balanceController, accountsNVC, transactionsNVC, settingsNVC ];
+
+//    [self installSwipe:self.balanceController];
+//    [self installSwipe:self.accountsController];
+//    [self installSwipe:self.transactionsController];
+//    [self installSwipe:self.settingsController];
 }
 
 - (void)viewDidLoad
@@ -61,6 +66,33 @@
 - (void) manageAccounts:(id)sender
 {
     self.selectedViewController = self.accountsController.navigationController;
+}
+
+- (void) installSwipe:(UIViewController*)vc
+{
+    UISwipeGestureRecognizer* gr = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeLeft:)];
+    gr.direction = UISwipeGestureRecognizerDirectionLeft;
+    [vc.view addGestureRecognizer:gr];
+
+    UISwipeGestureRecognizer* gr2 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeRight:)];
+    gr2.direction = UISwipeGestureRecognizerDirectionRight;
+    [vc.view addGestureRecognizer:gr2];
+}
+
+- (void) swipeLeft:(UISwipeGestureRecognizer*)gr
+{
+    if (self.selectedIndex < (self.viewControllers.count - 1))
+    {
+        self.selectedIndex = self.selectedIndex + 1;
+    }
+}
+
+- (void) swipeRight:(UISwipeGestureRecognizer*)gr
+{
+    if (self.selectedIndex > 0)
+    {
+        self.selectedIndex = self.selectedIndex - 1;
+    }
 }
 
 @end
