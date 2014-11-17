@@ -161,6 +161,13 @@ static BTCSatoshi MYCFeeRate = 10000;
 {
     [super viewDidAppear:animated];
 
+    [[MYCWallet currentWallet] updateExchangeRate:YES completion:^(BOOL success, NSError *error) {
+        if (!success && error)
+        {
+            MYCError(@"MYCSendViewController: Automatic update of exchange rate failed: %@", error);
+        }
+    }];
+
     // If last time used QR code scanner, show it this time.
     // Do not show if we have some default address already.
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"MYCSendWithScanner"])

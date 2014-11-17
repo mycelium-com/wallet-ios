@@ -816,6 +816,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Mycelium Wallet/Mycelium Wallet.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mycelium Wallet/MYCPrefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -827,7 +828,7 @@
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "f334681a-fc5e-4f3c-99f1-7780ce2adf9c";
 			};
 			name = Debug;
 		};
@@ -839,6 +840,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Mycelium Wallet/Mycelium Wallet.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mycelium Wallet/MYCPrefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -850,7 +852,7 @@
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "f334681a-fc5e-4f3c-99f1-7780ce2adf9c";
 			};
 			name = Release;
 		};

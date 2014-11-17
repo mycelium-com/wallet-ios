@@ -113,6 +113,8 @@
             {
                 [wallet updateActiveAccounts:^(BOOL success, NSError *error) {
                 }];
+                [wallet updateExchangeRate:YES completion:^(BOOL success, NSError *error2) {
+                }];
             }
         }];
 

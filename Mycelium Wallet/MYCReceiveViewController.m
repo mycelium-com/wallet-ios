@@ -80,6 +80,13 @@
 
     if (self.fiatInput) [self.fiatField becomeFirstResponder];
     else [self.btcField becomeFirstResponder];
+
+    [[MYCWallet currentWallet] updateExchangeRate:YES completion:^(BOOL success, NSError *error) {
+        if (!success && error)
+        {
+            MYCError(@"MYCReceiveViewController: Automatic update of exchange rate failed: %@", error);
+        }
+    }];
 }
 
 

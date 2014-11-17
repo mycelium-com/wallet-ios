@@ -105,6 +105,12 @@
                 MYCError(@"MYCAppDelegate: Automatic update of active accounts failed: %@", error);
             }
         }];
+        [[MYCWallet currentWallet] updateExchangeRate:NO completion:^(BOOL success, NSError *error) {
+            if (!success && error)
+            {
+                MYCError(@"MYCAppDelegate: Automatic update of exchange rate failed: %@", error);
+            }
+        }];
     }
 }
 
