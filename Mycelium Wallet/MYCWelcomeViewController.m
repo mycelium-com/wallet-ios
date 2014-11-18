@@ -184,7 +184,7 @@
     self.restorePassphraseWalletView.translatesAutoresizingMaskIntoConstraints = YES;
     [self.containerView addSubview:self.restorePassphraseWalletView];
 
-    self.restorePassphraseLabel.text = NSLocalizedString(@"Enter a passphrase\n(omit passphrase if you did not use it when creating a wallet)", @"");
+    self.restorePassphraseLabel.text = NSLocalizedString(@"Enter a passphrase\n(omit passphrase if you did not specify it while creating a wallet)", @"");
     [self.restorePassphraseCancelButton setTitle:NSLocalizedString(@"Back", @"") forState:UIControlStateNormal];
     [self.restorePassphraseCompleteButton setTitle:NSLocalizedString(@"Continue", @"") forState:UIControlStateNormal];
 

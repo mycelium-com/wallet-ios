@@ -6,6 +6,7 @@ Release Notes Beta 2:
 — Improved backup screen layout for iPhone 4S when keyboard is visible.
 — Wording fix ("Master wallet seed" -> "master seed of your wallet'")
 — "Main account" button is not displayed on balance view when there is only one account (easier on newcomers)
+— Better line spacing between status labels.
 
 Bugreports:
 

@@ -166,14 +166,14 @@
 
     if (self.account.sendingAmount > 0)
     {
-        [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"Sending %@", @"") lowercaseString],
+        [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"Sending %@", @"") self],
                             [self.wallet.btcFormatter stringFromAmount:self.account.sendingAmount]]];
 
     }
 
     if (self.account.receivingAmount > 0)
     {
-        [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"Receiving %@", @"") lowercaseString],
+        [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"Receiving %@", @"") self],
                             [self.wallet.btcFormatter stringFromAmount:self.account.receivingAmount]]];
     }
     
@@ -183,7 +183,14 @@
                             [self.wallet.fiatFormatter stringFromNumber:self.wallet.currencyConverter.averageRate]]];
     }
 
-    self.statusLabel.text = [strings componentsJoinedByString:@"\n"];
+    NSString* text = [strings componentsJoinedByString:@"\n"];
+
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineSpacing = 7.0;
+    paragraphStyle.alignment = NSTextAlignmentCenter;
+    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, text.length)];
+    self.statusLabel.attributedText = attributedString;
 }
 
 - (void) updateRefreshControlAnimated:(BOOL)animated
