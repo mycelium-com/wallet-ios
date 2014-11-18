@@ -13,8 +13,8 @@ Bugreports:
   - will conflict with swipe-to-back gesture
 + 4s: backupscreen: The keyboard covers the line where words supposed to appear.
 + "master wallet seed" -> "wallet's master seed"
++ balance: do not show main account if only one account is there
 
-- balance: do not show main account if only one account is there
 - send: crash when entering USD value when exchange rate is 0 or never updated.
 
 

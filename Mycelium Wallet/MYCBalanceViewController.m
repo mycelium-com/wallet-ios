@@ -114,9 +114,11 @@
 
 - (void) reloadAccount
 {
+    __block MYCWalletAccount* acc = nil;
     [self.wallet inDatabase:^(FMDatabase *db) {
-        self.account = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
+        acc = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
     }];
+    self.account = acc;
 }
 
 - (void) setAccount:(MYCWalletAccount *)account
@@ -135,6 +137,10 @@
 
     [self updateFiatAmount];
     [self updateRefreshControlAnimated:NO];
+
+    [self.wallet inDatabase:^(FMDatabase *db) {
+        self.accountButton.hidden = ([MYCWalletAccount countAllFromDatabase:db] <= 1);
+    }];
 
     [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
 
