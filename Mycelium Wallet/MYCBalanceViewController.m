@@ -166,14 +166,14 @@
 
     if (self.account.sendingAmount > 0)
     {
-        [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"  Sending %@...", @"") lowercaseString],
+        [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"Sending %@", @"") lowercaseString],
                             [self.wallet.btcFormatter stringFromAmount:self.account.sendingAmount]]];
 
     }
 
     if (self.account.receivingAmount > 0)
     {
-        [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"  Receiving %@...", @"") lowercaseString],
+        [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"Receiving %@", @"") lowercaseString],
                             [self.wallet.btcFormatter stringFromAmount:self.account.receivingAmount]]];
     }
     

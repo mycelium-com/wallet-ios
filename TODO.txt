@@ -1,5 +1,11 @@
 Todo:
 
+Release Notes Beta 2:
+— Fixed issues with exchange rate update (now updated on app activation and in Send/Receive screens)
+— Improved labels for pending funds (Receiving/Sending without "...")
+— Improved backup screen layout for iPhone 4S when keyboard is visible.
+— Wording fix ("Master wallet seed" -> "master seed of your wallet'")
+— "Main account" button is not displayed on balance view when there is only one account (easier on newcomers)
 
 Bugreports:
 
