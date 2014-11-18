@@ -9,4 +9,10 @@
 #import "MYCBackupPageView.h"
 
 @implementation MYCBackupPageView
+
+- (IBAction)swipeDown:(id)sender
+{
+    [self.textField resignFirstResponder];
+}
+
 @end
