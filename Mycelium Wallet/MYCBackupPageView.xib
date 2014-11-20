@@ -8,11 +8,11 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MYCBackupViewController"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="vxf-g5-QaA" userLabel="Page View" customClass="MYCBackupPageView">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="You will see a list of words, one by one. Write them down and store in a safe place." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.29999999999999999" translatesAutoresizingMaskIntoConstraints="NO" id="K0x-4q-p1g">
-                    <rect key="frame" x="20" y="173" width="280" height="59.5"/>
+                    <rect key="frame" x="20" y="109" width="280" height="59.5"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="lessThanOrEqual" constant="160" id="1rF-vL-Yjx"/>
@@ -22,7 +22,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qtG-f3-3YQ" customClass="MYCRoundedTextField">
-                    <rect key="frame" x="20" y="252" width="280" height="30"/>
+                    <rect key="frame" x="20" y="188" width="280" height="30"/>
                     <color key="backgroundColor" red="0.96999999999999997" green="0.96999999999999997" blue="0.96999999999999997" alpha="1" colorSpace="deviceRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="T87-9X-AJc"/>
@@ -34,7 +34,7 @@
                     </connections>
                 </textField>
                 <button opaque="NO" tag="200" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GDd-qc-sbh">
-                    <rect key="frame" x="141" y="292.5" width="37" height="32"/>
+                    <rect key="frame" x="141" y="228" width="37" height="32"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                     <state key="normal" title="Start">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -47,19 +47,21 @@
                 <constraint firstItem="qtG-f3-3YQ" firstAttribute="top" secondItem="K0x-4q-p1g" secondAttribute="bottom" priority="900" constant="20" id="8BD-kO-0t7"/>
                 <constraint firstAttribute="trailing" secondItem="K0x-4q-p1g" secondAttribute="trailing" constant="20" id="Di6-5s-w29"/>
                 <constraint firstAttribute="centerX" secondItem="GDd-qc-sbh" secondAttribute="centerX" id="Is2-LL-0aQ"/>
+                <constraint firstItem="GDd-qc-sbh" firstAttribute="top" relation="greaterThanOrEqual" secondItem="K0x-4q-p1g" secondAttribute="bottom" constant="20" id="JDy-Db-d3g"/>
                 <constraint firstAttribute="centerX" secondItem="K0x-4q-p1g" secondAttribute="centerX" id="Nx5-8e-oQv"/>
                 <constraint firstItem="K0x-4q-p1g" firstAttribute="leading" secondItem="vxf-g5-QaA" secondAttribute="leading" multiplier="1.2" id="QLF-rN-cF8"/>
+                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="GDd-qc-sbh" secondAttribute="bottom" priority="890" constant="220" id="WMH-ni-sm7"/>
                 <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="qtG-f3-3YQ" secondAttribute="bottom" constant="220" id="i2A-h2-hw0"/>
                 <constraint firstItem="qtG-f3-3YQ" firstAttribute="leading" secondItem="vxf-g5-QaA" secondAttribute="leading" constant="20" id="klA-Ha-iri"/>
                 <constraint firstItem="GDd-qc-sbh" firstAttribute="top" relation="greaterThanOrEqual" secondItem="qtG-f3-3YQ" secondAttribute="bottom" constant="10" id="mHM-Ii-iV1"/>
                 <constraint firstItem="K0x-4q-p1g" firstAttribute="leading" secondItem="vxf-g5-QaA" secondAttribute="leading" constant="20" id="nj0-mp-cX1"/>
                 <constraint firstAttribute="bottom" secondItem="GDd-qc-sbh" secondAttribute="bottom" multiplier="1.75" priority="690" id="oJP-fH-XsH"/>
                 <constraint firstAttribute="trailing" secondItem="qtG-f3-3YQ" secondAttribute="trailing" constant="20" id="obL-mx-etv"/>
-                <constraint firstItem="K0x-4q-p1g" firstAttribute="top" relation="greaterThanOrEqual" secondItem="vxf-g5-QaA" secondAttribute="top" constant="80" id="qsG-i2-6R2"/>
+                <constraint firstItem="K0x-4q-p1g" firstAttribute="top" relation="greaterThanOrEqual" secondItem="vxf-g5-QaA" secondAttribute="top" priority="900" constant="80" id="qsG-i2-6R2"/>
                 <constraint firstAttribute="centerY" secondItem="K0x-4q-p1g" secondAttribute="centerY" multiplier="1.25" priority="680" constant="30" id="xY9-aC-KVU"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
-            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
             <variation key="default">
                 <mask key="constraints">
                     <exclude reference="QLF-rN-cF8"/>
