@@ -828,7 +828,7 @@
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "5c6619c7-2375-40f4-bb26-d081f1387d95";
+				PROVISIONING_PROFILE = "0ec0bb0a-a07c-40bf-bbde-c2113e1ad4a1";
 			};
 			name = Debug;
 		};
@@ -852,7 +852,7 @@
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "5c6619c7-2375-40f4-bb26-d081f1387d95";
+				PROVISIONING_PROFILE = "0ec0bb0a-a07c-40bf-bbde-c2113e1ad4a1";
 			};
 			name = Release;
 		};
