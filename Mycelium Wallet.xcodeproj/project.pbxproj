@@ -755,6 +755,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"XXXMYCTESTNET=1",
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -822,7 +823,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
-					"MYCTESTNET=1",
 				);
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
@@ -846,7 +846,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
-					"MYCTESTNET=1",
 				);
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
