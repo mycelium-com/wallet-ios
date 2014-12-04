@@ -93,7 +93,7 @@
     [(UIScrollView*)self.view setContentInset:UIEdgeInsetsZero];
 }
 
-- (void) setupWalletWithMnemonic:(BTCMnemonic*)mnemonic
+- (void) setupWalletWithMnemonic:(BTCMnemonic*)mnemonic newWallet:(BOOL)newWallet
 {
     MYCWallet* wallet = [MYCWallet currentWallet];
 
@@ -103,20 +103,23 @@
 
         // This will write the mnemonic to iOS keychain.
         unlockedWallet.mnemonic = mnemonic;
-        
-        [wallet discoverAccounts:unlockedWallet.keychain completion:^(BOOL success, NSError *error) {
-            if (!success)
-            {
-                MYCError(@"MYCWelcomeViewController: failed to discover accounts. Please add them manually. %@", error);
-            }
-            else
-            {
-                [wallet updateActiveAccounts:^(BOOL success, NSError *error) {
-                }];
-                [wallet updateExchangeRate:YES completion:^(BOOL success, NSError *error2) {
-                }];
-            }
-        }];
+
+        void(^updateWallet)() = ^{
+            [wallet updateActiveAccounts:^(BOOL success, NSError *error) {}];
+            [wallet updateExchangeRate:YES completion:^(BOOL success, NSError *error) {}];
+        };
+
+        if (newWallet) {
+            updateWallet();
+        } else {
+            [wallet discoverAccounts:unlockedWallet.keychain completion:^(BOOL success, NSError *error) {
+                if (!success) {
+                    MYCError(@"MYCWelcomeViewController: failed to discover accounts. Please add them manually. %@", error);
+                } else {
+                    updateWallet();
+                }
+            }];
+        }
 
     } reason:NSLocalizedString(@"Authenticate to store master key on the device", @"")];
 
@@ -138,7 +141,7 @@
 
         // Prepare a database and store the mnemonic in the keychain
 
-        [self setupWalletWithMnemonic:mnemonic];
+        [self setupWalletWithMnemonic:mnemonic newWallet:YES];
 
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [[MYCAppDelegate sharedInstance] displayMainView];
@@ -204,7 +207,7 @@
 
     if (mnemonic && mnemonic.keychain)
     {
-        [self setupWalletWithMnemonic:mnemonic];
+        [self setupWalletWithMnemonic:mnemonic newWallet:NO];
         
         // Remember that the wallet is backed up now.
         [MYCWallet currentWallet].backedUp = YES;
