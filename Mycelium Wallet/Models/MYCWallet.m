@@ -385,29 +385,12 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     database = [[MYCDatabase alloc] initWithURL:databaseURL];
     NSAssert([fm fileExistsAtPath:databaseURL.path], @"Database file does not exist");
 
-    // Database file flags
-    {
-        // Encrypt database file
-        if (![fm setAttributes:@{ NSFileProtectionKey: NSFileProtectionComplete }
-                  ofItemAtPath:database.URL.path
-                         error:&error])
-        {
-            [NSException raise:NSInternalInconsistencyException format:@"Can not protect database file (%@)", error];
-        }
-
-        // Prevent database file from iCloud backup
-        if (![database.URL setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error])
-        {
-            [NSException raise:NSInternalInconsistencyException format:@"Can not exclude database file from backup (%@)", error];
-        }
-    }
-
     // Register model migrations
 
     [MYCDatabaseMigrations registerMigrations:database];
 
 
-    // Create default account
+    // Create a default account
 
     [database registerMigration:@"Create Main Account" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
 
@@ -423,7 +406,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         return [account saveInDatabase:db error:outError];
     }];
 
-    
     // Open database
 
     if (![database open:&error])
@@ -439,11 +421,25 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
                 [NSException raise:NSInternalInconsistencyException format:@"Give up (%@)", error];
             }
             --retryCount;
-            [self openDatabaseOrCreateWithMnemonic:mnemonic];
+            return [self openDatabaseOrCreateWithMnemonic:mnemonic];
         }
         else
         {
             [NSException raise:NSInternalInconsistencyException format:@"Give up because can not delete database file (%@)", error];
+        }
+    }
+
+    // Database file flags
+
+    {
+        // Note: SQLite DB file encryption is provided by global App ID settings (complete file protection).
+        // The secret is always protected since it's stored in Keychain with setting "this device only, when unlocked only".
+
+        // Prevent database file from iCloud backup
+        if (![database.URL setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error])
+        {
+            NSLog(@"WARNING: Can not exclude database file from backup (%@)", error);
+            //[NSException raise:NSInternalInconsistencyException format:@"Can not exclude database file from backup (%@)", error];
         }
     }
 
