@@ -160,7 +160,7 @@
     self.restoreWalletView.translatesAutoresizingMaskIntoConstraints = YES;
     [self.containerView addSubview:self.restoreWalletView];
 
-    self.restoreLabel.text = NSLocalizedString(@"Type in your 12-word master seed (separated by spaces)", @"");
+    self.restoreLabel.text = NSLocalizedString(@"Type in your master seed (separated by spaces)", @"");
     [self.restoreCancelButton setTitle:NSLocalizedString(@"Back", @"") forState:UIControlStateNormal];
     [self.restoreCompleteButton setTitle:NSLocalizedString(@"Next", @"") forState:UIControlStateNormal];
 
@@ -283,19 +283,19 @@
 
 - (void) updateRestoreUI
 {
-    self.restoreLabel.text = NSLocalizedString(@"Type in your 12-word master seed separated by spaces", @"");
+    self.restoreLabel.text = NSLocalizedString(@"Type in your master seed separated by spaces", @"");
     self.restoreLabel.textColor = [UIColor blackColor];
 
     self.restoreCompleteButton.enabled = NO;
 
     NSArray* words = [self currentWords];
 
-    if (words.count > 12)
+    if (words.count > 24)
     {   
         self.restoreLabel.text = NSLocalizedString(@"Too many words entered.", @"");
         self.restoreLabel.textColor = [UIColor redColor];
     }
-    else if (words.count == 12)
+    else if (words.count >= 12 && words.count <= 24 && words.count % 3 == 0)
     {
         BTCMnemonic* mnemonic = [[BTCMnemonic alloc] initWithWords:words password:nil wordListType:BTCMnemonicWordListTypeEnglish];
 
