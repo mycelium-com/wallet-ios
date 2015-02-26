@@ -19,6 +19,7 @@
                 <outlet property="fiatButton" destination="LZw-UV-QNe" id="p6a-xe-deA"/>
                 <outlet property="fiatField" destination="JKe-vf-UtV" id="6ia-FC-NnN"/>
                 <outlet property="qrcodeView" destination="qKL-wx-tqI" id="g72-dv-pZ5"/>
+                <outlet property="shareButton" destination="fmV-mf-w7f" id="2PK-ad-TUa"/>
                 <outlet property="view" destination="SYu-BO-0m1" id="Owo-Iv-V8q"/>
             </connections>
         </placeholder>
@@ -131,6 +132,13 @@
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fmV-mf-w7f" userLabel="Share">
+                            <rect key="frame" x="291" y="26" width="19" height="27"/>
+                            <state key="normal" image="ShareIcon"/>
+                            <connections>
+                                <action selector="share:" destination="-1" eventType="touchUpInside" id="0sw-gF-tPU"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" red="0.97254901959999995" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
@@ -142,7 +150,9 @@
                         <constraint firstAttribute="height" constant="140" id="Mr1-vC-jtv"/>
                         <constraint firstAttribute="centerX" secondItem="gJD-sZ-hFA" secondAttribute="centerX" constant="-0.25" id="ODo-x1-hM8"/>
                         <constraint firstItem="JKe-vf-UtV" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" id="OPq-tC-FQi"/>
+                        <constraint firstItem="0vX-Jh-BID" firstAttribute="centerY" secondItem="fmV-mf-w7f" secondAttribute="centerY" constant="4" id="P09-hP-Bbo"/>
                         <constraint firstItem="gJD-sZ-hFA" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="top" constant="32" id="QCb-bX-XD2"/>
+                        <constraint firstAttribute="trailing" secondItem="fmV-mf-w7f" secondAttribute="trailing" constant="10" id="Yd9-M2-EeK"/>
                         <constraint firstItem="JKe-vf-UtV" firstAttribute="baseline" secondItem="LZw-UV-QNe" secondAttribute="baseline" id="Z4U-Fw-IMh"/>
                         <constraint firstItem="LZw-UV-QNe" firstAttribute="leading" secondItem="JKe-vf-UtV" secondAttribute="trailing" constant="4" id="dzl-eL-Zh3"/>
                         <constraint firstItem="kFl-8S-cfl" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" id="epa-68-63W"/>
@@ -212,5 +222,6 @@
     </objects>
     <resources>
         <image name="SampleQRCode" width="512" height="512"/>
+        <image name="ShareIcon" width="19" height="27"/>
     </resources>
 </document>

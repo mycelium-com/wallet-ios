@@ -22,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *QRCodeProportionalHeightConstraint;
 
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
+@property (weak, nonatomic) IBOutlet UIButton *shareButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *btcButton;
 @property (weak, nonatomic) IBOutlet UIButton *fiatButton;
@@ -61,7 +62,7 @@
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter addObserver:self selector:@selector(notifyKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [notificationCenter addObserver:self selector:@selector(notifyKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(notifyKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];    
 
     self.btcLiveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.btcField numberFormatter:self.wallet.btcFormatterNaked];
     self.fiatLiveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.fiatField numberFormatter:self.wallet.fiatFormatterNaked];
@@ -168,6 +169,10 @@
     [self setEditing:NO animated:YES];
     if (self.completionBlock) self.completionBlock();
     self.completionBlock = nil;
+}
+
+- (IBAction)share:(id)sender
+{
 }
 
 - (void) setEditing:(BOOL)editing animated:(BOOL)animated
