@@ -130,6 +130,28 @@
         }];
     }
 
+    if (!self.account.isCurrent && self.account.spendableAmount == 0)
+    {
+        [self.tableViewSource section:^(PTableViewSourceSection *section) {
+            [section item:^(PTableViewSourceItem *item) {
+                item.title = NSLocalizedString(@"Delete Account", @"");
+                item.textColor = [UIColor redColor];
+                item.selectionStyle = UITableViewCellSelectionStyleDefault;
+                item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you really want to delete this account?", @"") message:nil preferredStyle:UIAlertControllerStyleAlert];
+                    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                        [weakself.tableView deselectRowAtIndexPath:[weakself.tableView indexPathForSelectedRow] animated:NO];
+                        [weakself dismissViewControllerAnimated:YES completion:nil];
+                    }]];
+                    [alert addAction:[UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+                        [weakself deleteAccount];
+                    }]];
+                    [weakself presentViewController:alert animated:YES completion:nil];
+                };
+                
+            }];
+        }];
+    }
 }
 
 
@@ -292,6 +314,68 @@
     [self updateSections];
     [self.tableView reloadData];
 
+    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:self.account];
+}
+
+- (void) deleteAccount
+{
+    // If this account is current, pick another account as a current one.
+    // If there is only one non-archived account (this one), do nothing.
+    
+    [[MYCWallet currentWallet] inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        
+        NSError* dberror = nil;
+        
+        // If current, find another account to currentize.
+        if (self.account.current)
+        {
+            NSArray* allAccounts = [MYCWalletAccount loadAccountsFromDatabase:db];
+            
+            MYCWalletAccount* anotherAccount = nil;
+            for (MYCWalletAccount* acc in allAccounts)
+            {
+                if (acc.accountIndex != self.account.accountIndex)
+                {
+                    // Prefer non-archived accounts, but if there are none, use an archived one.
+                    if (!anotherAccount || anotherAccount.isArchived)
+                    {
+                        anotherAccount = acc;
+                    }
+                }
+            }
+            
+            if (anotherAccount)
+            {
+                anotherAccount.current = YES;
+                anotherAccount.archived = NO;
+                if (![anotherAccount saveInDatabase:db error:&dberror])
+                {
+                    MYCError(@"Failed to currentize account %@: %@", @(anotherAccount.accountIndex), dberror);
+                    *rollback = YES;
+                    return;
+                }
+            }
+            else
+            {
+                MYCError(@"Cannot archive an account when there is no other candidate for archiving");
+                *rollback = YES;
+                return;
+            }
+        }
+        
+        if (![self.account deleteFromDatabase:db error:&dberror])
+        {
+            MYCError(@"Failed to delete account %@: %@", @(self.account.accountIndex), dberror);
+            *rollback = YES;
+            return;
+        }
+    }];
+    
+    [self updateSections];
+    [self.tableView reloadData];
+    
+    [self.navigationController popViewControllerAnimated:YES];
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:self.account];
 }
 
