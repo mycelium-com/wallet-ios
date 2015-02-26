@@ -13,7 +13,7 @@ Enhancements and new features:
 - TouchID / passcode protection for critical actions.
 - multiple currencies / sources picker.
 - show everything in one currency (e.g. USD), allow switching currency from anywhere on the screen.
-- share Bitcoin address via SMS/Email/Twitter/etc.
++ share Bitcoin address via SMS/Email/Twitter/etc.
 - invite friend to download the app via sharing screen.
 
 
