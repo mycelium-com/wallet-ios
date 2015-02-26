@@ -19,6 +19,8 @@
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *borderHeightConstraint;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *QRCodeProportionalHeightConstraint;
+
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *btcButton;
@@ -56,6 +58,10 @@
 - (void) viewDidLoad
 {
     [super viewDidLoad];
+    
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter addObserver:self selector:@selector(notifyKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(notifyKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 
     self.btcLiveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.btcField numberFormatter:self.wallet.btcFormatterNaked];
     self.fiatLiveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.fiatField numberFormatter:self.wallet.fiatFormatterNaked];
@@ -87,6 +93,13 @@
             MYCError(@"MYCReceiveViewController: Automatic update of exchange rate failed: %@", error);
         }
     }];
+}
+
+- (void)dealloc
+{
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [notificationCenter removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 
@@ -351,6 +364,43 @@
     }
     [self restoreBrightness];
 }
+
+- (void)notifyKeyboardWillShow:(NSNotification *)notification
+{
+    CGRect windowKeyboardFrameEnd = [(NSValue *)[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGRect keyboardFrameEnd = [self.addressLabel.superview convertRect:windowKeyboardFrameEnd fromView:self.addressLabel.window];
+    CGRect frame = self.addressLabel.frame;
+    CGFloat bottom = CGRectGetMaxY(frame) - CGRectGetMinY(keyboardFrameEnd);
+    
+    if (bottom > 1)
+    {
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+        [UIView setAnimationCurve:[notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue]];
+        [UIView setAnimationBeginsFromCurrentState:YES];
+        
+        self.QRCodeProportionalHeightConstraint.constant = - (bottom + 16);
+        [self.view setNeedsLayout];
+        [self.view layoutIfNeeded];
+        
+        [UIView commitAnimations];
+    }
+}
+
+- (void)notifyKeyboardWillHide:(NSNotification *)notification
+{
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+    [UIView setAnimationCurve:[notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue]];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    self.QRCodeProportionalHeightConstraint.constant = 0;
+    [self.view setNeedsLayout];
+    [self.view layoutIfNeeded];
+    
+    [UIView commitAnimations];
+}
+
 
 
 
