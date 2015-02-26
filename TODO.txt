@@ -1,5 +1,31 @@
 Todo:
 
+
+Part 1
+
+A few bugfixes:
++ QR code overlapped by keyboard on Receive screen.
+- stability improvement when exchange rate is not available yet (error or missing).
+
+Enhancements and new features:
+- move cold storage import to Receive and/or Send screen for easier discovery.
++ allow removing empty accounts.
+- TouchID / passcode protection for critical actions.
+- multiple currencies / sources picker.
+- show everything in one currency (e.g. USD), allow switching currency from anywhere on the screen.
+- share Bitcoin address via SMS/Email/Twitter/etc.
+- invite friend to download the app via sharing screen.
+
+
+Part 2 (to be clarified with developers)
+
+- Storing custom labels and historical prices in transactions.
+- Adding labels for incoming transactions ("issuing invoices").
+- BIP70 Payment Requests support. Storing receipts and labels per transaction.
+- Auto-backup for all metadata (transaction labels, BIP70 receipts, historical prices, currency settings).
+
+------------------------
+
 Release Notes Beta 2:
 — Fixed issues with exchange rate update (now updated on app activation and in Send/Receive screens)
 — Improved labels for pending funds (Receiving/Sending without "...")
