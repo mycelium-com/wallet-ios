@@ -173,6 +173,33 @@
 
 - (IBAction)share:(id)sender
 {
+    [self setEditing:NO animated:YES];
+
+    NSArray* items;
+    
+    if (self.requestedAmount > 0)
+    {
+        NSString* amount;
+        
+        if (self.fiatInput)
+        {
+            amount = [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:self.requestedAmount]];
+        }
+        else
+        {
+            amount = [self.wallet.btcFormatter stringFromAmount:self.requestedAmount];
+        }
+        
+        items = @[[NSString stringWithFormat:NSLocalizedString(@"Please send me %@ to %@", @""), amount, self.account.externalAddress.base58String]];
+    }
+    else
+    {
+        items = @[self.account.externalAddress.base58String];
+    }
+
+    UIActivityViewController* activityController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    activityController.excludedActivityTypes = @[];
+    [self presentViewController:activityController animated:YES completion:nil];
 }
 
 - (void) setEditing:(BOOL)editing animated:(BOOL)animated
@@ -301,18 +328,23 @@
     [MYCWallet currentWallet].preferredCurrency = _fiatInput ? MYCWalletPreferredCurrencyFiat : MYCWalletPreferredCurrencyBTC;
 
     // Exchange fonts
-
-    UIFont* btcFieldFont = self.btcField.font;
-    UIFont* fiatFieldFont = self.fiatField.font;
-
-    self.btcField.font = fiatFieldFont;
-    self.fiatField.font = btcFieldFont;
-
-    UIFont* btcButtonFont = self.btcButton.titleLabel.font;
-    UIFont* fiatButtonFont = self.fiatButton.titleLabel.font;
-
-    self.btcButton.titleLabel.font = fiatButtonFont;
-    self.fiatButton.titleLabel.font = btcButtonFont;
+    
+    [UIView performWithoutAnimation:^{
+        UIFont* btcFieldFont = self.btcField.font;
+        UIFont* fiatFieldFont = self.fiatField.font;
+        
+        self.btcField.font = fiatFieldFont;
+        self.fiatField.font = btcFieldFont;
+        
+        UIFont* btcButtonFont = self.btcButton.titleLabel.font;
+        UIFont* fiatButtonFont = self.fiatButton.titleLabel.font;
+        
+        self.btcButton.titleLabel.font = fiatButtonFont;
+        self.fiatButton.titleLabel.font = btcButtonFont;
+        
+        [self.view setNeedsLayout];
+        [self.view layoutIfNeeded];
+    }];
 }
 
 
