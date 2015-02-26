@@ -133,7 +133,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fmV-mf-w7f" userLabel="Share">
-                            <rect key="frame" x="291" y="26" width="19" height="27"/>
+                            <rect key="frame" x="285" y="26" width="19" height="27"/>
                             <state key="normal" image="ShareIcon"/>
                             <connections>
                                 <action selector="share:" destination="-1" eventType="touchUpInside" id="0sw-gF-tPU"/>
@@ -152,7 +152,7 @@
                         <constraint firstItem="JKe-vf-UtV" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" id="OPq-tC-FQi"/>
                         <constraint firstItem="0vX-Jh-BID" firstAttribute="centerY" secondItem="fmV-mf-w7f" secondAttribute="centerY" constant="4" id="P09-hP-Bbo"/>
                         <constraint firstItem="gJD-sZ-hFA" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="top" constant="32" id="QCb-bX-XD2"/>
-                        <constraint firstAttribute="trailing" secondItem="fmV-mf-w7f" secondAttribute="trailing" constant="10" id="Yd9-M2-EeK"/>
+                        <constraint firstAttribute="trailing" secondItem="fmV-mf-w7f" secondAttribute="trailing" constant="16" id="Yd9-M2-EeK"/>
                         <constraint firstItem="JKe-vf-UtV" firstAttribute="baseline" secondItem="LZw-UV-QNe" secondAttribute="baseline" id="Z4U-Fw-IMh"/>
                         <constraint firstItem="LZw-UV-QNe" firstAttribute="leading" secondItem="JKe-vf-UtV" secondAttribute="trailing" constant="4" id="dzl-eL-Zh3"/>
                         <constraint firstItem="kFl-8S-cfl" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" id="epa-68-63W"/>
