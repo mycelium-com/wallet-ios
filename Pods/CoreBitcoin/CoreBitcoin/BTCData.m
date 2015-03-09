@@ -123,15 +123,22 @@ NSData* BTCCoinFlipDataWithLength(NSUInteger length)
     return data;
 }
 
+NSData* BTCDataWithUTF8String(const char* utf8string) { // deprecated
+    return BTCDataWithUTF8CString(utf8string);
+}
 
 // Creates data with zero-terminated string in UTF-8 encoding.
-NSData* BTCDataWithUTF8String(const char* utf8string)
+NSData* BTCDataWithUTF8CString(const char* utf8string)
 {
     return [[NSData alloc] initWithBytes:utf8string length:strlen(utf8string)];
 }
 
+NSData* BTCDataWithHexString(NSString* hexString) { // deprecated
+    return BTCDataFromHex(hexString);
+}
+
 // Init with hex string (lower- or uppercase, with optional 0x prefix)
-NSData* BTCDataWithHexString(NSString* hexString)
+NSData* BTCDataFromHex(NSString* hexString)
 {
     return BTCDataWithHexCString([hexString cStringUsingEncoding:NSASCIIStringEncoding]);
 }
@@ -196,7 +203,7 @@ NSData* BTCDataWithHexCString(const char* hexCString)
 }
 
 
-NSString* BTCHexStringFromDataWithFormat(NSData* data, const char* format)
+NSString* BTCHexFromDataWithFormat(NSData* data, const char* format)
 {
     if (!data) return nil;
     
@@ -213,15 +220,22 @@ NSString* BTCHexStringFromDataWithFormat(NSData* data, const char* format)
     return [[NSString alloc] initWithData:resultdata encoding:NSASCIIStringEncoding];
 }
 
-NSString* BTCHexStringFromData(NSData* data)
-{
-    return BTCHexStringFromDataWithFormat(data, "%02x");
+NSString* BTCHexStringFromData(NSData* data) { // deprecated
+    return BTCHexFromDataWithFormat(data, "%02x");
 }
 
-NSString* BTCUppercaseHexStringFromData(NSData* data)
-{
-    return BTCHexStringFromDataWithFormat(data, "%02X");
+NSString* BTCUppercaseHexStringFromData(NSData* data) { // deprecated
+    return BTCHexFromDataWithFormat(data, "%02X");
 }
+
+NSString* BTCHexFromData(NSData* data) {
+    return BTCHexFromDataWithFormat(data, "%02x");
+}
+
+NSString* BTCUppercaseHexFromData(NSData* data) {
+    return BTCHexFromDataWithFormat(data, "%02X");
+}
+
 
 NSData* BTCReversedData(NSData* data)
 {
@@ -284,7 +298,13 @@ NSMutableData* BTCSHA1(NSData* data)
 {
     if (!data) return nil;
     unsigned char digest[CC_SHA1_DIGEST_LENGTH];
-    CC_SHA1([data bytes], (CC_LONG)[data length], digest);
+
+    __block CC_SHA1_CTX ctx;
+    CC_SHA1_Init(&ctx);
+    [data enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        CC_SHA1_Update(&ctx, bytes, (CC_LONG)byteRange.length);
+    }];
+    CC_SHA1_Final(digest, &ctx);
 
     NSMutableData* result = [NSMutableData dataWithBytes:digest length:CC_SHA1_DIGEST_LENGTH];
     BTCSecureMemset(digest, 0, CC_SHA1_DIGEST_LENGTH);
@@ -295,7 +315,13 @@ NSMutableData* BTCSHA256(NSData* data)
 {
     if (!data) return nil;
     unsigned char digest[CC_SHA256_DIGEST_LENGTH];
-    CC_SHA256([data bytes], (CC_LONG)[data length], digest);
+
+    __block CC_SHA256_CTX ctx;
+    CC_SHA256_Init(&ctx);
+    [data enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        CC_SHA256_Update(&ctx, bytes, (CC_LONG)byteRange.length);
+    }];
+    CC_SHA256_Final(digest, &ctx);
 
     NSMutableData* result = [NSMutableData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
     BTCSecureMemset(digest, 0, CC_SHA256_DIGEST_LENGTH);
@@ -307,10 +333,14 @@ NSMutableData* BTCSHA256Concat(NSData* data1, NSData* data2)
     if (!data1 || !data2) return nil;
     unsigned char digest[CC_SHA256_DIGEST_LENGTH];
     
-    CC_SHA256_CTX ctx;
+    __block CC_SHA256_CTX ctx;
     CC_SHA256_Init(&ctx);
-    CC_SHA256_Update(&ctx, [data1 bytes], (CC_LONG)[data1 length]);
-    CC_SHA256_Update(&ctx, [data2 bytes], (CC_LONG)[data2 length]);
+    [data1 enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        CC_SHA256_Update(&ctx, bytes, (CC_LONG)byteRange.length);
+    }];
+    [data2 enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        CC_SHA256_Update(&ctx, bytes, (CC_LONG)byteRange.length);
+    }];
     CC_SHA256_Final(digest, &ctx);
     
     NSMutableData* result = [NSMutableData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
@@ -323,7 +353,12 @@ NSMutableData* BTCHash256(NSData* data)
     if (!data) return nil;
     unsigned char digest1[CC_SHA256_DIGEST_LENGTH];
     unsigned char digest2[CC_SHA256_DIGEST_LENGTH];
-    CC_SHA256([data bytes], (CC_LONG)[data length], digest1);
+    __block CC_SHA256_CTX ctx;
+    CC_SHA256_Init(&ctx);
+    [data enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        CC_SHA256_Update(&ctx, bytes, (CC_LONG)byteRange.length);
+    }];
+    CC_SHA256_Final(digest1, &ctx);
     CC_SHA256(digest1, CC_SHA256_DIGEST_LENGTH, digest2);
     NSMutableData* result = [NSMutableData dataWithBytes:digest2 length:CC_SHA256_DIGEST_LENGTH];
     BTCSecureMemset(digest1, 0, CC_SHA256_DIGEST_LENGTH);
@@ -338,10 +373,14 @@ NSMutableData* BTCHash256Concat(NSData* data1, NSData* data2)
     unsigned char digest1[CC_SHA256_DIGEST_LENGTH];
     unsigned char digest2[CC_SHA256_DIGEST_LENGTH];
     
-    CC_SHA256_CTX ctx;
+    __block CC_SHA256_CTX ctx;
     CC_SHA256_Init(&ctx);
-    CC_SHA256_Update(&ctx, [data1 bytes], (CC_LONG)[data1 length]);
-    CC_SHA256_Update(&ctx, [data2 bytes], (CC_LONG)[data2 length]);
+    [data1 enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        CC_SHA256_Update(&ctx, bytes, (CC_LONG)byteRange.length);
+    }];
+    [data2 enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        CC_SHA256_Update(&ctx, bytes, (CC_LONG)byteRange.length);
+    }];
     CC_SHA256_Final(digest1, &ctx);
     CC_SHA256(digest1, CC_SHA256_DIGEST_LENGTH, digest2);
     
@@ -394,7 +433,12 @@ NSMutableData* BTCRIPEMD160(NSData* data)
 {
     if (!data) return nil;
     unsigned char digest[RIPEMD160_DIGEST_LENGTH];
-    RIPEMD160([data bytes], (size_t)[data length], digest);
+    __block RIPEMD160_CTX ctx;
+    RIPEMD160_Init(&ctx);
+    [data enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        RIPEMD160_Update(&ctx, bytes, (size_t)byteRange.length);
+    }];
+    RIPEMD160_Final(digest, &ctx);
 
     NSMutableData* result = [NSMutableData dataWithBytes:digest length:RIPEMD160_DIGEST_LENGTH];
     BTCSecureMemset(digest, 0, RIPEMD160_DIGEST_LENGTH);
@@ -406,7 +450,12 @@ NSMutableData* BTCHash160(NSData* data)
     if (!data) return nil;
     unsigned char digest1[CC_SHA256_DIGEST_LENGTH];
     unsigned char digest2[RIPEMD160_DIGEST_LENGTH];
-    CC_SHA256([data bytes], (CC_LONG)[data length], digest1);
+    __block CC_SHA256_CTX ctx;
+    CC_SHA256_Init(&ctx);
+    [data enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        CC_SHA256_Update(&ctx, bytes, (CC_LONG)byteRange.length);
+    }];
+    CC_SHA256_Final(digest1, &ctx);
     RIPEMD160(digest1, CC_SHA256_DIGEST_LENGTH, digest2);
     
     NSMutableData* result = [NSMutableData dataWithBytes:digest2 length:RIPEMD160_DIGEST_LENGTH];
@@ -606,18 +655,18 @@ NSMutableData* BTCMemoryHardAESKDF(NSData* password, NSData* salt, unsigned int 
         }
         else // OpenSSL implementation
         {
-            EVP_CIPHER_CTX evpctx;
-            int outlen1, outlen2;
-            
-            EVP_EncryptInit(&evpctx, EVP_aes_256_cbc(), key, iv);
-            EVP_EncryptUpdate(&evpctx, spaceBytes, &outlen1, spaceBytes, (int)numberOfBytes);
-            EVP_EncryptFinal(&evpctx, spaceBytes + outlen1, &outlen2);
-            
-            if (outlen1 != numberOfBytes || outlen2 != blockSize)
-            {
-                failed = YES;
-                break;
-            }
+//            EVP_CIPHER_CTX evpctx;
+//            int outlen1, outlen2;
+//            
+//            EVP_EncryptInit(&evpctx, EVP_aes_256_cbc(), key, iv);
+//            EVP_EncryptUpdate(&evpctx, spaceBytes, &outlen1, spaceBytes, (int)numberOfBytes);
+//            EVP_EncryptFinal(&evpctx, spaceBytes + outlen1, &outlen2);
+//            
+//            if (outlen1 != numberOfBytes || outlen2 != blockSize)
+//            {
+//                failed = YES;
+//                break;
+//            }
         }
 
         // iv2 = SHA256(iv1 + tail)

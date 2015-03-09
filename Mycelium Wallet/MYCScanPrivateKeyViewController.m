@@ -145,7 +145,7 @@
                 return;
             }
 
-            BTCSatoshi balance = 0;
+            BTCAmount balance = 0;
             for (BTCTransactionOutput* txout in outputs)
             {
                 balance += txout.value;
@@ -267,7 +267,7 @@
                         return;
                     }
 
-                    BTCSatoshi balance = 0;
+                    BTCAmount balance = 0;
                     for (BTCTransactionOutput* txout in outputs)
                     {
                         balance += txout.value;

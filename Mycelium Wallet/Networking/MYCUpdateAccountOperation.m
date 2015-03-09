@@ -224,7 +224,7 @@
                             }
                             else
                             {
-                                MYCError(@"MYCUpdateAccountOperation: could not find which key is using this output: %@:%d", BTCTransactionIDFromHash(txout.transactionHash), (int)txout.index);
+                                MYCError(@"MYCUpdateAccountOperation: could not find which key is using this output: %@:%d", BTCIDFromHash(txout.transactionHash), (int)txout.index);
                                 mout = nil;
                             }
                         }
@@ -236,7 +236,7 @@
                             // set latest version of unspent output.
                             mout.transactionOutput = txout;
 
-                            [txidsToUpdate addObject:BTCTransactionIDFromHash(mout.outpointHash)];
+                            [txidsToUpdate addObject:BTCIDFromHash(mout.outpointHash)];
                             //[moutputsToSave addObject:mout];
 
                             if (![mout insertInDatabase:db error:&dberror])
@@ -247,7 +247,7 @@
                             }
                             else
                             {
-                                //MYCLog(@"MYCUpdateAccountOperation: saved unspent output %@:%@", BTCTransactionIDFromHash(txout.transactionHash), @(txout.index));
+                                //MYCLog(@"MYCUpdateAccountOperation: saved unspent output %@:%@", BTCIDFromHash(txout.transactionHash), @(txout.index));
                             }
                         }
                     }
@@ -401,10 +401,10 @@
 {
     [self.wallet asyncInTransaction:^id(FMDatabase *db, BOOL *rollback, NSError *__autoreleasing *dberrorOut) {
 
-        BTCSatoshi confirmed = 0;
-        BTCSatoshi pendingChange = 0;
-        BTCSatoshi pendingSending = 0;
-        BTCSatoshi pendingReceiving = 0;
+        BTCAmount confirmed = 0;
+        BTCAmount pendingChange = 0;
+        BTCAmount pendingSending = 0;
+        BTCAmount pendingReceiving = 0;
 
         NSArray* /* [MYCUnspentOutput] */ unspentOutputs = [MYCUnspentOutput loadOutputsForAccount:self.account.accountIndex database:db];
 
@@ -818,13 +818,13 @@
                                 {
                                     parentOutput.userInfo = @{@"change": @(change), @"keyIndex": @(keyIndex) };
                                     //MYCLog(@"MYCUpdateAccountOperation: parent output %@:%@ is detected to be used in the account %@",
-                                    //       BTCTransactionIDFromHash(parentOutput.transactionHash), @(parentOutput.index), @(accountIndex));
+                                    //       BTCIDFromHash(parentOutput.transactionHash), @(parentOutput.index), @(accountIndex));
                                 }
                                 else
                                 {
                                     parentOutput.userInfo = @{@"change": @(-1), @"keyIndex": @(-1) };
                                     //MYCLog(@"MYCUpdateAccountOperation: parent output %@:%@ not used in the account %@",
-                                    //       BTCTransactionIDFromHash(parentOutput.transactionHash), @(parentOutput.index), @(accountIndex));
+                                    //       BTCIDFromHash(parentOutput.transactionHash), @(parentOutput.index), @(accountIndex));
                                 }
 
                                 // Save both ours and foreign parent outputs so we can show full details in transaction history.
@@ -864,7 +864,7 @@
                             }
                             else
                             {
-                                //MYCLog(@"MYCUpdateAccountOperation: saved parent output %@:%d", BTCTransactionIDFromHash(txout.transactionHash), (int)txout.index);
+                                //MYCLog(@"MYCUpdateAccountOperation: saved parent output %@:%d", BTCIDFromHash(txout.transactionHash), (int)txout.index);
                             }
                         }
                     }];

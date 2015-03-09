@@ -16,7 +16,7 @@ enum
 };
 
 @interface BTCAddress ()
-@property(nonatomic) NSMutableData* data;
+@property(nonatomic, readwrite) NSData* data;
 @end
 
 @implementation BTCAddress {
@@ -31,11 +31,14 @@ enum
     _data = nil;
 }
 
-// Returns an object of a specific subclass depending on version number.
-// For unsupported addresses returns nil.
-+ (id) addressWithBase58String:(NSString*)string
++ (instancetype) addressWithString:(NSString*)string
 {
     return [self addressWithBase58CString:[string cStringUsingEncoding:NSASCIIStringEncoding]];
+}
+
++ (instancetype) addressWithBase58String:(NSString*)string // DEPRECATED
+{
+    return [self addressWithString:string];
 }
 
 // Initializes address with raw data. Should only be used in subclasses, base class will raise exception.
@@ -133,11 +136,17 @@ enum
     return _cstring;
 }
 
-- (NSString*) base58String
+// Returns representation in base58 encoding.
+- (NSString*) string
 {
     const char* cstr = [self base58CString];
     if (!cstr) return nil;
     return [NSString stringWithCString:cstr encoding:NSASCIIStringEncoding];
+}
+
+- (NSString*) base58String
+{
+    return [self string];
 }
 
 - (BTCAddress*) publicAddress
@@ -158,8 +167,15 @@ enum
 
 - (NSString*) description
 {
-    return [NSString stringWithFormat:@"<%@: %@>", [self class], [self base58String]];
+    return [NSString stringWithFormat:@"<%@: %@>", [self class], self.string];
 }
+
+- (BOOL) isEqual:(BTCAddress*)other
+{
+    if (![other isKindOfClass:[BTCAddress class]]) return NO;
+    return [self.string isEqualToString:other.string];
+}
+
 @end
 
 
@@ -198,7 +214,7 @@ enum
     NSMutableData* data = [NSMutableData dataWithLength:1 + BTCPublicKeyAddressLength];
     char* buf = data.mutableBytes;
     buf[0] = [self versionByte];
-    memcpy(buf + 1, self.data.mutableBytes, BTCPublicKeyAddressLength);
+    memcpy(buf + 1, self.data.bytes, BTCPublicKeyAddressLength);
     return data;
 }
 
@@ -307,7 +323,7 @@ enum
     NSMutableData* data = [NSMutableData dataWithLength:1 + BTCPrivateKeyAddressLength + (_publicKeyCompressed ? 1 : 0)];
     char* buf = data.mutableBytes;
     buf[0] = [self versionByte];
-    memcpy(buf + 1, self.data.mutableBytes, BTCPrivateKeyAddressLength);
+    memcpy(buf + 1, self.data.bytes, BTCPrivateKeyAddressLength);
     if (_publicKeyCompressed)
     {
         // Add extra byte 0x01 in the end.
@@ -385,7 +401,7 @@ enum
     NSMutableData* data = [NSMutableData dataWithLength:1 + BTCScriptHashAddressLength];
     char* buf = data.mutableBytes;
     buf[0] = [self versionByte];
-    memcpy(buf + 1, self.data.mutableBytes, BTCScriptHashAddressLength);
+    memcpy(buf + 1, self.data.bytes, BTCScriptHashAddressLength);
     return data;
 }
 

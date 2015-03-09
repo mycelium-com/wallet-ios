@@ -148,7 +148,7 @@ static uint32_t BTCEMFullTargetForCompactTarget(uint8_t compactTarget);
         
         // Create a shared secret
         
-        BTCBigNumber* pk = [[BTCBigNumber alloc] initWithUnsignedData:privkey];
+        BTCBigNumber* pk = [[BTCBigNumber alloc] initWithUnsignedBigEndian:privkey];
         
         BTCCurvePoint* curvePoint = recipientKey.curvePoint;
         
@@ -156,7 +156,7 @@ static uint32_t BTCEMFullTargetForCompactTarget(uint8_t compactTarget);
         // Recipient will multiply his private key (bignum) by our pubkey that we attach in the previous step.
         [curvePoint multiply:pk];
         
-        NSData* pointX = curvePoint.x.unsignedData;
+        NSData* pointX = curvePoint.x.unsignedBigEndian;
         
         // Hash the x-coordinate for better diffusion.
         CC_SHA256_Init(&ctx256);
@@ -390,7 +390,7 @@ static uint32_t BTCEMFullTargetForCompactTarget(uint8_t compactTarget);
     
     // 1. Reconstruct a shared secret from key and _nonceKey.
     
-    BTCBigNumber* pk = [[BTCBigNumber alloc] initWithUnsignedData:key.privateKey];
+    BTCBigNumber* pk = [[BTCBigNumber alloc] initWithUnsignedBigEndian:key.privateKey];
     
     BTCCurvePoint* curvePoint = _nonceKey.curvePoint;
     
@@ -398,7 +398,7 @@ static uint32_t BTCEMFullTargetForCompactTarget(uint8_t compactTarget);
     // Sender did multiply his nonce private key (bignum) by recipient's pubkey to encrypt the message.
     [curvePoint multiply:pk];
     
-    NSData* pointX = curvePoint.x.unsignedData;
+    NSData* pointX = curvePoint.x.unsignedBigEndian;
     
     // These will be used for various purposes.
     unsigned char digest256[CC_SHA256_DIGEST_LENGTH];

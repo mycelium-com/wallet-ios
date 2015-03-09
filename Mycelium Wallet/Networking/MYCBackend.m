@@ -46,7 +46,7 @@
                                   [NSURL URLWithString:@"https://mws2.mycelium.com/wapi"],
                                   [NSURL URLWithString:@"https://88.198.17.7/wapi"],
                                   ];
-        instance.SSLFingerprint = BTCDataWithHexString([@"B3:42:65:33:40:F5:B9:1B:DA:A2:C8:7A:F5:4C:7C:5D:A9:63:C4:C3" stringByReplacingOccurrencesOfString:@":" withString:@""]);
+        instance.SSLFingerprint = BTCDataFromHex([@"B3:42:65:33:40:F5:B9:1B:DA:A2:C8:7A:F5:4C:7C:5D:A9:63:C4:C3" stringByReplacingOccurrencesOfString:@":" withString:@""]);
     });
     return instance;
 }
@@ -64,7 +64,7 @@
                         [NSURL URLWithString:@"https://node3.mycelium.com/wapitestnet"],
                         [NSURL URLWithString:@"https://144.76.165.115/wapitestnet"],
                         ];
-        instance.SSLFingerprint = BTCDataWithHexString([@"E5:70:76:B2:67:3A:89:44:7A:48:14:81:DF:BD:A0:58:C8:82:72:4F" stringByReplacingOccurrencesOfString:@":" withString:@""]);
+        instance.SSLFingerprint = BTCDataFromHex([@"E5:70:76:B2:67:3A:89:44:7A:48:14:81:DF:BD:A0:58:C8:82:72:4F" stringByReplacingOccurrencesOfString:@":" withString:@""]);
     });
     return instance;
 }
@@ -235,7 +235,7 @@
                        }
 
                        // tx hash is sent reversed, but we store the true hash
-                       NSData* txhash = BTCReversedData(BTCDataWithHexString(txHashAndIndex[0]));
+                       NSData* txhash = BTCReversedData(BTCDataFromHex(txHashAndIndex[0]));
 
                        if (!txhash || txhash.length != 32)
                        {

@@ -9,8 +9,8 @@
 // CoreBitcoin
 #define COCOAPODS_POD_AVAILABLE_CoreBitcoin
 #define COCOAPODS_VERSION_MAJOR_CoreBitcoin 0
-#define COCOAPODS_VERSION_MINOR_CoreBitcoin 5
-#define COCOAPODS_VERSION_PATCH_CoreBitcoin 0
+#define COCOAPODS_VERSION_MINOR_CoreBitcoin 6
+#define COCOAPODS_VERSION_PATCH_CoreBitcoin 5
 
 // FMDB
 #define COCOAPODS_POD_AVAILABLE_FMDB
@@ -30,10 +30,16 @@
 #define COCOAPODS_VERSION_MINOR_FMDB_standard 1
 #define COCOAPODS_VERSION_PATCH_FMDB_standard 0
 
+// ISO8601DateFormatter
+#define COCOAPODS_POD_AVAILABLE_ISO8601DateFormatter
+#define COCOAPODS_VERSION_MAJOR_ISO8601DateFormatter 0
+#define COCOAPODS_VERSION_MINOR_ISO8601DateFormatter 7
+#define COCOAPODS_VERSION_PATCH_ISO8601DateFormatter 0
+
 // OpenSSL-Universal
 #define COCOAPODS_POD_AVAILABLE_OpenSSL_Universal
 // This library does not follow semantic-versioning,
 // so we were not able to define version macros.
 // Please contact the author.
-// Version: 1.0.1.h.
+// Version: 1.0.1.j-2.
 

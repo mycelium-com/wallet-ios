@@ -17,10 +17,10 @@
 @property(nonatomic) NSString*  extendedPublicKey;
 
 // The sum of the unspent outputs which are confirmed and currently not spent in pending transactions.
-@property(atomic) BTCSatoshi confirmedAmount;
-@property(atomic) BTCSatoshi pendingChangeAmount; // total unconfirmed outputs on change addresses
-@property(atomic) BTCSatoshi pendingReceivedAmount; // total unconfirmed outputs on external addresses
-@property(atomic) BTCSatoshi pendingSentAmount; // total unconfirmed outputs spent
+@property(atomic) BTCAmount confirmedAmount;
+@property(atomic) BTCAmount pendingChangeAmount; // total unconfirmed outputs on change addresses
+@property(atomic) BTCAmount pendingReceivedAmount; // total unconfirmed outputs on external addresses
+@property(atomic) BTCAmount pendingSentAmount; // total unconfirmed outputs spent
 
 // Indices to be used in the next payment for each subchain of keys.
 // Normally the latest used index is (externalKeyIndex - 1).
@@ -44,17 +44,17 @@
 
 // Confirmed and unconfirmed amounts combined.
 // This is the amount that will equal confirmedAmount once all pending transactions are confirmed.
-@property(nonatomic, readonly) BTCSatoshi unconfirmedAmount;
+@property(nonatomic, readonly) BTCAmount unconfirmedAmount;
 
 // Confirmed + change amount that you can spend.
 // Wallet should prefer spending confirmed outputs first, of course.
-@property(nonatomic, readonly) BTCSatoshi spendableAmount;
+@property(nonatomic, readonly) BTCAmount spendableAmount;
 
 // Returns pendingReceivedAmount.
-@property(nonatomic, readonly) BTCSatoshi receivingAmount;
+@property(nonatomic, readonly) BTCAmount receivingAmount;
 
 // Returns pendingSentAmount - pendingChangeAmount
-@property(nonatomic, readonly) BTCSatoshi sendingAmount;
+@property(nonatomic, readonly) BTCAmount sendingAmount;
 
 - (NSString*) debugBalanceDescription;
 

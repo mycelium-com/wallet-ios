@@ -24,7 +24,7 @@
 @property(nonatomic) NSString* defaultAddressLabel;
 
 // If not zero, placed as a default amount in the amount field.
-@property(nonatomic) BTCSatoshi defaultAmount;
+@property(nonatomic) BTCAmount defaultAmount;
 
 // If YES, default amount is set to use all funds.
 @property(nonatomic) BOOL prefillAllFunds;

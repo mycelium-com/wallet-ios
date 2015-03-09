@@ -5,7 +5,7 @@
 #import "BTCSignatureHashType.h"
 
 static const uint32_t BTCTransactionCurrentVersion = 1;
-static const BTCSatoshi BTCTransactionDefaultFeeRate = 10000; // 10K satoshis per 1000 bytes
+static const BTCAmount BTCTransactionDefaultFeeRate = 10000; // 10K satoshis per 1000 bytes
 
 
 @class BTCScript;
@@ -15,12 +15,12 @@ static const BTCSatoshi BTCTransactionDefaultFeeRate = 10000; // 10K satoshis pe
 /*!
  * Converts string transaction ID (reversed tx hash in hex format) to transaction hash.
  */
-NSData* BTCTransactionHashFromID(NSString* txid);
+NSData* BTCTransactionHashFromID(NSString* txid) DEPRECATED_ATTRIBUTE;
 
 /*!
  * Converts hash of the transaction to its string ID (reversed tx hash in hex format).
  */
-NSString* BTCTransactionIDFromHash(NSData* txhash);
+NSString* BTCTransactionIDFromHash(NSData* txhash) DEPRECATED_ATTRIBUTE;
 
 
 /*!
@@ -49,9 +49,6 @@ NSString* BTCTransactionIDFromHash(NSData* txhash);
 // Array of BTCTransactionOutput objects
 @property(nonatomic) NSArray* outputs;
 
-// Binary representation on tx ready to be sent over the wire (aka "payload")
-@property(nonatomic, readonly) NSData* data;
-
 // Version. Default is 1.
 @property(nonatomic) uint32_t version;
 
@@ -59,8 +56,28 @@ NSString* BTCTransactionIDFromHash(NSData* txhash);
 // Default is 0.
 @property(nonatomic) uint32_t lockTime; // aka "lock_time"
 
-// Informational property, could be set by some APIs that fetch transactions.
-// Note: unconfirmed transactions may be marked with -1 block height.
+// Binary representation on tx ready to be sent over the wire (aka "payload")
+@property(nonatomic, readonly) NSData* data;
+
+// Binary representiation in hex.
+@property(nonatomic, readonly) NSString* hex;
+
+
+// Informational properties
+// ------------------------
+// These are set by external APIs such as Chain.com.
+
+
+// Hash of the block in which transaction is included.
+// Default is nil.
+@property(nonatomic) NSData* blockHash;
+
+// ID of the block in which transaction is included.
+// Default is nil.
+@property(nonatomic) NSString* blockID;
+
+// Height of the block in which this transaction is included.
+// Unconfirmed transactions may be marked with -1 block height.
 // Default is 0.
 @property(nonatomic) NSInteger blockHeight;
 
@@ -71,22 +88,41 @@ NSString* BTCTransactionIDFromHash(NSData* txhash);
 // Number of confirmations. Default is NSNotFound.
 @property(nonatomic) NSUInteger confirmations;
 
+// Mining fee paid by this transaction.
+// If set, `inputs_amount` is updated as (`outputs_amount` + `fee`).
+// Default is -1.
+@property(nonatomic) BTCAmount fee;
+
+// If available, returns total amount of all inputs.
+// If set, `fee` is updated as (`inputsAmount` - `outputsAmount`).
+// Default is -1.
+@property(nonatomic) BTCAmount inputsAmount;
+
+// Total amount on all outputs (not including fees).
+// Always available since outputs contain their amounts.
+@property(nonatomic, readonly) BTCAmount outputsAmount;
+
 // Arbitrary information attached to this instance.
 // The reference is copied when this instance is copied.
 // Default is nil.
 @property(nonatomic) NSDictionary* userInfo;
 
+// Returns a dictionary representation suitable for encoding in JSON or Plist.
+@property(nonatomic, readonly) NSDictionary* dictionary;
+
+- (NSDictionary*) dictionaryRepresentation DEPRECATED_ATTRIBUTE;
+
 // Parses tx from data buffer.
 - (id) initWithData:(NSData*)data;
+
+// Parses tx from hex string.
+- (id) initWithHex:(NSString*)hex;
 
 // Parses input stream (useful when parsing many transactions from a single source, e.g. a block).
 - (id) initWithStream:(NSInputStream*)stream;
 
 // Constructs transaction from its dictionary representation
 - (id) initWithDictionary:(NSDictionary*)dictionary;
-
-// Returns a dictionary representation suitable for encoding in JSON or Plist.
-- (NSDictionary*) dictionaryRepresentation;
 
 // Hash for signing a transaction.
 // You should supply the output script of the previous transaction, desired hash type and input index in this transaction.
@@ -105,35 +141,35 @@ NSString* BTCTransactionIDFromHash(NSData* txhash);
 - (void) removeAllOutputs;
 
 // Returns YES if this txin generates new coins.
-- (BOOL) isCoinbase;
+@property(nonatomic, readonly) BOOL isCoinbase;
 
 // Computes estimated fee for this tx size using default fee rate.
 // @see BTCTransactionDefaultFeeRate.
-- (BTCSatoshi) estimatedFee;
+@property(nonatomic, readonly) BTCAmount estimatedFee;
 
 // Computes estimated fee for this tx size using specified fee rate (satoshis per 1000 bytes).
-- (BTCSatoshi) estimatedFeeWithRate:(BTCSatoshi)feePerK;
+- (BTCAmount) estimatedFeeWithRate:(BTCAmount)feePerK;
 
 // Computes estimated fee for the given tx size using specified fee rate (satoshis per 1000 bytes).
-+ (BTCSatoshi) estimateFeeForSize:(NSInteger)txsize feeRate:(BTCSatoshi)feePerK;
++ (BTCAmount) estimateFeeForSize:(NSInteger)txsize feeRate:(BTCAmount)feePerK;
 
 
 // These fee methods need to be reviewed. They are for validating incoming transactions, not for
 // calculating a fee for a new transaction.
 
 // Minimum fee to relay the transaction
-- (BTCSatoshi) minimumRelayFee;
+- (BTCAmount) minimumRelayFee;
 
 // Minimum fee to send the transaction
-- (BTCSatoshi) minimumSendFee;
+- (BTCAmount) minimumSendFee;
 
 // Minimum base fee to send a transaction.
-+ (BTCSatoshi) minimumFee;
-+ (void) setMinimumFee:(BTCSatoshi)fee;
++ (BTCAmount) minimumFee;
++ (void) setMinimumFee:(BTCAmount)fee;
 
 // Minimum base fee to relay a transaction.
-+ (BTCSatoshi) minimumRelayFee;
-+ (void) setMinimumRelayFee:(BTCSatoshi)fee;
++ (BTCAmount) minimumRelayFee;
++ (void) setMinimumRelayFee:(BTCAmount)fee;
 
 
 @end

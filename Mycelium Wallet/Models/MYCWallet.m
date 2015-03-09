@@ -201,7 +201,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         {
             _currencyConverter = [[BTCCurrencyConverter alloc] init];
             _currencyConverter.currencyCode = @"USD";
-            _currencyConverter.marketName = @"Bitstamp";
+            _currencyConverter.sourceName = @"Bitstamp";
             _currencyConverter.averageRate = [NSDecimalNumber zero];
             _currencyConverter.date = [NSDate dateWithTimeIntervalSince1970:0];
         }
@@ -582,7 +582,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
                                             [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"MYCWalletCurrencyRateUpdateDate"];
 
                                             self.currencyConverter.averageRate = btcPrice;
-                                            self.currencyConverter.marketName = marketName;
+                                            self.currencyConverter.sourceName = marketName;
                                             if (date) self.currencyConverter.date = date;
                                             self.currencyConverter.nativeCurrencyCode = nativeCurrencyCode ?: self.currencyConverter.currencyCode;
 
@@ -711,7 +711,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
             // Bad transaction rejected. Return error and do nothing else.
             if (status == MYCBroadcastStatusBadTransaction)
             {
-                MYCError(@"Cannot broadcast transaction: %@. Error: %@. Raw hex: %@", tx.transactionID, error, BTCHexStringFromData(tx.data));
+                MYCError(@"Cannot broadcast transaction: %@. Error: %@. Raw hex: %@", tx.transactionID, error, BTCHexFromData(tx.data));
                 if (completion) completion(NO, NO, error);
                 return;
             }
@@ -819,7 +819,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
                 }
                 else
                 {
-                    MYCLog(@"MYCWallet: removed unspent output (now spent): %@:%@", BTCTransactionIDFromHash(mout.transactionOutput.transactionHash), @(mout.transactionOutput.index));
+                    MYCLog(@"MYCWallet: removed unspent output (now spent): %@:%@", BTCIDFromHash(mout.transactionOutput.transactionHash), @(mout.transactionOutput.index));
                 }
             }
         }
@@ -854,7 +854,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
                 }
                 else
                 {
-                    MYCLog(@"MYCWallet: added new unspent output (from new transaction): %@:%@", BTCTransactionIDFromHash(txout.transactionHash), @(txout.index));
+                    MYCLog(@"MYCWallet: added new unspent output (from new transaction): %@:%@", BTCIDFromHash(txout.transactionHash), @(txout.index));
                 }
             }
         }

@@ -115,22 +115,22 @@
     return [self.wallet addressForKey:[self.internalKeychain keyAtIndex:self.internalKeyIndex]];
 }
 
-- (BTCSatoshi) unconfirmedAmount
+- (BTCAmount) unconfirmedAmount
 {
     return self.confirmedAmount + self.pendingChangeAmount + self.pendingReceivedAmount - self.pendingSentAmount;
 }
 
-- (BTCSatoshi) spendableAmount
+- (BTCAmount) spendableAmount
 {
     return self.confirmedAmount + self.pendingChangeAmount;
 }
 
-- (BTCSatoshi) receivingAmount
+- (BTCAmount) receivingAmount
 {
     return self.pendingReceivedAmount;
 }
 
-- (BTCSatoshi) sendingAmount
+- (BTCAmount) sendingAmount
 {
     return self.pendingSentAmount - self.pendingChangeAmount;
 }

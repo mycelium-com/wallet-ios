@@ -89,15 +89,26 @@ typedef NS_ENUM(NSInteger, BTCCurrencyConverterMode) {
 
 /*!
  * Code of the fiat currency used by exchange natively.
- * Typically, it is the same as `currencyCode`, but may differ if, 
+ * Typically, it is the same as `currencyCode`, but may differ if,
  * for instance, prices are expressed in USD, but exchange operates in EUR.
  */
 @property(nonatomic) NSString* nativeCurrencyCode;
 
 /*!
  * Name of the exchange/market that provides this exchange rate.
+ * Deprecated. Use sourceName instead.
  */
-@property(nonatomic) NSString* marketName;
+@property(nonatomic) NSString* marketName DEPRECATED_ATTRIBUTE;
+
+/*!
+ * Name of the exchange market or price index that provides this exchange rate.
+ */
+@property(nonatomic) NSString* sourceName;
+
+/*!
+ * Serializes state into a plist/json dictionary.
+ */
+@property(nonatomic, readonly) NSDictionary* dictionary;
 
 /*!
  * Serializes state into a plist/json dictionary.
@@ -107,16 +118,12 @@ typedef NS_ENUM(NSInteger, BTCCurrencyConverterMode) {
 /*!
  * Converts fiat amount to bitcoin amount in satoshis using specified mode.
  */
-- (BTCSatoshi) bitcoinFromFiat:(NSDecimalNumber*)fiatAmount;
+- (BTCAmount) bitcoinFromFiat:(NSDecimalNumber*)fiatAmount;
 
 /*!
  * Converts bitcoin amount to fiat amount using specified mode.
  */
-- (NSDecimalNumber*) fiatFromBitcoin:(BTCSatoshi)satoshis;
+- (NSDecimalNumber*) fiatFromBitcoin:(BTCAmount)satoshis;
 
-/*!
- * Serializes state into a plist/json dictionary.
- */
-- (NSDictionary*) dictionary;
 
 @end

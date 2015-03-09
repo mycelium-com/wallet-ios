@@ -88,7 +88,7 @@
             BTCNumberFormatter* fmt = [[MYCWallet currentWallet].btcFormatter copy];
             fmt.bitcoinUnit = unit;
 
-            BTCSatoshi amount = currentAccount.confirmedAmount;
+            BTCAmount amount = currentAccount.confirmedAmount;
             if (amount == 0) amount = 123456789; // sample amount in case wallet is empty.
 
             BTCNumberFormatter* fmt2 = [fmt copy];

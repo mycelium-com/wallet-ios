@@ -39,12 +39,12 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 
 - (NSString*) transactionID
 {
-    return BTCTransactionIDFromHash(self.transactionHash);
+    return BTCIDFromHash(self.transactionHash);
 }
 
 - (void) setTransactionID:(NSString *)transactionID
 {
-    self.transactionHash = BTCTransactionHashFromID(transactionID);
+    self.transactionHash = BTCHashFromID(transactionID);
 }
 
 - (NSDate *) date
@@ -78,7 +78,7 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 
 - (NSString*) dataHex
 {
-    return BTCHexStringFromData(self.data);
+    return BTCHexFromData(self.data);
 }
 
 

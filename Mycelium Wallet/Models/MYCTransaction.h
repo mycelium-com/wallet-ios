@@ -27,10 +27,10 @@
 
 // Details (see `-loadDetailsFromDatabase:`)
 @property(nonatomic) NSString* label; // Label or address.
-@property(nonatomic) BTCSatoshi amountTransferred; // Negative if spent
-@property(nonatomic) BTCSatoshi inputsAmount;
-@property(nonatomic) BTCSatoshi outputsAmount;
-@property(nonatomic) BTCSatoshi fee; // Mining fee spent by this transaction
+@property(nonatomic) BTCAmount amountTransferred; // Negative if spent
+@property(nonatomic) BTCAmount inputsAmount;
+@property(nonatomic) BTCAmount outputsAmount;
+@property(nonatomic) BTCAmount fee; // Mining fee spent by this transaction
 @property(nonatomic) NSArray* transactionInputs; // BTCTransactionInput instances with userInfo @"value" and @"address"
 @property(nonatomic) NSArray* transactionOutputs; // BTCTransactionOutput instances directly from `-transaction`.
 

@@ -36,7 +36,7 @@
     static BTCBigNumber* order;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        order = [[BTCBigNumber alloc] initWithUnsignedData:BTCDataWithHexCString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141")];
+        order = [[BTCBigNumber alloc] initWithUnsignedBigEndian:BTCDataWithHexCString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141")];
     });
     return order;
 }
@@ -266,7 +266,7 @@
 
 - (NSString*) description
 {
-    return [NSString stringWithFormat:@"<BTCCurvePoint:0x%p %@>", self, BTCHexStringFromData(self.data)];
+    return [NSString stringWithFormat:@"<BTCCurvePoint:0x%p %@>", self, BTCHexFromData(self.data)];
 }
 
 

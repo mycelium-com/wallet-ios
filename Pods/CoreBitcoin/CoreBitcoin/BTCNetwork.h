@@ -7,6 +7,7 @@
 @class BTCBlock;
 @interface BTCNetwork : NSObject <NSCopying>
 
+- (id) initWithName:(NSString*)name;
 
 // Available networks
 
@@ -14,7 +15,7 @@
 + (BTCNetwork*) mainnet;
 
 // Testnet3 (current testnet), singleton instance.
-+ (BTCNetwork*) testnet3;
++ (BTCNetwork*) testnet;
 
 
 
@@ -24,7 +25,16 @@
 
 
 // Returns YES if this network is testnet3 (used to tweak certain validation rules).
-- (BOOL) isTestnet;
+@property(nonatomic, readonly) BOOL isTestnet;
+
+// Returns opposite of `isTestnet`.
+@property(nonatomic, readonly) BOOL isMainnet;
+
+// Name of the network ("mainnet", "testnet3" etc)
+@property(nonatomic, copy) NSString* name;
+
+// Name of the network for BIP70 Payment Details ("main", "test" or some custom name used in `-initWithName:`)
+@property(nonatomic, copy) NSString* paymentProtocolName;
 
 // Hash of the genesis block.
 @property(nonatomic) NSData* genesisBlockHash;

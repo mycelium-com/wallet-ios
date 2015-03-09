@@ -179,7 +179,7 @@
     
     {
         [strings addObject:[NSString stringWithFormat:NSLocalizedString(@"%@: %@", @""),
-                                 self.wallet.currencyConverter.marketName,
+                                 self.wallet.currencyConverter.sourceName,
                             [self.wallet.fiatFormatter stringFromNumber:self.wallet.currencyConverter.averageRate]]];
     }
 

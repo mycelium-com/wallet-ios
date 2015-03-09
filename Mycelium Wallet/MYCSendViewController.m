@@ -16,16 +16,16 @@
 
 #if 0 && DEBUG
 #warning DEBUG: Zero fees
-static BTCSatoshi MYCFeeRate = 0;
+static BTCAmount MYCFeeRate = 0;
 #else
-static BTCSatoshi MYCFeeRate = 10000;
+static BTCAmount MYCFeeRate = 10000;
 #endif
 
 @interface MYCSendViewController () <UITextFieldDelegate, BTCTransactionBuilderDataSource>
 
 @property(nonatomic,readonly) MYCWallet* wallet;
 
-@property(nonatomic) BTCSatoshi spendingAmount;
+@property(nonatomic) BTCAmount spendingAmount;
 @property(nonatomic) BTCAddress* spendingAddress;
 
 @property(nonatomic) BOOL addressValid;
@@ -217,7 +217,7 @@ static BTCSatoshi MYCFeeRate = 10000;
     }
 }
 
-- (void) setSpendingAmount:(BTCSatoshi)spendingAmount
+- (void) setSpendingAmount:(BTCAmount)spendingAmount
 {
     _spendingAmount = spendingAmount;
     [self updateAmounts];
@@ -303,7 +303,7 @@ static BTCSatoshi MYCFeeRate = 10000;
             {
                 [self.view endEditing:YES];
 
-                MYCLog(@"signed tx: %@", BTCHexStringFromData(result.transaction.data));
+                MYCLog(@"signed tx: %@", BTCHexFromData(result.transaction.data));
                 MYCLog(@"signed tx base64: %@", [result.transaction.data base64EncodedStringWithOptions:0]);
 
                 [self beginSpinning];
@@ -501,7 +501,7 @@ static BTCSatoshi MYCFeeRate = 10000;
 
             // 1. Try to read a valid address.
             BTCAddress* address = [[BTCAddress addressWithBase58String:message] publicAddress];
-            BTCSatoshi amount = -1;
+            BTCAmount amount = -1;
 
             if (!address)
             {
@@ -630,7 +630,7 @@ static BTCSatoshi MYCFeeRate = 10000;
 
 
 
-- (NSString*) formatAmountInSelectedCurrency:(BTCSatoshi)amount
+- (NSString*) formatAmountInSelectedCurrency:(BTCAmount)amount
 {
     if (self.fiatInput)
     {
@@ -642,12 +642,12 @@ static BTCSatoshi MYCFeeRate = 10000;
 
 - (void) updateTotalBalance
 {
-    BTCSatoshi spendableAmount = [self spendableAmount];
+    BTCAmount spendableAmount = [self spendableAmount];
     self.allFundsLabel.text = [self formatAmountInSelectedCurrency:spendableAmount];
     self.allFundsButton.enabled = (spendableAmount > 0);
 }
 
-- (BTCSatoshi) spendableAmount
+- (BTCAmount) spendableAmount
 {
     if (self.account)
     {
@@ -655,7 +655,7 @@ static BTCSatoshi MYCFeeRate = 10000;
     }
     else if (self.unspentOutputs)
     {
-        BTCSatoshi balance = 0;
+        BTCAmount balance = 0;
         for (BTCTransactionOutput* txout in self.unspentOutputs)
         {
             balance += txout.value;

@@ -27,12 +27,12 @@
 
 - (NSString*) transactionID
 {
-    return BTCTransactionIDFromHash(self.transactionHash);
+    return BTCIDFromHash(self.transactionHash);
 }
 
 - (NSString*) dataHex
 {
-    return BTCHexStringFromData(self.data);
+    return BTCHexFromData(self.data);
 }
 
 

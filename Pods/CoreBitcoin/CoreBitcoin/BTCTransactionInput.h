@@ -26,7 +26,12 @@
 @property(nonatomic) BTCOutpoint* outpoint;
 
 // Script that proves ownership of the previous transaction output.
+// This property is nil for coinbase inputs. See `coinbaseData` for raw binary data.
 @property(nonatomic) BTCScript* signatureScript;
+
+// Raw coinbase data if this input is coinbase.
+// If `coinbaseData` is not nil, then `signatureScript` is nil.
+@property(nonatomic) NSData* coinbaseData;
 
 // Input sequence. Default is maximum value 0xFFFFFFFF.
 // Sequence is used to update a timelocked tx stored in memory of the nodes. It is only relevant when tx lockTime > 0.
@@ -36,11 +41,21 @@
 // Serialized binary representation of the txin.
 @property(nonatomic, readonly) NSData* data;
 
+
+// Informational properties
+// ------------------------
+// These are set by external APIs such as Chain.com.
+
+
 // Set when input is added via [tx addInput:input]
 @property(weak, nonatomic) BTCTransaction* transaction;
 
 // Optional reference to a corresponding output, typically an unspent output in a context of building a new transaction.
 @property(nonatomic) BTCTransactionOutput* transactionOutput;
+
+// Value in the corresponding output.
+// Default is transactionOutput.value or -1.
+@property(nonatomic) BTCAmount value;
 
 // Arbitrary information attached to this instance.
 // The reference is copied when this instance is copied.
@@ -58,10 +73,12 @@
 - (id) initWithDictionary:(NSDictionary*)dictionary;
 
 // Returns a dictionary representation suitable for encoding in JSON or Plist.
-- (NSDictionary*) dictionaryRepresentation;
+@property(nonatomic, readonly) NSDictionary* dictionary;
 
 // Returns YES if this txin generates new coins.
-- (BOOL) isCoinbase;
+@property(nonatomic, readonly) BOOL isCoinbase;
+
+- (NSDictionary*) dictionaryRepresentation DEPRECATED_ATTRIBUTE;
 
 @end
 

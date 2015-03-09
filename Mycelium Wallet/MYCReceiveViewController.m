@@ -15,7 +15,7 @@
 
 @property(nonatomic,readonly) MYCWallet* wallet;
 @property(nonatomic) MYCWalletAccount* account;
-@property(nonatomic) BTCSatoshi requestedAmount;
+@property(nonatomic) BTCAmount requestedAmount;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *borderHeightConstraint;
 
@@ -122,7 +122,7 @@
     [self updateAllViews];
 }
 
-- (void) setRequestedAmount:(BTCSatoshi)requestedAmount
+- (void) setRequestedAmount:(BTCAmount)requestedAmount
 {
     _requestedAmount = requestedAmount;
     [self updateAllViews];

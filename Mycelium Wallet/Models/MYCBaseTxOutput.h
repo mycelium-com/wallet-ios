@@ -14,7 +14,7 @@
 @property(nonatomic) NSInteger outpointIndex; // index of this output in its tx
 @property(nonatomic) NSInteger blockHeight;
 @property(nonatomic) NSData* scriptData;
-@property(nonatomic) BTCSatoshi value;
+@property(nonatomic) BTCAmount value;
 @property(nonatomic) BOOL coinbase;
 @property(nonatomic) NSInteger accountIndex; // 0, 1, 2, ...
 @property(nonatomic) NSInteger change; // 0 or 1 according to BIP44.

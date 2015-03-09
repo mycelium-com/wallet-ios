@@ -71,6 +71,16 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
     return self;
 }
 
+- (id) initWithWIF:(NSString*)wifString
+{
+    BTCPrivateKeyAddress* addr = [BTCPrivateKeyAddress addressWithBase58String:wifString];
+    if (![addr isKindOfClass:[BTCPrivateKeyAddress class]])
+    {
+        return nil;
+    }
+    return [self initWithPrivateKeyAddress:addr];
+}
+
 - (id) initWithDERPrivateKey:(NSData*)DERPrivateKey
 {
     if (self = [super init])
@@ -135,6 +145,11 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
 }
 
 // Same as above, but also appends a hash type byte to the signature.
+- (NSData*)signatureForHash:(NSData*)hash hashType:(BTCSignatureHashType)hashType
+{
+   return [self signatureForHash:hash appendHashType:YES hashType:hashType];
+}
+
 - (NSData*)signatureForHash:(NSData*)hash withHashType:(BTCSignatureHashType)hashType
 {
     return [self signatureForHash:hash appendHashType:YES hashType:hashType];
@@ -176,7 +191,7 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
         BTCBigNumber* n = [BTCCurvePoint curveOrder];
 
         NSMutableData* kdata = BTCHMACSHA256(privkeyData, hash);
-        BTCMutableBigNumber* k = [[BTCMutableBigNumber alloc] initWithUnsignedData:kdata];
+        BTCMutableBigNumber* k = [[BTCMutableBigNumber alloc] initWithUnsignedBigEndian:kdata];
         [k mod:n]; // make sure k belongs to [0, n - 1]
         
         BTCDataClear(kdata);
@@ -185,7 +200,7 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
         BTCCurvePoint* K = [[BTCCurvePoint generator] multiply:k];
         BTCBigNumber* Kx = K.x;
         
-        BTCBigNumber* hashBN = [[BTCBigNumber alloc] initWithUnsignedData:hash];
+        BTCBigNumber* hashBN = [[BTCBigNumber alloc] initWithUnsignedBigEndian:hash];
         
         // Compute s = (k^-1)*(h + Kx*privkey)
         
@@ -333,6 +348,7 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
 - (NSMutableData*) privateKey
 {
     CHECK_IF_CLEARED;
+    if (!_key) return nil;
     const BIGNUM *bignum = EC_KEY_get0_private_key(_key);
     if (!bignum) return nil;
     int num_bytes = BN_num_bytes(bignum);
@@ -340,6 +356,18 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
     int copied_bytes = BN_bn2bin(bignum, &data.mutableBytes[32 - num_bytes]);
     if (copied_bytes != num_bytes) return nil;
     return data;
+}
+
+- (NSString*) WIF
+{
+    if (!self.privateKey) return nil;
+    return [self privateKeyAddress].base58String;
+}
+
+- (NSString*) WIFTestnet
+{
+    if (!self.privateKey) return nil;
+    return [self privateKeyAddressTestnet].base58String;
 }
 
 - (void) setPublicKey:(NSData *)publicKey
@@ -460,12 +488,12 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
 
 - (NSString*) description
 {
-    return [NSString stringWithFormat:@"<BTCKey:0x%p %@>", self, BTCHexStringFromData(self.publicKeyCached)];
+    return [NSString stringWithFormat:@"<BTCKey:0x%p %@>", self, BTCHexFromData(self.publicKeyCached)];
 }
 
 - (NSString*) debugDescription
 {
-    return [NSString stringWithFormat:@"<BTCKey:0x%p pubkey:%@ privkey:%@>", self, BTCHexStringFromData(self.publicKeyCached), BTCHexStringFromData(self.privateKey)];
+    return [NSString stringWithFormat:@"<BTCKey:0x%p pubkey:%@ privkey:%@>", self, BTCHexFromData(self.publicKeyCached), BTCHexFromData(self.privateKey)];
 }
 
 
@@ -524,6 +552,14 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
     return [BTCPublicKeyAddress addressWithData:BTCHash160(pubkey)];
 }
 
+- (BTCPublicKeyAddressTestnet*) addressTestnet
+{
+    CHECK_IF_CLEARED;
+    NSData* pubkey = [self publicKeyCached];
+    if (pubkey.length == 0) return nil;
+    return [BTCPublicKeyAddressTestnet addressWithData:BTCHash160(pubkey)];
+}
+
 - (BTCPublicKeyAddress*) compressedPublicKeyAddress
 {
     CHECK_IF_CLEARED;
@@ -543,10 +579,22 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
 - (BTCPrivateKeyAddress*) privateKeyAddress
 {
     CHECK_IF_CLEARED;
-    NSMutableData* privkey = [self privateKey];
+    NSMutableData* privkey = self.privateKey;
     if (privkey.length == 0) return nil;
     
-    BTCPrivateKeyAddress* result = [BTCPrivateKeyAddress addressWithData:privkey publicKeyCompressed:[self isPublicKeyCompressed]];
+    BTCPrivateKeyAddress* result = [BTCPrivateKeyAddress addressWithData:privkey publicKeyCompressed:self.isPublicKeyCompressed];
+    BTCDataClear(privkey);
+    return result;
+}
+
+
+- (BTCPrivateKeyAddressTestnet*) privateKeyAddressTestnet
+{
+    CHECK_IF_CLEARED;
+    NSMutableData* privkey = self.privateKey;
+    if (privkey.length == 0) return nil;
+
+    BTCPrivateKeyAddressTestnet* result = [BTCPrivateKeyAddressTestnet addressWithData:privkey publicKeyCompressed:self.isPublicKeyCompressed];
     BTCDataClear(privkey);
     return result;
 }
@@ -665,6 +713,24 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
 }
 
 
+// Multiplies a public key of the receiver with a given private key and returns resulting curve point as BTCKey object (pubkey only).
+// Pubkey compression flag is the same as on receiver.
+- (BTCKey*) diffieHellmanWithPrivateKey:(BTCKey*)privkey {
+
+    BTCCurvePoint* curvePoint = self.curvePoint;
+    BTCBigNumber* pk = [[BTCBigNumber alloc] initWithUnsignedBigEndian:privkey.privateKey];
+
+    NSAssert(curvePoint, @"sanity check");
+    NSAssert(pk, @"sanity check");
+
+    // D-H happens here.
+    [curvePoint multiply:pk];
+
+    BTCKey* dhKey = [[BTCKey alloc] initWithCurvePoint:curvePoint];
+    dhKey.publicKeyCompressed = self.publicKeyCompressed;
+
+    return dhKey;
+}
 
 
 
@@ -874,8 +940,8 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
     
     if (S[0] & 0x80)
     {
-        return NO;
         if (errorOut) *errorOut = [NSError errorWithDomain:BTCErrorDomain code:BTCErrorNonCanonicalScriptSignature userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Non-canonical signature: S value is negative", @"")}];
+        return NO;
     }
     
     if (lenS > 1 && (S[0] == 0x00) && !(S[1] & 0x80))

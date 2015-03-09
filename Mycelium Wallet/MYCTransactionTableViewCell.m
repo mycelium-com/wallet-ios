@@ -51,7 +51,7 @@
     MYCWallet* wallet = [MYCWallet currentWallet];
 
     self.amountLabel.text = _formattedAmount ?: @"0.00";
-    BTCSatoshi amount = self.transaction.amountTransferred;
+    BTCAmount amount = self.transaction.amountTransferred;
     UIColor* amountColor = (amount > 0 ? _greenColor : _redColor);
     self.amountLabel.textColor = amountColor;
 
