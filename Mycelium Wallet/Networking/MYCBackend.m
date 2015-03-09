@@ -46,6 +46,7 @@
                                   [NSURL URLWithString:@"https://mws2.mycelium.com/wapi"],
                                   [NSURL URLWithString:@"https://88.198.17.7/wapi"],
                                   ];
+        instance.currentEndpointURL = instance.endpointURLs.firstObject;
         instance.SSLFingerprint = BTCDataFromHex([@"B3:42:65:33:40:F5:B9:1B:DA:A2:C8:7A:F5:4C:7C:5D:A9:63:C4:C3" stringByReplacingOccurrencesOfString:@":" withString:@""]);
     });
     return instance;
@@ -64,6 +65,7 @@
                         [NSURL URLWithString:@"https://node3.mycelium.com/wapitestnet"],
                         [NSURL URLWithString:@"https://144.76.165.115/wapitestnet"],
                         ];
+        instance.currentEndpointURL = instance.endpointURLs.firstObject;
         instance.SSLFingerprint = BTCDataFromHex([@"E5:70:76:B2:67:3A:89:44:7A:48:14:81:DF:BD:A0:58:C8:82:72:4F" stringByReplacingOccurrencesOfString:@":" withString:@""]);
     });
     return instance;

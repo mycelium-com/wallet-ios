@@ -34,6 +34,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *receiveButton;
 @property (weak, nonatomic) IBOutlet UIButton *backupButton;
 
+@property (weak, nonatomic) IBOutlet UIButton *currencyButton;
+
 @end
 
 @implementation MYCBalanceViewController
