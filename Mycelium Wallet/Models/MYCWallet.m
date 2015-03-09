@@ -17,6 +17,8 @@
 #import "MYCTransaction.h"
 #import "MYCParentOutput.h"
 #import "MYCUnspentOutput.h"
+#import "MYCCurrencyFormatter.h"
+#import "BTCPriceSourceMycelium.h"
 
 NSString* const MYCWalletFormatterDidUpdateNotification = @"MYCWalletFormatterDidUpdateNotification";
 NSString* const MYCWalletCurrencyConverterDidUpdateNotification = @"MYCWalletCurrencyConverterDidUpdateNotification";
@@ -39,6 +41,9 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     MYCDatabase* _database;
     int _updatingExchangeRate;
     NSMutableArray* _accountUpdateOperations;
+    NSArray* _currencyFormatters;
+    MYCCurrencyFormatter* _primaryCurrencyFormatter;
+    MYCCurrencyFormatter* _secondaryCurrencyFormatter;
 
     MYCUnlockedWallet* _unlockedWallet; // allows nesting calls with the same unlockedWallet.
 }
@@ -226,6 +231,146 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     [[NSUserDefaults standardUserDefaults] setInteger:pc forKey:@"MYCWalletPreferredCurrency"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
+
+- (NSArray*) currencyFormatters {
+    if (!_currencyFormatters) {
+        _currencyFormatters =  @[
+                                 [[MYCCurrencyFormatter alloc] initWithBTCFormatter:
+                                  [[BTCNumberFormatter alloc] initWithBitcoinUnit:BTCNumberFormatterUnitBTC symbolStyle:BTCNumberFormatterSymbolStyleSymbol]],
+                                 [[MYCCurrencyFormatter alloc] initWithBTCFormatter:
+                                  [[BTCNumberFormatter alloc] initWithBitcoinUnit:BTCNumberFormatterUnitMilliBTC symbolStyle:BTCNumberFormatterSymbolStyleSymbol]],
+                                 [[MYCCurrencyFormatter alloc] initWithBTCFormatter:
+                                  [[BTCNumberFormatter alloc] initWithBitcoinUnit:BTCNumberFormatterUnitBit symbolStyle:BTCNumberFormatterSymbolStyleSymbol]],
+//                                 
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"JPY"]],
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"USD"]],
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"EUR"]],
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"CNY"]],
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"GBP"]],
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"AUD"]],
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"CAD"]],
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"CHF"]],
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"NZD"]],
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"RUB"]],
+//                                 [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:[self persistentCurrencyConverterWithCode:@"UAH"]],
+                                 ];
+    }
+    return _currencyFormatters;
+}
+
+- (BTCCurrencyConverter*) persistentCurrencyConverterWithCode:(NSString*)code {
+    
+    NSDictionary* cachedConverterDict = [[NSUserDefaults standardUserDefaults] objectForKey:[self formatterKeyForCurrencyCode:code]];
+    
+    BTCCurrencyConverter* currencyConverter = nil;
+    
+    if (cachedConverterDict) {
+        currencyConverter = [[BTCCurrencyConverter alloc] initWithDictionary:cachedConverterDict];
+    } else {
+        currencyConverter = [[BTCCurrencyConverter alloc] init];
+        currencyConverter.currencyCode = code;
+    }
+    return currencyConverter;
+}
+
+- (NSString*) reformatString:(NSString*)amount forCurrency:(NSString*)currencyCode {
+    if (!currencyCode) return nil;
+    if (!amount) return nil;
+    for (MYCCurrencyFormatter* fmt in self.currencyFormatters) {
+        if ([fmt.currencyCode isEqual:currencyCode]) {
+            return [fmt.fiatReformatter stringFromNumber:[NSDecimalNumber decimalNumberWithString:amount]];
+        }
+    }
+    return nil;
+}
+
+- (void) updateCurrencyFormatter:(MYCCurrencyFormatter*)formatter completionHandler:(void(^)(BOOL result, NSError* error))completionHandler {
+    if (formatter.isBitcoinFormatter) {
+        if (completionHandler) completionHandler(YES, nil);
+        return;
+    }
+    
+    BTCPriceSourceMycelium* source = [[BTCPriceSourceMycelium alloc] init];
+    [source loadPriceForCurrency:formatter.currencyCode completionHandler:^(BTCPriceSourceResult *result, NSError *error) {
+        
+        if (!result) {
+            if (completionHandler) completionHandler(NO, error);
+            return;
+        }
+        
+        formatter.currencyConverter.averageRate = result.averageRate;
+        formatter.currencyConverter.date = result.date;
+        formatter.currencyConverter.sourceName = source.name;
+        
+        [self saveCurrencyFormatter:formatter];
+        if (completionHandler) completionHandler(YES, nil);
+        [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletCurrencyConverterDidUpdateNotification object:formatter];
+    }];
+}
+
+- (void) saveCurrencyFormatter:(MYCCurrencyFormatter*)formatter {
+    if (formatter.isFiatFormatter) {
+        NSDictionary* dict = formatter.currencyConverter.dictionary;
+        if (dict) {
+            [[NSUserDefaults standardUserDefaults] setObject:dict forKey:[self formatterKeyForCurrencyCode:formatter.currencyCode]];
+        }
+    }
+}
+
+- (NSString*) formatterKeyForCurrencyCode:(NSString*)code {
+    return [NSString stringWithFormat:@"MYCCurrencyFormatter%@", code];
+}
+
+- (void) selectPrimaryCurrencyFormatter:(MYCCurrencyFormatter*)formatter {
+    
+    if ([formatter.currencyCode isEqual:_primaryCurrencyFormatter.currencyCode]) {
+        return;
+    }
+    
+    if (formatter.isFiatFormatter) {
+        _secondaryCurrencyFormatter = self.btcCurrencyFormatter;
+    }
+    if (formatter.isBitcoinFormatter) {
+        _secondaryCurrencyFormatter = self.fiatCurrencyFormatter;
+    }
+    
+    _primaryCurrencyFormatter = formatter;
+    
+    [self saveCurrencyFormatterSelection];
+    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletCurrencyConverterDidUpdateNotification object:formatter];
+}
+
+- (void) saveCurrencyFormatterSelection {
+    [[NSUserDefaults standardUserDefaults] setObject:_primaryCurrencyFormatter.dictionary ?: @{} forKey:@"MYCWalletPrimaryCurrencyFormatter"];
+    [[NSUserDefaults standardUserDefaults] setObject:_secondaryCurrencyFormatter.dictionary ?: @{} forKey:@"MYCWalletSecondaryCurrencyFormatter"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void) loadCurrencyFormatterSelection {
+    NSDictionary* primaryDict = [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletPrimaryCurrencyFormatterV2"];
+    NSDictionary* secondaryDict = [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletSecondaryCurrencyFormatterV2"];
+    
+    _primaryCurrencyFormatter = [[MYCCurrencyFormatter alloc] initWithDictionary:primaryDict];
+    _secondaryCurrencyFormatter = [[MYCCurrencyFormatter alloc] initWithDictionary:secondaryDict];
+    
+    if (!_primaryCurrencyFormatter || !_secondaryCurrencyFormatter) {
+        
+        self.currencyConverter = [[BTCCurrencyConverter alloc] init];
+        self.currencyConverter.currencyCode = [self defaultFiatCurrency];
+        
+        _primaryCurrencyFormatter = [[MYCCurrencyFormatter alloc] initWithCurrencyConverter:self.currencyConverter];
+        _secondaryCurrencyFormatter = [[MYCCurrencyFormatter alloc] initWithBTCFormatter:[self defaultBitcoinFormatter]];
+    }
+}
+
+- (NSString*) defaultFiatCurrency {
+    return @"USD";
+}
+
+- (BTCNumberFormatter*) defaultBitcoinFormatter {
+    return [[BTCNumberFormatter alloc] initWithBitcoinUnit:BTCNumberFormatterUnitBTC symbolStyle:BTCNumberFormatterSymbolStyleSymbol];
+}
+
 
 // Returns YES if wallet is fully initialized and stored on disk.
 - (BOOL) isStored

@@ -10,6 +10,7 @@
 #import "MYCSendViewController.h"
 #import "MYCReceiveViewController.h"
 #import "MYCBackupViewController.h"
+#import "MYCCurrenciesViewController.h"
 
 #import "MYCAppDelegate.h"
 #import "MYCWallet.h"
@@ -324,6 +325,13 @@
         return YES;
     }
     return NO;
+}
+
+- (IBAction) showCurrencies:(id)sender
+{
+    MYCCurrenciesViewController* currenciesVC = [[MYCCurrenciesViewController alloc] initWithNibName:nil bundle:nil];
+    UINavigationController* navC = [[UINavigationController alloc] initWithRootViewController:currenciesVC];
+    [self presentViewController:navC animated:YES completion:nil];
 }
 
 - (IBAction) refresh:(id)sender

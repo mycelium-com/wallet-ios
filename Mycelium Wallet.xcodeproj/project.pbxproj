@@ -69,6 +69,10 @@
 		20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */; };
 		20C2D82C19EBD6CB0022CAAC /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82B19EBD6CB0022CAAC /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		311D631D1AADCDD500798450 /* BTCPriceSourceMycelium.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D631C1AADCDD500798450 /* BTCPriceSourceMycelium.m */; };
+		311D63221AADD72900798450 /* MYCCurrenciesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D63201AADD72900798450 /* MYCCurrenciesViewController.m */; };
+		311D63261AADD8AF00798450 /* MYCCurrencyFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D63251AADD8AF00798450 /* MYCCurrencyFormatter.m */; };
+		311D63291AADE8F700798450 /* MYCCurrencyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D63281AADE8F700798450 /* MYCCurrencyTableViewCell.m */; };
+		311D632B1AADEE6600798450 /* MYCCurrencyTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 311D632A1AADEE6600798450 /* MYCCurrencyTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -189,6 +193,13 @@
 		20C2D82B19EBD6CB0022CAAC /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		311D631B1AADCDD500798450 /* BTCPriceSourceMycelium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCPriceSourceMycelium.h; sourceTree = "<group>"; };
 		311D631C1AADCDD500798450 /* BTCPriceSourceMycelium.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCPriceSourceMycelium.m; sourceTree = "<group>"; };
+		311D631F1AADD72900798450 /* MYCCurrenciesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCCurrenciesViewController.h; sourceTree = "<group>"; };
+		311D63201AADD72900798450 /* MYCCurrenciesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCCurrenciesViewController.m; sourceTree = "<group>"; };
+		311D63241AADD8AF00798450 /* MYCCurrencyFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCCurrencyFormatter.h; path = Models/MYCCurrencyFormatter.h; sourceTree = "<group>"; };
+		311D63251AADD8AF00798450 /* MYCCurrencyFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCCurrencyFormatter.m; path = Models/MYCCurrencyFormatter.m; sourceTree = "<group>"; };
+		311D63271AADE8F700798450 /* MYCCurrencyTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCCurrencyTableViewCell.h; sourceTree = "<group>"; };
+		311D63281AADE8F700798450 /* MYCCurrencyTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCCurrencyTableViewCell.m; sourceTree = "<group>"; };
+		311D632A1AADEE6600798450 /* MYCCurrencyTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCCurrencyTableViewCell.xib; sourceTree = "<group>"; };
 		677B515CE201D7130F53029B /* Pods-Mycelium Wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mycelium Wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAB8F4EBE2F75284722E9193 /* Pods-Mycelium Wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.debug.xcconfig"; sourceTree = "<group>"; };
@@ -364,6 +375,7 @@
 				208FFBC019D984B800D4C159 /* Networking */,
 				208FFBBD19D9848B00D4C159 /* Welcome Views */,
 				208FFBBE19D9849800D4C159 /* Main Views */,
+				311D631E1AADD6CF00798450 /* Currency View */,
 				203AA4A919DC514C00572BD9 /* Send View */,
 				203AA4AF19DC523100572BD9 /* Receive View */,
 				203AA4B519DC53B200572BD9 /* Backup */,
@@ -451,6 +463,8 @@
 				2095C44719FE779900635C85 /* MYCOutgoingTransaction.m */,
 				20203ADA19F665F80085C01F /* MYCDatabaseMigrations.h */,
 				20203ADB19F665F80085C01F /* MYCDatabaseMigrations.m */,
+				311D63241AADD8AF00798450 /* MYCCurrencyFormatter.h */,
+				311D63251AADD8AF00798450 /* MYCCurrencyFormatter.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -495,6 +509,18 @@
 				BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		311D631E1AADD6CF00798450 /* Currency View */ = {
+			isa = PBXGroup;
+			children = (
+				311D631F1AADD72900798450 /* MYCCurrenciesViewController.h */,
+				311D63201AADD72900798450 /* MYCCurrenciesViewController.m */,
+				311D63271AADE8F700798450 /* MYCCurrencyTableViewCell.h */,
+				311D63281AADE8F700798450 /* MYCCurrencyTableViewCell.m */,
+				311D632A1AADEE6600798450 /* MYCCurrencyTableViewCell.xib */,
+			);
+			name = "Currency View";
 			sourceTree = "<group>";
 		};
 		B854AA3614D7CE6D59DB9FA3 /* Pods */ = {
@@ -600,6 +626,7 @@
 				20C0F70019EEAF7300DD0748 /* MYCAccountTableViewCell.xib in Resources */,
 				203AA4B419DC525100572BD9 /* MYCReceiveViewController.xib in Resources */,
 				2064E38819D9A0E400CD81B8 /* MYCAccountsViewController.xib in Resources */,
+				311D632B1AADEE6600798450 /* MYCCurrencyTableViewCell.xib in Resources */,
 				2076471A1A0D080A000F00F2 /* MYCWebViewController.xib in Resources */,
 				208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */,
 				208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */,
@@ -667,6 +694,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				311D63261AADD8AF00798450 /* MYCCurrencyFormatter.m in Sources */,
 				2095C45219FFF52400635C85 /* MYCTransactionDetailsViewController.m in Sources */,
 				20C0F6FF19EEAF7300DD0748 /* MYCAccountTableViewCell.m in Sources */,
 				20C2D82C19EBD6CB0022CAAC /* Reachability.m in Sources */,
@@ -678,6 +706,7 @@
 				203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */,
 				2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */,
 				20203AD619F65E290085C01F /* MYCBaseTxOutput.m in Sources */,
+				311D63221AADD72900798450 /* MYCCurrenciesViewController.m in Sources */,
 				200AAE3C19F9440C0004F908 /* MYCScannerView.m in Sources */,
 				2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */,
 				20C2D81219E3EDB10022CAAC /* MYCDatabase.m in Sources */,
@@ -694,6 +723,7 @@
 				203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */,
 				2095C44C19FF985100635C85 /* MYCTransactionTableViewCell.m in Sources */,
 				200AAE3719F91EE50004F908 /* MYCTextFieldLiveFormatter.m in Sources */,
+				311D63291AADE8F700798450 /* MYCCurrencyTableViewCell.m in Sources */,
 				20C0F70419EEB37D00DD0748 /* MYCAccountViewController.m in Sources */,
 				20C2D7F719E292F80022CAAC /* MYCBackupPageView.m in Sources */,
 				208FFB9519D9802000D4C159 /* main.m in Sources */,

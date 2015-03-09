@@ -33,6 +33,7 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 @class MYCBackend;
 @class MYCWalletAccount;
+@class MYCCurrencyFormatter;
 
 @interface MYCWallet : NSObject
 
@@ -52,6 +53,15 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Set to YES once the user has backed up the wallet.
 @property(nonatomic, getter=isBackedUp) BOOL backedUp;
 
+// Primary and secondary formatters are typically (btc, fiat) or (fiat, btc).
+// When user switches to usd/eur/cny it becomes primary; previous bitcoin formatter (primary or secondary) becomes a secondary one.
+// When user switches to btc/mbtc/bits it becomes primary; previous fiat formatter (primary or secondary) becomes a secondary one.
+@property(nonatomic, readonly) MYCCurrencyFormatter* primaryCurrencyFormatter;
+@property(nonatomic, readonly) MYCCurrencyFormatter* secondaryCurrencyFormatter;
+
+@property(nonatomic, readonly) MYCCurrencyFormatter* fiatCurrencyFormatter;
+@property(nonatomic, readonly) MYCCurrencyFormatter* btcCurrencyFormatter;
+
 // Formatter for bitcoin values.
 // When formatter changes, notification MYCWalletFormatterDidUpdateNotification is posted.
 @property(nonatomic) BTCNumberFormatter* btcFormatter;
@@ -69,6 +79,21 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Currency converter for currently used fiat currency.
 // View controllers post MYCWalletCurrencyConverterDidUpdateNotification when updating this property.
 @property(nonatomic) BTCCurrencyConverter* currencyConverter;
+
+// Array of all supported MYCCurrencyFormatters.
+@property(nonatomic, readonly) NSArray* currencyFormatters;
+
+// E.g. you have "1.23 EUR", it'll be stored as "1.23" and "EUR".
+- (NSString*) reformatString:(NSString*)amount forCurrency:(NSString*)currencyCode;
+
+// Updates exchange rate and sends CNWalletDidUpdateCurrencyNotification (object == formatter).
+- (void) updateCurrencyFormatter:(MYCCurrencyFormatter*)formatter completionHandler:(void(^)(BOOL result, NSError* error))completionHandler;
+
+// Remembers settings in the currency formatter.
+- (void) saveCurrencyFormatter:(MYCCurrencyFormatter*)formatter;
+
+// Selects this formatter as a primary one. Sends CNWalletDidUpdateCurrencyNotification.
+- (void) selectPrimaryCurrencyFormatter:(MYCCurrencyFormatter*)formatter;
 
 // User-selected BTC-or-Fiat.
 @property(nonatomic) MYCWalletPreferredCurrency preferredCurrency;
