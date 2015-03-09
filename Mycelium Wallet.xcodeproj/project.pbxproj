@@ -68,6 +68,7 @@
 		20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */; };
 		20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */; };
 		20C2D82C19EBD6CB0022CAAC /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82B19EBD6CB0022CAAC /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		311D631D1AADCDD500798450 /* BTCPriceSourceMycelium.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D631C1AADCDD500798450 /* BTCPriceSourceMycelium.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -186,6 +187,8 @@
 		20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCErrorAnimation.m; sourceTree = "<group>"; };
 		20C2D82A19EBD6CB0022CAAC /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		20C2D82B19EBD6CB0022CAAC /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		311D631B1AADCDD500798450 /* BTCPriceSourceMycelium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCPriceSourceMycelium.h; sourceTree = "<group>"; };
+		311D631C1AADCDD500798450 /* BTCPriceSourceMycelium.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCPriceSourceMycelium.m; sourceTree = "<group>"; };
 		677B515CE201D7130F53029B /* Pods-Mycelium Wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.release.xcconfig"; sourceTree = "<group>"; };
 		BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mycelium Wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAB8F4EBE2F75284722E9193 /* Pods-Mycelium Wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.debug.xcconfig"; sourceTree = "<group>"; };
@@ -479,6 +482,8 @@
 		20C2D81819E595E60022CAAC /* CoreBitcoin Spinoffs */ = {
 			isa = PBXGroup;
 			children = (
+				311D631B1AADCDD500798450 /* BTCPriceSourceMycelium.h */,
+				311D631C1AADCDD500798450 /* BTCPriceSourceMycelium.m */,
 			);
 			name = "CoreBitcoin Spinoffs";
 			sourceTree = "<group>";
@@ -699,6 +704,7 @@
 				203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */,
 				20A9C07419F534AB00AF61DE /* MYCUnspentOutput.m in Sources */,
 				203AA4A819DC4A2600572BD9 /* PColor.m in Sources */,
+				311D631D1AADCDD500798450 /* BTCPriceSourceMycelium.m in Sources */,
 				207647191A0D080A000F00F2 /* MYCWebViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
