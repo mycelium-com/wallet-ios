@@ -77,5 +77,6 @@ typedef NS_ENUM(NSInteger, MYCBroadcastStatus) {
 - (void) broadcastTransaction:(BTCTransaction*)tx
                    completion:(void(^)(MYCBroadcastStatus status, NSError* error))completion;
 
+- (NSMutableURLRequest*) requestWithName:(NSString*)name;
 
 @end

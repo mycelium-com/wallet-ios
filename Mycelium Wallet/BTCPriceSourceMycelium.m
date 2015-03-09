@@ -7,6 +7,8 @@
 //
 
 #import "BTCPriceSourceMycelium.h"
+#import "MYCWallet.h"
+#import "MYCBackend.h"
 
 @implementation BTCPriceSourceMycelium
 
@@ -22,7 +24,7 @@
 - (NSURLRequest*) requestForCurrency:(NSString*)currencyCode {
     // curl  -k -X POST -H "Content-Type: application/json" -d '{"version":1,"currency":"USD"}' https://mws1.mycelium.com/wapi/wapi/queryExchangeRates
     
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://mws1.mycelium.com/wapi/wapi/queryExchangeRates"]];
+    NSMutableURLRequest* request = [[MYCWallet currentWallet].backend requestWithName:@"queryExchangeRates"];;
     
     NSDictionary* payload = @{@"version":@1,
                               @"currency":currencyCode};
