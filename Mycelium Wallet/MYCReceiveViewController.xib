@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
@@ -11,13 +11,11 @@
                 <outlet property="QRCodeProportionalHeightConstraint" destination="lwr-c1-cRu" id="0oR-Vr-cdA"/>
                 <outlet property="accountButton" destination="Uw4-md-gDa" id="ZBO-pM-uYM"/>
                 <outlet property="addressLabel" destination="jya-1l-D26" id="WWI-XN-hWB"/>
+                <outlet property="amountField" destination="kFl-8S-cfl" id="K2G-w5-Q4R"/>
                 <outlet property="borderHeightConstraint" destination="c9m-RA-dhy" id="trf-Ab-WkB"/>
-                <outlet property="btcButton" destination="3RM-6k-xvO" id="PgZ-bW-bcq"/>
-                <outlet property="btcField" destination="kFl-8S-cfl" id="5fM-O3-eDr"/>
                 <outlet property="closeButton" destination="0vX-Jh-BID" id="tto-Nj-1qe"/>
+                <outlet property="currencyButton" destination="3RM-6k-xvO" id="HUT-Nj-H6D"/>
                 <outlet property="editingOverlay" destination="kos-8N-C97" id="RcG-qn-zTk"/>
-                <outlet property="fiatButton" destination="LZw-UV-QNe" id="p6a-xe-deA"/>
-                <outlet property="fiatField" destination="JKe-vf-UtV" id="6ia-FC-NnN"/>
                 <outlet property="qrcodeView" destination="qKL-wx-tqI" id="g72-dv-pZ5"/>
                 <outlet property="shareButton" destination="fmV-mf-w7f" id="2PK-ad-TUa"/>
                 <outlet property="view" destination="SYu-BO-0m1" id="Owo-Iv-V8q"/>
@@ -36,14 +34,14 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uw4-md-gDa">
-                    <rect key="frame" x="109" y="351" width="101" height="33"/>
+                    <rect key="frame" x="109" y="321" width="101" height="33"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                     <state key="normal" title="Main Account">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
                 <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1CBtcGivXmHQ8ZqdPgeMfcpQNJrqTrSAcG" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.20000000298023224" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jya-1l-D26">
-                    <rect key="frame" x="20" y="384" width="280" height="21"/>
+                    <rect key="frame" x="20" y="354" width="280" height="20.5"/>
                     <gestureRecognizers/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -53,7 +51,7 @@
                     </connections>
                 </label>
                 <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SampleQRCode" translatesAutoresizingMaskIntoConstraints="NO" id="qKL-wx-tqI">
-                    <rect key="frame" x="64" y="155" width="192" height="192"/>
+                    <rect key="frame" x="64" y="125" width="192" height="192"/>
                     <gestureRecognizers/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="qKL-wx-tqI" secondAttribute="height" multiplier="1:1" id="OBh-gp-1mO"/>
@@ -72,7 +70,7 @@
                     </connections>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zI5-WZ-INr" userLabel="Top Bar">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="140"/>
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="110"/>
                     <subviews>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="0 000 000" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kFl-8S-cfl">
                             <rect key="frame" x="0.0" y="64" width="181" height="36"/>
@@ -85,35 +83,14 @@
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3RM-6k-xvO">
-                            <rect key="frame" x="185" y="64" width="55" height="36"/>
+                            <rect key="frame" x="185" y="64.5" width="55" height="36"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="30"/>
                             <inset key="contentEdgeInsets" minX="4" minY="0.0" maxX="4" maxY="0.0"/>
                             <state key="normal" title="bits">
                                 <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </state>
                             <connections>
-                                <action selector="switchToBTC:" destination="-1" eventType="touchUpInside" id="eru-An-QI2"/>
-                            </connections>
-                        </button>
-                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="0.00" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="JKe-vf-UtV">
-                            <rect key="frame" x="0.0" y="106" width="181" height="23"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="19"/>
-                            <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
-                            <connections>
-                                <action selector="didBeginEditingFiat:" destination="-1" eventType="editingDidBegin" id="VJ9-KJ-xpI"/>
-                                <action selector="didEditFiat:" destination="-1" eventType="editingChanged" id="sqR-yt-KaW"/>
-                                <outlet property="delegate" destination="-1" id="86q-Ea-5Kv"/>
-                            </connections>
-                        </textField>
-                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LZw-UV-QNe">
-                            <rect key="frame" x="185" y="106" width="55" height="23"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="19"/>
-                            <inset key="contentEdgeInsets" minX="4" minY="0.0" maxX="4" maxY="0.0"/>
-                            <state key="normal" title="usd">
-                                <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="switchToFiat:" destination="-1" eventType="touchUpInside" id="fFn-sf-edq"/>
+                                <action selector="openCurrencyPicker:" destination="-1" eventType="touchUpInside" id="WPH-3a-ktf"/>
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0vX-Jh-BID">
@@ -127,7 +104,7 @@
                             </connections>
                         </button>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Receive Payment" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gJD-sZ-hFA">
-                            <rect key="frame" x="92" y="32" width="137" height="21"/>
+                            <rect key="frame" x="92" y="32" width="137" height="20.5"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
@@ -143,28 +120,21 @@
                     <color key="backgroundColor" red="0.97254901959999995" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstItem="0vX-Jh-BID" firstAttribute="baseline" secondItem="gJD-sZ-hFA" secondAttribute="baseline" id="0yE-pM-ea4"/>
-                        <constraint firstItem="3RM-6k-xvO" firstAttribute="leading" secondItem="LZw-UV-QNe" secondAttribute="leading" id="CB2-TN-JgP"/>
-                        <constraint firstItem="kFl-8S-cfl" firstAttribute="trailing" secondItem="JKe-vf-UtV" secondAttribute="trailing" id="HZt-0b-rWb"/>
                         <constraint firstItem="kFl-8S-cfl" firstAttribute="baseline" secondItem="3RM-6k-xvO" secondAttribute="baseline" id="Jfv-kl-77W"/>
                         <constraint firstItem="3RM-6k-xvO" firstAttribute="leading" secondItem="kFl-8S-cfl" secondAttribute="trailing" constant="4" id="Kcc-8j-LYu"/>
-                        <constraint firstAttribute="height" constant="140" id="Mr1-vC-jtv"/>
+                        <constraint firstAttribute="height" constant="110" id="Mr1-vC-jtv"/>
                         <constraint firstAttribute="centerX" secondItem="gJD-sZ-hFA" secondAttribute="centerX" constant="-0.25" id="ODo-x1-hM8"/>
-                        <constraint firstItem="JKe-vf-UtV" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" id="OPq-tC-FQi"/>
                         <constraint firstItem="0vX-Jh-BID" firstAttribute="centerY" secondItem="fmV-mf-w7f" secondAttribute="centerY" constant="4" id="P09-hP-Bbo"/>
                         <constraint firstItem="gJD-sZ-hFA" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="top" constant="32" id="QCb-bX-XD2"/>
                         <constraint firstAttribute="trailing" secondItem="fmV-mf-w7f" secondAttribute="trailing" constant="16" id="Yd9-M2-EeK"/>
-                        <constraint firstItem="JKe-vf-UtV" firstAttribute="baseline" secondItem="LZw-UV-QNe" secondAttribute="baseline" id="Z4U-Fw-IMh"/>
-                        <constraint firstItem="LZw-UV-QNe" firstAttribute="leading" secondItem="JKe-vf-UtV" secondAttribute="trailing" constant="4" id="dzl-eL-Zh3"/>
                         <constraint firstItem="kFl-8S-cfl" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" id="epa-68-63W"/>
                         <constraint firstItem="0vX-Jh-BID" firstAttribute="leading" secondItem="zI5-WZ-INr" secondAttribute="leading" constant="10" id="hg5-ZM-wAX"/>
                         <constraint firstItem="kFl-8S-cfl" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="top" constant="64" id="iVT-H8-2qH"/>
                         <constraint firstAttribute="trailing" secondItem="3RM-6k-xvO" secondAttribute="trailing" multiplier="1.333" priority="999" id="k6K-sf-3AY"/>
-                        <constraint firstItem="JKe-vf-UtV" firstAttribute="top" secondItem="kFl-8S-cfl" secondAttribute="bottom" constant="6" id="n0T-UN-qcK"/>
-                        <constraint firstAttribute="trailing" secondItem="LZw-UV-QNe" secondAttribute="trailing" multiplier="1.333" priority="999" id="rQn-8q-17P"/>
                     </constraints>
                 </view>
                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UIJ-5J-paw" userLabel="Border View">
-                    <rect key="frame" x="0.0" y="140" width="320" height="1"/>
+                    <rect key="frame" x="0.0" y="110" width="320" height="1"/>
                     <color key="backgroundColor" red="0.76499247550000005" green="0.76496958729999998" blue="0.76498252150000001" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="1" id="c9m-RA-dhy"/>
@@ -197,7 +167,7 @@
                 <constraint firstAttribute="bottom" secondItem="MXC-lp-Lj8" secondAttribute="bottom" id="vhV-jV-n6p"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-362" y="489"/>
+            <point key="canvasLocation" x="-321" y="468"/>
         </view>
         <tapGestureRecognizer id="5sX-Ey-r1D">
             <connections>

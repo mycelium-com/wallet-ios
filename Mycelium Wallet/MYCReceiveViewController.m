@@ -10,6 +10,8 @@
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "MYCTextFieldLiveFormatter.h"
+#import "MYCCurrencyFormatter.h"
+#import "MYCCurrenciesViewController.h"
 
 @interface MYCReceiveViewController ()
 
@@ -24,14 +26,10 @@
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (weak, nonatomic) IBOutlet UIButton *shareButton;
 
-@property (weak, nonatomic) IBOutlet UIButton *btcButton;
-@property (weak, nonatomic) IBOutlet UIButton *fiatButton;
+@property (weak, nonatomic) IBOutlet UIButton *currencyButton;
+@property (weak, nonatomic) IBOutlet UITextField *amountField;
+@property (nonatomic) MYCTextFieldLiveFormatter* liveFormatter;
 
-@property (weak, nonatomic) IBOutlet UITextField *btcField;
-@property (weak, nonatomic) IBOutlet UITextField *fiatField;
-
-@property (nonatomic) MYCTextFieldLiveFormatter* btcLiveFormatter;
-@property (nonatomic) MYCTextFieldLiveFormatter* fiatLiveFormatter;
 
 @property (weak, nonatomic) IBOutlet UIImageView *qrcodeView;
 @property (weak, nonatomic) IBOutlet UIButton* accountButton;
@@ -39,7 +37,7 @@
 
 @property (weak, nonatomic) IBOutlet UIView *editingOverlay;
 
-@property(nonatomic) BOOL fiatInput;
+@property(nonatomic) BOOL fiatInput DEPRECATED_ATTRIBUTE;
 
 @property(nonatomic) NSNumber* previousBrightness;
 
@@ -59,19 +57,15 @@
 - (void) viewDidLoad
 {
     [super viewDidLoad];
-    
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    [notificationCenter addObserver:self selector:@selector(notifyKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [notificationCenter addObserver:self selector:@selector(notifyKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];    
 
-    self.btcLiveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.btcField numberFormatter:self.wallet.btcFormatterNaked];
-    self.fiatLiveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.fiatField numberFormatter:self.wallet.fiatFormatterNaked];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(currencyDidUpdate:) name:MYCWalletCurrencyDidUpdateNotification object:nil];
 
     self.borderHeightConstraint.constant = 1.0/[UIScreen mainScreen].nativeScale;
 
-    self.fiatInput = ([MYCWallet currentWallet].preferredCurrency == MYCWalletPreferredCurrencyFiat);
-
     [self reloadAccount];
+    [self updateCurrency];
 }
 
 - (void) viewWillDisappear:(BOOL)animated
@@ -85,8 +79,7 @@
 {
     [super viewDidAppear:animated];
 
-    if (self.fiatInput) [self.fiatField becomeFirstResponder];
-    else [self.btcField becomeFirstResponder];
+    [self.amountField becomeFirstResponder];
 
     [[MYCWallet currentWallet] updateExchangeRate:YES completion:^(BOOL success, NSError *error) {
         if (!success && error)
@@ -109,6 +102,20 @@
     return [MYCWallet currentWallet];
 }
 
+- (void) currencyDidUpdate:(NSNotification*)notif {
+    [self updateCurrency];
+}
+
+- (void) updateCurrency {
+    self.amountField.placeholder = [MYCWallet currentWallet].primaryCurrencyFormatter.placeholderText;
+    self.liveFormatter.textField = nil;
+    self.liveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.amountField numberFormatter:[MYCWallet currentWallet].primaryCurrencyFormatter.nakedFormatter];
+
+    [self.currencyButton setTitle:self.wallet.primaryCurrencyFormatter.currencyCode forState:UIControlStateNormal];
+
+    self.amountField.placeholder = self.wallet.primaryCurrencyFormatter.placeholderText;
+}
+
 - (void) reloadAccount
 {
     [self.wallet inDatabase:^(FMDatabase *db) {
@@ -124,6 +131,7 @@
 
 - (void) setRequestedAmount:(BTCAmount)requestedAmount
 {
+    NSLog(@"Set Requested Amount: %@ btc", @(((double)requestedAmount)/BTCCoin));
     _requestedAmount = requestedAmount;
     [self updateAllViews];
 }
@@ -154,10 +162,7 @@
 
 - (void) updateUnits
 {
-    [self.btcButton setTitle:self.wallet.btcFormatter.standaloneSymbol forState:UIControlStateNormal];
-    [self.fiatButton setTitle:self.wallet.fiatFormatter.currencySymbol forState:UIControlStateNormal];
-
-    self.btcField.placeholder = self.wallet.btcFormatter.placeholderText;
+    [self updateCurrency];
 }
 
 
@@ -179,17 +184,7 @@
     
     if (self.requestedAmount > 0)
     {
-        NSString* amount;
-        
-        if (self.fiatInput)
-        {
-            amount = [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:self.requestedAmount]];
-        }
-        else
-        {
-            amount = [self.wallet.btcFormatter stringFromAmount:self.requestedAmount];
-        }
-        
+        NSString* amount = [self.wallet.primaryCurrencyFormatter stringFromAmount:self.requestedAmount];
         items = @[[NSString stringWithFormat:NSLocalizedString(@"Please send me %@ to %@", @""), amount, self.account.externalAddress.base58String]];
     }
     else
@@ -212,10 +207,9 @@
 
     if (self.isEditing)
     {
-        if (!self.btcField.isFirstResponder &&
-            !self.fiatField.isFirstResponder)
+        if (!self.amountField.isFirstResponder)
         {
-            [self.btcField becomeFirstResponder];
+            [self.amountField becomeFirstResponder];
         }
         if (animated)
         {
@@ -234,8 +228,7 @@
     }
     else
     {
-        [self.btcField resignFirstResponder];
-        [self.fiatField resignFirstResponder];
+        [self.amountField resignFirstResponder];
 
         if (animated)
         {
@@ -318,87 +311,24 @@
     return NO;
 }
 
-
-- (void) setFiatInput:(BOOL)fiatInput
+- (IBAction)openCurrencyPicker:(id)sender
 {
-    if (_fiatInput == fiatInput) return;
-
-    _fiatInput = fiatInput;
-
-    [MYCWallet currentWallet].preferredCurrency = _fiatInput ? MYCWalletPreferredCurrencyFiat : MYCWalletPreferredCurrencyBTC;
-
-    // Exchange fonts
-    
-    [UIView performWithoutAnimation:^{
-        UIFont* btcFieldFont = self.btcField.font;
-        UIFont* fiatFieldFont = self.fiatField.font;
-        
-        self.btcField.font = fiatFieldFont;
-        self.fiatField.font = btcFieldFont;
-        
-        UIFont* btcButtonFont = self.btcButton.titleLabel.font;
-        UIFont* fiatButtonFont = self.fiatButton.titleLabel.font;
-        
-        self.btcButton.titleLabel.font = fiatButtonFont;
-        self.fiatButton.titleLabel.font = btcButtonFont;
-        
-        [self.view setNeedsLayout];
-        [self.view layoutIfNeeded];
-    }];
-}
-
-
-- (IBAction)switchToBTC:(id)sender
-{
-    self.fiatInput = !self.fiatInput;
-    if (self.fiatInput) [self.fiatField becomeFirstResponder];
-    else [self.btcField becomeFirstResponder];
-
     [self restoreBrightness];
-}
-
-- (IBAction)switchToFiat:(id)sender
-{
-    [self switchToBTC:sender];
+    MYCCurrenciesViewController* currenciesVC = [[MYCCurrenciesViewController alloc] initWithNibName:nil bundle:nil];
+    currenciesVC.amount = self.requestedAmount;
+    UINavigationController* navC = [[UINavigationController alloc] initWithRootViewController:currenciesVC];
+    [self presentViewController:navC animated:YES completion:nil];
 }
 
 - (IBAction)didBeginEditingBtc:(id)sender
 {
-    self.fiatInput = NO;
-    [self setEditing:YES animated:YES];
-    [self restoreBrightness];
-}
-
-- (IBAction)didBeginEditingFiat:(id)sender
-{
-    self.fiatInput = YES;
     [self setEditing:YES animated:YES];
     [self restoreBrightness];
 }
 
 - (IBAction)didEditBtc:(id)sender
 {
-    self.requestedAmount = [self.wallet.btcFormatter amountFromString:self.btcField.text];
-    self.fiatField.text = [self.wallet.fiatFormatterNaked
-                           stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:self.requestedAmount]];
-
-    if (self.btcField.text.length == 0)
-    {
-        self.fiatField.text = @"";
-    }
-    [self restoreBrightness];
-}
-
-- (IBAction)didEditFiat:(id)sender
-{
-    NSNumber* fiatAmount = [self.wallet.fiatFormatter numberFromString:self.fiatField.text];
-    self.requestedAmount = [self.wallet.currencyConverter bitcoinFromFiat:[NSDecimalNumber decimalNumberWithDecimal:fiatAmount.decimalValue]];
-    self.btcField.text = [self.wallet.btcFormatterNaked stringFromAmount:self.requestedAmount];
-
-    if (self.fiatField.text.length == 0)
-    {
-        self.btcField.text = @"";
-    }
+    self.requestedAmount = BTCAmountFromDecimalNumber([self.wallet.primaryCurrencyFormatter.nakedFormatter numberFromString:self.amountField.text]);
     [self restoreBrightness];
 }
 

@@ -98,9 +98,10 @@
 
     // [[NSLocale currentLocale] displayNameForKey:NSLocaleCurrencySymbol value:@"USD"];
     // Returns "$US" for symbol and "dollar des etats unis" for code.
+    MYCCurrencyFormatterStyle style = MYCCurrencyFormatterStyleCode; // TODO: add API for that.
 
-#warning  TODO: add an API to switch between symbols and codes.
-    if (0) {
+    if (style == MYCCurrencyFormatterStyleSymbol){
+
         fmt.currencySymbol = [self codeToSymbolMapping][fmt.currencyCode];
         fmt.internationalCurrencySymbol = fmt.currencySymbol;
         fmt.minusSign = @"–";
@@ -108,7 +109,7 @@
     //    fmt.positivePrefix = @"";
     //    fmt.positiveSuffix = [@"\xE2\x80\xAF" stringByAppendingString:fmt.currencySymbol];
     //    fmt.negativeFormat = [fmt.positiveFormat stringByReplacingCharactersInRange:[fmt.positiveFormat rangeOfString:@"#"] withString:@"-#"];
-    } else {
+    } else if (style == MYCCurrencyFormatterStyleCode) {
         fmt.currencySymbol = fmt.currencyCode;
         fmt.internationalCurrencySymbol = fmt.currencySymbol;
         fmt.minusSign = @"–";

@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <CoreBitcoin/CoreBitcoin.h>
 
+typedef NS_ENUM(NSInteger, MYCCurrencyFormatterStyle) {
+    MYCCurrencyFormatterStyleNone = 0,
+    MYCCurrencyFormatterStyleSymbol = 1,
+    MYCCurrencyFormatterStyleCode = 2,
+};
+
 // App-specific currency formatter that can show both bitcoin denominations (BTC, bits) and
 // fiat denominations (exchange rate converted and updated automatically).
 // NSNumber returned and consumed is always BTCAmount.
