@@ -56,6 +56,8 @@ static BTCAmount MYCFeeRate = 10000;
 
 @property(weak, nonatomic) MYCScannerView* scannerView;
 
+@property(nonatomic) BTCKeychain* accountKeychain; // when wallet is unlocked.
+
 @end
 
 @implementation MYCSendViewController
@@ -311,16 +313,23 @@ static BTCAmount MYCFeeRate = 10000;
             builder.changeAddress = self.changeAddress ?: self.account.internalAddress;
             builder.feeRate = MYCFeeRate;
 
-            __block NSError* berror = nil;
-            __block BTCTransactionBuilderResult* result = nil;
-
             NSString* authString = [NSString stringWithFormat:NSLocalizedString(@"Authorize spending %@", @""),
                                     [self formatAmountInSelectedCurrency:self.spendingAmount]];
 
             // Unlock wallet so builder can sign.
             [self.wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
-                result = [builder buildTransaction:&berror];
+                self.accountKeychain = [unlockedWallet.keychain keychainForAccount:(uint32_t)self.account.accountIndex];
             } reason:authString];
+
+            NSError* berror = nil;
+            BTCTransactionBuilderResult* result = nil;
+
+            if (self.accountKeychain) {
+                result = [builder buildTransaction:&berror];
+            }
+
+            [self.accountKeychain clear];
+            self.accountKeychain = nil;
 
             if (result && result.unsignedInputsIndexes.count == 0)
             {
@@ -331,33 +340,38 @@ static BTCAmount MYCFeeRate = 10000;
 
                 [self beginSpinning];
 
-                UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm payment", @"")
-                                                                            message:[NSString stringWithFormat:NSLocalizedString(@"You are sending %@ to %@", @""),
-                                                                                     [self formatAmountInSelectedCurrency:self.spendingAmount],
-                                                                                     [self.spendingAddress base58String]
-                                                                                     ]
-                                                                     preferredStyle:UIAlertControllerStyleAlert];
-                [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"")
-                                                       style:UIAlertActionStyleCancel
-                                                     handler:^(UIAlertAction *action) {
+                if (![MYCUnlockedWallet isPasscodeSet]) {
+                    UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm payment", @"")
+                                                                                message:[NSString stringWithFormat:NSLocalizedString(@"You are sending %@ to %@", @""),
+                                                                                         [self formatAmountInSelectedCurrency:self.spendingAmount],
+                                                                                         [self.spendingAddress base58String]
+                                                                                         ]
+                                                                         preferredStyle:UIAlertControllerStyleAlert];
+                    [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"")
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction *action) {
 
-                                                         [self endSpinning];
+                                                             [self endSpinning];
 
-                                                     }]];
-                [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Send", @"")
-                                                       style:UIAlertActionStyleDefault
-                                                     handler:^(UIAlertAction *action) {
+                                                         }]];
+                    [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Send", @"")
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction *action) {
 
-                                                        [self broadcastTransaction:result.transaction];
+                                                            [self broadcastTransaction:result.transaction];
 
-                                                     }]];
+                                                         }]];
 
-                [self presentViewController:ac animated:YES completion:nil];
+                    [self presentViewController:ac animated:YES completion:nil];
+
+                } else {
+                    [self broadcastTransaction:result.transaction];
+                }
             }
             else
             {
+                // Typically user declined signing.
                 MYCLog(@"TX BUILDER ERROR: %@", berror);
-                [MYCErrorAnimation animateError:self.view radius:10.0];
             }
         }];
     }
@@ -605,20 +619,9 @@ static BTCAmount MYCFeeRate = 10000;
     if (unspent)
     {
         NSAssert(unspent, @"sanity check");
-
-        __block BTCKey* key = nil;
-        [self.wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
-
-            BTCKeychain* accountKeychain = [unlockedWallet.keychain keychainForAccount:(uint32_t)self.account.accountIndex];
-
-            NSAssert(accountKeychain, @"sanity check");
-
-            key = [[accountKeychain derivedKeychainAtIndex:(uint32_t)unspent.change] keyAtIndex:(uint32_t)unspent.keyIndex];
-
-            NSAssert(key, @"sanity check");
-
-        } reason:nil]; // should be already unlocked
-
+        NSAssert(self.accountKeychain, @"should already get account keychain");
+        BTCKey* key = [[self.accountKeychain derivedKeychainAtIndex:(uint32_t)unspent.change] keyAtIndex:(uint32_t)unspent.keyIndex];
+        NSAssert(key, @"sanity check");
         return key; // will clear on dealloc.
     }
     else

@@ -16,6 +16,7 @@
 #import "MYCAppDelegate.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
+#import "MYCScanPrivateKeyViewController.h"
 
 @interface MYCBalanceViewController ()
 
@@ -310,6 +311,17 @@
 //    [[UIPasteboard generalPasteboard] setValue:self.addressLabel.text
 //                             forPasteboardType:(id)kUTTypeUTF8PlainText];
 }
+
+- (IBAction)coldStorage:(id)sender {
+    __typeof(self) __weak weakself = self;
+    MYCScanPrivateKeyViewController* vc = [[MYCScanPrivateKeyViewController alloc] initWithNibName:nil bundle:nil];
+    vc.completionBlock = ^(BOOL finished){
+        [weakself dismissViewControllerAnimated:YES completion:nil];
+    };
+    UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
+    [weakself presentViewController:navc animated:YES completion:nil];
+}
+
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {

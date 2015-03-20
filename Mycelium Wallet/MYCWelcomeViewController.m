@@ -10,6 +10,7 @@
 #import "MYCAppDelegate.h"
 
 #import "MYCWallet.h"
+#import "MYCUnlockedWallet.h"
 
 #import <CoreMotion/CoreMotion.h>
 #import <CoreBitcoin/CoreBitcoin.h>
@@ -91,6 +92,21 @@
 {
     [super viewWillAppear:animated];
     [(UIScrollView*)self.view setContentInset:UIEdgeInsetsZero];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (![MYCUnlockedWallet isPasscodeSet]) {
+
+
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Passcode is not set", @"Errors")
+                                                                           message:NSLocalizedString(@"To protect your bitcoins please set up a passcode or Touch ID in System Settings.", @"")
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+
+            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [MYCUnlockedWallet setBypassMissingPasscode];
+            }]];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
+    });
 }
 
 - (void) setupWalletWithMnemonic:(BTCMnemonic*)mnemonic newWallet:(BOOL)newWallet

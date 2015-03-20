@@ -399,6 +399,20 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     _unlockedWallet.wallet = self;
     _unlockedWallet.reason = reason;
 
+    // Migrate to touch id when unlocking the wallet.
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MYCDidMigrateToTouchID"]) {
+        if ([MYCUnlockedWallet isPasscodeSet]) {
+
+            BTCMnemonic* mnemonic = _unlockedWallet.mnemonic;
+            if (mnemonic) {
+                _unlockedWallet.mnemonic = mnemonic;
+            }
+
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MYCDidMigrateToTouchID"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+    }
+
     block(_unlockedWallet);
 
     [_unlockedWallet clear];

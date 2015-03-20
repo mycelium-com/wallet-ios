@@ -21,6 +21,10 @@
 // Internal properties and methods
 @property(nonatomic, weak) MYCWallet* wallet;
 @property(nonatomic) NSString* reason;
+@property(nonatomic) NSError* error;
+
++ (void) setBypassMissingPasscode;
++ (BOOL) isPasscodeSet;
 
 - (void) clear;
 
