@@ -133,9 +133,9 @@
     [self updateAmounts];
     [self updateRefreshControlAnimated:NO];
 
-    [self.wallet inDatabase:^(FMDatabase *db) {
-        self.accountButton.hidden = ([MYCWalletAccount countAllFromDatabase:db] <= 1);
-    }];
+//    [self.wallet inDatabase:^(FMDatabase *db) {
+//        self.accountButton.hidden = ([MYCWalletAccount countAllFromDatabase:db] <= 1);
+//    }];
 
     [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
 
