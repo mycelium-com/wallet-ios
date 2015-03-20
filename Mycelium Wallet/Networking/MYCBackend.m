@@ -254,7 +254,7 @@
 
                        BTCTransactionOutput* txout = [[BTCTransactionOutput alloc] init];
 
-                       txout.value = [dict[@"value"] longLongValue];
+                       txout.value = BTCAmountFromDecimalNumber(dict[@"value"]);
                        txout.script = [[BTCScript alloc] initWithData:scriptData];
 
                        txout.index = (uint32_t)[((NSString*)txHashAndIndex[1]) integerValue];

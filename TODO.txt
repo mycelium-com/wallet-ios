@@ -8,13 +8,14 @@ A few bugfixes:
 + stability improvement when exchange rate is not available yet (error or missing).
 
 Enhancements and new features:
+- move cold storage import to Receive and/or Send screen for easier discovery.
+- TouchID / passcode protection for critical actions.
+- invite friend to download the app via sharing screen.
+
 + show everything in one currency (e.g. USD), allow switching currency from anywhere on the screen.
 + multiple currencies / sources picker.
-- move cold storage import to Receive and/or Send screen for easier discovery.
 + allow removing empty accounts.
-- TouchID / passcode protection for critical actions.
 + share Bitcoin address via SMS/Email/Twitter/etc.
-- invite friend to download the app via sharing screen.
 
 
 Part 2

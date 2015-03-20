@@ -154,7 +154,7 @@
         {
             [section item:^(PTableViewSourceItem *item) {
                 item.cellIdentifier = @"keyvalue2";
-                item.key = [btcfmt stringFromAmount:[txin.userInfo[@"value"] longLongValue]];
+                item.key = [btcfmt stringFromAmount:BTCAmountFromDecimalNumber(txin.userInfo[@"value"])];
                 item.value = [txin.userInfo[@"address"] base58String];
                 if (item.value)
                 {
