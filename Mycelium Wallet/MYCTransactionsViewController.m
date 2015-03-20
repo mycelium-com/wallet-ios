@@ -9,6 +9,9 @@
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "MYCTransaction.h"
+#import "MYCCurrencyFormatter.h"
+#import "MYCRoundedView.h"
+#import "MYCCurrenciesViewController.h"
 
 #import "MYCTransactionsViewController.h"
 #import "MYCTransactionTableViewCell.h"
@@ -20,8 +23,6 @@
 
 @property(nonatomic) BTCNumberFormatter* btcFormatter;
 @property(nonatomic) NSNumberFormatter* fiatFormatter;
-
-@property(nonatomic) UISegmentedControl* currencyControl;
 @end
 
 @implementation MYCTransactionsViewController
@@ -39,9 +40,8 @@
         
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Transactions", @"") image:[UIImage imageNamed:@"TabTransactions"] selectedImage:[UIImage imageNamed:@"TabTransactionsSelected"]];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletCurrencyDidUpdateNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidReload:) name:MYCWalletDidReloadNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletExchangeRateDidUpdate:) name:MYCWalletCurrencyConverterDidUpdateNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidUpdateAccount:) name:MYCWalletDidUpdateAccountNotification object:nil];
     }
     return self;
@@ -70,16 +70,11 @@
 
 - (void) formattersDidUpdate:(NSNotification*)notif
 {
-    [self updateFormatters];
+    [self updateCurrencyButton];
     [self.tableView reloadData];
 }
 
 - (void) walletDidReload:(NSNotification*)notif
-{
-    [self.tableView reloadData];
-}
-
-- (void) walletExchangeRateDidUpdate:(NSNotification*)notif
 {
     [self.tableView reloadData];
 }
@@ -109,7 +104,7 @@
 {
     [super viewWillAppear:animated];
 
-    [self updateFormatters];
+    [self updateCurrencyButton];
 
     // Deselect current row.
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:animated];
@@ -137,66 +132,38 @@
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-
-    //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.currencyControl];
-    self.navigationItem.titleView = self.currencyControl;
 }
 
 - (void) updateRefreshControl
 {
-    
 }
 
-- (void) updateFormatters
+- (void) updateCurrencyButton
 {
-    self.btcFormatter = [[MYCWallet currentWallet].btcFormatter copy];
-    self.btcFormatter.symbolStyle = BTCNumberFormatterSymbolStyleSymbol;
-    self.btcFormatter.minimumFractionDigits = self.btcFormatter.maximumFractionDigits;
+    NSString* title = [MYCWallet currentWallet].primaryCurrencyFormatter.currencyCode;
 
-    self.fiatFormatter = [[MYCWallet currentWallet].fiatFormatter copy];
-    self.fiatFormatter.minimumFractionDigits = self.fiatFormatter.maximumFractionDigits;
-    self.fiatFormatter.currencySymbol = @"";
-    self.fiatFormatter.positiveSuffix = @"";
-    self.fiatFormatter.positivePrefix = NSLocalizedString(@"$", @"");
-    self.fiatFormatter.negativeSuffix = @"";
+//    MYCRoundedButton* currencyButton = [[MYCRoundedButton alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+//    [currencyButton setTitle:title forState:UIControlStateNormal];
+//    currencyButton.borderRadius = 4;
+//    currencyButton.borderWidth = 1;
+//    currencyButton.borderColor = self.tintColor;
+//    currencyButton.tintColor = self.tintColor;
+//    [currencyButton sizeToFit];
+//
+//    [currencyButton addTarget:self action:@selector(selectCurrency:) forControlEvents:UIControlEventTouchUpInside];
+//
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:currencyButton];
 
-    self.currencyControl = [[UISegmentedControl alloc] initWithItems:@[
-      [MYCWallet currentWallet].btcFormatter.currencySymbol ?: @"BTC",
-      [MYCWallet currentWallet].fiatFormatter.currencySymbol ?: @"USD"]];
-
-    [self.currencyControl setWidth:60 forSegmentAtIndex:0];
-    [self.currencyControl setWidth:60 forSegmentAtIndex:1];
-
-    [self.currencyControl addTarget:self action:@selector(currencyDidChange:) forControlEvents:UIControlEventValueChanged];
-    self.currencyControl.tintColor = self.tintColor;
-    [self updateCurrencyControl];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:title style:UIBarButtonItemStylePlain target:self action:@selector(selectCurrency:)];
 }
 
-- (void) updateCurrencyControl
+- (void) selectCurrency:(id)_
 {
-    switch ([MYCWallet currentWallet].preferredCurrency)
-    {
-        case MYCWalletPreferredCurrencyBTC:
-            self.currencyControl.selectedSegmentIndex = 0;
-            break;
-        case MYCWalletPreferredCurrencyFiat:
-            self.currencyControl.selectedSegmentIndex = 1;
-            break;
-    }
+    MYCCurrenciesViewController* currenciesVC = [[MYCCurrenciesViewController alloc] initWithNibName:nil bundle:nil];
+    UINavigationController* navC = [[UINavigationController alloc] initWithRootViewController:currenciesVC];
+    [self presentViewController:navC animated:YES completion:nil];
 }
 
-- (void) currencyDidChange:(id)_
-{
-    if (self.currencyControl.selectedSegmentIndex == 0)
-    {
-        [MYCWallet currentWallet].preferredCurrency = MYCWalletPreferredCurrencyBTC;
-    }
-    else if (self.currencyControl.selectedSegmentIndex == 1)
-    {
-        [MYCWallet currentWallet].preferredCurrency = MYCWalletPreferredCurrencyFiat;
-    }
-    [self.tableView reloadData];
-}
 
 #pragma mark - UITableView
 
@@ -225,13 +192,7 @@
     }];
     cell.transaction = tx;
 
-    NSString* amountString = @"";
-    if ([MYCWallet currentWallet].preferredCurrency == MYCWalletPreferredCurrencyBTC) {
-        amountString = [self.btcFormatter stringFromAmount:ABS(tx.amountTransferred)];
-    }
-    else {
-        amountString = [self.fiatFormatter stringFromNumber:[[MYCWallet currentWallet].currencyConverter fiatFromBitcoin:ABS(tx.amountTransferred)]];
-    }
+    NSString* amountString = [[MYCWallet currentWallet].primaryCurrencyFormatter stringFromAmount:ABS(tx.amountTransferred)];
 
     if (tx.amountTransferred > 0) {
         amountString = [@"+ " stringByAppendingString:amountString];

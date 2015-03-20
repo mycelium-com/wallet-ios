@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
@@ -9,11 +9,11 @@
             <connections>
                 <outlet property="accountButton" destination="Enb-d0-ZL3" id="8um-oD-ytN"/>
                 <outlet property="backupButton" destination="E9X-Ob-kXK" id="LfG-fl-7TA"/>
-                <outlet property="btcAmountLabel" destination="Yb0-XZ-Ygw" id="bT8-v1-hLL"/>
-                <outlet property="fiatAmountLabel" destination="o2C-Sr-dwE" id="ijy-zE-ggl"/>
+                <outlet property="primaryAmountLabel" destination="Yb0-XZ-Ygw" id="v4h-go-O0R"/>
                 <outlet property="receiveButton" destination="MPE-AQ-jAs" id="mQ4-kf-6VU"/>
                 <outlet property="refreshActivityIndicator" destination="bE2-35-rUf" id="Jaj-np-kYS"/>
                 <outlet property="refreshButton" destination="B2o-6q-Qie" id="p9I-NL-OME"/>
+                <outlet property="secondaryAmountLabel" destination="o2C-Sr-dwE" id="MEz-7N-G6z"/>
                 <outlet property="sendButton" destination="qAK-Zb-AXQ" id="BFD-Cr-rHH"/>
                 <outlet property="statusLabel" destination="MLg-NG-sWO" id="WsE-6I-uDQ"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -49,7 +49,7 @@
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                         </view>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NNj-oR-Mer">
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NNj-oR-Mer" userLabel="Switch Currency Button">
                             <rect key="frame" x="41" y="95" width="239" height="76"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal">

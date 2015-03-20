@@ -39,10 +39,14 @@
         return;
     }
 
-    self.nameLabel.text = [[NSLocale currentLocale] displayNameForKey:NSLocaleCurrencyCode value:self.formatter.currencyCode] ?: @"";
-    if (self.nameLabel.text.length == 0) {
-        self.nameLabel.text = self.formatter.currencyCode;
+    NSString* title = [[NSLocale currentLocale] displayNameForKey:NSLocaleCurrencyCode value:self.formatter.currencyCode] ?: @"";
+    if (title.length == 0) {
+        title = self.formatter.currencyCode;
     }
+    if (title.length > 1 && self.formatter.isFiatFormatter) {
+        title = [[[title substringToIndex:1] capitalizedString] stringByAppendingString:[title substringFromIndex:1]];
+    }
+    self.nameLabel.text = title;
     self.amountLabel.text = [self.formatter stringFromAmount:_amount ?: 123456789];
 }
 

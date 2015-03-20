@@ -8,11 +8,8 @@
 
 #import "MYCUnlockedWallet.h"
 
-// Posted when any formatter was changed.
-extern NSString* const MYCWalletFormatterDidUpdateNotification;
-
 // Posted when currency exchange rate has changed.
-extern NSString* const MYCWalletCurrencyConverterDidUpdateNotification;
+extern NSString* const MYCWalletCurrencyDidUpdateNotification;
 
 // Posted when wallet updates internal state and all data must be reloaded from the database.
 extern NSString* const MYCWalletDidReloadNotification;
@@ -64,21 +61,23 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 // Formatter for bitcoin values.
 // When formatter changes, notification MYCWalletFormatterDidUpdateNotification is posted.
-@property(nonatomic) BTCNumberFormatter* btcFormatter;
-@property(nonatomic) BTCNumberFormatter* btcFormatterNaked; // without unit decoration
+@property(nonatomic, readonly) BTCNumberFormatter* btcFormatter DEPRECATED_ATTRIBUTE;
+@property(nonatomic, readonly) BTCNumberFormatter* btcFormatterNaked DEPRECATED_ATTRIBUTE; // without unit decoration
 
 // Formatter for current fiat currency.
 // When formatter changes, notification MYCWalletFormatterDidUpdateNotification is posted.
-@property(nonatomic) NSNumberFormatter* fiatFormatter;
-@property(nonatomic) NSNumberFormatter* fiatFormatterNaked; // without unit decoration
+@property(nonatomic, readonly) NSNumberFormatter* fiatFormatter DEPRECATED_ATTRIBUTE;
+@property(nonatomic, readonly) NSNumberFormatter* fiatFormatterNaked DEPRECATED_ATTRIBUTE; // without unit decoration
 
 // User-selected bitcoin unit.
 // View controllers post MYCWalletFormatterDidUpdateNotification when updating this property.
-@property(nonatomic) BTCNumberFormatterUnit bitcoinUnit;
+@property(nonatomic) BTCNumberFormatterUnit bitcoinUnit DEPRECATED_ATTRIBUTE;
 
-// Currency converter for currently used fiat currency.
-// View controllers post MYCWalletCurrencyConverterDidUpdateNotification when updating this property.
-@property(nonatomic) BTCCurrencyConverter* currencyConverter;
+// User-selected BTC-or-Fiat.
+@property(nonatomic) MYCWalletPreferredCurrency preferredCurrency DEPRECATED_ATTRIBUTE;
+
+// Current currency converter.
+@property(nonatomic, readonly) BTCCurrencyConverter* currencyConverter;
 
 // Array of all supported MYCCurrencyFormatters.
 @property(nonatomic, readonly) NSArray* currencyFormatters;
@@ -95,8 +94,6 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Selects this formatter as a primary one. Sends CNWalletDidUpdateCurrencyNotification.
 - (void) selectPrimaryCurrencyFormatter:(MYCCurrencyFormatter*)formatter;
 
-// User-selected BTC-or-Fiat.
-@property(nonatomic) MYCWalletPreferredCurrency preferredCurrency;
 
 // Date formatters
 @property(nonatomic) NSDateFormatter* compactDateFormatter;
@@ -110,9 +107,6 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 // Sets testnet mode once. Call it in developer build in application:didFinishLaunchingWithOptions:
 - (void) setTestnetOnce;
-
-// Saves exchange rate persistently.
-- (void) saveCurrencyConverter;
 
 // Methods to produce correct testnet/mainnet presentation of the address.
 - (BTCPublicKeyAddress*) addressForAddress:(BTCAddress*)address; // converts to testnet or mainnet if needed

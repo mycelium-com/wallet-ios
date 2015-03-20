@@ -5,26 +5,186 @@ Part 1
 
 A few bugfixes:
 + QR code overlapped by keyboard on Receive screen.
-- stability improvement when exchange rate is not available yet (error or missing).
++ stability improvement when exchange rate is not available yet (error or missing).
 
 Enhancements and new features:
++ show everything in one currency (e.g. USD), allow switching currency from anywhere on the screen.
++ multiple currencies / sources picker.
 - move cold storage import to Receive and/or Send screen for easier discovery.
 + allow removing empty accounts.
 - TouchID / passcode protection for critical actions.
-- multiple currencies / sources picker.
-- show everything in one currency (e.g. USD), allow switching currency from anywhere on the screen.
 + share Bitcoin address via SMS/Email/Twitter/etc.
 - invite friend to download the app via sharing screen.
 
 
-Part 2 (to be clarified with developers)
+Part 2
+
+
+## 1. BIP70 implementation
+
+* Payment Request
+* X.509 Signature verification
+* Payment/PaymentACK support
+
+
+## 2. Storing labels within transactions
+
+Metadata (all fields are optional):
+
+* `memo` (string)
+* `recipient` (string)
+* `sender` (string)
+* `payment_request` (binary PaymentRequest object per BIP70)
+* `payment_ack` (binary PaymentACK object per BIP70)
+* `fiat_amount` sent or received in fiat currency that was current when transaction created/arrived (string with dot as a decimal separator)
+     (sent amount must be negative). Sent amount should not include the fee (so it'll be "-10.00" instead of "-10.03" if the fee is 0.03)
+* `fiat_code` -  ISO 4217 currency code in  (string "USD", "EUR", "CNY", "GBP" etc)
+
+
+## 3. Backup Format
+
+JSON object encrypted and signed according to spec: https://github.com/oleganza/bitcoin-papers/blob/master/AutomaticEncryptedWalletBackups.md
+
+**Top-level keys reference:**
+
+* `version` is `"1"`. Should be changed when the format becomes incompatible with older versions, or should be handled differently.
+* `network` is `"test"` or `"main"`. If the wallet app supports both testnet and mainnet wallets, separate backup payloads should be created.
+* `accounts` is a dictionary of Account Objects keyed by BIP44 account index (from 0 to 2^31) as a string.
+* `transactions` is a dictionary of Transaction Objects keyed by transaction ID (256-bit hash of transaction, byte-reversed and hex-encoded)
+* `currency` is a dictionary of Currency Objects specifying currency preferences.
+* unknown top-level keys must be preserved after restoring from backup and carried to future backups.
+
+**Account Object keys reference:**
+
+* `label` is a string containing user-specified account label
+* unknown keys must be preserved after restoring from backup and carried to future backups.
+
+**Transaction Object keys reference (all fields are optional):**
+
+* `memo` is a free-form string describing transaction. When payment is made via BIP70 Payment Request, this is pre-filled with "memo" field from PR.
+* `recipient` is a name of the recipient of transaction. Typically empty for received payments. Pre-filled with signer's name extracted from X.509 certificate in Payment Request.
+* `sender` is a free-form string describing the sender. Reserved for future use when sender can be identified automatically or when app prepares an invoice with named sender.
+* `payment_request` contains hex-encoded protobuf-encoded PaymentRequest (see BIP70).
+* `payment_ack` contains hex-encoded protobuf-encoded PaymentACK (see BIP70). This is a payment receipt.
+* `fiat_amount` is an ASCII string containing signed decimal number of the amount transferred in the fiat currency (selected at the time of transaction). No group separator must be used. Dot "." must be used as a decimal point. Amount is negative if payment is outgoing and must not include mining fees (so it'll be "-10.00" instead of "-10.03" if the fee is $0.03).
+* `fiat_code` -  ISO 4217 currency code corresponding to the "fiat_amount" (string "USD", "EUR", "CNY", "GBP" etc)
+
+**Currency Object keys:**
+
+* `fiat_code` - ISO 4217 currency code
+* `fiat_source` - exchange rate source (market or index name). E.g. "BitcoinAverage", "Winkdex", "Coinbase", "OKCoin" etc.
+* `btc_unit` - which denomination to use for BTC amounts: "BTC", "mBTC", "uBTC", "satoshi".
+
+Example:
+
+    {
+      "version": "1",
+      "network": "main" or "test",
+      "accounts": {
+        /* key is a decimal string encoding index of BIP44 account (from 0 to 2^31) */
+        "0":  {"label": "label for bip44 account 0"},
+        "1":  {"label": "label for bip44 account 1"},
+        "17": {"label": "label for bip44 account 17", /* unknown keys must be preserved */ },
+      },
+      "transactions": {
+        /* txid is reversed transaction hash in hex, see BTCTransactionIDFromHash */
+        /* transactions without any data do not need to be included at all*/
+        "txid1":  {
+            "memo": "Hotel in Lisbon",
+            "recipient": "Expedia, Inc.",
+            "payment_request": "1200849c11778f127d66...",
+            "payment_ack": "478e8a0e260976a30b26...",
+            "fiat_amount": "-265.10",
+            "fiat_code": "EUR",
+            /* unknown keys must be preserved */
+        },
+      },
+      "currency": {
+        "fiat_code": "USD", "EUR" etc,
+        "fiat_source": "Coinbase",
+        "btc_unit": "BTC" | "mBTC" | "uBTC" | "satoshi",
+        /* unknown keys must be preserved */
+      }
+      /* unknown keys must be preserved */
+    }
+
+
+## 5. Backup Backend API
+
+Backups will be uploaded overwriting the previous copy.
+
+iOS wallet will upload backup to both public and private databases in CloudKit container indexed by *WalletID* (see the spec) and to Mycelium backend.
+
+Mycelium backend provides two APIs: to upload and retrieve a wallet. Upload API contains a simple proof-of-work requirement proportional to the size of the backup.
+
+**Upload**
+
+    POST /wapi/wallet_backups/<WalletID in hex>
+    HTTP body in JSON: {
+       "backup": "4982bf9aea517af075423cea...",
+       "pow1": "f7a546729..."
+    }
+
+**Download**
+
+    GET /wapi/wallet_backups/<WalletID in hex>
+    Response in JSON: {"backup": "4982bf9aea517af075423cea..."}
+
+
+## 6. Proof-of-Work V1 Specification
+
+```
+H1 = SHA-256(SHA-256(Nonce || WalletID || BackupPayload))
+H2 = SHA-256(SHA-256(H1 || WalletID || BackupPayload))
+H3 = SHA-256(SHA-256(H2 || WalletID || BackupPayload))
+...
+H(n) = SHA-256(SHA-256(H(n-1) || WalletID || BackupPayload))
+H(n) must be below fixed target value.
+```
+
+**WalletID** is a binary 16-byte Wallet ID according to Automatic Backup spec.
+
+**BackupPayload** is a binary backup payload according to Automatic Backup spec.
+
+**Nonce** is a 32-byte value that constitutes the proof of work.
+
+**Rounds Count** is a number of rounds to hash the backup contents with a *Round Nonce*. To be defined (will be between 1K to 100K iterations).
+
+**Round Nonce** is a 32-byte value used during each hashing round. First value equals *Nonce*. Successive values equal hashes from the previous round.
+
+**Round** is a procedure of hashing data with *Round Nonce* as a prefix:
+
+    H(i) = SHA-256(SHA-256(H(i-1) || WalletID || BackupPayload))
+
+**Result** is a 64-bit big-endian unsigned integer extracted from the first 8 bytes of the final `H(RoundsCount)` hash value.
+
+**Base Target** is a 64-bit fixed integer to require proof-of-work. To be defined.
+
+**Target** is a 64-bit integer computed as `BaseTarget / Length(BackupPayload)`. Empty Backup Payload is rejected.
+
+Proof-of-work is valid if *Nonce* applied to a given *WalletID* and *BackupPayload* yields a *Result* less than *Target*.
+
+Future versions may change parameters or the algorithm. Wallets sending obsolete proof-of-work may have their backup rejected.
+
+
 
 - Storing custom labels and historical prices in transactions.
 - Adding labels for incoming transactions ("issuing invoices").
 - BIP70 Payment Requests support. Storing receipts and labels per transaction.
 - Auto-backup for all metadata (transaction labels, BIP70 receipts, historical prices, currency settings).
 
-------------------------
+
+
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+
+
+
+
+________________________________________________________________________________
 
 Release Notes Beta 2:
 — Fixed issues with exchange rate update (now updated on app activation and in Send/Receive screens)

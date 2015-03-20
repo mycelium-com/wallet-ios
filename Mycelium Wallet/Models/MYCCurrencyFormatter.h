@@ -9,8 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <CoreBitcoin/CoreBitcoin.h>
 
-extern NSString* const MYCCurrencyFormatterDidUpdateNotification;
-
 // App-specific currency formatter that can show both bitcoin denominations (BTC, bits) and
 // fiat denominations (exchange rate converted and updated automatically).
 // NSNumber returned and consumed is always BTCAmount.
@@ -38,6 +36,8 @@ extern NSString* const MYCCurrencyFormatterDidUpdateNotification;
 @property(nonatomic, readonly) BOOL isBitcoinFormatter;
 @property(nonatomic, readonly) BOOL isFiatFormatter;
 
+@property(nonatomic, readonly) BTCNumberFormatter* btcFormatter;
+@property(nonatomic, readonly) NSNumberFormatter* fiatFormatter;
 @property(nonatomic, readonly) BTCCurrencyConverter* currencyConverter;
 
 @property(nonatomic, readonly) NSString* placeholderText;
@@ -59,12 +59,5 @@ extern NSString* const MYCCurrencyFormatterDidUpdateNotification;
 
 // Parsed/converted amount from string.
 - (BTCAmount) amountFromString:(NSString*)string;
-
-// Updates exchange rate if needed.
-// For BTC units does nothing and returns immediately.
-// Completion block is called always upon completion (even if does nothing),
-// posts MYCCurrencyFormatterDidUpdateNotification only when exchange rate was updated.
-// Block receives result = YES if no error occured (if nothing was updated it still returns YES).
-- (void) update:(void(^)(BOOL result, NSError* error))completionHandler;
 
 @end

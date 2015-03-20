@@ -7,6 +7,8 @@
 //
 
 #import "MYCSettingsViewController.h"
+#import "MYCCurrencyFormatter.h"
+#import "MYCCurrenciesViewController.h"
 #import "MYCBackupViewController.h"
 #import "MYCScanPrivateKeyViewController.h"
 #import "MYCWebViewController.h"
@@ -32,7 +34,7 @@
         self.tintColor = [UIColor colorWithHue:208.0f/360.0f saturation:1.0f brightness:1.0f alpha:1.0f];
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Settings", @"") image:[UIImage imageNamed:@"TabSettings"] selectedImage:[UIImage imageNamed:@"TabSettingsSelected"]];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletCurrencyDidUpdateNotification object:nil];
     }
     return self;
 }
@@ -73,41 +75,35 @@
     __typeof(self) __weak weakself = self;
 
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
-        section.headerTitle = NSLocalizedString(@"Units", @"");
+        section.headerTitle = NSLocalizedString(@"Currency", @"");
         section.rowHeight = 52.0;
-        section.cellStyle = UITableViewCellStyleSubtitle;
+        section.cellStyle = UITableViewCellStyleValue1;
         section.detailFont = [UIFont systemFontOfSize:15.0];
         section.detailTextColor = [UIColor grayColor];
 
-        for (NSNumber* unitObj in @[ @(BTCNumberFormatterUnitBTC),
-                                     @(BTCNumberFormatterUnitMilliBTC),
-                                     @(BTCNumberFormatterUnitBit) ])
-        {
-            BTCNumberFormatterUnit unit = unitObj.unsignedIntegerValue;
+        BTCAmount amount = currentAccount.confirmedAmount;
+        if (amount == 0) amount = 1; // sample amount in case wallet is empty.
 
-            BTCNumberFormatter* fmt = [[MYCWallet currentWallet].btcFormatter copy];
-            fmt.bitcoinUnit = unit;
-
-            BTCAmount amount = currentAccount.confirmedAmount;
-            if (amount == 0) amount = 123456789; // sample amount in case wallet is empty.
-
-            BTCNumberFormatter* fmt2 = [fmt copy];
-            fmt2.symbolStyle = BTCNumberFormatterSymbolStyleCode;
-            NSString* symbol = fmt2.currencySymbol;
-
-            NSString* sampleString = [fmt stringFromAmount:amount];
-
-            [section item:^(PTableViewSourceItem *item) {
-                item.title = symbol;
-                item.detailTitle = sampleString;
-                item.accessoryType = [MYCWallet currentWallet].bitcoinUnit == unit ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-                item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
-                    [MYCWallet currentWallet].bitcoinUnit = unit;
-                    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletFormatterDidUpdateNotification object:nil];
-                };
-            }];
-
+        MYCCurrencyFormatter* formatter = [MYCWallet currentWallet].primaryCurrencyFormatter;
+        NSString* title = [[NSLocale currentLocale] displayNameForKey:NSLocaleCurrencyCode value:formatter.currencyCode] ?: @"";
+        if (title.length == 0) {
+            title = formatter.currencyCode;
         }
+
+        if (title.length > 1 && formatter.isFiatFormatter) {
+            title = [[[title substringToIndex:1] capitalizedString] stringByAppendingString:[title substringFromIndex:1]];
+        }
+
+        NSString* subtitle = [formatter stringFromAmount:amount];
+
+        [section item:^(PTableViewSourceItem *item) {
+            item.title = title;
+            item.detailTitle = subtitle;
+            item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                [weakself showCurrencies:nil];
+            };
+        }];
     }];
 
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
@@ -281,6 +277,13 @@
     }];
 #endif // MYCTESTNET
 
+}
+
+- (IBAction) showCurrencies:(id)sender
+{
+    MYCCurrenciesViewController* currenciesVC = [[MYCCurrenciesViewController alloc] initWithNibName:nil bundle:nil];
+    UINavigationController* navC = [[UINavigationController alloc] initWithRootViewController:currenciesVC];
+    [self presentViewController:navC animated:YES completion:nil];
 }
 
 

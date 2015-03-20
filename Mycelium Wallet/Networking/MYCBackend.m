@@ -140,8 +140,15 @@
                        return;
                    }
 
-                   // Taking the first exchange rate for now. Later we'll support switch in the settings.
+                   // By default, pick the first one.
                    NSDictionary* rateDict = [result[@"exchangeRates"] firstObject];
+                   // Try to find BitcoinAverage
+                   for (NSDictionary* dict in result[@"exchangeRates"]) {
+                       if ([dict[@"name"] isEqualToString:@"BitcoinAverage"]) {
+                           rateDict = dict;
+                           break;
+                       }
+                   }
 
                    if (completion) completion([self ensureDecimalNumber:rateDict[@"price"]],
                                                        rateDict[@"name"],

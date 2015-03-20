@@ -11,6 +11,7 @@
 #import "MYCReceiveViewController.h"
 #import "MYCBackupViewController.h"
 #import "MYCCurrenciesViewController.h"
+#import "MYCCurrencyFormatter.h"
 
 #import "MYCAppDelegate.h"
 #import "MYCWallet.h"
@@ -25,8 +26,8 @@
 // IBOutlets
 @property (weak, nonatomic) IBOutlet UIButton *refreshButton;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* refreshActivityIndicator;
-@property (weak, nonatomic) IBOutlet UILabel *btcAmountLabel;
-@property (weak, nonatomic) IBOutlet UILabel *fiatAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *primaryAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *secondaryAmountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UIButton* accountButton;
 
@@ -48,9 +49,8 @@
 
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Balance", @"") image:[UIImage imageNamed:@"TabBalance"] selectedImage:[UIImage imageNamed:@"TabBalanceSelected"]];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(formattersDidUpdate:) name:MYCWalletFormatterDidUpdateNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidReload:) name:MYCWalletDidReloadNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletExchangeRateDidUpdate:) name:MYCWalletCurrencyConverterDidUpdateNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletExchangeRateDidUpdate:) name:MYCWalletCurrencyDidUpdateNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidUpdateNetworkActivity:) name:MYCWalletDidUpdateNetworkActivityNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(walletDidUpdateAccount:) name:MYCWalletDidUpdateAccountNotification object:nil];
     }
@@ -87,11 +87,6 @@
     [self updateAllViews];
 }
 
-- (void) formattersDidUpdate:(NSNotification*)notif
-{
-    [self updateAllViews];
-}
-
 - (void) walletDidReload:(NSNotification*)notif
 {
     [self reloadAccount];
@@ -99,7 +94,7 @@
 
 - (void) walletExchangeRateDidUpdate:(NSNotification*)notif
 {
-    [self updateFiatAmount];
+    [self updateAmounts];
     [self updateStatusLabel];
 }
 
@@ -134,11 +129,7 @@
 {
     if (!self.isViewLoaded) return;
 
-    MYCWallet* wallet = self.wallet;
-
-    self.btcAmountLabel.text = [wallet.btcFormatter stringFromAmount:self.account.spendableAmount];
-
-    [self updateFiatAmount];
+    [self updateAmounts];
     [self updateRefreshControlAnimated:NO];
 
     [self.wallet inDatabase:^(FMDatabase *db) {
@@ -152,15 +143,15 @@
 //    self.qrcodeView.image = [BTCQRCode imageForString:address size:self.qrcodeView.bounds.size scale:[UIScreen mainScreen].scale];
 
     // Backup button must be visible only when it has > 0 btc and was never backed up.
-    self.backupButton.hidden = !(!wallet.isBackedUp && self.account.unconfirmedAmount > 0);
+    self.backupButton.hidden = !(!self.wallet.isBackedUp && self.account.unconfirmedAmount > 0);
 
     [self updateStatusLabel];
 }
 
-- (void) updateFiatAmount
+- (void) updateAmounts
 {
-    NSNumber* fiatAmount = [self.wallet.currencyConverter fiatFromBitcoin:self.account.confirmedAmount];
-    self.fiatAmountLabel.text = [self.wallet.fiatFormatter stringFromNumber:fiatAmount];
+    self.primaryAmountLabel.text = [self.wallet.primaryCurrencyFormatter stringFromAmount:self.account.spendableAmount];
+    self.secondaryAmountLabel.text = [self.wallet.secondaryCurrencyFormatter stringFromAmount:self.account.spendableAmount];
 }
 
 - (void) updateStatusLabel
@@ -170,20 +161,20 @@
     if (self.account.sendingAmount > 0)
     {
         [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"Sending %@", @"") self],
-                            [self.wallet.btcFormatter stringFromAmount:self.account.sendingAmount]]];
+                            [self.wallet.primaryCurrencyFormatter stringFromAmount:self.account.sendingAmount]]];
 
     }
 
     if (self.account.receivingAmount > 0)
     {
         [strings addObject:[NSString stringWithFormat:[NSLocalizedString(@"Receiving %@", @"") self],
-                            [self.wallet.btcFormatter stringFromAmount:self.account.receivingAmount]]];
+                            [self.wallet.primaryCurrencyFormatter stringFromAmount:self.account.receivingAmount]]];
     }
     
     {
         [strings addObject:[NSString stringWithFormat:NSLocalizedString(@"%@: %@", @""),
-                                 self.wallet.currencyConverter.sourceName,
-                            [self.wallet.fiatFormatter stringFromNumber:self.wallet.currencyConverter.averageRate]]];
+                                 NSLocalizedString(@"Exchange rate", @""),
+                            [self.wallet.fiatCurrencyFormatter stringFromAmount:BTCCoin]]];
     }
 
     NSString* text = [strings componentsJoinedByString:@"\n"];

@@ -8,14 +8,12 @@
 
 #import "MYCCurrencyFormatter.h"
 
-NSString* const MYCCurrencyFormatterDidUpdateNotification = @"MYCCurrencyFormatterDidUpdateNotification";
-
 @interface MYCCurrencyFormatter ()
-@property(nonatomic) BTCNumberFormatter* btcFormatter;
-@property(nonatomic) BTCNumberFormatter* nakedBtcFormatter;
-@property(nonatomic) NSNumberFormatter* fiatFormatter;
-@property(nonatomic) NSNumberFormatter* nakedFiatFormatter;
 @property(nonatomic, readwrite) BTCCurrencyConverter* currencyConverter;
+@property(nonatomic, readwrite) BTCNumberFormatter* btcFormatter;
+@property(nonatomic, readwrite) NSNumberFormatter* fiatFormatter;
+@property(nonatomic) BTCNumberFormatter* nakedBtcFormatter;
+@property(nonatomic) NSNumberFormatter* nakedFiatFormatter;
 @end
 
 @interface MYCMyMultiplierNSNumberFormatter : NSNumberFormatter
@@ -101,13 +99,23 @@ NSString* const MYCCurrencyFormatterDidUpdateNotification = @"MYCCurrencyFormatt
     // [[NSLocale currentLocale] displayNameForKey:NSLocaleCurrencySymbol value:@"USD"];
     // Returns "$US" for symbol and "dollar des etats unis" for code.
 
-    fmt.currencySymbol = [self codeToSymbolMapping][fmt.currencyCode];
-    fmt.internationalCurrencySymbol = fmt.currencySymbol;
-    fmt.minusSign = @"–";
-//#warning TODO: review choice of currency symbol position. If we leave it to locale, then minus sign might look strange.
-//    fmt.positivePrefix = @"";
-//    fmt.positiveSuffix = [@"\xE2\x80\xAF" stringByAppendingString:fmt.currencySymbol];
-//    fmt.negativeFormat = [fmt.positiveFormat stringByReplacingCharactersInRange:[fmt.positiveFormat rangeOfString:@"#"] withString:@"-#"];
+#warning  TODO: add an API to switch between symbols and codes.
+    if (0) {
+        fmt.currencySymbol = [self codeToSymbolMapping][fmt.currencyCode];
+        fmt.internationalCurrencySymbol = fmt.currencySymbol;
+        fmt.minusSign = @"–";
+    //#warning TODO: review choice of currency symbol position. If we leave it to locale, then minus sign might look strange.
+    //    fmt.positivePrefix = @"";
+    //    fmt.positiveSuffix = [@"\xE2\x80\xAF" stringByAppendingString:fmt.currencySymbol];
+    //    fmt.negativeFormat = [fmt.positiveFormat stringByReplacingCharactersInRange:[fmt.positiveFormat rangeOfString:@"#"] withString:@"-#"];
+    } else {
+        fmt.currencySymbol = fmt.currencyCode;
+        fmt.internationalCurrencySymbol = fmt.currencySymbol;
+        fmt.minusSign = @"–";
+        fmt.positivePrefix = @"";
+        fmt.positiveSuffix = [@" " stringByAppendingString:fmt.currencySymbol];
+        fmt.negativeFormat = [fmt.positiveFormat stringByReplacingCharactersInRange:[fmt.positiveFormat rangeOfString:@"#"] withString:@"-#"];
+    }
     return fmt;
 }
 
@@ -196,16 +204,6 @@ NSString* const MYCCurrencyFormatterDidUpdateNotification = @"MYCCurrencyFormatt
 
 - (BTCAmount) amountFromString:(NSString*)string {
     return BTCAmountFromDecimalNumber([self numberFromString:string]);
-}
-
-- (void) update:(void(^)(BOOL result, NSError* error))completionHandler {
-
-    if (self.btcFormatter) {
-        if (completionHandler) completionHandler(YES, nil);
-        return;
-    }
-
-    
 }
 
 - (NSDictionary*) codeToSymbolMapping {

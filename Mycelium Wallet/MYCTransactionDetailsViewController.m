@@ -8,6 +8,7 @@
 
 #import "MYCTransactionDetailsViewController.h"
 #import "MYCTransactionsViewController.h"
+#import "MYCCurrencyFormatter.h"
 
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
@@ -52,7 +53,7 @@
 {
     self.tableViewSource = [[PTableViewSource alloc] init];
 
-    BTCNumberFormatter* btcfmt = [[MYCWallet currentWallet].btcFormatter copy];
+    BTCNumberFormatter* btcfmt = [[MYCWallet currentWallet].btcCurrencyFormatter.btcFormatter copy];
     btcfmt.minimumFractionDigits = btcfmt.maximumFractionDigits;
 
     // Fill in data for every cell.

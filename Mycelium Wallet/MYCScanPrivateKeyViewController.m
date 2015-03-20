@@ -7,6 +7,7 @@
 //
 
 #import "MYCScanPrivateKeyViewController.h"
+#import "MYCCurrencyFormatter.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "MYCBackend.h"
@@ -153,10 +154,7 @@
 
             self.unspentOutputs = outputs;
 
-            self.statusLabel.text = [NSString stringWithFormat:@"%@ (%@)",
-                                     [self.wallet.btcFormatter stringFromAmount:balance],
-                                     [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:balance]]
-                                     ];
+            self.statusLabel.text = [self.wallet.primaryCurrencyFormatter stringFromAmount:balance];
 
             if (self.privateAddress && balance > 0)
             {
@@ -273,10 +271,7 @@
                         balance += txout.value;
                     }
 
-                    NSString* balanceString = [NSString stringWithFormat:@"%@ (%@)",
-                                               [self.wallet.btcFormatter stringFromAmount:balance],
-                                               [self.wallet.fiatFormatter stringFromNumber:[self.wallet.currencyConverter fiatFromBitcoin:balance]]
-                                               ];
+                    NSString* balanceString = [self.wallet.primaryCurrencyFormatter stringFromAmount:balance];
                     
                     self.scannerView.message = [NSString stringWithFormat:NSLocalizedString(@"This is a public address with %@", @""), balanceString];
                 }];

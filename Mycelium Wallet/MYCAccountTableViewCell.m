@@ -9,12 +9,13 @@
 #import "MYCAccountTableViewCell.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
+#import "MYCCurrencyFormatter.h"
 
 @interface MYCAccountTableViewCell ()
 
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
-@property (weak, nonatomic) IBOutlet UILabel *btcLabel;
-@property (weak, nonatomic) IBOutlet UILabel *fiatLabel;
+@property (weak, nonatomic) IBOutlet UILabel *primaryLabel;
+@property (weak, nonatomic) IBOutlet UILabel *secondaryLabel;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 
 @end
@@ -40,7 +41,7 @@
 - (void) updateStyle
 {
     self.statusLabel.textColor = self.tintColor;
-    self.fiatLabel.textColor = self.tintColor;
+    self.secondaryLabel.textColor = self.tintColor;
 }
 
 - (void) setAccount:(MYCWalletAccount *)account
@@ -56,10 +57,8 @@
 
     MYCWallet* wallet = [MYCWallet currentWallet];
 
-    self.btcLabel.text = [wallet.btcFormatter stringFromAmount:account.spendableAmount];
-
-    NSNumber* fiatAmount = [wallet.currencyConverter fiatFromBitcoin:account.spendableAmount];
-    self.fiatLabel.text = [wallet.fiatFormatter stringFromNumber:fiatAmount];
+    self.primaryLabel.text = [wallet.primaryCurrencyFormatter stringFromAmount:account.spendableAmount];
+    self.secondaryLabel.text = [wallet.secondaryCurrencyFormatter stringFromAmount:account.spendableAmount];
 }
 
 @end
