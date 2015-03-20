@@ -46,6 +46,9 @@
     if ([[MYCWallet currentWallet] isStored])
     {
         [self displayMainView];
+
+        [[MYCWallet currentWallet] updateExchangeRate:YES completion:^(BOOL success, NSError *error) {
+        }];
     }
     else
     {

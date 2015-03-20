@@ -173,9 +173,12 @@
     }
     
     {
-        [strings addObject:[NSString stringWithFormat:NSLocalizedString(@"%@: %@", @""),
-                                 NSLocalizedString(@"Exchange rate", @""),
-                            [self.wallet.fiatCurrencyFormatter stringFromAmount:BTCCoin]]];
+        NSString* rateString = [NSString stringWithFormat:NSLocalizedString(@"%@: %@", @""),
+                                NSLocalizedString(@"Exchange rate", @""),
+                                [self.wallet.fiatCurrencyFormatter stringFromAmount:BTCCoin]];
+        if (![rateString containsString:@"null"]) {
+            [strings addObject:rateString];
+        }
     }
 
     NSString* text = [strings componentsJoinedByString:@"\n"];
