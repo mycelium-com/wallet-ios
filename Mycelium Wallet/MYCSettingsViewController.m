@@ -107,23 +107,45 @@
     }];
 
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
-        section.headerTitle = NSLocalizedString(@"Cold Storage", @"");
+        section.headerTitle = NSLocalizedString(@"Invite", @"");
 
         [section item:^(PTableViewSourceItem *item) {
-            item.title = NSLocalizedString(@"Import Private Key", @"");
-            item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            item.title = NSLocalizedString(@"Invite a friend", @"");
+            item.accessoryType = UITableViewCellAccessoryNone;
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
 
-                MYCScanPrivateKeyViewController* vc = [[MYCScanPrivateKeyViewController alloc] initWithNibName:nil bundle:nil];
-                vc.completionBlock = ^(BOOL finished){
-                    [weakself dismissViewControllerAnimated:YES completion:nil];
-                };
-                UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
-                [weakself presentViewController:navc animated:YES completion:nil];
+                [weakself.tableView deselectRowAtIndexPath:[weakself.tableView indexPathForSelectedRow] animated:NO];
+
+                NSString* appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleNameKey];
+                NSURL* itunesURL = [NSURL URLWithString:@"https://itunes.apple.com/us/app/mycelium-bitcoin-wallet/id943912290?mt=8"];
+
+                NSArray* items = @[[NSString stringWithFormat:NSLocalizedString(@"Hey, install %@ and I will send you some bitcoins.", @""), appName], itunesURL];
+                UIActivityViewController* activityController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+                activityController.excludedActivityTypes = @[];
+                [self presentViewController:activityController animated:YES completion:nil];
 
             };
         }];
     }];
+
+//    [self.tableViewSource section:^(PTableViewSourceSection *section) {
+//        section.headerTitle = NSLocalizedString(@"Cold Storage", @"");
+//
+//        [section item:^(PTableViewSourceItem *item) {
+//            item.title = NSLocalizedString(@"Import Private Key", @"");
+//            item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+//
+//                MYCScanPrivateKeyViewController* vc = [[MYCScanPrivateKeyViewController alloc] initWithNibName:nil bundle:nil];
+//                vc.completionBlock = ^(BOOL finished){
+//                    [weakself dismissViewControllerAnimated:YES completion:nil];
+//                };
+//                UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
+//                [weakself presentViewController:navc animated:YES completion:nil];
+//
+//            };
+//        }];
+//    }];
 
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
         section.headerTitle = NSLocalizedString(@"Backup", @"");

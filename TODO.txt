@@ -8,8 +8,7 @@ A few bugfixes:
 + stability improvement when exchange rate is not available yet (error or missing).
 
 Enhancements and new features:
-- invite friend to download the app via sharing screen.
-
++ invite friend to download the app via sharing screen.
 + TouchID / passcode protection for critical actions.
 + move cold storage import to Receive and/or Send screen for easier discovery.
 + show everything in one currency (e.g. USD), allow switching currency from anywhere on the screen.
