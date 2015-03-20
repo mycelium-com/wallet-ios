@@ -73,6 +73,7 @@
     [super viewWillDisappear:animated];
 
     [self restoreBrightness];
+    [self updateCurrency];
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -108,6 +109,13 @@
 
 - (void) updateCurrency {
     self.amountField.placeholder = [MYCWallet currentWallet].primaryCurrencyFormatter.placeholderText;
+    BTCAmount amountToPay = self.requestedAmount;
+    if (amountToPay > 0) {
+        self.amountField.text = [[MYCWallet currentWallet].primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(amountToPay)];
+    } else {
+        self.amountField.text = @"";
+    }
+
     self.liveFormatter.textField = nil;
     self.liveFormatter = [[MYCTextFieldLiveFormatter alloc] initWithTextField:self.amountField numberFormatter:[MYCWallet currentWallet].primaryCurrencyFormatter.nakedFormatter];
 
@@ -156,17 +164,7 @@
     self.qrcodeView.image = [BTCQRCode imageForString:qrString
                                                  size:self.qrcodeView.bounds.size
                                                 scale:[UIScreen mainScreen].scale];
-
-    [self updateUnits];
 }
-
-- (void) updateUnits
-{
-    [self updateCurrency];
-}
-
-
-
 
 
 - (IBAction)close:(id)sender
