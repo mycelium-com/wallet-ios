@@ -43,7 +43,7 @@
                             </userDefinedRuntimeAttributes>
                         </view>
                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="725" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="zy7-EP-Ola">
-                            <rect key="frame" x="131.5" y="26" width="55" height="56"/>
+                            <rect key="frame" x="130.5" y="26" width="57" height="58"/>
                             <constraints>
                                 <constraint firstAttribute="height" relation="lessThanOrEqual" constant="125" id="0Lz-DJ-xqu"/>
                                 <constraint firstAttribute="height" priority="730" constant="120" id="Cf2-cb-XjO"/>
@@ -51,7 +51,7 @@
                             </constraints>
                         </imageView>
                         <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Enb-d0-ZL3">
-                            <rect key="frame" x="107" y="82" width="106" height="32"/>
+                            <rect key="frame" x="107" y="84" width="106" height="32"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                             <state key="normal" title="Main Account">
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -61,7 +61,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NNj-oR-Mer" userLabel="Switch Currency Button">
-                            <rect key="frame" x="84" y="108" width="161" height="64"/>
+                            <rect key="frame" x="84" y="109" width="161" height="63"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <state key="normal">
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -71,7 +71,7 @@
                             </connections>
                         </button>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 123 456,78 bits" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yb0-XZ-Ygw">
-                            <rect key="frame" x="79" y="118" width="161" height="25"/>
+                            <rect key="frame" x="79" y="116" width="161" height="25"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="21"/>
                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                             <nil key="highlightedColor"/>
@@ -83,10 +83,10 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="bE2-35-rUf">
-                            <rect key="frame" x="255" y="121.5" width="20" height="20"/>
+                            <rect key="frame" x="255" y="119.5" width="20" height="20"/>
                         </activityIndicatorView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B2o-6q-Qie" userLabel="Refresh Button">
-                            <rect key="frame" x="245" y="111.5" width="40" height="40"/>
+                            <rect key="frame" x="245" y="109.5" width="40" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="40" id="nhS-qa-VtH"/>
                                 <constraint firstAttribute="height" constant="40" id="srv-la-Nto"/>
@@ -159,8 +159,8 @@
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstItem="Yb0-XZ-Ygw" firstAttribute="top" secondItem="Enb-d0-ZL3" secondAttribute="bottom" constant="4" id="4qW-IA-vmy"/>
-                        <constraint firstItem="NNj-oR-Mer" firstAttribute="top" secondItem="Yb0-XZ-Ygw" secondAttribute="top" constant="-10" id="BUD-en-3Rm"/>
+                        <constraint firstItem="Yb0-XZ-Ygw" firstAttribute="top" secondItem="Enb-d0-ZL3" secondAttribute="bottom" id="4qW-IA-vmy"/>
+                        <constraint firstItem="Yb0-XZ-Ygw" firstAttribute="top" secondItem="NNj-oR-Mer" secondAttribute="top" constant="7" id="BUD-en-3Rm"/>
                         <constraint firstItem="B2o-6q-Qie" firstAttribute="leading" secondItem="Yb0-XZ-Ygw" secondAttribute="trailing" constant="5" id="C69-Rr-LwI"/>
                         <constraint firstItem="NNj-oR-Mer" firstAttribute="trailing" secondItem="Yb0-XZ-Ygw" secondAttribute="trailing" constant="5" id="EXl-fu-hX1"/>
                         <constraint firstItem="mcn-nK-j7d" firstAttribute="bottom" secondItem="o2C-Sr-dwE" secondAttribute="bottom" constant="20" id="Gdg-ra-dki"/>
@@ -191,7 +191,7 @@
                         <constraint firstItem="MPE-AQ-jAs" firstAttribute="top" secondItem="qAK-Zb-AXQ" secondAttribute="bottom" constant="16" id="kvP-xh-hoR"/>
                         <constraint firstItem="MPE-AQ-jAs" firstAttribute="trailing" secondItem="o1L-jw-pA5" secondAttribute="trailing" id="oNs-rz-zdb"/>
                         <constraint firstAttribute="centerX" secondItem="Enb-d0-ZL3" secondAttribute="centerX" constant="-0.5" id="skQ-Pe-Y8n"/>
-                        <constraint firstItem="o2C-Sr-dwE" firstAttribute="top" secondItem="Yb0-XZ-Ygw" secondAttribute="bottom" constant="2" id="swV-A2-Gy5"/>
+                        <constraint firstItem="o2C-Sr-dwE" firstAttribute="top" secondItem="Yb0-XZ-Ygw" secondAttribute="bottom" constant="4" id="swV-A2-Gy5"/>
                         <constraint firstItem="qAK-Zb-AXQ" firstAttribute="top" relation="greaterThanOrEqual" secondItem="mcn-nK-j7d" secondAttribute="bottom" constant="16" id="tYj-P5-vWH"/>
                         <constraint firstItem="mcn-nK-j7d" firstAttribute="width" secondItem="qAK-Zb-AXQ" secondAttribute="width" priority="700" id="v4h-5c-tdn"/>
                         <constraint firstAttribute="centerX" secondItem="mcn-nK-j7d" secondAttribute="centerX" id="yUQ-Ug-dGb"/>
