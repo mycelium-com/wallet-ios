@@ -313,7 +313,7 @@ static BTCAmount MYCFeeRate = 10000;
             builder.changeAddress = self.changeAddress ?: self.account.internalAddress;
             builder.feeRate = MYCFeeRate;
 
-            NSString* authString = [NSString stringWithFormat:NSLocalizedString(@"Authorize spending %@", @""),
+            NSString* authString = [NSString stringWithFormat:NSLocalizedString(@"Confirm payment of %@", @""),
                                     [self formatAmountInSelectedCurrency:self.spendingAmount]];
 
             // Unlock wallet so builder can sign.
