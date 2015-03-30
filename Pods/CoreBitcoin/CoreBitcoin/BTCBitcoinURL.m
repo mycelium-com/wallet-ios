@@ -104,6 +104,12 @@
     NSLocale* locale = [[NSLocale localeWithLocaleIdentifier:@"en_US"] copy]; // uses period (".") as a decimal point.
     NSAssert([[locale objectForKey:NSLocaleDecimalSeparator] isEqual:@"."], @"must be point as a decimal separator");
     NSDecimalNumber* dn = [NSDecimalNumber decimalNumberWithString:string locale:locale];
+    if ([dn isEqual:[NSDecimalNumber notANumber]]) {
+        return 0;
+    }
+    if (BTCAmountFromDecimalNumber(dn) > 21000000) {
+        return 0;
+    }
     dn = [dn decimalNumberByMultiplyingByPowerOf10:8];
     return BTCAmountFromDecimalNumber(dn);
 }
