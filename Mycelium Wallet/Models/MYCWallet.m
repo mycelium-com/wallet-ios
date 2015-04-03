@@ -402,18 +402,30 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     _unlockedWallet.reason = reason;
 
     // Migrate to touch id when unlocking the wallet.
+#if 0 // TODO: make it user-driven with a dialog.
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MYCDidMigrateToTouchID"]) {
         if ([MYCUnlockedWallet isPasscodeSet]) {
+            if (self.isBackedUp) {
 
-            BTCMnemonic* mnemonic = _unlockedWallet.mnemonic;
-            if (mnemonic) {
-                _unlockedWallet.mnemonic = mnemonic;
+                MYCLog(@"MYCWallet: migrating mnemonic to a touchid/passcode protected item");
+
+                BTCMnemonic* mnemonic = _unlockedWallet.mnemonic;
+                if (mnemonic) {
+                    _unlockedWallet.mnemonic = mnemonic;
+                } else {
+                    MYCLog(@"MYCWallet: not migrating mnemonic to a touchid/passcode: can't read the mnemonic (error: %@)", _unlockedWallet.error);
+                }
+
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MYCDidMigrateToTouchID"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            } else {
+                MYCLog(@"MYCWallet: not migrating to touchid/passcode: user hasnt backed up yet");
             }
-
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MYCDidMigrateToTouchID"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
+        } else {
+            MYCLog(@"MYCWallet: not migrating to touchid/passcode: user does not have a passcode");
         }
     }
+#endif
 
     block(_unlockedWallet);
 
