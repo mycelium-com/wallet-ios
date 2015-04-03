@@ -68,6 +68,7 @@
 		20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */; };
 		20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */; };
 		20C2D82C19EBD6CB0022CAAC /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82B19EBD6CB0022CAAC /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		20DAD9DB1ACECD9700EBC85F /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20DAD9DA1ACECD9700EBC85F /* Crashlytics.framework */; };
 		311D631D1AADCDD500798450 /* BTCPriceSourceMycelium.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D631C1AADCDD500798450 /* BTCPriceSourceMycelium.m */; };
 		311D63221AADD72900798450 /* MYCCurrenciesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D63201AADD72900798450 /* MYCCurrenciesViewController.m */; };
 		311D63261AADD8AF00798450 /* MYCCurrencyFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D63251AADD8AF00798450 /* MYCCurrencyFormatter.m */; };
@@ -191,6 +192,7 @@
 		20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCErrorAnimation.m; sourceTree = "<group>"; };
 		20C2D82A19EBD6CB0022CAAC /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		20C2D82B19EBD6CB0022CAAC /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		20DAD9DA1ACECD9700EBC85F /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		311D631B1AADCDD500798450 /* BTCPriceSourceMycelium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTCPriceSourceMycelium.h; sourceTree = "<group>"; };
 		311D631C1AADCDD500798450 /* BTCPriceSourceMycelium.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTCPriceSourceMycelium.m; sourceTree = "<group>"; };
 		311D631F1AADD72900798450 /* MYCCurrenciesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCCurrenciesViewController.h; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				200AAE3919F93FFB0004F908 /* AVFoundation.framework in Frameworks */,
+				20DAD9DB1ACECD9700EBC85F /* Crashlytics.framework in Frameworks */,
 				13DC93D53302498C84E6F0E9 /* libPods-Mycelium Wallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -505,6 +508,7 @@
 		2D8A166B7A734937ACF4ACCC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				20DAD9DA1ACECD9700EBC85F /* Crashlytics.framework */,
 				200AAE3819F93FFB0004F908 /* AVFoundation.framework */,
 				BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */,
 			);
@@ -544,6 +548,7 @@
 				208FFB8C19D9802000D4C159 /* Frameworks */,
 				208FFB8D19D9802000D4C159 /* Resources */,
 				D6DF2EDE39C94DEA9C818951 /* Copy Pods Resources */,
+				20DAD9D91ACECD6000EBC85F /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -657,6 +662,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		20DAD9D91ACECD6000EBC85F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Crashlytics.framework/run a0449b892cadffe38ac3e11d7d564d916b905e5c 14a15ad0e654ac3560db0a9fba7a33be42877c2807a04761606aceb6ec7e2a74\n";
+		};
 		D6DF2EDE39C94DEA9C818951 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -794,7 +812,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					"MYCTESTNET=1",
+					"XXXMYCTESTNET=1",
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -856,6 +874,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mycelium Wallet/MYCPrefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -879,6 +901,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mycelium Wallet/MYCPrefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
