@@ -139,7 +139,7 @@
 
 - (void) setRequestedAmount:(BTCAmount)requestedAmount
 {
-    NSLog(@"Set Requested Amount: %@ btc", @(((double)requestedAmount)/BTCCoin));
+    MYCLog(@"Set Requested Amount: %@ btc", @(((double)requestedAmount)/BTCCoin));
     _requestedAmount = requestedAmount;
     [self updateAllViews];
 }

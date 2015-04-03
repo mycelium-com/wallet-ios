@@ -35,6 +35,7 @@ static BOOL MYCBypassMissingPasscode = 0;
         NSError* error = nil;
         NSData* data = [self readItemWithName:kMasterSeedName error:&error];
         if (!data) {
+            MYCLog(@"MYCUnlockedWallet: Cannot read mnemonic from keychain: %@", error);
             self.error = error;
             return nil;
         }
@@ -49,6 +50,7 @@ static BOOL MYCBypassMissingPasscode = 0;
     NSError* error = nil;
     NSData* data = mnemonic.dataWithSeed ?: [NSData data];
     if (![self writeItem:data withName:kMasterSeedName accessibility:kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly error:&error]) {
+        MYCLog(@"MYCUnlockedWallet: Cannot write mnemonic to keychain: %@", error);
         self.error = error;
         return;
     }
@@ -204,6 +206,7 @@ static BOOL MYCBypassMissingPasscode = 0;
     }
     else if (status == errSecItemNotFound) {
         // We have no data stored there yet, so we don't return an error.
+        MYCLog(@"MYCUnlockedWallet: Item with name %@ not found", name);
         return nil;
     }
 
@@ -251,6 +254,7 @@ static BOOL MYCBypassMissingPasscode = 0;
     }
 
     if (!data) {
+        MYCLog(@"MYCUnlockedWallet: Writing nil data for name %@", name);
         return YES;
     }
 
@@ -351,8 +355,11 @@ static BOOL MYCBypassMissingPasscode = 0;
 //    errSecAuthFailed                            = -25293,  /* The user name or passphrase you entered is not correct. */
 //};
 
-
 - (NSError*) errorForOSStatus:(OSStatus)statusCode {
+    return [MYCUnlockedWallet errorForOSStatus:statusCode];
+}
+
++ (NSError*) errorForOSStatus:(OSStatus)statusCode {
     NSString* description = nil;
     NSString* codeName = nil;
 
@@ -423,7 +430,7 @@ static BOOL MYCBypassMissingPasscode = 0;
             break;
     }
 
-    return [NSError errorWithDomain:@"com.Chain"
+    return [NSError errorWithDomain:MYCErrorDomain
                                code:statusCode
                            userInfo:@{NSLocalizedDescriptionKey:
                                           [NSString stringWithFormat:@"%@ (%@)",
@@ -451,6 +458,7 @@ static BOOL MYCBypassMissingPasscode = 0;
         if (status == errSecSuccess || status == errSecItemNotFound) {
             // okay
         } else {
+            MYCError(@"MYCUnlockedWallet: failed to delete isPasscodeSet probe: %@", [self errorForOSStatus:status]);
             // interesting.
         }
     }
@@ -482,6 +490,8 @@ static BOOL MYCBypassMissingPasscode = 0;
         
         return YES;
     }
+
+    MYCError(@"MYCUnlockedWallet: status after setting isPasscodeSet probe (errSecDecode is expected when passcode is not set): %@", [self errorForOSStatus:status]);
     
     // errSecDecode seems to be the error thrown on a device with no passcode set
     if (status == errSecDecode) {

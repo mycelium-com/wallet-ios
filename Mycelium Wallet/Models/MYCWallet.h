@@ -184,4 +184,12 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Returns YES if this new account if within a window of empty accounts.
 - (BOOL) canAddAccount;
 
+
+// Diagnostics
+
+@property(nonatomic, readonly) NSString* diagnosticsLog;
+
+- (void) log:(NSString*)message;
+- (void) logError:(NSString*)message;
+
 @end

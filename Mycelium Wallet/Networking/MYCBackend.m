@@ -7,6 +7,7 @@
 //
 
 #import "MYCBackend.h"
+#import "MYCWallet.h"
 
 @interface MYCBackend () <NSURLSessionDelegate>
 

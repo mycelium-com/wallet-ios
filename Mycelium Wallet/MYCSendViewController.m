@@ -245,7 +245,7 @@ static BTCAmount MYCFeeRate = 10000;
 
 - (void) setSpendingAmount:(BTCAmount)spendingAmount
 {
-    NSLog(@"Set Spending Amount: %@ btc", @(((double)spendingAmount)/BTCCoin));
+    MYCLog(@"Set Spending Amount: %@ btc", @(((double)spendingAmount)/BTCCoin));
     _spendingAmount = spendingAmount;
     [self updateAmounts];
 }

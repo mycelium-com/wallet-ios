@@ -29,11 +29,35 @@
 {
     [super viewWillAppear:animated];
 
-    if (self.URL)
+    if (self.allowShare) {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share:)];
+    }
+
+    if (self.html) {
+        [self.webView loadHTMLString:self.html baseURL:self.URL];
+    }
+    else if (self.text) {
+        // maybe need to wrap in <html><body>...
+        [self.webView loadHTMLString:[NSString stringWithFormat:@""
+                                      "<html><body><pre style='font-family:Menlo;font-size:12px;'>" // white-space: pre-wrap;
+                                      "%@"
+                                      "</pre></body></html>"
+                                      , self.text] baseURL:self.URL];
+    }
+    else if (self.URL)
     {
         [self.webView loadRequest:[NSURLRequest requestWithURL:self.URL]];
     }
 }
+
+- (void) share:(id)_ {
+
+    NSArray* items = @[ self.text ?: self.html ?: self.URL ?: @"" ];
+    UIActivityViewController* activityController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    activityController.excludedActivityTypes = @[];
+    [self presentViewController:activityController animated:YES completion:nil];
+}
+
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {

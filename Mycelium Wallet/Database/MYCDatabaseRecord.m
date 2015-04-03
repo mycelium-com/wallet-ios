@@ -1,6 +1,7 @@
 #import <FMDB/FMDatabase.h>
 #import "MYCDatabaseRecord.h"
 #import "MYCDatabase.h"
+#import "MYCWallet.h"
 
 NSString* const MYCDatabaseRecordErrorDomain = @"MYCDatabaseRecordErrorDomain";
 NSString* const MYCDatabaseRecordColumnKey = @"MYCDatabaseRecordColumn";

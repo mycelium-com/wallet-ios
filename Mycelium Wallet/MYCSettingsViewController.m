@@ -168,8 +168,6 @@
 
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
 
-        section.headerTitle =
-
         section.headerTitle = NSLocalizedString(@"About", @"");
 
         section.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -202,7 +200,23 @@
             };
 
         }];
+
+#if 1
+#warning Diagnostics View Enabled
+        [section item:^(PTableViewSourceItem *item) {
+            item.title = NSLocalizedString(@"Diagnostics", @"");
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                MYCWebViewController* vc = [[MYCWebViewController alloc] initWithNibName:nil bundle:nil];
+                vc.title = NSLocalizedString(@"Diagnostics", @"");
+                vc.text = [MYCWallet currentWallet].diagnosticsLog;
+                vc.allowShare = YES;
+                [weakself.navigationController pushViewController:vc animated:YES];
+            };
+        }];
+#endif
+
     }];
+
 
 #if MYCTESTNET
     [self.tableViewSource section:^(PTableViewSourceSection *section) {

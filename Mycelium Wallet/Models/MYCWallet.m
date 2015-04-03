@@ -19,6 +19,7 @@
 #import "MYCUnspentOutput.h"
 #import "MYCCurrencyFormatter.h"
 #import "BTCPriceSourceMycelium.h"
+#include <pthread.h>
 
 NSString* const MYCWalletCurrencyDidUpdateNotification = @"MYCWalletCurrencyDidUpdateNotification";
 NSString* const MYCWalletDidReloadNotification = @"MYCWalletDidReloadNotification";
@@ -33,6 +34,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 @property(nonatomic) NSArray* currencyFormatters;
 @property(nonatomic) MYCCurrencyFormatter* primaryCurrencyFormatter;
 @property(nonatomic) MYCCurrencyFormatter* secondaryCurrencyFormatter;
+@property(nonatomic) NSMutableString* log;
 
 // Returns current database configuration.
 // Returns nil if database is not created yet.
@@ -544,7 +546,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         // Prevent database file from iCloud backup
         if (![database.URL setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error])
         {
-            NSLog(@"WARNING: Can not exclude database file from backup (%@)", error);
+            MYCLog(@"WARNING: Can not exclude database file from backup (%@)", error);
             //[NSException raise:NSInternalInconsistencyException format:@"Can not exclude database file from backup (%@)", error];
         }
     }
@@ -1188,6 +1190,24 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 }
 
 
+- (NSString*) diagnosticsLog {
+    return _log ?: @"";
+}
+
+- (void) log:(NSString*)message {
+    if (!_log) _log = [NSMutableString string];
+    if (_log.length > 1000000) {
+        _log = [[_log substringFromIndex:500000] mutableCopy];
+    }
+    [_log appendFormat:@"%@ %@ %@\n", [NSDate date], [NSThread currentThread], message];
+}
+
+- (void) logError:(NSString*)message {
+    if (!_log) _log = [NSMutableString string];
+    if (_log.length > 1000000) {
+        _log = [[_log substringFromIndex:500000] mutableCopy];
+    }
+    [_log appendFormat:@"%@ %@ ERROR: %@\n", [NSDate date], [NSThread currentThread], message];
+}
 
 @end
-

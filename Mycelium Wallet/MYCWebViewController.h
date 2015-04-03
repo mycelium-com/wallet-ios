@@ -11,5 +11,8 @@
 @interface MYCWebViewController : UIViewController
 
 @property(nonatomic) NSURL* URL;
+@property(nonatomic) NSString* text;
+@property(nonatomic) NSString* html;
+@property(nonatomic) BOOL allowShare;
 
 @end
