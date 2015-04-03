@@ -14,15 +14,15 @@
 
         #import <CoreBitcoin/CoreBitcoin.h>
 
-        #ifdef DEBUG
+        #ifndef DEBUG
             #define MYCDebugHexDatabaseFields 1
             #define MYCDebug(expression) expression
             #define MYCLog(...)   do{ id s = [NSString stringWithFormat:__VA_ARGS__]; NSLog(@"MYC: %@", s); [[MYCWallet currentWallet] log:s]; }while(0)
             #define MYCError(...) do{ id s = [NSString stringWithFormat:__VA_ARGS__]; NSLog(@"MYC ERROR: %@", s); [[MYCWallet currentWallet] log:s]; }while(0)
         #else
             #define MYCDebugHexDatabaseFields 0
-            #define MYCDebug(expression)
-            #define MYCLog(args...) do{ id s = [NSString stringWithFormat:__VA_ARGS__]; [[MYCWallet currentWallet] log:s]; }while(0)
+            #define MYCDebug(expression) expression
+            #define MYCLog(...)   do{ id s = [NSString stringWithFormat:__VA_ARGS__]; [[MYCWallet currentWallet] log:s]; }while(0)
             #define MYCError(...) do{ id s = [NSString stringWithFormat:__VA_ARGS__]; NSLog(@"MYC ERROR: %@", s); [[MYCWallet currentWallet] log:s]; }while(0)
         #endif
     #endif
