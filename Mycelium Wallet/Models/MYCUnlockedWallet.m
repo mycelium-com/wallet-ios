@@ -487,7 +487,10 @@ static BOOL MYCBypassMissingPasscode = 0;
                                 };
         
         status = SecItemDelete((__bridge CFDictionaryRef)query);
-        
+
+        if (status != errSecSuccess) {
+            MYCError(@"MYCUnlockedWallet: status after deleting isPasscodeSet probe after successful creation: %@", [self errorForOSStatus:status]);
+        }
         return YES;
     }
 

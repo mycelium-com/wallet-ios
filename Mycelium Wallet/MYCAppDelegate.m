@@ -32,6 +32,7 @@
 {
     [Crashlytics startWithAPIKey:@"a0449b892cadffe38ac3e11d7d564d916b905e5c"];
 
+    MYCLog(@"MYCAppDelegate: [MYCWallet isPasscodeSet]: %@", @([MYCUnlockedWallet isPasscodeSet]));
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
 #if DEBUG && 0
