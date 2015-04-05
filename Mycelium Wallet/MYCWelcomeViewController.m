@@ -120,8 +120,7 @@
         // This will write the mnemonic to iOS keychain.
         unlockedWallet.mnemonic = mnemonic;
 
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MYCDidMigrateToTouchID"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+        wallet.migratedToTouchID = YES;
 
         void(^updateWallet)() = ^{
             [wallet updateActiveAccounts:^(BOOL success, NSError *error) {}];

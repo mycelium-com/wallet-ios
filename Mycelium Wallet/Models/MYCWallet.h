@@ -50,6 +50,9 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Set to YES once the user has backed up the wallet.
 @property(nonatomic, getter=isBackedUp) BOOL backedUp;
 
+// Set to YES once the user has backed up the wallet.
+@property(nonatomic, getter=isMigratedToTouchID) BOOL migratedToTouchID;
+
 // Primary and secondary formatters are typically (btc, fiat) or (fiat, btc).
 // When user switches to usd/eur/cny it becomes primary; previous bitcoin formatter (primary or secondary) becomes a secondary one.
 // When user switches to btc/mbtc/bits it becomes primary; previous fiat formatter (primary or secondary) becomes a secondary one.

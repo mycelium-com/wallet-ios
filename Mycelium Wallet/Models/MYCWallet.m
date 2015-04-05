@@ -122,6 +122,18 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (BOOL) isMigratedToTouchID
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"MYCDidMigrateToTouchID"];
+}
+
+- (void) setMigratedToTouchID:(BOOL)migrated
+{
+    [[NSUserDefaults standardUserDefaults] setBool:migrated forKey:@"MYCDidMigrateToTouchID"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
 - (BTCNumberFormatterUnit) bitcoinUnit
 {
     NSNumber* num = [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletBitcoinUnit"];
@@ -403,7 +415,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 
     // Migrate to touch id when unlocking the wallet.
 #if 0 // TODO: make it user-driven with a dialog.
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"MYCDidMigrateToTouchID"]) {
+    if (!self.isMigratedToTouchID) {
         if ([MYCUnlockedWallet isPasscodeSet]) {
             if (self.isBackedUp) {
 
@@ -416,8 +428,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
                     MYCLog(@"MYCWallet: not migrating mnemonic to a touchid/passcode: can't read the mnemonic (error: %@)", _unlockedWallet.error);
                 }
 
-                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MYCDidMigrateToTouchID"];
-                [[NSUserDefaults standardUserDefaults] synchronize];
+                self.migratedToTouchID = YES;
             } else {
                 MYCLog(@"MYCWallet: not migrating to touchid/passcode: user hasnt backed up yet");
             }
