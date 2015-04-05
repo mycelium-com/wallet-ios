@@ -204,10 +204,13 @@
 #if 1
 #warning Diagnostics View Enabled
         [section item:^(PTableViewSourceItem *item) {
-            item.title = NSLocalizedString(@"Diagnostics", @"");
+            item.title = NSLocalizedString(@"Diagnostical Log", @"");
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+
+                MYCLog(@"MYCSettings: [MYCWallet isPasscodeSet]: %@", @([MYCUnlockedWallet isPasscodeSet]));
+
                 MYCWebViewController* vc = [[MYCWebViewController alloc] initWithNibName:nil bundle:nil];
-                vc.title = NSLocalizedString(@"Diagnostics", @"");
+                vc.title = NSLocalizedString(@"Diagnostical Log", @"");
                 vc.text = [MYCWallet currentWallet].diagnosticsLog;
                 vc.allowShare = YES;
                 [weakself.navigationController pushViewController:vc animated:YES];
