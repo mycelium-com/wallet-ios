@@ -12,6 +12,7 @@
 #import "MYCTextFieldLiveFormatter.h"
 #import "MYCCurrencyFormatter.h"
 #import "MYCCurrenciesViewController.h"
+#import "MYCBackupViewController.h"
 
 @interface MYCReceiveViewController ()
 
@@ -37,7 +38,8 @@
 
 @property (weak, nonatomic) IBOutlet UIView *editingOverlay;
 
-@property(nonatomic) BOOL fiatInput DEPRECATED_ATTRIBUTE;
+@property (weak, nonatomic) IBOutlet UIView *backupWarningOverlay;
+
 
 @property(nonatomic) NSNumber* previousBrightness;
 
@@ -88,7 +90,25 @@
             MYCError(@"MYCReceiveViewController: Automatic update of exchange rate failed: %@", error);
         }
     }];
+
+    [self warnAboutBackupIfNeeded];
 }
+
+- (void) warnAboutBackupIfNeeded {
+
+    if ([MYCWallet currentWallet].isBackedUp) return;
+
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Back up your wallet", @"")
+                                                                   message:NSLocalizedString(@"Any software of hardware failure may render your funds forever inaccessible.", @"")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self backup:nil];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 
 - (void)dealloc
 {
@@ -147,6 +167,10 @@
 - (void) updateAllViews
 {
     if (!self.isViewLoaded) return;
+
+    if (![MYCWallet currentWallet].isBackedUp) {
+        self.backupWarningOverlay.hidden = (self.requestedAmount < 0.1 * BTCCoin);
+    }
 
     [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
 
@@ -329,6 +353,17 @@
     self.requestedAmount = BTCAmountFromDecimalNumber([self.wallet.primaryCurrencyFormatter.nakedFormatter numberFromString:self.amountField.text]);
     [self restoreBrightness];
 }
+
+- (IBAction) backup:(id)sender
+{
+    MYCBackupViewController* vc = [[MYCBackupViewController alloc] initWithNibName:nil bundle:nil];
+    vc.completionBlock = ^(BOOL finished){
+        [self dismissViewControllerAnimated:YES completion:nil];
+    };
+    UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self presentViewController:navc animated:YES completion:nil];
+}
+
 
 - (void)notifyKeyboardWillShow:(NSNotification *)notification
 {

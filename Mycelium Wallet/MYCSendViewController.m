@@ -317,8 +317,16 @@ static BTCAmount MYCFeeRate = 10000;
                                     [self formatAmountInSelectedCurrency:self.spendingAmount]];
 
             // Unlock wallet so builder can sign.
-            [self.wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
-                self.accountKeychain = [unlockedWallet.keychain keychainForAccount:(uint32_t)self.account.accountIndex];
+            [self.wallet unlockWallet:^(MYCUnlockedWallet *uw) {
+                BTCKeychain* kc = uw.keychain;
+                if (!kc) {
+                    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+                                                message:[NSString stringWithFormat:@"You may need to restore wallet from backup. %@", uw.error.localizedDescription ?: @""] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+                    return;
+                } else {
+                    self.accountKeychain = [uw.keychain keychainForAccount:(uint32_t)self.account.accountIndex];
+                }
+
             } reason:authString];
 
             NSError* berror = nil;

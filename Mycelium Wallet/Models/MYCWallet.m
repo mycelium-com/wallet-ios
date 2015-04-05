@@ -20,6 +20,7 @@
 #import "MYCCurrencyFormatter.h"
 #import "BTCPriceSourceMycelium.h"
 #include <pthread.h>
+#include <LocalAuthentication/LocalAuthentication.h>
 
 NSString* const MYCWalletCurrencyDidUpdateNotification = @"MYCWalletCurrencyDidUpdateNotification";
 NSString* const MYCWalletDidReloadNotification = @"MYCWalletDidReloadNotification";
@@ -45,7 +46,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 @implementation MYCWallet {
     int _updatingExchangeRate;
     NSMutableArray* _accountUpdateOperations;
-    MYCUnlockedWallet* _unlockedWallet; // allows nesting calls with the same unlockedWallet.
 }
 
 + (instancetype) currentWallet
@@ -98,7 +98,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
             MYCLog(@"MYCWallet: loading mnemonic to create another database for %@", testnet ? @"testnet" : @"mainnet");
             [self unlockWallet:^(MYCUnlockedWallet *uw) {
                 _database = [self openDatabaseOrCreateWithMnemonic:uw.mnemonic];
-            } reason:NSLocalizedString(@"Authorize access to master key to switch testnet mode", @"")];
+            } reason:NSLocalizedString(@"Authorize change of network mode", @"")];
         }
     }
 }
@@ -133,6 +133,15 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (NSDate*) dateLastAskedAboutMigratingToTouchID {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCDateLastAskedAboutMigratingToTouchID"] ?: [NSDate dateWithTimeIntervalSince1970:0];
+}
+
+- (void) setDateLastAskedAboutMigratingToTouchID:(NSDate *)dateLastAskedAboutMigratingToTouchID {
+    [[NSUserDefaults standardUserDefaults] setObject:dateLastAskedAboutMigratingToTouchID ?: [NSDate dateWithTimeIntervalSince1970:0]
+                                              forKey:@"MYCDateLastAskedAboutMigratingToTouchID"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 - (BTCNumberFormatterUnit) bitcoinUnit
 {
@@ -396,52 +405,101 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 
 
 
-
-
-
-- (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason
+- (BOOL) isTouchIDEnabled
 {
-    // If already within a context of unlocked wallet, reuse it.
-    if (_unlockedWallet)
-    {
-        block(_unlockedWallet);
+    return ([LAContext class] &&
+            [[LAContext new] canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil]);
+}
+
+- (BOOL) isDevicePasscodeEnabled
+{
+    if (![LAContext class]) return NO; // LAContext is iOS8+, but we only target iOS8 anyway
+    NSError* error = nil;
+    if ([[LAContext new] canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
+        return YES;
+    }
+    if (error && error.code == LAErrorPasscodeNotSet) {
+        return NO;
+    }
+    return [MYCUnlockedWallet isPasscodeSet];
+}
+
+- (void) migrateToTouchID:(void(^)(BOOL result, NSError* error))completionBlock {
+    if (self.isMigratedToTouchID) {
+        MYCError(@"MYCWallet migrateToTouchID: Already migrated.");
+        completionBlock(NO, nil);
+        return;
+    }
+    if (![self isDevicePasscodeEnabled]) {
+        MYCError(@"MYCWallet migrateToTouchID: Seems like device passcode is not set, not migrating.");
+        completionBlock(NO, nil);
         return;
     }
 
-    _unlockedWallet = [[MYCUnlockedWallet alloc] init];
+    if (!self.isBackedUp) {
+        MYCError(@"MYCWallet migrateToTouchID: Not backed up: not migrating.");
+        completionBlock(NO, nil);
+        return;
+    }
 
-    _unlockedWallet.wallet = self;
-    _unlockedWallet.reason = reason;
+    MYCLog(@"MYCWallet: migrating mnemonic to a touchid/passcode protected item");
 
-    // Migrate to touch id when unlocking the wallet.
-#if 0 // TODO: make it user-driven with a dialog.
-    if (!self.isMigratedToTouchID) {
-        if ([MYCUnlockedWallet isPasscodeSet]) {
-            if (self.isBackedUp) {
+    [self unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
 
-                MYCLog(@"MYCWallet: migrating mnemonic to a touchid/passcode protected item");
+        BTCMnemonic* mnemonic = unlockedWallet.mnemonic;
+        NSString* words = [mnemonic.words componentsJoinedByString:@" "];
+        if (!mnemonic) {
+            MYCLog(@"MYCWallet: not migrating mnemonic to a touchid/passcode: can't read the mnemonic (error: %@)", unlockedWallet.error);
+            completionBlock(NO, unlockedWallet.error);
+            return;
+        }
 
-                BTCMnemonic* mnemonic = _unlockedWallet.mnemonic;
-                if (mnemonic) {
-                    _unlockedWallet.mnemonic = mnemonic;
-                } else {
-                    MYCLog(@"MYCWallet: not migrating mnemonic to a touchid/passcode: can't read the mnemonic (error: %@)", _unlockedWallet.error);
+        unlockedWallet.mnemonic = mnemonic;
+        
+        if (unlockedWallet.error) {
+            MYCLog(@"MYCWallet: failed to set mnemonic to a touchid/passcode (error: %@)", unlockedWallet.error);
+            NSError* error = [NSError errorWithDomain:MYCErrorDomain
+                                        code:-666
+                                    userInfo:@{NSLocalizedDescriptionKey:
+                                                   [NSString stringWithFormat:NSLocalizedString(@"Upgrading security failed. PLEASE WRITE DOWN YOUR BACKUP SEED: %@\nError: %@", @""), words, unlockedWallet.error]}];
+
+            completionBlock(NO, error);
+            return;
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self unlockWallet:^(MYCUnlockedWallet *uw2) {
+
+                BTCMnemonic* mnemonic2 = uw2.mnemonic;
+                NSString* words2 = [mnemonic2.words componentsJoinedByString:@" "];
+                if (!mnemonic2 || ![words2 isEqual:words]) {
+                    NSError* error = [NSError errorWithDomain:MYCErrorDomain
+                                                code:-666
+                                            userInfo:@{NSLocalizedDescriptionKey:
+                                                           [NSString stringWithFormat:NSLocalizedString(@"Verification failed. PLEASE WRITE DOWN YOUR BACKUP SEED: %@", @""), words]}];
+                    completionBlock(NO, error);
+                    return;
                 }
 
                 self.migratedToTouchID = YES;
-            } else {
-                MYCLog(@"MYCWallet: not migrating to touchid/passcode: user hasnt backed up yet");
-            }
-        } else {
-            MYCLog(@"MYCWallet: not migrating to touchid/passcode: user does not have a passcode");
-        }
-    }
-#endif
+                completionBlock(YES, nil);
 
-    block(_unlockedWallet);
+            } reason:NSLocalizedString(@"Verifying that migration did succeed.", @"")];
+        });
+    } reason:NSLocalizedString(@"Authenticate security upgrade.", @"")];
+}
 
-    [_unlockedWallet clear];
-    _unlockedWallet = nil;
+- (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason
+{
+    MYCUnlockedWallet* unlockedWallet = [[MYCUnlockedWallet alloc] init];
+
+    unlockedWallet.wallet = self;
+    unlockedWallet.reason = reason;
+
+    block(unlockedWallet);
+
+    [unlockedWallet clear];
+    unlockedWallet = nil;
 }
 
 
@@ -610,7 +668,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         BTCMnemonic* mnemonic = w.mnemonic;
         [self removeDatabase];
         _database = [self openDatabaseOrCreateWithMnemonic:mnemonic];
-    } reason:@"Authorize access to mnemonic to re-create database."];
+    } reason:@"Authorize access to seed to reset database."];
 }
 
 // Access database

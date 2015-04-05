@@ -327,6 +327,13 @@
         [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
 
             BTCKeychain* bitcoinKeychain = uw.keychain;
+
+            if (!bitcoinKeychain) {
+                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+                                            message:[NSString stringWithFormat:@"You may need to restore wallet from backup. %@", uw.error.localizedDescription ?: @""] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+                return;
+            }
+
             acc = [[MYCWalletAccount alloc] initWithKeychain:[bitcoinKeychain keychainForAccount:(uint32_t)lastAccount.accountIndex + 1]];
 
         } reason:NSLocalizedString(@"Authorize new account", @"")];

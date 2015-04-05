@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1514" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
@@ -12,6 +12,7 @@
                 <outlet property="accountButton" destination="Uw4-md-gDa" id="ZBO-pM-uYM"/>
                 <outlet property="addressLabel" destination="jya-1l-D26" id="WWI-XN-hWB"/>
                 <outlet property="amountField" destination="kFl-8S-cfl" id="K2G-w5-Q4R"/>
+                <outlet property="backupWarningOverlay" destination="RKS-Tz-ZVg" id="flN-hq-GBe"/>
                 <outlet property="borderHeightConstraint" destination="c9m-RA-dhy" id="trf-Ab-WkB"/>
                 <outlet property="closeButton" destination="0vX-Jh-BID" id="tto-Nj-1qe"/>
                 <outlet property="currencyButton" destination="3RM-6k-xvO" id="HUT-Nj-H6D"/>
@@ -69,6 +70,36 @@
                         <outletCollection property="gestureRecognizers" destination="PjU-BC-4aN" appends="YES" id="40x-WC-O8g"/>
                     </connections>
                 </view>
+                <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RKS-Tz-ZVg" userLabel="Backup Warning Overlay">
+                    <rect key="frame" x="0.0" y="110" width="320" height="370"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please backup the wallet before depositing any funds in it." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mNU-GW-e7I">
+                            <rect key="frame" x="8" y="21" width="304" height="41"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fi5-8D-4bs">
+                            <rect key="frame" x="128" y="67.5" width="64" height="33"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <state key="normal" title="Back up">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="backup:" destination="-1" eventType="touchUpInside" id="Zcw-fD-Od4"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="0.97999999999999998" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="mNU-GW-e7I" firstAttribute="top" secondItem="RKS-Tz-ZVg" secondAttribute="top" constant="21" id="Ead-nt-4Zy"/>
+                        <constraint firstAttribute="centerX" secondItem="mNU-GW-e7I" secondAttribute="centerX" id="P8I-dR-5xK"/>
+                        <constraint firstItem="mNU-GW-e7I" firstAttribute="centerX" secondItem="Fi5-8D-4bs" secondAttribute="centerX" constant="-0.5" id="WjY-vK-A5u"/>
+                        <constraint firstAttribute="trailing" secondItem="mNU-GW-e7I" secondAttribute="trailing" constant="8" id="kI3-BC-V4f"/>
+                        <constraint firstItem="Fi5-8D-4bs" firstAttribute="top" secondItem="mNU-GW-e7I" secondAttribute="bottom" constant="5.5" id="n4J-pR-dpv"/>
+                        <constraint firstItem="mNU-GW-e7I" firstAttribute="leading" secondItem="RKS-Tz-ZVg" secondAttribute="leading" constant="8" id="xXH-TQ-kBY"/>
+                    </constraints>
+                </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zI5-WZ-INr" userLabel="Top Bar">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="110"/>
                     <subviews>
@@ -83,7 +114,7 @@
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3RM-6k-xvO">
-                            <rect key="frame" x="185" y="64.5" width="55" height="36"/>
+                            <rect key="frame" x="185" y="64" width="55" height="36"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="30"/>
                             <inset key="contentEdgeInsets" minX="4" minY="0.0" maxX="4" maxY="0.0"/>
                             <state key="normal" title="bits">
@@ -94,7 +125,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0vX-Jh-BID">
-                            <rect key="frame" x="10" y="28" width="42" height="32"/>
+                            <rect key="frame" x="10" y="27" width="42" height="32"/>
                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                             <state key="normal" title="Close">
                                 <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -110,7 +141,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fmV-mf-w7f" userLabel="Share">
-                            <rect key="frame" x="285" y="26" width="19" height="27"/>
+                            <rect key="frame" x="285" y="25" width="19" height="27"/>
                             <state key="normal" image="ShareIcon"/>
                             <connections>
                                 <action selector="share:" destination="-1" eventType="touchUpInside" id="0sw-gF-tPU"/>
@@ -155,6 +186,7 @@
                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="jya-1l-D26" secondAttribute="trailing" constant="20" id="J9b-e9-Chr"/>
                 <constraint firstItem="MXC-lp-Lj8" firstAttribute="top" secondItem="SYu-BO-0m1" secondAttribute="top" id="QDI-um-aXC"/>
                 <constraint firstItem="Uw4-md-gDa" firstAttribute="top" secondItem="qKL-wx-tqI" secondAttribute="bottom" constant="4" id="S23-Gu-yms"/>
+                <constraint firstItem="RKS-Tz-ZVg" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="bottom" id="Uqw-4U-dMH"/>
                 <constraint firstItem="Uw4-md-gDa" firstAttribute="centerX" secondItem="qKL-wx-tqI" secondAttribute="centerX" id="Wbq-jv-7CD"/>
                 <constraint firstItem="zI5-WZ-INr" firstAttribute="top" secondItem="SYu-BO-0m1" secondAttribute="top" id="aBD-xo-rwE"/>
                 <constraint firstItem="Uw4-md-gDa" firstAttribute="centerX" secondItem="jya-1l-D26" secondAttribute="centerX" id="bgK-X9-MxK"/>
@@ -162,12 +194,15 @@
                 <constraint firstAttribute="trailing" secondItem="MXC-lp-Lj8" secondAttribute="trailing" id="lXM-u5-0pm"/>
                 <constraint firstItem="qKL-wx-tqI" firstAttribute="height" secondItem="MXC-lp-Lj8" secondAttribute="height" multiplier="0.4" id="lwr-c1-cRu"/>
                 <constraint firstItem="jya-1l-D26" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="SYu-BO-0m1" secondAttribute="leading" constant="20" id="mgL-Vk-dYl"/>
+                <constraint firstItem="RKS-Tz-ZVg" firstAttribute="leading" secondItem="SYu-BO-0m1" secondAttribute="leading" id="mxd-3R-cnu"/>
+                <constraint firstAttribute="trailing" secondItem="RKS-Tz-ZVg" secondAttribute="trailing" id="n4j-bT-mBg"/>
                 <constraint firstItem="qKL-wx-tqI" firstAttribute="top" secondItem="zI5-WZ-INr" secondAttribute="bottom" constant="15" id="q37-Th-61E"/>
+                <constraint firstAttribute="bottom" secondItem="RKS-Tz-ZVg" secondAttribute="bottom" id="qpk-pk-EL4"/>
                 <constraint firstAttribute="trailing" secondItem="kos-8N-C97" secondAttribute="trailing" id="swf-eE-Ko4"/>
                 <constraint firstAttribute="bottom" secondItem="MXC-lp-Lj8" secondAttribute="bottom" id="vhV-jV-n6p"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-321" y="468"/>
+            <point key="canvasLocation" x="-592" y="473"/>
         </view>
         <tapGestureRecognizer id="5sX-Ey-r1D">
             <connections>

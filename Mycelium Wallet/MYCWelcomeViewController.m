@@ -113,12 +113,21 @@
 {
     MYCWallet* wallet = [MYCWallet currentWallet];
 
-    [wallet setupDatabaseWithMnemonic:mnemonic];
-
     [wallet unlockWallet:^(MYCUnlockedWallet *unlockedWallet) {
 
         // This will write the mnemonic to iOS keychain.
         unlockedWallet.mnemonic = mnemonic;
+
+        if (unlockedWallet.error) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+                                        message:unlockedWallet.error.localizedDescription ?: @""
+                                       delegate:nil
+                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
+                              otherButtonTitles:nil] show];
+            return;
+        }
+
+        [wallet setupDatabaseWithMnemonic:mnemonic];
 
         wallet.migratedToTouchID = YES;
 
@@ -139,7 +148,7 @@
             }];
         }
 
-    } reason:NSLocalizedString(@"Authenticate to store master key on the device", @"")];
+    } reason:NSLocalizedString(@"Authenticate storage for the wallet seed", @"")];
 
 
 }

@@ -171,7 +171,10 @@ static BOOL MYCBypassMissingPasscode = 0;
 {
     if (!_keychain)
     {
-        _keychain = (self.wallet.isTestnet ? [self.mnemonic.keychain bitcoinTestnetKeychain] : [self.mnemonic.keychain bitcoinMainnetKeychain]);
+        BTCMnemonic* mnemonic = self.mnemonic;
+        if (mnemonic) {
+            _keychain = (self.wallet.isTestnet ? [mnemonic.keychain bitcoinTestnetKeychain] : [mnemonic.keychain bitcoinMainnetKeychain]);
+        }
     }
     return _keychain;
 }

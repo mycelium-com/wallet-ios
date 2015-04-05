@@ -13,7 +13,6 @@
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "BTCBitcoinURL.h"
-#import <Crashlytics/Crashlytics.h>
 
 @interface MYCAppDelegate ()
 @property(nonatomic) MYCWelcomeViewController* welcomeViewController;

@@ -15,6 +15,7 @@
 #import "MYCErrorAnimation.h"
 #import "MYCScannerView.h"
 #import "MYCSendViewController.h"
+#import "MYCBackupViewController.h"
 
 @interface MYCScanPrivateKeyViewController () <UITextFieldDelegate>
 
@@ -57,6 +58,12 @@
     [self.spinner stopAnimating];
 
     [super viewDidLoad];
+}
+
+- (void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+
+    [self warnAboutBackupIfNeeded];
 }
 
 
@@ -279,6 +286,35 @@
         }];
     }];
 }
+
+
+- (void) warnAboutBackupIfNeeded {
+
+    if ([MYCWallet currentWallet].isBackedUp) return;
+
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Back up your wallet", @"")
+                                                                   message:NSLocalizedString(@"Any software of hardware failure may render your funds forever inaccessible.", @"")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        [self cancel:nil];
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self backup:nil];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (IBAction) backup:(id)sender
+{
+    MYCBackupViewController* vc = [[MYCBackupViewController alloc] initWithNibName:nil bundle:nil];
+    vc.completionBlock = ^(BOOL finished){
+        [self dismissViewControllerAnimated:YES completion:nil];
+    };
+    UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self presentViewController:navc animated:YES completion:nil];
+}
+
+
 
 
 

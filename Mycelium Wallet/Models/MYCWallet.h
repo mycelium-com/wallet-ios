@@ -52,6 +52,7 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 // Set to YES once the user has backed up the wallet.
 @property(nonatomic, getter=isMigratedToTouchID) BOOL migratedToTouchID;
+@property(nonatomic) NSDate* dateLastAskedAboutMigratingToTouchID;
 
 // Primary and secondary formatters are typically (btc, fiat) or (fiat, btc).
 // When user switches to usd/eur/cny it becomes primary; previous bitcoin formatter (primary or secondary) becomes a secondary one.
@@ -119,6 +120,11 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 
 // Accessing Secret Data
+
+- (BOOL) isTouchIDEnabled;
+- (BOOL) isDevicePasscodeEnabled;
+
+- (void) migrateToTouchID:(void(^)(BOOL result, NSError* error))completionBlock;
 
 // Unlocks wallet with a human-readable reason.
 - (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason;

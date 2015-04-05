@@ -101,11 +101,19 @@
 {
     if (!self.words)
     {
-        [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *wallet) {
+        [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
 
-            self.words = wallet.mnemonic.words;
+            BTCMnemonic* mnemonic = uw.mnemonic;
 
-        } reason:NSLocalizedString(@"Authorize access to the master key for backup", @"")];
+            if (!mnemonic) {
+                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+                                            message:[NSString stringWithFormat:@"You may need to restore wallet from backup. %@", uw.error.localizedDescription ?: @""] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+                return;
+            }
+
+            self.words = mnemonic.words;
+
+        } reason:NSLocalizedString(@"Authorize access to the backup", @"")];
 
         for (NSString* word in self.words)
         {
