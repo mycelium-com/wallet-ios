@@ -10,9 +10,10 @@ v1.2 - fix and hardening of Keychain handling
 + on receive screen, if not backed up, show alert every time screen opens: "Please Back up: OK, Later".
   + if asking to deposit > 0.1 BTC, show overlay "You must back up wallet before depositing XXX BTC. Back up now."
 + on import cold storage screen, if not backed up, warn and not allow import at all
-- when creating a new wallet, store the copy of the seed outside the keychain in a file with no icloud backup, and data protection.
-  - when backed up for the first time, overwrite and erase that file.
-
+≠ when creating a new wallet, store the copy of the seed outside the keychain in a file with no icloud backup, and data protection.
+  ≠ when backed up for the first time, overwrite and erase that file.
+-> this may open a can of worms and potentially leak the secret elsewhere on the file system or hard drive.
+   It's much safer to warn the user many times about making the backups.
 
 
 Part 1

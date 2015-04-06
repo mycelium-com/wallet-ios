@@ -91,13 +91,37 @@
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    [self promptToMigrateToTouchIDIfNeeded];
+    if (![self promptToBackupIfNeeded]) {
+        [self promptToMigrateToTouchIDIfNeeded];
+    }
 }
 
-- (void) promptToMigrateToTouchIDIfNeeded {
+- (BOOL) promptToBackupIfNeeded {
+    if ([MYCWallet currentWallet].isBackedUp) return NO;
 
-    if ([[MYCWallet currentWallet] isMigratedToTouchID]) return;
-    if ([[NSDate date] timeIntervalSinceDate:[[MYCWallet currentWallet] dateLastAskedAboutMigratingToTouchID]] < 24*3600) return;
+    if (!self.account) {
+        [self reloadAccount];
+    }
+
+    if (self.account.unconfirmedAmount < 0.02*BTCCoin) return NO;
+
+    UIAlertController* bakalert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please make the backup of your wallet", @"")
+                                                                      message:NSLocalizedString(@"Without backup you will not be able to access funds if you disable passcode, lose your iPhone etc.", @"")
+                                                               preferredStyle:UIAlertControllerStyleAlert];
+    [bakalert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    }]];
+    [bakalert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self backup:nil];
+    }]];
+    [self presentViewController:bakalert animated:YES completion:nil];
+
+    return YES;
+}
+
+- (BOOL) promptToMigrateToTouchIDIfNeeded {
+
+    if ([MYCWallet currentWallet].isMigratedToTouchID) return NO;
+    if ([[NSDate date] timeIntervalSinceDate:[[MYCWallet currentWallet] dateLastAskedAboutMigratingToTouchID]] < 24*3600) return NO;
 
     BOOL touchid = [MYCWallet currentWallet].isTouchIDEnabled;
     BOOL passcode = [MYCWallet currentWallet].isDevicePasscodeEnabled;
@@ -160,6 +184,8 @@
         }];
     }]];
     [self presentViewController:alert animated:YES completion:nil];
+
+    return YES;
 }
 
 - (void) walletDidReload:(NSNotification*)notif
@@ -226,6 +252,9 @@
 - (void) updateAmounts
 {
     self.primaryAmountLabel.text = [self.wallet.primaryCurrencyFormatter stringFromAmount:self.account.spendableAmount];
+    if (self.primaryAmountLabel.text.length == 0) {
+        self.primaryAmountLabel.text = @"—";
+    }
     self.secondaryAmountLabel.text = [self.wallet.secondaryCurrencyFormatter stringFromAmount:self.account.spendableAmount];
 }
 
