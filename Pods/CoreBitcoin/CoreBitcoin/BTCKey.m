@@ -7,6 +7,7 @@
 #import "BTCBigNumber.h"
 #import "BTCProtocolSerialization.h"
 #import "BTCErrors.h"
+#include <CommonCrypto/CommonCrypto.h>
 #include <openssl/ec.h>
 #include <openssl/ecdsa.h>
 #include <openssl/evp.h>
@@ -175,97 +176,75 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
     //       private key from a few observed signatures. Using the same function to derive k therefore
     //       does not make the signature any less secure.
     //
-   
+
     ECDSA_SIG sigValue;
     ECDSA_SIG *sig = NULL;
-    
-    if (1 /* deterministic signature with nonce derived from message and private key */)
-    {
-        sig = &sigValue;
-        
-        const BIGNUM *privkeyBIGNUM = EC_KEY_get0_private_key(_key);
-        
-        BTCMutableBigNumber* privkeyBN = [[BTCMutableBigNumber alloc] initWithBIGNUM:privkeyBIGNUM];
-        NSMutableData* privkeyData = [self privateKey];
-        
-        BTCBigNumber* n = [BTCCurvePoint curveOrder];
 
-        NSMutableData* kdata = BTCHMACSHA256(privkeyData, hash);
-        BTCMutableBigNumber* k = [[BTCMutableBigNumber alloc] initWithUnsignedBigEndian:kdata];
-        [k mod:n]; // make sure k belongs to [0, n - 1]
-        
-        BTCDataClear(kdata);
-        BTCDataClear(privkeyData);
-        
-        BTCCurvePoint* K = [[BTCCurvePoint generator] multiply:k];
-        BTCBigNumber* Kx = K.x;
-        
-        BTCBigNumber* hashBN = [[BTCBigNumber alloc] initWithUnsignedBigEndian:hash];
-        
-        // Compute s = (k^-1)*(h + Kx*privkey)
-        
-        BTCBigNumber* signatureBN = [[[privkeyBN multiply:Kx mod:n] add:hashBN mod:n] multiply:[k inverseMod:n] mod:n];
-        
-        //NSLog(@"ECDSA: r = %@", Kx.hexString);
-        //NSLog(@"ECDSA: s = %@", signatureBN.hexString);
-        BIGNUM r; BN_init(&r); BN_copy(&r, Kx.BIGNUM);
-        BIGNUM s; BN_init(&s); BN_copy(&s, signatureBN.BIGNUM);
-        
-        [privkeyBN clear];
-        [k clear];
-        [hashBN clear];
-        [K clear];
-        [Kx clear];
-        [signatureBN clear];
-        
-        sig->r = &r;
-        sig->s = &s;
-    }
-    else
-    {
-// Non-deterministic ECDSA signature using OpenSSL's RNG.
-//        sig = ECDSA_do_sign((unsigned char*)hash.bytes, (int)hash.length, _key);
-//        if (sig == NULL)
-//        {
-//            return nil;
-//        }
-    }
+    /* deterministic signature with nonce derived from message and private key */
+    sig = &sigValue;
     
+    const BIGNUM *privkeyBIGNUM = EC_KEY_get0_private_key(_key);
+
+    BTCMutableBigNumber* privkeyBN = [[BTCMutableBigNumber alloc] initWithBIGNUM:privkeyBIGNUM];
+    BTCBigNumber* n = [BTCCurvePoint curveOrder];
+
+    NSMutableData* kdata = [self signatureNonceForHash:hash];
+    BTCMutableBigNumber* k = [[BTCMutableBigNumber alloc] initWithUnsignedBigEndian:kdata];
+    [k mod:n]; // make sure k belongs to [0, n - 1]
+
+    BTCDataClear(kdata);
+
+    BTCCurvePoint* K = [[BTCCurvePoint generator] multiply:k];
+    BTCBigNumber* Kx = K.x;
+
+    BTCBigNumber* hashBN = [[BTCBigNumber alloc] initWithUnsignedBigEndian:hash];
+
+    // Compute s = (k^-1)*(h + Kx*privkey)
+
+    BTCBigNumber* signatureBN = [[[privkeyBN multiply:Kx mod:n] add:hashBN mod:n] multiply:[k inverseMod:n] mod:n];
+
+    //NSLog(@"ECDSA: r = %@", Kx.hexString);
+    //NSLog(@"ECDSA: s = %@", signatureBN.hexString);
+    BIGNUM r; BN_init(&r); BN_copy(&r, Kx.BIGNUM);
+    BIGNUM s; BN_init(&s); BN_copy(&s, signatureBN.BIGNUM);
+
+    [privkeyBN clear];
+    [k clear];
+    [hashBN clear];
+    [K clear];
+    [Kx clear];
+    [signatureBN clear];
+
+    sig->r = &r;
+    sig->s = &s;
+
     BN_CTX *ctx = BN_CTX_new();
     BN_CTX_start(ctx);
-    
+
     const EC_GROUP *group = EC_KEY_get0_group(_key);
     BIGNUM *order = BN_CTX_get(ctx);
     BIGNUM *halforder = BN_CTX_get(ctx);
     EC_GROUP_get_order(group, order, ctx);
     BN_rshift1(halforder, order);
-    if (BN_cmp(sig->s, halforder) > 0)
-    {
+    if (BN_cmp(sig->s, halforder) > 0) {
         // enforce low S values, by negating the value (modulo the order) if above order/2.
         BN_sub(sig->s, order, sig->s);
     }
     BN_CTX_end(ctx);
     BN_CTX_free(ctx);
     unsigned int sigSize = ECDSA_size(_key);
-    
+
     NSMutableData* signature = [NSMutableData dataWithLength:sigSize + 16]; // Make sure it is big enough
-    
+
     unsigned char *pos = (unsigned char *)signature.mutableBytes;
     sigSize = i2d_ECDSA_SIG(sig, &pos);
-    
-//    if (!deterministic)
-//    {
-//        ECDSA_SIG_free(sig); // sig was dynamically allocated by ECDSA_do_sign
-//    }
-    
+
     [signature setLength:sigSize];  // Shrink to fit actual size
-    
-    if (appendHashType)
-    {
+
+    if (appendHashType) {
         [signature appendBytes:&hashType length:sizeof(hashType)];
     }
 
-    
     return signature;
     
     // This code is simpler but it produces random signatures and does not canonicalize S as done above.
@@ -283,6 +262,67 @@ static int     ECDSA_SIG_recover_key_GFp(EC_KEY *eckey, ECDSA_SIG *ecsig, const 
     //    return signature;
 }
 
+// [RFC6979 implementation](https://tools.ietf.org/html/rfc6979#section-3.2).
+// Returns 32-byte `k` nonce generated deterministically from the `hash` and the private key.
+- (NSMutableData*) signatureNonceForHash:(NSData*)hash {
+
+    NSMutableData* privkey = [self privateKey];
+    BTCBigNumber* order = [BTCCurvePoint curveOrder];
+
+    uint8_t v[32];
+    uint8_t k[32];
+    uint8_t bx[2*32];
+    uint8_t buf[32 + 1 + sizeof(bx)];
+    uint8_t t[32];
+
+    // Step 3.2.a. hash = H(message). Already performed by the caller.
+
+    // Step 3.2.b. V = 0x01 0x01 0x01 ... 0x01 (32 bytes equal 0x01)
+    memset(v, 1, sizeof(v));
+
+    // Step 3.2.c. K = 0x00 0x00 0x00 ... 0x00 (32 bytes equal 0x00)
+    memset(k, 0, sizeof(k));
+
+    // Step 3.2.d. K = HMAC-SHA256(key: K, data: V || 0x00 || int2octets(privkey) || bits2octets(hash))
+    memcpy(bx, privkey.bytes, 32);
+    BTCMutableBigNumber* hashModOrder = [[[BTCMutableBigNumber alloc] initWithUnsignedBigEndian:hash] mod:order];
+    memcpy(bx + 32, hashModOrder.unsignedBigEndian.bytes, 32);
+
+    memcpy(buf, v, sizeof(v));
+    buf[sizeof(v)] = 0x00;
+    memcpy(buf + sizeof(v) + 1, bx, 64);
+
+    CCHmac(kCCHmacAlgSHA256, k, sizeof(k), buf, sizeof(buf), k);
+
+    // Step 3.2.e. V = HMAC-SHA256(key: K, data: V)
+    CCHmac(kCCHmacAlgSHA256, k, sizeof(k), v, sizeof(v), v);
+
+    // Step 3.2.f. K = HMAC-SHA256(key: K, data: V || 0x01 || int2octets(privkey) || bits2octets(hash))
+    memcpy(buf, v, sizeof(v));
+    buf[sizeof(v)] = 0x01;
+    memcpy(buf + sizeof(v) + 1, bx, 64);
+    CCHmac(kCCHmacAlgSHA256, k, sizeof(k), buf, sizeof(buf), k);
+
+    // Step 3.2.g. V = HMAC-SHA256(key: K, data: V)
+    CCHmac(kCCHmacAlgSHA256, k, sizeof(k), v, sizeof(v), v);
+
+    // Step 3.2.h.
+    for (int i = 0; i < 10000; i++) {
+        CCHmac(kCCHmacAlgSHA256, k, sizeof(k), v, sizeof(v), t);
+
+        BTCBigNumber* bn = [[BTCBigNumber alloc] initWithUnsignedBigEndian:[NSData dataWithBytesNoCopy:t length:sizeof(t) freeWhenDone:NO]];
+        if (!bn.isZero && [bn less:order]) {
+            return [NSMutableData dataWithBytes:&t length:sizeof(t)];
+        }
+        // Note: the probability of not succeeding at the first try is about 2^-127.
+        memcpy(buf, v, sizeof(v));
+        buf[sizeof(v)] = 0x00;
+        CCHmac(kCCHmacAlgSHA256, k, sizeof(k), buf, sizeof(v) + 1, k);
+        CCHmac(kCCHmacAlgSHA256, k, sizeof(k), v, sizeof(v), v);
+    }
+    // we generated 10000 numbers, none of them is good -> fail.
+    return nil;
+}
 
 - (NSMutableData*) publicKey
 {

@@ -1,7 +1,7 @@
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/CoreBitcoin" "${PODS_ROOT}/Headers/Public/FMDB" "${PODS_ROOT}/Headers/Public/ISO8601DateFormatter" "${PODS_ROOT}/Headers/Public/OpenSSL-Universal" "${PODS_ROOT}/Headers/Public/OpenSSL-Universal/openssl"
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/CoreBitcoin" "${PODS_ROOT}/Headers/Public/FMDB" "${PODS_ROOT}/Headers/Public/ISO8601DateFormatter" "${PODS_ROOT}/Headers/Public/OpenSSL-Universal" "${PODS_ROOT}/Headers/Public/OpenSSL-Universal/openssl"
 LIBRARY_SEARCH_PATHS = "$(PODS_ROOT)/OpenSSL-Universal/lib-ios" "$(PODS_ROOT)/OpenSSL-Universal/lib-ios"
 OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/CoreBitcoin" -isystem "${PODS_ROOT}/Headers/Public/FMDB" -isystem "${PODS_ROOT}/Headers/Public/ISO8601DateFormatter" -isystem "${PODS_ROOT}/Headers/Public/OpenSSL-Universal" -isystem "${PODS_ROOT}/Headers/Public/OpenSSL-Universal/openssl"
-OTHER_LDFLAGS = -ObjC -l"Pods-Mycelium Wallet-CoreBitcoin" -l"Pods-Mycelium Wallet-FMDB" -l"Pods-Mycelium Wallet-ISO8601DateFormatter" -l"Pods-Mycelium Wallet-OpenSSL-Universal" -l"crypto" -l"sqlite3" -l"ssl" -framework "Foundation" -framework "UIKit"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"Pods-Mycelium Wallet-CoreBitcoin" -l"Pods-Mycelium Wallet-FMDB" -l"Pods-Mycelium Wallet-ISO8601DateFormatter" -l"Pods-Mycelium Wallet-OpenSSL-Universal" -l"crypto" -l"sqlite3" -l"ssl" -framework "Foundation" -framework "UIKit"
 OTHER_LIBTOOLFLAGS = $(OTHER_LDFLAGS)
 PODS_ROOT = ${SRCROOT}/Pods

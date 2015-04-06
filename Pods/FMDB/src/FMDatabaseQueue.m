@@ -20,9 +20,8 @@
 @implementation FMDatabaseQueue
 
 @synthesize path = _path;
-@synthesize openFlags = _openFlags;
 
-+ (instancetype)databaseQueueWithPath:(NSString*)aPath {
++ (id)databaseQueueWithPath:(NSString*)aPath {
     
     FMDatabaseQueue *q = [[self alloc] initWithPath:aPath];
     
@@ -31,34 +30,16 @@
     return q;
 }
 
-+ (instancetype)databaseQueueWithPath:(NSString*)aPath flags:(int)openFlags {
-    
-    FMDatabaseQueue *q = [[self alloc] initWithPath:aPath flags:openFlags];
-    
-    FMDBAutorelease(q);
-    
-    return q;
-}
-
-+ (Class)databaseClass {
-    return [FMDatabase class];
-}
-
-- (instancetype)initWithPath:(NSString*)aPath flags:(int)openFlags {
+- (id)initWithPath:(NSString*)aPath {
     
     self = [super init];
     
     if (self != nil) {
         
-        _db = [[[self class] databaseClass] databaseWithPath:aPath];
+        _db = [FMDatabase databaseWithPath:aPath];
         FMDBRetain(_db);
         
-#if SQLITE_VERSION_NUMBER >= 3005000
-        BOOL success = [_db openWithFlags:openFlags];
-#else
-        BOOL success = [_db open];
-#endif
-        if (!success) {
+        if (![_db open]) {
             NSLog(@"Could not create database queue for path %@", aPath);
             FMDBRelease(self);
             return 0x00;
@@ -67,23 +48,11 @@
         _path = FMDBReturnRetained(aPath);
         
         _queue = dispatch_queue_create([[NSString stringWithFormat:@"fmdb.%@", self] UTF8String], NULL);
-        _openFlags = openFlags;
     }
     
     return self;
 }
 
-- (instancetype)initWithPath:(NSString*)aPath {
-    
-    // default flags for sqlite3_open
-    return [self initWithPath:aPath flags:SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE];
-}
-
-- (instancetype)init {
-    return [self initWithPath:nil];
-}
-
-    
 - (void)dealloc {
     
     FMDBRelease(_db);
@@ -112,12 +81,7 @@
     if (!_db) {
         _db = FMDBReturnRetained([FMDatabase databaseWithPath:_path]);
         
-#if SQLITE_VERSION_NUMBER >= 3005000
-        BOOL success = [_db openWithFlags:_openFlags];
-#else
-        BOOL success = [db open];
-#endif
-        if (!success) {
+        if (![_db open]) {
             NSLog(@"FMDatabaseQueue could not reopen database for path %@", _path);
             FMDBRelease(_db);
             _db  = 0x00;
@@ -138,14 +102,6 @@
         
         if ([db hasOpenResultSets]) {
             NSLog(@"Warning: there is at least one open result set around after performing [FMDatabaseQueue inDatabase:]");
-            
-#ifdef DEBUG
-            NSSet *openSetCopy = FMDBReturnAutoreleased([[db valueForKey:@"_openResultSets"] copy]);
-            for (NSValue *rsInWrappedInATastyValueMeal in openSetCopy) {
-                FMResultSet *rs = (FMResultSet *)[rsInWrappedInATastyValueMeal pointerValue];
-                NSLog(@"query: '%@'", [rs query]);
-            }
-#endif
         }
     });
     
@@ -204,10 +160,11 @@
             block([self database], &shouldRollback);
             
             if (shouldRollback) {
-                // We need to rollback and release this savepoint to remove it
                 [[self database] rollbackToSavePointWithName:name error:&err];
             }
-            [[self database] releaseSavePointWithName:name error:&err];
+            else {
+                [[self database] releaseSavePointWithName:name error:&err];
+            }
             
         }
     });
