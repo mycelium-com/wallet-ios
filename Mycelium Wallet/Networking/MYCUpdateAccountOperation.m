@@ -506,8 +506,8 @@
         if (![prevBalanceDesc isEqualToString:currBalanceDesc])
         {
             MYCLog(@"MYCUpdateAccountOperation[%@]: Updated account balance:", @(self.account.accountIndex));
-            MYCLog(@"MYCUpdateAccountOperation[%@]: BEFORE: %@", @(self.account.accountIndex), prevBalanceDesc);
-            MYCLog(@"MYCUpdateAccountOperation[%@]:  AFTER: %@", @(self.account.accountIndex), currBalanceDesc);
+            NSLog(@"MYCUpdateAccountOperation[%@]: BEFORE: %@", @(self.account.accountIndex), prevBalanceDesc);
+            NSLog(@"MYCUpdateAccountOperation[%@]:  AFTER: %@", @(self.account.accountIndex), currBalanceDesc);
         }
         else
         {
