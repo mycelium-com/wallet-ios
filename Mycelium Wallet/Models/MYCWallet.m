@@ -143,6 +143,16 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (NSDate*) dateLastAskedToVerifyBackupAccess {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCDateLastAskedToVerifyBackupAccess"];
+}
+
+- (void) setDateLastAskedToVerifyBackupAccess:(NSDate *)date {
+    [[NSUserDefaults standardUserDefaults] setObject:date ?: [NSDate dateWithTimeIntervalSince1970:0]
+                                              forKey:@"MYCDateLastAskedToVerifyBackupAccess"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 - (BTCNumberFormatterUnit) bitcoinUnit
 {
     NSNumber* num = [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletBitcoinUnit"];

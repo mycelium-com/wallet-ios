@@ -121,18 +121,18 @@
     [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
 
         UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you understand the risk?", @"")
-                                                                       message:NSLocalizedString(@"Without a backup you have no guarantee that after you deposit some funds you will be able to access them again. There is not warranty, software or hardware may fail any time.", @"")
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        [alert2 addAction:[UIAlertAction actionWithTitle:@"Proceed without backup" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-            // Do nothing. Allow user to deposit funds before making a backup.
+                                                                        message:NSLocalizedString(@"Without a backup you have no guarantee that after you deposit some funds you will be able to access them again. There is no warranty. Software or hardware may fail any time.", @"")
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+        [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Proceed without backup",@"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+            // Do nothing.
         }]];
-        [alert2 addAction:[UIAlertAction actionWithTitle:@"Backup now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             [self backup:nil];
         }]];
         [self presentViewController:alert2 animated:YES completion:nil];
 
     }]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Backup now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [self backup:nil];
     }]];
     [self presentViewController:alert animated:YES completion:nil];

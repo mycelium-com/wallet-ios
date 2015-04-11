@@ -7,6 +7,7 @@
 //
 
 #import "MYCWelcomeViewController.h"
+#import "MYCBackupViewController.h"
 #import "MYCAppDelegate.h"
 
 #import "MYCWallet.h"
@@ -40,6 +41,8 @@
 @property (weak, nonatomic) IBOutlet UITextView *restorePassphraseTextView;
 @property (weak, nonatomic) IBOutlet UIButton* restorePassphraseCancelButton;
 @property (weak, nonatomic) IBOutlet UIButton* restorePassphraseCompleteButton;
+
+@property (strong, nonatomic) IBOutlet UIView *backupWarningView;
 
 @end
 
@@ -170,16 +173,59 @@
         // Prepare a database and store the mnemonic in the keychain
 
         [self setupWalletWithMnemonic:mnemonic newWallet:YES];
-
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [[MYCAppDelegate sharedInstance] displayMainView];
-        });
+        [self displayWarningAboutBackup];
 
     } progress:^(double pr) {
         self.generatingProgressView.progress = pr;
     }];
 
 }
+
+- (void) displayWarningAboutBackup {
+    self.backupWarningView.frame = self.containerView.bounds;
+    self.backupWarningView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    self.backupWarningView.translatesAutoresizingMaskIntoConstraints = YES;
+    [self.containerView addSubview:self.backupWarningView];
+
+    // Let user choose to backup or not.
+}
+
+- (IBAction)backupLater:(id)sender {
+    UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you understand the risk?", @"")
+                                                                    message:NSLocalizedString(@"Without a backup you have no guarantee that after you deposit some funds you will be able to access them again. There is no warranty. Software or hardware may fail any time.", @"")
+                                                             preferredStyle:UIAlertControllerStyleAlert];
+    [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Proceed without backup", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+        [self beginUsingNewWallet];
+    }]];
+    [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self backupNow:nil];
+    }]];
+    [self presentViewController:alert2 animated:YES completion:nil];
+}
+
+- (IBAction) backupNow:(id)sender {
+
+    MYCBackupViewController* vc = [[MYCBackupViewController alloc] initWithNibName:nil bundle:nil];
+    vc.completionBlock = ^(BOOL finished){
+        [self dismissViewControllerAnimated:YES completion:nil];
+
+        if ([MYCWallet currentWallet].isBackedUp) {
+            [self beginUsingNewWallet];
+        }
+    };
+    UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self presentViewController:navc animated:YES completion:nil];
+
+}
+
+- (void) beginUsingNewWallet {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[MYCAppDelegate sharedInstance] displayMainView];
+    });
+}
+
+
+
 
 - (IBAction)restoreFromBackup:(id)sender
 {

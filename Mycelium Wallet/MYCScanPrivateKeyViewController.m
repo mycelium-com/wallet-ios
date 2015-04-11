@@ -312,10 +312,10 @@
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Back up your wallet", @"")
                                                                    message:NSLocalizedString(@"Disabling your passcode, software or hardware failure may render your funds forever inaccessible. This takes only a minute.", @"")
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel",@"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
         [self cancel:nil];
     }]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Backup now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [self backup:nil];
     }]];
     [self presentViewController:alert animated:YES completion:nil];

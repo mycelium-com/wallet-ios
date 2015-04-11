@@ -54,6 +54,9 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 @property(nonatomic, getter=isMigratedToTouchID) BOOL migratedToTouchID;
 @property(nonatomic) NSDate* dateLastAskedAboutMigratingToTouchID;
 
+// Used to remind the user to verify if backup is still accessible and not lost.
+@property(nonatomic) NSDate* dateLastAskedToVerifyBackupAccess;
+
 // Primary and secondary formatters are typically (btc, fiat) or (fiat, btc).
 // When user switches to usd/eur/cny it becomes primary; previous bitcoin formatter (primary or secondary) becomes a secondary one.
 // When user switches to btc/mbtc/bits it becomes primary; previous fiat formatter (primary or secondary) becomes a secondary one.

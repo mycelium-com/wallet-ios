@@ -92,8 +92,38 @@
     [super viewDidAppear:animated];
 
     if (![self promptToBackupIfNeeded]) {
-        [self promptToMigrateToTouchIDIfNeeded];
+        if (![self promptToVerifyBackupIfNeeded]) {
+            [self promptToMigrateToTouchIDIfNeeded];
+        }
     }
+}
+
+- (BOOL) promptToVerifyBackupIfNeeded {
+    // Only prompt if backup was made
+    if (![MYCWallet currentWallet].isBackedUp) return NO;
+
+    NSDate* lastAskedDate = [MYCWallet currentWallet].dateLastAskedToVerifyBackupAccess;
+    if (!lastAskedDate) { // never asked yet, save today's date and return.
+        [MYCWallet currentWallet].dateLastAskedToVerifyBackupAccess = [NSDate date];
+        return NO;
+    }
+
+    // Asked in 30 days only.
+    const NSTimeInterval reminderPeriod = 30*24*3600;
+    if ([[NSDate date] timeIntervalSinceDate:lastAskedDate] < reminderPeriod) return NO;
+
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Check your backup", @"")
+                                                                   message:NSLocalizedString(@"This is a monthly reminder. Make sure your wallet backup is stored in a safe place and not lost or destroyed. If you are not sure, you should back up immediately.", @"")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        [MYCWallet currentWallet].dateLastAskedToVerifyBackupAccess = [NSDate date];
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [MYCWallet currentWallet].dateLastAskedToVerifyBackupAccess = [NSDate date];
+        [self backup:nil];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+    return YES;
 }
 
 - (BOOL) promptToBackupIfNeeded {
@@ -111,18 +141,18 @@
     [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
 
         UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you understand the risk?", @"")
-                                                                        message:NSLocalizedString(@"Without a backup you have no guarantee that after you deposit some funds you will be able to access them again. There is not warranty, software or hardware may fail any time.", @"")
+                                                                        message:NSLocalizedString(@"Without a backup you have no guarantee that after you deposit some funds you will be able to access them again. There is no warranty. Software or hardware may fail any time.", @"")
                                                                  preferredStyle:UIAlertControllerStyleAlert];
-        [alert2 addAction:[UIAlertAction actionWithTitle:@"Proceed without backup" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Proceed without backup", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
             // Do nothing.
         }]];
-        [alert2 addAction:[UIAlertAction actionWithTitle:@"Backup now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             [self backup:nil];
         }]];
         [self presentViewController:alert2 animated:YES completion:nil];
 
     }]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Backup now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [self backup:nil];
     }]];
     [self presentViewController:alert animated:YES completion:nil];
@@ -133,7 +163,7 @@
 - (BOOL) promptToMigrateToTouchIDIfNeeded {
 
     if ([MYCWallet currentWallet].isMigratedToTouchID) return NO;
-    if ([[NSDate date] timeIntervalSinceDate:[[MYCWallet currentWallet] dateLastAskedAboutMigratingToTouchID]] < 24*3600) return NO;
+    if ([[NSDate date] timeIntervalSinceDate:[MYCWallet currentWallet].dateLastAskedAboutMigratingToTouchID] < 24*3600) return NO;
 
     BOOL touchid = [MYCWallet currentWallet].isTouchIDEnabled;
     BOOL passcode = [MYCWallet currentWallet].isDevicePasscodeEnabled;

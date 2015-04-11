@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14D131" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MYCWelcomeViewController">
             <connections>
+                <outlet property="backupWarningView" destination="ADJ-Sc-fvQ" id="83O-yP-MSt"/>
                 <outlet property="containerView" destination="zk1-nh-s99" id="Sk7-5z-N9e"/>
                 <outlet property="createWalletButton" destination="f5C-7p-rC0" id="A3E-1d-QGF"/>
                 <outlet property="generatingLabel" destination="AQU-jP-I10" id="dLn-jG-TCb"/>
@@ -52,7 +54,7 @@
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uKo-X3-ODu" customClass="MYCRoundedButton">
+                                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uKo-X3-ODu" customClass="MYCRoundedButton">
                                     <rect key="frame" x="64" y="408" width="192" height="40"/>
                                     <color key="backgroundColor" red="0.098039224743843079" green="0.57647061347961426" blue="0.9803922176361084" alpha="1" colorSpace="deviceRGB"/>
                                     <constraints>
@@ -60,14 +62,14 @@
                                     </constraints>
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                                     <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
-                                    <state key="normal" title="Restore from Backup">
+                                    <state key="normal" title="Restore from backup">
                                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </state>
                                     <connections>
                                         <action selector="restoreFromBackup:" destination="-1" eventType="touchUpInside" id="SsV-sm-UFq"/>
                                     </connections>
                                 </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f5C-7p-rC0" customClass="MYCRoundedButton">
+                                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f5C-7p-rC0" customClass="MYCRoundedButton">
                                     <rect key="frame" x="64" y="339" width="192" height="50"/>
                                     <color key="backgroundColor" red="0.098039224743843079" green="0.57647061347961426" blue="0.9803922176361084" alpha="1" colorSpace="deviceRGB"/>
                                     <constraints>
@@ -125,7 +127,7 @@
                 <constraint firstAttribute="trailing" secondItem="vjA-uI-cjw" secondAttribute="trailing" id="l1J-rD-Ni1"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-642.5" y="319.5"/>
+            <point key="canvasLocation" x="-641" y="303"/>
         </scrollView>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ewL-k6-0qQ" userLabel="Progress View">
             <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
@@ -221,7 +223,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vrQ-D3-ash">
-                    <rect key="frame" x="20" y="431" width="39" height="32"/>
+                    <rect key="frame" x="20" y="432" width="39" height="32"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                     <state key="normal" title="Back">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -245,7 +247,7 @@
                 <constraint firstItem="m1J-cf-4cX" firstAttribute="centerX" secondItem="bNA-Jd-rew" secondAttribute="centerX" constant="-0.5" id="cAD-dP-bcO"/>
                 <constraint firstItem="vIh-qV-MuP" firstAttribute="leading" secondItem="ZEF-I3-YbT" secondAttribute="leading" constant="20" id="chL-WP-7fY"/>
                 <constraint firstAttribute="centerX" secondItem="m1J-cf-4cX" secondAttribute="centerX" id="ecg-8r-lpr"/>
-                <constraint firstItem="vrQ-D3-ash" firstAttribute="baseline" secondItem="UaT-Wz-zig" secondAttribute="baseline" constant="-1" id="g7q-wp-AeU"/>
+                <constraint firstItem="vrQ-D3-ash" firstAttribute="baseline" secondItem="UaT-Wz-zig" secondAttribute="baseline" id="g7q-wp-AeU"/>
                 <constraint firstItem="vIh-qV-MuP" firstAttribute="top" secondItem="bNA-Jd-rew" secondAttribute="bottom" constant="16" id="lQL-4G-7OA"/>
                 <constraint firstItem="ZaI-mu-D2p" firstAttribute="leading" secondItem="ZEF-I3-YbT" secondAttribute="leading" constant="20" id="n3W-DA-hTy"/>
                 <constraint firstItem="UaT-Wz-zig" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="vrQ-D3-ash" secondAttribute="trailing" constant="20" id="oSi-7w-H9G"/>
@@ -301,7 +303,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UBb-ZW-0gm">
-                    <rect key="frame" x="20" y="431" width="39" height="32"/>
+                    <rect key="frame" x="20" y="432" width="39" height="32"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                     <state key="normal" title="Back">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -317,7 +319,7 @@
                 <constraint firstItem="ucd-ar-xew" firstAttribute="top" secondItem="Hgs-yE-agU" secondAttribute="bottom" constant="-30" id="8Ym-Ok-kPj"/>
                 <constraint firstItem="BTE-2P-Whg" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="UBb-ZW-0gm" secondAttribute="trailing" constant="20" id="BBA-Ae-sEQ"/>
                 <constraint firstAttribute="centerX" secondItem="BTE-2P-Whg" secondAttribute="centerX" priority="999" id="Cfa-9A-0Jp"/>
-                <constraint firstItem="UBb-ZW-0gm" firstAttribute="baseline" secondItem="BTE-2P-Whg" secondAttribute="baseline" constant="-1" id="Goa-ae-7LY"/>
+                <constraint firstItem="UBb-ZW-0gm" firstAttribute="baseline" secondItem="BTE-2P-Whg" secondAttribute="baseline" id="Goa-ae-7LY"/>
                 <constraint firstAttribute="bottom" secondItem="BTE-2P-Whg" secondAttribute="bottom" constant="16" id="Gwp-J8-6oZ"/>
                 <constraint firstItem="RI8-vZ-RIs" firstAttribute="leading" secondItem="wRK-st-fjA" secondAttribute="leading" constant="20" id="Lc6-sh-xcD"/>
                 <constraint firstAttribute="centerX" secondItem="Hgs-yE-agU" secondAttribute="centerX" id="Qst-C8-TfE"/>
@@ -334,6 +336,73 @@
             <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="555" y="268"/>
+        </view>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="ADJ-Sc-fvQ" userLabel="Backup Warning View">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="K8e-C6-95e">
+                    <rect key="frame" x="60" y="8" width="200" height="200"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="K8e-C6-95e" secondAttribute="height" multiplier="1:1" id="ghy-ga-mbd"/>
+                        <constraint firstAttribute="width" constant="200" id="kGz-RI-FDq"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="mycelium" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="fMf-2s-cz7">
+                    <rect key="frame" x="94" y="178" width="132.5" height="41"/>
+                    <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="30"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="jwE-xX-QT1">
+                    <rect key="frame" x="20" y="235" width="280" height="176"/>
+                    <string key="text">To prevent any losses of your funds it is highly recommended to make a back up of your wallet — with it you will be able to easily restore your funds in case of loss, damage or mulfunction of your device.
+
+Making a backup is very simple, just write  down 12 words and keep them in a safe  place.</string>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sgc-Cu-i0s">
+                    <rect key="frame" x="170" y="431" width="103" height="33"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
+                    <state key="normal" title="Back up now">
+                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="backupNow:" destination="-1" eventType="touchUpInside" id="k14-cE-jTA"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qtb-8R-DC2">
+                    <rect key="frame" x="49" y="432" width="101" height="32"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                    <state key="normal" title="Back up later">
+                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="backupLater:" destination="-1" eventType="touchUpInside" id="AFN-9a-iXT"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="centerX" secondItem="sgc-Cu-i0s" secondAttribute="leading" constant="-10" id="IMJ-u7-8wy"/>
+                <constraint firstItem="K8e-C6-95e" firstAttribute="top" secondItem="ADJ-Sc-fvQ" secondAttribute="top" constant="8" id="KfJ-Ch-nOG"/>
+                <constraint firstAttribute="trailing" secondItem="jwE-xX-QT1" secondAttribute="trailing" constant="20" id="RLg-fZ-c0R"/>
+                <constraint firstItem="K8e-C6-95e" firstAttribute="centerX" secondItem="fMf-2s-cz7" secondAttribute="centerX" constant="-0.5" id="RvI-VR-0a3"/>
+                <constraint firstItem="fMf-2s-cz7" firstAttribute="top" secondItem="K8e-C6-95e" secondAttribute="bottom" constant="-30" id="T3a-G3-hIT"/>
+                <constraint firstAttribute="centerX" secondItem="Qtb-8R-DC2" secondAttribute="trailing" constant="10" id="m9s-32-4Iy"/>
+                <constraint firstAttribute="centerX" secondItem="K8e-C6-95e" secondAttribute="centerX" id="mRy-cH-gKC"/>
+                <constraint firstAttribute="bottom" secondItem="sgc-Cu-i0s" secondAttribute="bottom" constant="16" id="ms7-lr-K0i"/>
+                <constraint firstItem="jwE-xX-QT1" firstAttribute="leading" secondItem="ADJ-Sc-fvQ" secondAttribute="leading" constant="20" id="sve-Ep-Ax9"/>
+                <constraint firstItem="Qtb-8R-DC2" firstAttribute="baseline" secondItem="sgc-Cu-i0s" secondAttribute="baseline" id="t9y-fJ-eKY"/>
+                <constraint firstItem="sgc-Cu-i0s" firstAttribute="top" relation="greaterThanOrEqual" secondItem="jwE-xX-QT1" secondAttribute="bottom" constant="20" id="tSy-sj-wYU"/>
+                <constraint firstItem="jwE-xX-QT1" firstAttribute="top" secondItem="fMf-2s-cz7" secondAttribute="bottom" constant="16" id="z98-ET-Nat"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="934" y="268"/>
         </view>
     </objects>
     <resources>
