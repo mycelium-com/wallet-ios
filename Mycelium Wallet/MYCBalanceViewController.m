@@ -170,32 +170,33 @@
 
     if (!touchid && !passcode) {
         MYCLog(@"MYCBalanceView: neither touch ID nor passcode seem to be enabled; not migrating to new keychain storage.");
+        return NO;
     }
 
     NSString* title = NSLocalizedString(@"Enable Touch ID wallet protection?", @"");
-    NSString* message = NSLocalizedString(@"You will use TouchID or device passcode to authenticate payments. IMPORTANT: if you remove your passcode, wallet will need to be restored from backup.", @"");
+    NSString* message = NSLocalizedString(@"You will use TouchID or device passcode to authenticate payments.\nIMPORTANT: if you remove your passcode, wallet will need to be restored from backup.", @"");
     if (!touchid) {
         title = NSLocalizedString(@"Enable Passcode wallet protection?", @"");
-        message = NSLocalizedString(@"You will use device passcode to authenticate payments. IMPORTANT: if you remove your passcode, wallet will need to be restored from backup.", @"");
+        message = NSLocalizedString(@"You will use device passcode to authenticate payments.\nIMPORTANT: if you remove your passcode, wallet will need to be restored from backup.", @"");
     }
 
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
                                                                    message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Later", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
         [MYCWallet currentWallet].dateLastAskedAboutMigratingToTouchID = [NSDate date];
     }]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
         if (![MYCWallet currentWallet].isBackedUp) {
 
-            UIAlertController* bakalert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please make the backup of your wallet", @"")
+            UIAlertController* bakalert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please back up your wallet", @"")
                                                                            message:NSLocalizedString(@"Without backup you will not be able to access funds if you remove your device passcode.", @"")
                                                                     preferredStyle:UIAlertControllerStyleAlert];
-            [bakalert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
                 // Do not migrate.
             }]];
-            [bakalert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [self backup:nil];
             }]];
             [self presentViewController:bakalert animated:YES completion:nil];
