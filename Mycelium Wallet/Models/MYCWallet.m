@@ -424,6 +424,24 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     return [MYCUnlockedWallet isPasscodeSet];
 }
 
+// Returns YES if the keychain data is stored correctly.
+- (BOOL) verifyKeychainIntegrity {
+    __block BOOL result = NO;
+    [self unlockWallet:^(MYCUnlockedWallet *uw) {
+
+        result = uw.probeItem;
+
+        // If we updated from v1.0, try reading mnemonic itself (it won't trigger passcode/touchid dialog).
+        if (!result && !self.migratedToTouchID) {
+            result = uw.mnemonic ? YES : NO;
+        }
+
+        // Note: normally this prompt should never be triggered.
+    } reason:NSLocalizedString(@"Verifying wallet integrity.", @"")];
+
+    return result;
+}
+
 - (void) migrateToTouchID:(void(^)(BOOL result, NSError* error))completionBlock {
     if (self.isMigratedToTouchID) {
         MYCError(@"MYCWallet migrateToTouchID: Already migrated.");
@@ -481,6 +499,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
                     return;
                 }
 
+                uw2.probeItem = YES;
                 self.migratedToTouchID = YES;
                 completionBlock(YES, nil);
 

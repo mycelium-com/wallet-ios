@@ -124,6 +124,9 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 - (BOOL) isTouchIDEnabled;
 - (BOOL) isDevicePasscodeEnabled;
 
+// Returns YES if the keychain data is stored correctly.
+- (BOOL) verifyKeychainIntegrity;
+
 - (void) migrateToTouchID:(void(^)(BOOL result, NSError* error))completionBlock;
 
 // Unlocks wallet with a human-readable reason.

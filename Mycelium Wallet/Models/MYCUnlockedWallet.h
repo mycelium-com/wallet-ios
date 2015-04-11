@@ -14,6 +14,9 @@
 // Root wallet seed encoded as a BIP39 mnemonic.
 @property(nonatomic) BTCMnemonic* mnemonic;
 
+// Returns YES if can successfully read the probe item that does not require user interaction.
+@property(nonatomic) BOOL probeItem;
+
 // Returns a BIP32 keychain for current wallet configuration (seed/purpose'/coin_type').
 // To get an address for a given account, you should drill in with "account'/change/address_index".
 @property(nonatomic) BTCKeychain* keychain;

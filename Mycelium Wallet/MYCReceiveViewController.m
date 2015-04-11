@@ -91,22 +91,53 @@
         }
     }];
 
-    [self warnAboutBackupIfNeeded];
+    if (![self warnAboutSecretLoss]) {
+        [self warnAboutBackupIfNeeded];
+    }
 }
 
-- (void) warnAboutBackupIfNeeded {
+- (BOOL) warnAboutSecretLoss {
+    if ([[MYCWallet currentWallet] verifyKeychainIntegrity]) {
+        return NO;
+    }
 
-    if ([MYCWallet currentWallet].isBackedUp) return;
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Wallet may be locked out!", @"")
+                                                                   message:NSLocalizedString(@"Do not send any funds to this wallet. Restore wallet from backup or contact Mycelium Support.", @"")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self close:nil];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+    return YES;
+}
+
+- (BOOL) warnAboutBackupIfNeeded {
+
+    if ([MYCWallet currentWallet].isBackedUp) return NO;
 
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Back up your wallet", @"")
-                                                                   message:NSLocalizedString(@"Any software of hardware failure may render your funds forever inaccessible.", @"")
+                                                                   message:NSLocalizedString(@"Backup is a 12-word phrase that allows you to recover your funds when you disable your device passcode, or in case of loss/damage/malfunction of the device. This takes only a minute.", @"")
                                                             preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+
+        UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you understand the risk?", @"")
+                                                                       message:NSLocalizedString(@"Without a backup you have no guarantee that after you deposit some funds you will be able to access them again. There is not warranty, software or hardware may fail any time.", @"")
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert2 addAction:[UIAlertAction actionWithTitle:@"Proceed without backup" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+            // Do nothing. Allow user to deposit funds before making a backup.
+        }]];
+        [alert2 addAction:[UIAlertAction actionWithTitle:@"Backup now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self backup:nil];
+        }]];
+        [self presentViewController:alert2 animated:YES completion:nil];
+
     }]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"Backup now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [self backup:nil];
     }]];
     [self presentViewController:alert animated:YES completion:nil];
+
+    return YES;
 }
 
 

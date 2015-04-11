@@ -105,15 +105,27 @@
 
     if (self.account.unconfirmedAmount < 0.02*BTCCoin) return NO;
 
-    UIAlertController* bakalert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please make the backup of your wallet", @"")
-                                                                      message:NSLocalizedString(@"Without backup you will not be able to access funds if you disable passcode, lose your iPhone etc.", @"")
-                                                               preferredStyle:UIAlertControllerStyleAlert];
-    [bakalert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Back up your wallet", @"")
+                                                                   message:NSLocalizedString(@"Backup is a 12-word phrase that allows you to recover your funds when you disable your device passcode, or in case of loss/damage/malfunction of the device. This takes only a minute.", @"")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+
+        UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you understand the risk?", @"")
+                                                                        message:NSLocalizedString(@"Without a backup you have no guarantee that after you deposit some funds you will be able to access them again. There is not warranty, software or hardware may fail any time.", @"")
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+        [alert2 addAction:[UIAlertAction actionWithTitle:@"Proceed without backup" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+            // Do nothing.
+        }]];
+        [alert2 addAction:[UIAlertAction actionWithTitle:@"Backup now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self backup:nil];
+        }]];
+        [self presentViewController:alert2 animated:YES completion:nil];
+
     }]];
-    [bakalert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"Backup now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [self backup:nil];
     }]];
-    [self presentViewController:bakalert animated:YES completion:nil];
+    [self presentViewController:alert animated:YES completion:nil];
 
     return YES;
 }
@@ -130,10 +142,10 @@
         MYCLog(@"MYCBalanceView: neither touch ID nor passcode seem to be enabled; not migrating to new keychain storage.");
     }
 
-    NSString* title = NSLocalizedString(@"Switch to Touch ID wallet protection?", @"");
+    NSString* title = NSLocalizedString(@"Enable Touch ID wallet protection?", @"");
     NSString* message = NSLocalizedString(@"You will use TouchID or device passcode to authenticate payments. IMPORTANT: if you remove your passcode, wallet will need to be restored from backup.", @"");
     if (!touchid) {
-        title = NSLocalizedString(@"Switch to Passcode wallet protection?", @"");
+        title = NSLocalizedString(@"Enable Passcode wallet protection?", @"");
         message = NSLocalizedString(@"You will use device passcode to authenticate payments. IMPORTANT: if you remove your passcode, wallet will need to be restored from backup.", @"");
     }
 
@@ -169,12 +181,12 @@
                     NSString* message = [error localizedDescription] ?: @"";
                     [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
                 } else {
-                    NSString* title = NSLocalizedString(@"Can't switch to passcode/TouchID", @"");
+                    NSString* title = NSLocalizedString(@"Can't enable passcode/TouchID", @"");
                     NSString* message = @"";
                     [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
                 }
             } else {
-                NSString* title = NSLocalizedString(@"Touch ID is now enabled", @"");
+                NSString* title = NSLocalizedString(@"Passcode/Touch ID is now enabled", @"");
                 NSString* message = NSLocalizedString(@"If you remove your device passcode, you will need to use backup to restore access to your funds.", @"");
                 if (!touchid) {
                     title = NSLocalizedString(@"Passcode protection enabled", @"");

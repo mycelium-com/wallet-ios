@@ -129,6 +129,7 @@
 
         [wallet setupDatabaseWithMnemonic:mnemonic];
 
+        unlockedWallet.probeItem = YES;
         wallet.migratedToTouchID = YES;
 
         void(^updateWallet)() = ^{

@@ -63,7 +63,9 @@
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    [self warnAboutBackupIfNeeded];
+    if (![self warnAboutSecretLoss]) {
+        [self warnAboutBackupIfNeeded];
+    }
 }
 
 
@@ -287,21 +289,38 @@
     }];
 }
 
+- (BOOL) warnAboutSecretLoss {
+    if ([[MYCWallet currentWallet] verifyKeychainIntegrity]) {
+        return NO;
+    }
 
-- (void) warnAboutBackupIfNeeded {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Wallet may be locked out!", @"")
+                                                                   message:NSLocalizedString(@"Do not send any funds to this wallet. Restore wallet from backup or contact Mycelium Support.", @"")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self cancel:nil];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+    return YES;
+}
 
-    if ([MYCWallet currentWallet].isBackedUp) return;
+
+- (BOOL) warnAboutBackupIfNeeded {
+
+    if ([MYCWallet currentWallet].isBackedUp) return NO;
 
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Back up your wallet", @"")
-                                                                   message:NSLocalizedString(@"Any software of hardware failure may render your funds forever inaccessible.", @"")
+                                                                   message:NSLocalizedString(@"Disabling your passcode, software or hardware failure may render your funds forever inaccessible. This takes only a minute.", @"")
                                                             preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
         [self cancel:nil];
     }]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"Backup now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [self backup:nil];
     }]];
     [self presentViewController:alert animated:YES completion:nil];
+
+    return YES;
 }
 
 - (IBAction) backup:(id)sender

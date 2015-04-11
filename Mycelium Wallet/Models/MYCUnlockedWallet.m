@@ -11,6 +11,7 @@
 #import <Security/Security.h>
 
 #define kMasterSeedName @"MasterSeed"
+#define kProbeItemName  @"ProbeItem"
 
 static BOOL MYCBypassMissingPasscode = 0;
 
@@ -49,8 +50,48 @@ static BOOL MYCBypassMissingPasscode = 0;
     _mnemonic = mnemonic;
     NSError* error = nil;
     NSData* data = mnemonic.dataWithSeed ?: [NSData data];
-    if (![self writeItem:data withName:kMasterSeedName accessibility:kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly error:&error]) {
+    if (![self writeItem:data
+                withName:kMasterSeedName
+           accessibility:kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly
+     requireUserPresence:YES
+                   error:&error]) {
         MYCLog(@"MYCUnlockedWallet: Cannot write mnemonic to keychain: %@", error);
+        self.error = error;
+        return;
+    }
+}
+
+- (NSData*) probeItemValue {
+    return [@"probe" dataUsingEncoding:NSUTF8StringEncoding];
+}
+
+- (BOOL) probeItem {
+    NSError* error = nil;
+    NSData* data = [self readItemWithName:kProbeItemName error:&error];
+    if (!data) {
+        MYCLog(@"MYCUnlockedWallet: Cannot read probe item from keychain: %@", error);
+        self.error = error;
+        return NO;
+    }
+    if ([data isEqual:[self probeItemValue]]) {
+        return YES;
+    }
+    self.error = [NSError errorWithDomain:MYCErrorDomain
+                                     code:-3
+                                 userInfo:@{NSLocalizedDescriptionKey:
+                                                NSLocalizedString(@"Failed to read a correct probe item value from iOS Keychain.", @"")}];
+    return NO;
+}
+
+- (void) setProbeItem:(BOOL)probeItem {
+    NSData* data = probeItem ? [self probeItemValue] : nil;
+    NSError* error = nil;
+    if (![self writeItem:data
+                withName:kProbeItemName
+           accessibility:kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly
+     requireUserPresence:NO
+                   error:&error]) {
+        MYCLog(@"MYCUnlockedWallet: Cannot write probe item to keychain: %@", error);
         self.error = error;
         return;
     }
@@ -241,7 +282,11 @@ static BOOL MYCBypassMissingPasscode = 0;
     return NO;
 }
 
-- (BOOL) writeItem:(NSData*)data withName:(NSString*)name accessibility:(CFTypeRef)accessibility error:(NSError**)errorOut {
+- (BOOL) writeItem:(NSData*)data
+          withName:(NSString*)name
+     accessibility:(CFTypeRef)accessibility
+requireUserPresence:(BOOL)requireUserPresence
+             error:(NSError**)errorOut {
 
     MYCLog(@"MYCUnlockedWallet: Writing %@ bytes with name: %@", @(data.length), name);
     NSParameterAssert(name);
@@ -261,7 +306,10 @@ static BOOL MYCBypassMissingPasscode = 0;
         return YES;
     }
 
-    NSDictionary* createRequest = [self keychainCreateRequestForItemNamed:name data:data accessibility:accessibility];
+    NSDictionary* createRequest = [self keychainCreateRequestForItemNamed:name
+                                                                     data:data
+                                                            accessibility:accessibility
+                                                      requireUserPresence:requireUserPresence];
     CFDictionaryRef attributes = NULL;
     OSStatus status = SecItemAdd((__bridge CFDictionaryRef)createRequest, (CFTypeRef *)&attributes);
     if (status != errSecSuccess) {
@@ -299,11 +347,15 @@ static BOOL MYCBypassMissingPasscode = 0;
     return dict;
 }
 
-- (NSMutableDictionary*) keychainCreateRequestForItemNamed:(NSString*)name data:(NSData*)data accessibility:(CFTypeRef)accessibility  {
+- (NSMutableDictionary*) keychainCreateRequestForItemNamed:(NSString*)name
+                                                      data:(NSData*)data
+                                             accessibility:(CFTypeRef)accessibility
+                                       requireUserPresence:(BOOL)requireUserPresence {
 
     NSMutableDictionary* dict = [self keychainBaseDictForItemNamed:name];
 
-    if (data) dict[(__bridge id)kSecValueData] = data;
+    if (!data || data.length == 0) [NSException raise:@"Unexpected value!" format:@"Must provide data to make an iOS keychain create request"];
+    dict[(__bridge id)kSecValueData] = data;
 
 #if TARGET_IPHONE_SIMULATOR
     // Simulator does not support touch id or passcode, but we need to test the UI on simulator,
@@ -311,21 +363,24 @@ static BOOL MYCBypassMissingPasscode = 0;
     if (accessibility == kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly) {
         accessibility = kSecAttrAccessibleWhenUnlockedThisDeviceOnly;
     }
+    requireUserPresence = NO;
 #endif
 
     if (MYCBypassMissingPasscode && (accessibility == kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly)) {
-        MYCLog(@"Downgrading security because passcode is not set.");
+        MYCLog(@"Downgrading security to WhenUnlockedThisDeviceOnly because passcode is not set.");
         accessibility = kSecAttrAccessibleWhenUnlockedThisDeviceOnly;
+        requireUserPresence = NO;
     }
 
     // Need to set access control object to require user enter passcode / touch id every time.
     // For all other accessibility modes we can read items any time device is unlocked.
-    if (accessibility == kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly) {
+    if (requireUserPresence) {
         SecAccessControlRef sac = SecAccessControlCreateWithFlags(kCFAllocatorDefault, accessibility, kSecAccessControlUserPresence, NULL);
         NSAssert(sac, @"");
         if (sac) {
             dict[(__bridge id)kSecAttrAccessControl] = (__bridge_transfer id)sac;
-            dict[(__bridge id)kSecUseNoAuthenticationUI] = @YES; // cargo cult.
+            dict[(__bridge id)kSecUseNoAuthenticationUI] = @YES; // we set the attribute kSecUseNoAuthenticationUI because we don't want to be prompted on Add.  (http://corinnekrych.blogspot.fr/2014/09/touchid-and-keychain-ios8-best-friends.html)
+            MYCLog(@"MYCUnlockedWallet: Using access control object with UserPresence flag to write %@.", name);
         } else {
             MYCLog(@"CANNOT CREATE SecAccessControlRef");
         }
