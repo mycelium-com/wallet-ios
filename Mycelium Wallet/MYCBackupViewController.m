@@ -43,7 +43,7 @@
 {
     [super viewDidLoad];
 
-    [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"You are about to back up a master seed of your wallet. This seed is not encrypted and allows to restore entire wallet contents.\n\nYou will see a list of words, one by one. Write them down and store in a safe place.", @"") button:NSLocalizedString(@"Start", @"") action:@selector(start:)]];
+    [self.scrollView addSubview:[self pageViewWithText:NSLocalizedString(@"You are about to back up a master seed of your wallet. This seed allows anyone knowing it to spend all funds from your wallet.\n\nYou will see a list of words, one by one. Write them down and store in a safe place.", @"") button:NSLocalizedString(@"Start", @"") action:@selector(start:)]];
 
     [self scrollViewDidScroll:self.scrollView];
 }
