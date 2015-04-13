@@ -141,7 +141,7 @@
     [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
 
         UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you understand the risk?", @"")
-                                                                        message:NSLocalizedString(@"Without a backup you have no guarantee that after you deposit some funds you will be able to access them again. There is not warranty, any software or any  hardware may fail any time. Your wallet is not linked to your email or phone number, you can be sure that your funds are save  only when  you are sure you have your back up made and stored securely. We highly recommend to spend a  minute  and  make it  now. ", @"")
+                                                                        message:NSLocalizedString(@"Without a backup, there is no guarantee that you will be able to access your funds after depositing them into the wallet. There is no warranty. Any software or hardware may fail any time. Your wallet is not linked to your email or phone number. Mycelium does not keep copies of your private keys. The only way to protect your funds is to make your own backup and store it in a safe place.\n\nIf you proceed without backup, you take full reposibility for any potential losses.", @"")
                                                                  preferredStyle:UIAlertControllerStyleAlert];
         [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"I agree, proceed without backup", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
             // Do nothing.
