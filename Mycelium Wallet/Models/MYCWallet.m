@@ -122,6 +122,18 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (BOOL) walletSetupInProgress
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"MYCWalletSetupInProgress"];
+}
+
+- (void) setWalletSetupInProgress:(BOOL)flag
+{
+    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:@"MYCWalletSetupInProgress"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
 - (BOOL) isMigratedToTouchID
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:@"MYCDidMigrateToTouchID"];
@@ -355,6 +367,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 // Returns YES if wallet is fully initialized and stored on disk.
 - (BOOL) isStored
 {
+    if ([self walletSetupInProgress]) return NO;
     return [[NSFileManager defaultManager] fileExistsAtPath:self.databaseURL.path];
 }
 

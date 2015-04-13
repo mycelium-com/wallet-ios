@@ -50,6 +50,9 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Set to YES once the user has backed up the wallet.
 @property(nonatomic, getter=isBackedUp) BOOL backedUp;
 
+// Set to YES when new wallet process begins and set to NO when completed.
+@property(nonatomic) BOOL walletSetupInProgress;
+
 // Set to YES once the user has backed up the wallet.
 @property(nonatomic, getter=isMigratedToTouchID) BOOL migratedToTouchID;
 @property(nonatomic) NSDate* dateLastAskedAboutMigratingToTouchID;
