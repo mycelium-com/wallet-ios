@@ -116,15 +116,15 @@
     if ([MYCWallet currentWallet].isBackedUp) return NO;
 
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Back up your wallet", @"")
-                                                                   message:NSLocalizedString(@"Backup is a 12-word phrase that allows you to recover your funds when you disable your device passcode, or in case of loss/damage/malfunction of the device. This takes only a minute.", @"")
+                                                                   message:NSLocalizedString(@"Backup consists of a 12-word phrase that you have to write down. It allows you to recover your funds when you disable your device passcode, or in case of loss/damage/malfunction of the device. This takes only a minute.", @"")
                                                             preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
 
         UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you understand the risk?", @"")
-                                                                        message:NSLocalizedString(@"Without a backup you have no guarantee that after you deposit some funds you will be able to access them again. There is no warranty. Software or hardware may fail any time.", @"")
+                                                                        message:NSLocalizedString(@"Without a backup, there is no guarantee that you will be able to access your funds after depositing them into the wallet. There is not warranty. Any software or hardware may fail any time. Your wallet is not linked to your email or phone number. Mycelium does not keep copies of your private keys. The only way to protect your funds is to make your own backup and store it in a safe place.\n\nIf you proceed without backup, you take full reposibility for potential losses.", @"")
                                                                  preferredStyle:UIAlertControllerStyleAlert];
-        [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Proceed without backup",@"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
-            // Do nothing.
+        [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"I understand, proceed without backup", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+            // Do nothing: user decided not to backup
         }]];
         [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             [self backup:nil];
