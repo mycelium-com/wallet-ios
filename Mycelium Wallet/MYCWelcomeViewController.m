@@ -159,6 +159,9 @@
 
 - (IBAction)createNewWallet:(id)sender
 {
+    // Mark that we begin the setup so user has to go through all warnings before being able to deposit funds.
+    [MYCWallet currentWallet].walletSetupInProgress = YES;
+
     self.generatingWalletView.frame = self.containerView.bounds;
     self.generatingWalletView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     self.generatingWalletView.translatesAutoresizingMaskIntoConstraints = YES;
@@ -192,9 +195,9 @@
 
 - (IBAction)backupLater:(id)sender {
     UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you understand the risk?", @"")
-                                                                    message:NSLocalizedString(@"Without a backup you have no guarantee that after you deposit some funds you will be able to access them again. There is no warranty. Software or hardware may fail any time.", @"")
+                                                                    message:NSLocalizedString(@"Without a backup, there is no guarantee that you will be able to access your funds after depositing them into the wallet. There is not warranty. Any software or hardware may fail any time. Your wallet is not linked to your email or phone number. Mycelium does not keep copies of your private keys. The only way to protect your funds is to make your own backup and store it in a safe place.\n\nIf you proceed without backup, you take full reposibility for potential losses.", @"")
                                                              preferredStyle:UIAlertControllerStyleAlert];
-    [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Proceed without backup", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+    [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"I understand, proceed without backup", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
         [self beginUsingNewWallet];
     }]];
     [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
@@ -219,6 +222,7 @@
 }
 
 - (void) beginUsingNewWallet {
+    [MYCWallet currentWallet].walletSetupInProgress = NO;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [[MYCAppDelegate sharedInstance] displayMainView];
     });
