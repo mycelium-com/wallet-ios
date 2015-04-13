@@ -133,7 +133,7 @@
         [self reloadAccount];
     }
 
-    if (self.account.unconfirmedAmount < 0.02*BTCCoin) return NO;
+    if (self.account.unconfirmedAmount <= 0) return NO;
 
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Back up your wallet", @"")
                                                                    message:NSLocalizedString(@"Backup consists of a 12-word phrase that you have to write down. It allows you to recover your funds when you disable your device passcode, or in case of loss/damage/malfunction of the device. This takes only a minute.", @"")

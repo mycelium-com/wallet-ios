@@ -200,7 +200,7 @@
     if (!self.isViewLoaded) return;
 
     if (![MYCWallet currentWallet].isBackedUp) {
-        self.backupWarningOverlay.hidden = (self.requestedAmount < 0.02 * BTCCoin);
+        self.backupWarningOverlay.hidden = (self.requestedAmount <= 0);
     }
 
     [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
