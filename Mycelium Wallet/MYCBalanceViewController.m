@@ -17,6 +17,8 @@
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "MYCScanPrivateKeyViewController.h"
+#import "MYCVerifyBackupViewController.h"
+
 
 @interface MYCBalanceViewController ()
 
@@ -115,8 +117,34 @@
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Check your backup", @"")
                                                                    message:NSLocalizedString(@"This is a monthly reminder. Make sure your wallet backup is stored in a safe place and not lost or destroyed. If you are not sure, you should back up immediately.", @"")
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Verify", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+
         [MYCWallet currentWallet].dateLastAskedToVerifyBackupAccess = [NSDate date];
+
+        MYCVerifyBackupViewController* vb = [[MYCVerifyBackupViewController alloc] initWithNibName:nil bundle:nil];
+
+        vb.completionBlock = ^(BOOL verified) {
+
+            [self dismissViewControllerAnimated:YES completion:nil];
+
+            if (!verified) {
+
+                UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Backup is not verified", @"")
+                                                                               message:NSLocalizedString(@"You have full responsibility for security of your backup. ", @"")
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"I agree, proceed without verification", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+                    // Proceed.
+                }]];
+                [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    [self backup:nil];
+                }]];
+
+                [self presentViewController:alert2 animated:YES completion:nil];
+            }
+        };
+
+        UINavigationController* navC = [[UINavigationController alloc] initWithRootViewController:vb];
+        [self presentViewController:navC animated:YES completion:nil];
     }]];
     [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [MYCWallet currentWallet].dateLastAskedToVerifyBackupAccess = [NSDate date];

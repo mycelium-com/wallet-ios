@@ -33,6 +33,9 @@
 		2064E38D19D9A0F200CD81B8 /* MYCTransactionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E38B19D9A0F200CD81B8 /* MYCTransactionsViewController.xib */; };
 		2064E39119D9A10400CD81B8 /* MYCSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38F19D9A10400CD81B8 /* MYCSettingsViewController.m */; };
 		2064E39219D9A10400CD81B8 /* MYCSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E39019D9A10400CD81B8 /* MYCSettingsViewController.xib */; };
+		206EA4C01ADC154700F37019 /* MYCVerifyBackupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 206EA4BF1ADC154600F37019 /* MYCVerifyBackupViewController.m */; };
+		206EA4C31ADC179900F37019 /* MYCRestoreSeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 206EA4C21ADC179900F37019 /* MYCRestoreSeedViewController.m */; };
+		206EA4C51ADC17C500F37019 /* MYCVerifyBackupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 206EA4C41ADC17C500F37019 /* MYCVerifyBackupViewController.xib */; };
 		207646A31A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 207646A11A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m */; };
 		207646A41A0249FF000F00F2 /* MYCScanPrivateKeyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 207646A21A0249FF000F00F2 /* MYCScanPrivateKeyViewController.xib */; };
 		207647191A0D080A000F00F2 /* MYCWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 207647171A0D080A000F00F2 /* MYCWebViewController.m */; };
@@ -130,6 +133,11 @@
 		2064E38F19D9A10400CD81B8 /* MYCSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCSettingsViewController.m; sourceTree = "<group>"; };
 		2064E39019D9A10400CD81B8 /* MYCSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCSettingsViewController.xib; sourceTree = "<group>"; };
 		2064E39319D9AE1C00CD81B8 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; fileEncoding = 4; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		206EA4BE1ADC154600F37019 /* MYCVerifyBackupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCVerifyBackupViewController.h; sourceTree = "<group>"; };
+		206EA4BF1ADC154600F37019 /* MYCVerifyBackupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCVerifyBackupViewController.m; sourceTree = "<group>"; };
+		206EA4C11ADC179900F37019 /* MYCRestoreSeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCRestoreSeedViewController.h; sourceTree = "<group>"; };
+		206EA4C21ADC179900F37019 /* MYCRestoreSeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCRestoreSeedViewController.m; sourceTree = "<group>"; };
+		206EA4C41ADC17C500F37019 /* MYCVerifyBackupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCVerifyBackupViewController.xib; sourceTree = "<group>"; };
 		207646A01A0249FF000F00F2 /* MYCScanPrivateKeyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCScanPrivateKeyViewController.h; sourceTree = "<group>"; };
 		207646A11A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCScanPrivateKeyViewController.m; sourceTree = "<group>"; };
 		207646A21A0249FF000F00F2 /* MYCScanPrivateKeyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCScanPrivateKeyViewController.xib; sourceTree = "<group>"; };
@@ -331,6 +339,11 @@
 				20C2D7F519E292F80022CAAC /* MYCBackupPageView.h */,
 				20C2D7F619E292F80022CAAC /* MYCBackupPageView.m */,
 				20C2D7F319E290830022CAAC /* MYCBackupPageView.xib */,
+				206EA4BE1ADC154600F37019 /* MYCVerifyBackupViewController.h */,
+				206EA4BF1ADC154600F37019 /* MYCVerifyBackupViewController.m */,
+				206EA4C41ADC17C500F37019 /* MYCVerifyBackupViewController.xib */,
+				206EA4C11ADC179900F37019 /* MYCRestoreSeedViewController.h */,
+				206EA4C21ADC179900F37019 /* MYCRestoreSeedViewController.m */,
 			);
 			name = Backup;
 			sourceTree = "<group>";
@@ -637,6 +650,7 @@
 				208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */,
 				2076471C1A0D0A40000F00F2 /* Credits.html in Resources */,
 				203AA4AE19DC517200572BD9 /* MYCSendViewController.xib in Resources */,
+				206EA4C51ADC17C500F37019 /* MYCVerifyBackupViewController.xib in Resources */,
 				203AA4BA19DC53C900572BD9 /* MYCBackupViewController.xib in Resources */,
 				208FFBA019D9802000D4C159 /* Images.xcassets in Resources */,
 				2076471E1A0D0A93000F00F2 /* Legal.html in Resources */,
@@ -734,6 +748,7 @@
 				20C2D81319E3EDB10022CAAC /* MYCDatabaseRecord.m in Sources */,
 				203AA4AD19DC517200572BD9 /* MYCSendViewController.m in Sources */,
 				2064E39119D9A10400CD81B8 /* MYCSettingsViewController.m in Sources */,
+				206EA4C31ADC179900F37019 /* MYCRestoreSeedViewController.m in Sources */,
 				208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */,
 				20A9C07719F5520C00AF61DE /* MYCParentOutput.m in Sources */,
 				203AA4B919DC53C900572BD9 /* MYCBackupViewController.m in Sources */,
@@ -741,6 +756,7 @@
 				203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */,
 				2095C44C19FF985100635C85 /* MYCTransactionTableViewCell.m in Sources */,
 				200AAE3719F91EE50004F908 /* MYCTextFieldLiveFormatter.m in Sources */,
+				206EA4C01ADC154700F37019 /* MYCVerifyBackupViewController.m in Sources */,
 				311D63291AADE8F700798450 /* MYCCurrencyTableViewCell.m in Sources */,
 				20C0F70419EEB37D00DD0748 /* MYCAccountViewController.m in Sources */,
 				20C2D7F719E292F80022CAAC /* MYCBackupPageView.m in Sources */,
