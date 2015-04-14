@@ -398,9 +398,12 @@ static BOOL MYCBypassMissingPasscode = 0;
     }
     else if (status == errSecItemNotFound) {
         // We have no data stored there yet, so we don't return an error.
-        MYCLog(@"MYCUnlockedWallet: Item with name %@ not found", name);
+        MYCError(@"MYCUnlockedWallet: Item with name %@ not found", name);
         return nil;
     }
+
+    // We have no data stored there yet, so we don't return an error.
+    MYCError(@"MYCUnlockedWallet: Item with name %@ cannot be accessed. Error code: %@", name, @(status));
 
     if (errorOut) *errorOut = [self errorForOSStatus:status];
 
