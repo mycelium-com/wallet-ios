@@ -73,7 +73,7 @@
     __block BOOL matches = NO;
     [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
 
-        BTCMnemonic* m2 = uw.mnemonic;
+        BTCMnemonic* m2 = [uw readMnemonic];
         if ([m2.seed isEqual:mnemonic.seed]) {
             matches = YES;
         } else {

@@ -103,7 +103,7 @@
     {
         [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
 
-            BTCMnemonic* mnemonic = uw.mnemonic;
+            BTCMnemonic* mnemonic = [uw readMnemonic];
 
             if (!mnemonic) {
                 [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")

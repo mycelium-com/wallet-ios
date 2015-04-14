@@ -338,19 +338,21 @@
 
         } reason:NSLocalizedString(@"Authorize new account", @"")];
 
-        acc.label = [weakalert.textFields.firstObject text];
+        if (acc) {
+            acc.label = [weakalert.textFields.firstObject text];
 
-        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
-            [acc saveInDatabase:db error:NULL];
-        }];
+            [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+                [acc saveInDatabase:db error:NULL];
+            }];
 
-        [[MYCWallet currentWallet] updateAccount:acc force:YES completion:^(BOOL success, NSError *error) {
-        }];
+            [[MYCWallet currentWallet] updateAccount:acc force:YES completion:^(BOOL success, NSError *error) {
+            }];
 
-        [self updateSections];
-        [self.tableView reloadData];
+            [self updateSections];
+            [self.tableView reloadData];
 
-        [self selectAccount:acc];
+            [self selectAccount:acc];
+        }
     }]];
     [self presentViewController:alert animated:YES completion:nil];
 }

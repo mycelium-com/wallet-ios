@@ -431,7 +431,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 - (BOOL) isTouchIDEnabled
 {
     return ([LAContext class] &&
-            [[LAContext new] canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil]);
+            [[LAContext new] canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:NULL]);
 }
 
 - (BOOL) isDevicePasscodeEnabled
@@ -448,21 +448,53 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 }
 
 // Returns YES if the keychain data is stored correctly.
-- (BOOL) verifyKeychainIntegrity {
+- (BOOL) verifySeedIntegrity {
     __block BOOL result = NO;
     [self unlockWallet:^(MYCUnlockedWallet *uw) {
 
         result = uw.probeItem;
 
+        if (!result && uw.fileBasedMnemonic) {
+            result = YES;
+        }
+
         // If we updated from v1.0, try reading mnemonic itself (it won't trigger passcode/touchid dialog).
         if (!result && !self.migratedToTouchID) {
-            result = uw.mnemonic ? YES : NO;
+            result = [uw readMnemonic] ? YES : NO;
         }
 
         // Note: normally this prompt should never be triggered.
     } reason:NSLocalizedString(@"Verifying wallet integrity.", @"")];
 
     return result;
+}
+
+- (void) makeFileBasedSeedIfNeeded:(void(^)(BOOL result, NSError* error))completionBlock {
+    if (![UIApplication sharedApplication].isProtectedDataAvailable) {
+        completionBlock(NO, [NSError errorWithDomain:MYCErrorDomain code:-3 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Cannot make another copy of master seed while device is locked", @"")}]);
+        return;
+    }
+    if ([[MYCUnlockedWallet alloc] init].fileBasedMnemonicIsStored) {
+        // already stored, nothing to do here
+        completionBlock(YES, nil);
+        return;
+    }
+
+    [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
+        BTCMnemonic* mnemonic = uw.mnemonic;
+        if (!mnemonic) {
+            completionBlock(NO, uw.error);
+            return;
+        }
+
+        if (![uw makeFileBasedMnemonic:mnemonic]) {
+            completionBlock(NO, uw.error);
+            return;
+        }
+
+        completionBlock(YES, nil);
+    } reason:NSLocalizedString(@"Making a file-based copy of the wallet seed", @"")];
+
 }
 
 - (void) migrateToTouchID:(void(^)(BOOL result, NSError* error))completionBlock {
@@ -544,6 +576,33 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     unlockedWallet = nil;
 }
 
+
+- (void) bestEffortAuthenticateWithTouchID:(void(^)(MYCUnlockedWallet* uw, BOOL authenticated))block reason:(NSString*)reason {
+
+    LAContext *context = [[LAContext alloc] init];
+
+    if (![context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:NULL]) {
+        [self unlockWallet:^(MYCUnlockedWallet *uw) {
+            block(uw, NO);
+        } reason:reason];
+    }
+
+    context.localizedFallbackTitle = @""; // so the app-specific password option is not displayed.
+
+    [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
+            localizedReason:reason
+                      reply:^(BOOL success, NSError *authenticationError) {
+                          dispatch_async(dispatch_get_main_queue(), ^{
+                              if (success) {
+                                  [self unlockWallet:^(MYCUnlockedWallet *uw) {
+                                      block(uw, YES);
+                                  } reason:reason];
+                              } else {
+                                  block(nil, NO);
+                              }
+                          });
+                      }];
+}
 
 
 
@@ -669,7 +728,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         // Prevent database file from iCloud backup
         if (![database.URL setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error])
         {
-            MYCLog(@"WARNING: Can not exclude database file from backup (%@)", error);
+            MYCError(@"WARNING: Can not exclude database file from backup (%@)", error);
             //[NSException raise:NSInternalInconsistencyException format:@"Can not exclude database file from backup (%@)", error];
         }
     }
@@ -1137,6 +1196,11 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 // Update all active accounts.
 - (void) updateActiveAccounts:(void(^)(BOOL success, NSError *error))completion
 {
+    [self updateActiveAccountsForce:NO completionBlock:completion];
+}
+
+- (void) updateActiveAccountsForce:(BOOL)force completionBlock:(void(^)(BOOL success, NSError *error))completion
+{
     [self asyncInDatabase:^id(FMDatabase *db, NSError *__autoreleasing *dberrorOut) {
         return [MYCWalletAccount loadWithCondition:@"archived = 0" fromDatabase:db];
     } completion:^(NSArray* accs, NSError *dberror) {
@@ -1145,9 +1209,10 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
             if (completion) completion(NO, dberror);
             return;
         }
-        [self recursivelyUpdateAccounts:accs force:NO completion:completion];
+        [self recursivelyUpdateAccounts:accs force:force completion:completion];
     }];
 }
+
 
 // NSArray* remainingAccounts = [self.activeAccounts arrayByAddingObjectsFromArray:self.archivedAccounts];
 - (void) recursivelyUpdateAccounts:(NSArray*)accs force:(BOOL)force completion:(void(^)(BOOL success, NSError *error))completion

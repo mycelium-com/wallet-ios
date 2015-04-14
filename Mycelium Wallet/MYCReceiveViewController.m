@@ -76,6 +76,10 @@
 
     [self restoreBrightness];
     [self updateCurrency];
+
+    // If we expect some funds to arrive, when we close the window the wallet will show the new amount.
+    [self.wallet updateActiveAccountsForce:YES completionBlock:^(BOOL success, NSError *error) {
+    }];
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -97,7 +101,7 @@
 }
 
 - (BOOL) warnAboutSecretLoss {
-    if ([[MYCWallet currentWallet] verifyKeychainIntegrity]) {
+    if ([[MYCWallet currentWallet] verifySeedIntegrity]) {
         return NO;
     }
 

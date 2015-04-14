@@ -348,18 +348,8 @@
                         <constraint firstAttribute="width" constant="120" id="kGz-RI-FDq"/>
                     </constraints>
                 </imageView>
-                <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sgc-Cu-i0s">
-                    <rect key="frame" x="170" y="431" width="103" height="33"/>
-                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
-                    <state key="normal" title="Back up now">
-                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </state>
-                    <connections>
-                        <action selector="backupNow:" destination="-1" eventType="touchUpInside" id="k14-cE-jTA"/>
-                    </connections>
-                </button>
-                <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qtb-8R-DC2">
-                    <rect key="frame" x="49" y="432" width="101" height="32"/>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qtb-8R-DC2">
+                    <rect key="frame" x="110" y="440" width="101" height="32"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                     <state key="normal" title="Back up later">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -377,11 +367,23 @@ Making a backup is very simple: just write down 12 words and keep them in a safe
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sgc-Cu-i0s">
+                    <rect key="frame" x="109" y="399" width="103" height="33"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
+                    <state key="normal" title="Back up now">
+                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="backupNow:" destination="-1" eventType="touchUpInside" id="k14-cE-jTA"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstAttribute="centerX" secondItem="sgc-Cu-i0s" secondAttribute="centerX" id="IA8-Gc-659"/>
                 <constraint firstAttribute="centerX" secondItem="sgc-Cu-i0s" secondAttribute="leading" constant="-10" id="IMJ-u7-8wy"/>
                 <constraint firstItem="K8e-C6-95e" firstAttribute="top" secondItem="ADJ-Sc-fvQ" secondAttribute="top" constant="20" id="KfJ-Ch-nOG"/>
+                <constraint firstItem="sgc-Cu-i0s" firstAttribute="centerX" secondItem="Qtb-8R-DC2" secondAttribute="centerX" id="Nyc-pw-VFB"/>
                 <constraint firstAttribute="trailing" secondItem="jwE-xX-QT1" secondAttribute="trailing" constant="20" id="RLg-fZ-c0R"/>
                 <constraint firstItem="jwE-xX-QT1" firstAttribute="top" secondItem="K8e-C6-95e" secondAttribute="bottom" constant="20" id="kN9-Oj-lC7"/>
                 <constraint firstAttribute="centerX" secondItem="Qtb-8R-DC2" secondAttribute="trailing" constant="10" id="m9s-32-4Iy"/>
@@ -390,10 +392,20 @@ Making a backup is very simple: just write down 12 words and keep them in a safe
                 <constraint firstItem="jwE-xX-QT1" firstAttribute="leading" secondItem="ADJ-Sc-fvQ" secondAttribute="leading" constant="20" id="sve-Ep-Ax9"/>
                 <constraint firstItem="Qtb-8R-DC2" firstAttribute="baseline" secondItem="sgc-Cu-i0s" secondAttribute="baseline" id="t9y-fJ-eKY"/>
                 <constraint firstItem="sgc-Cu-i0s" firstAttribute="top" relation="greaterThanOrEqual" secondItem="jwE-xX-QT1" secondAttribute="bottom" constant="20" id="tSy-sj-wYU"/>
+                <constraint firstAttribute="bottom" secondItem="Qtb-8R-DC2" secondAttribute="bottom" constant="8" id="yc2-9e-V3Q"/>
+                <constraint firstItem="Qtb-8R-DC2" firstAttribute="top" secondItem="sgc-Cu-i0s" secondAttribute="bottom" constant="8" id="znO-bM-FGf"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="IMJ-u7-8wy"/>
+                    <exclude reference="ms7-lr-K0i"/>
+                    <exclude reference="m9s-32-4Iy"/>
+                    <exclude reference="t9y-fJ-eKY"/>
+                </mask>
+            </variation>
             <point key="canvasLocation" x="934" y="268"/>
         </view>
     </objects>

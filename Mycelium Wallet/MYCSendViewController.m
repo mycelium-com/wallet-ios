@@ -306,83 +306,107 @@ static BTCAmount MYCFeeRate = 10000;
                 [self presentViewController:ac animated:YES completion:nil];
             }
 
-
-            BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
-            builder.dataSource = self;
-            builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:self.spendingAddress] ];
-            builder.changeAddress = self.changeAddress ?: self.account.internalAddress;
-            builder.feeRate = MYCFeeRate;
-
-            NSString* authString = [NSString stringWithFormat:NSLocalizedString(@"Confirm payment of %@", @""),
-                                    [self formatAmountInSelectedCurrency:self.spendingAmount]];
-
-            // Unlock wallet so builder can sign.
-            [self.wallet unlockWallet:^(MYCUnlockedWallet *uw) {
-                BTCKeychain* kc = uw.keychain;
-                if (!kc) {
-                    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
-                                                message:[NSString stringWithFormat:@"You may need to restore wallet from backup. %@", uw.error.localizedDescription ?: @""] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
-                    return;
-                } else {
-                    self.accountKeychain = [uw.keychain keychainForAccount:(uint32_t)self.account.accountIndex];
-                }
-
-            } reason:authString];
-
-            NSError* berror = nil;
-            BTCTransactionBuilderResult* result = nil;
-
-            if (self.accountKeychain) {
-                result = [builder buildTransaction:&berror];
-            }
-
-            [self.accountKeychain clear];
-            self.accountKeychain = nil;
-
-            if (result && result.unsignedInputsIndexes.count == 0)
-            {
-                [self.view endEditing:YES];
-
-                MYCLog(@"signed tx: %@", BTCHexFromData(result.transaction.data));
-                MYCLog(@"signed tx base64: %@", [result.transaction.data base64EncodedStringWithOptions:0]);
-
-                [self beginSpinning];
-
-                if (![MYCUnlockedWallet isPasscodeSet]) {
-                    UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm payment", @"")
-                                                                                message:[NSString stringWithFormat:NSLocalizedString(@"You are sending %@ to %@", @""),
-                                                                                         [self formatAmountInSelectedCurrency:self.spendingAmount],
-                                                                                         [self.spendingAddress base58String]
-                                                                                         ]
-                                                                         preferredStyle:UIAlertControllerStyleAlert];
-                    [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"")
-                                                           style:UIAlertActionStyleCancel
-                                                         handler:^(UIAlertAction *action) {
-
-                                                             [self endSpinning];
-
-                                                         }]];
-                    [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Send", @"")
-                                                           style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction *action) {
-
-                                                            [self broadcastTransaction:result.transaction];
-
-                                                         }]];
-
-                    [self presentViewController:ac animated:YES completion:nil];
-
-                } else {
-                    [self broadcastTransaction:result.transaction];
-                }
-            }
-            else
-            {
-                // Typically user declined signing.
-                MYCLog(@"TX BUILDER ERROR: %@", berror);
-            }
+            [self confirmAndSend];
         }];
     }
+}
+
+- (void) confirmAndSend {
+
+    NSString* authString = [NSString stringWithFormat:NSLocalizedString(@"Confirm payment of %@", @""),
+                            [self formatAmountInSelectedCurrency:self.spendingAmount]];
+
+    [self.wallet bestEffortAuthenticateWithTouchID:^(MYCUnlockedWallet *uw, BOOL authenticated) {
+        if (!uw) {
+            // User denied access. Do nothing.
+            return;
+        }
+
+        BTCKeychain* kc = uw.keychain;
+
+        if (!kc) {
+#warning TODO: offer a way to re-enter the seed from backup to continue. Check if it matches account xpub.
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+                                        message:[NSString stringWithFormat:@"You may need to restore wallet from backup. %@", uw.error.localizedDescription ?: @""] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+            return;
+        }
+
+        self.accountKeychain = [kc keychainForAccount:(uint32_t)self.account.accountIndex];
+
+        if (authenticated) {
+            [self actuallySend];
+            return;
+        }
+
+        // TouchID is n/a or disabled. Ask with a simple alert.
+        UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Bitcoin Payment", @"")
+                                                                    message:authString
+                                                             preferredStyle:UIAlertControllerStyleAlert];
+        [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"")
+                                               style:UIAlertActionStyleCancel
+                                             handler:^(UIAlertAction *action) {
+
+                                                 [self endSpinning];
+
+                                             }]];
+        [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Send", @"")
+                                               style:UIAlertActionStyleDefault
+                                             handler:^(UIAlertAction *action) {
+
+                                                 [self actuallySend];
+                                                 
+                                             }]];
+        
+        [self presentViewController:ac animated:YES completion:nil];
+
+    } reason:authString];
+}
+
+- (void) actuallySend {
+
+    if (!self.accountKeychain) {
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Wallet is locked", @"")
+                                    message:[NSString stringWithFormat:@"Wallet access was not authenticated."] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+        return;
+    }
+
+    BTCAddress* changeAddress = self.changeAddress ?: self.account.internalAddress;
+
+    if (!changeAddress) {
+        [NSException raise:@"No change address" format:@"This should not happen"];
+    }
+
+    BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
+    builder.dataSource = self;
+    builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:self.spendingAddress] ];
+    builder.changeAddress = changeAddress;
+    builder.feeRate = MYCFeeRate;
+
+    NSError* berror = nil;
+    BTCTransactionBuilderResult* result = nil;
+
+    result = [builder buildTransaction:&berror];
+
+    [self.accountKeychain clear];
+    self.accountKeychain = nil;
+
+    if (!result || result.unsignedInputsIndexes.count > 0)
+    {
+        // Typically user declined signing.
+        MYCError(@"TX BUILDER ERROR: %@", berror);
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Payment Error", @"")
+                                    message:[NSString stringWithFormat:@"Cannot compose bitcoin transaction. %@", berror.localizedDescription ?: @""] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+
+        return;
+    }
+
+    [self.view endEditing:YES];
+
+    MYCLog(@"signed tx: %@", BTCHexFromData(result.transaction.data));
+
+    [self beginSpinning];
+
+    [self broadcastTransaction:result.transaction];
 }
 
 - (void) broadcastTransaction:(BTCTransaction*)tx

@@ -14,6 +14,19 @@
 // Root wallet seed encoded as a BIP39 mnemonic.
 @property(nonatomic) BTCMnemonic* mnemonic;
 
+// Mnemonic read from a file.
+@property(nonatomic) BTCMnemonic* fileBasedMnemonic;
+
+- (BTCMnemonic*) readMnemonic;
+
+@property(nonatomic, readonly) BOOL fileBasedMnemonicIsStored;
+
+- (BOOL) makeFileBasedMnemonic:(BTCMnemonic*)mnemonic;
+- (BOOL) makeFileBasedMnemonicIfNeededWithMnemonic:(BTCMnemonic*)mnemonic;
+
+- (BOOL) removeFileBasedMnemonic:(NSString*)reason;
+
+
 // Returns YES if can successfully read the probe item that does not require user interaction.
 @property(nonatomic) BOOL probeItem;
 

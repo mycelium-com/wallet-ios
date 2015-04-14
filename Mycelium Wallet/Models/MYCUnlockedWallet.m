@@ -31,12 +31,23 @@ static BOOL MYCBypassMissingPasscode = 0;
     return @"MyceliumWallet";
 }
 
+- (BTCMnemonic*) readMnemonic {
+
+    BTCMnemonic* m = self.mnemonic;
+
+    if (m) return m;
+
+    MYCError(@"Keychain-based mnemonic not found or cannot be accessed: %@", self.error);
+
+    return self.fileBasedMnemonic;
+}
+
 - (BTCMnemonic*) mnemonic {
     if (!_mnemonic) {
         NSError* error = nil;
         NSData* data = [self readItemWithName:kMasterSeedName error:&error];
         if (!data) {
-            MYCLog(@"MYCUnlockedWallet: Cannot read mnemonic from keychain: %@", error);
+            MYCError(@"MYCUnlockedWallet: Cannot read mnemonic from keychain: %@", error);
             self.error = error;
             return nil;
         }
@@ -52,10 +63,10 @@ static BOOL MYCBypassMissingPasscode = 0;
     NSData* data = mnemonic.dataWithSeed ?: [NSData data];
     if (![self writeItem:data
                 withName:kMasterSeedName
-           accessibility:kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly
-     requireUserPresence:YES
+           accessibility:kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+     requireUserPresence:NO
                    error:&error]) {
-        MYCLog(@"MYCUnlockedWallet: Cannot write mnemonic to keychain: %@", error);
+        MYCError(@"MYCUnlockedWallet: Cannot write mnemonic to keychain: %@", error);
         self.error = error;
         return;
     }
@@ -69,7 +80,7 @@ static BOOL MYCBypassMissingPasscode = 0;
     NSError* error = nil;
     NSData* data = [self readItemWithName:kProbeItemName error:&error];
     if (!data) {
-        MYCLog(@"MYCUnlockedWallet: Cannot read probe item from keychain: %@", error);
+        MYCError(@"MYCUnlockedWallet: Cannot read probe item from keychain: %@", error);
         self.error = error;
         return NO;
     }
@@ -91,11 +102,148 @@ static BOOL MYCBypassMissingPasscode = 0;
            accessibility:kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly
      requireUserPresence:NO
                    error:&error]) {
-        MYCLog(@"MYCUnlockedWallet: Cannot write probe item to keychain: %@", error);
+        MYCError(@"MYCUnlockedWallet: Cannot write probe item to keychain: %@", error);
         self.error = error;
         return;
     }
 }
+
+- (NSURL*) seedFileURL {
+    NSURL *documentsFolderURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURL *url = [NSURL URLWithString:@"MasterSeed.txt" relativeToURL:documentsFolderURL].absoluteURL;
+
+    if (!url) {
+        [NSException raise:@"Internal Inconsistency" format:@"Failed to construct a URL for MasterSeed file"];
+    }
+    return url;
+}
+
+- (BOOL) fileBasedMnemonicIsStored {
+    MYCLog(@"Checking if file exists at path %@", [self seedFileURL].path);
+    return [[NSFileManager defaultManager] fileExistsAtPath:[self seedFileURL].path];
+}
+
+- (BTCMnemonic*) fileBasedMnemonic {
+    if (![UIApplication sharedApplication].isProtectedDataAvailable) {
+        MYCLog(@"MYCUnlockedWallet: UIApplication isProtectedDataAvailable = NO; cannot read the seed from the file.");
+        self.error = [NSError errorWithDomain:MYCErrorDomain code:-3 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Cannot read the master seed from the file while device is locked (protected data is not available).", @"")}];
+        return nil;
+    }
+
+    NSURL* url = [self seedFileURL];
+    NSData* data = [[NSData alloc] initWithContentsOfURL:url];
+
+    if (!data) {
+        MYCError(@"MYCUnlockedWallet: failed to read master seed from file %@", url);
+        self.error = [NSError errorWithDomain:MYCErrorDomain code:-3 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Cannot read the master seed from the file.", @"")}];
+        return nil;
+    }
+
+    // Data is mnemonic data
+
+    BTCMnemonic* mnemonic = [[BTCMnemonic alloc] initWithData:data];
+    if (!mnemonic) {
+        MYCError(@"MYCUnlockedWallet: failed to read mnemonic from data of %@ bytes", @(data.length));
+        self.error = [NSError errorWithDomain:MYCErrorDomain code:-3 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Cannot read the master seed from the file.", @"")}];
+        return nil;
+    }
+    return mnemonic;
+}
+
+- (void) setFileBasedMnemonic:(BTCMnemonic*)mnemonic {
+
+    if (!mnemonic) {
+        [NSException raise:@"Cannot save nil mnemonic" format:@"You should use explicit deletion API if you want to erase mnemonic."];
+        return;
+    }
+
+    NSData* data = mnemonic.dataWithSeed;
+
+    if (!data || data.length < 128/8) {
+        [NSException raise:@"Cannot save empty mnemonic" format:@"Mnemonic is malformed, should return data object."];
+        return;
+    }
+
+    NSURL* url = [self seedFileURL];
+    NSError* error = nil;
+    if (![data writeToURL:url options:NSDataWritingAtomic|NSDataWritingFileProtectionComplete error:&error]) {
+        MYCError(@"Cannot write master seed to file %@ with full protection enabled. Error: %@", url, error);
+        self.error = error;
+    }
+
+    // Set file protection attributes explicitly & prevent backup
+
+    // Encrypt database file
+    if (![[NSFileManager defaultManager] setAttributes:@{ NSFileProtectionKey: NSFileProtectionComplete }
+                                          ofItemAtPath:url.path
+                                                 error:&error]) {
+        MYCError(@"Cannot protect seed file %@ with full protection enabled. Error: %@", url.path, error);
+        self.error = error;
+        return;
+    }
+
+    // Prevent database file from iCloud backup
+    if (![url setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error])
+    {
+        MYCError(@"WARNING: Can not exclude seed file from backup (%@)", error);
+        self.error = error;
+        return;
+    }
+}
+
+- (BOOL) removeFileBasedMnemonic:(NSString*)reason {
+    MYCError(@"WARNING: Removing file-based mnemonic. %@", reason);
+    NSError* error = nil;
+    if (![[NSFileManager defaultManager] removeItemAtURL:[self seedFileURL] error:&error]) {
+        MYCError(@"Cannot remove master seed file: %@", error);
+        self.error = error;
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL) makeFileBasedMnemonicIfNeededWithMnemonic:(BTCMnemonic*)mnemonic {
+
+    if ([self fileBasedMnemonicIsStored]) {
+        return YES;
+    }
+    return [self makeFileBasedMnemonic:mnemonic];
+}
+
+- (BOOL) makeFileBasedMnemonic:(BTCMnemonic*)mnemonic {
+
+    if (![UIApplication sharedApplication].isProtectedDataAvailable) {
+        self.error = [NSError errorWithDomain:MYCErrorDomain code:-3 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Cannot make another copy of master seed while device is locked", @"")}];
+        return NO;
+    }
+
+    if (!mnemonic) {
+        [NSException raise:@"Cannot use nil mnemonic to make file-based copy" format:@""];
+        return NO;
+    }
+
+    self.error = nil;
+    self.fileBasedMnemonic = mnemonic;
+
+    if (self.error) {
+        [self removeFileBasedMnemonic:@"Cleaning up after failing to save a file-based mnemonic"];
+        return NO;
+    }
+
+    BTCMnemonic* mnemonic2 = self.fileBasedMnemonic;
+    if (!mnemonic2) {
+        [self removeFileBasedMnemonic:@"Cleaning up after attempt to save a file-based mnemonic and failing to read it"];
+        return NO;
+    }
+
+    if (![mnemonic2.data isEqual:mnemonic.data]) {
+        self.error = [NSError errorWithDomain:MYCErrorDomain code:-3 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Stored seed differs from the one which the app asked to save.", @"")}];
+        return NO;
+    }
+    
+    return YES;
+}
+
 
 
 
@@ -212,7 +360,7 @@ static BOOL MYCBypassMissingPasscode = 0;
 {
     if (!_keychain)
     {
-        BTCMnemonic* mnemonic = self.mnemonic;
+        BTCMnemonic* mnemonic = [self readMnemonic];
         if (mnemonic) {
             _keychain = (self.wallet.isTestnet ? [mnemonic.keychain bitcoinTestnetKeychain] : [mnemonic.keychain bitcoinMainnetKeychain]);
         }

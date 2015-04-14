@@ -130,15 +130,17 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 - (BOOL) isTouchIDEnabled;
 - (BOOL) isDevicePasscodeEnabled;
 
-// Returns YES if the keychain data is stored correctly.
-- (BOOL) verifyKeychainIntegrity;
-
+// Returns YES if the keychain or file data is stored correctly.
+- (BOOL) verifySeedIntegrity;
+- (void) makeFileBasedSeedIfNeeded:(void(^)(BOOL result, NSError* error))completionBlock;
 - (void) migrateToTouchID:(void(^)(BOOL result, NSError* error))completionBlock;
 
 // Unlocks wallet with a human-readable reason.
 - (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason;
 
-
+// Uses LocalAuthentication API to auth with TouchID if it's available and enabled.
+// If user has only passcode or not passcode, then the block is simply being called without extra checks.s
+- (void) bestEffortAuthenticateWithTouchID:(void(^)(MYCUnlockedWallet* uw, BOOL authenticated))block reason:(NSString*)reason;
 
 // Accessing Database
 
@@ -193,6 +195,7 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 // Update all active accounts.
 - (void) updateActiveAccounts:(void(^)(BOOL success, NSError *error))completion;
+- (void) updateActiveAccountsForce:(BOOL)force completionBlock:(void(^)(BOOL success, NSError *error))completion;
 
 // Discover accounts with a sliding window. Since accounts' keychains are derived in a hardened mode,
 // we need a root keychain with private key to derive accounts' addresses.

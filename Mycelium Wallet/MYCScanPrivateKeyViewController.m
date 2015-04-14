@@ -290,7 +290,7 @@
 }
 
 - (BOOL) warnAboutSecretLoss {
-    if ([[MYCWallet currentWallet] verifyKeychainIntegrity]) {
+    if ([[MYCWallet currentWallet] verifySeedIntegrity]) {
         return NO;
     }
 

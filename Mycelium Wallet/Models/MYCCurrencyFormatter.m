@@ -44,6 +44,10 @@
 
 @implementation MYCCurrencyFormatter
 
+// These fix the warning: "Auto property synthesis will not synthesize property 'currencyCode'; it will be implemented by its superclass, use @dynamic to acknowledge intention".
+@dynamic currencyCode;
+@dynamic currencySymbol;
+
 // Returns a formatter that shows one of BTC units (BTC, mBTC, bits, satoshis).
 // Does not perform currency conversion.
 - (id) initWithBTCFormatter:(BTCNumberFormatter*)btcFormatter {

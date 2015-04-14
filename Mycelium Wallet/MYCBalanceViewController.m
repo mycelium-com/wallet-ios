@@ -42,7 +42,8 @@
 
 @end
 
-@implementation MYCBalanceViewController
+@implementation MYCBalanceViewController {
+}
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -95,9 +96,65 @@
 
     if (![self promptToBackupIfNeeded]) {
         if (![self promptToVerifyBackupIfNeeded]) {
-            [self promptToMigrateToTouchIDIfNeeded];
+            //if (![self promptToMigrateToTouchIDIfNeeded]) {
+                [self makeFileBasedSeedCopy];
+            //}
         }
     }
+}
+
+- (BOOL) makeFileBasedSeedCopy {
+
+    if ([[MYCUnlockedWallet alloc] init].fileBasedMnemonicIsStored) {
+        return NO;
+    }
+
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Upgrade wallet storage", @"")
+                                                                   message:NSLocalizedString(@"The wallet master seed will be stored in an alternative location on your device for better reliability (in addition to iOS Keychain). It will not be sent over the network. It will be protected by your device passcode.", @"")
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Later", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+
+        if (![MYCWallet currentWallet].isBackedUp) {
+
+            UIAlertController* bakalert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please back up your wallet", @"")
+                                                                              message:NSLocalizedString(@"Without backup you will not be able to access funds if you remove your device passcode.", @"")
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                // Do not migrate.
+            }]];
+            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [self backup:nil];
+            }]];
+            [self presentViewController:bakalert animated:YES completion:nil];
+            return;
+        }
+
+        [[MYCWallet currentWallet] makeFileBasedSeedIfNeeded:^(BOOL result, NSError *error) {
+
+            if (!result) {
+                // DO NOT LOG THIS ERROR AS IT MAY CONTAIN SEED FOR USER TO WRITE DOWN
+                // XXXLog(@"Failed to migrate to touch id / passcode: %@", error);
+                if (error) {
+                    NSString* title = NSLocalizedString(@"Error", @"");
+                    NSString* message = [error localizedDescription] ?: @"";
+                    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+                } else {
+                    NSString* title = NSLocalizedString(@"Can't update master seed storage.", @"");
+                    NSString* message = @"";
+                    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+                }
+            } else {
+                NSString* title = NSLocalizedString(@"Wallet storage updated.", @"");
+                NSString* message = NSLocalizedString(@"Your bitcoins are protected when your device is locked with passcode. If you remove the passcode and someone gets access to your device they could take all your funds.", @"");
+                [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+            }
+        }];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+
+    return YES;
 }
 
 - (BOOL) promptToVerifyBackupIfNeeded {
