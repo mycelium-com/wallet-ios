@@ -101,7 +101,11 @@
 {
     if (!self.words)
     {
-        [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
+        [[MYCWallet currentWallet] bestEffortAuthenticateWithTouchID:^(MYCUnlockedWallet *uw, BOOL authenticated) {
+
+            if (!uw) { // user not authorized, do nothing.
+                return;
+            }
 
             BTCMnemonic* mnemonic = [uw readMnemonic];
 
@@ -113,21 +117,22 @@
 
             self.words = mnemonic.words;
 
+            for (NSString* word in self.words)
+            {
+                [self.scrollView addSubview:[self pageViewWithText:word button:NSLocalizedString(@"Next word", @"") action:@selector(nextPage:)]];
+            }
+
+            MYCBackupPageView* validatePage = [self pageViewWithText:NSLocalizedString(@"Please enter all words separated by space to verify they are written correctly", @"") button:NSLocalizedString(@"Next", @"") action:@selector(verifyWords:)];
+            validatePage.textField.hidden = NO;
+            self.verifyTextField = validatePage.textField;
+            [self.verifyTextField addTarget:self action:@selector(didUpdateVerifyTextField:) forControlEvents:UIControlEventEditingChanged];
+            [self.scrollView addSubview:validatePage];
+
+            self.pageControl.numberOfPages = self.scrollView.subviews.count;
+            [self scrollViewDidScroll:self.scrollView];
+
         } reason:NSLocalizedString(@"Authorize access to the backup", @"")];
 
-        for (NSString* word in self.words)
-        {
-            [self.scrollView addSubview:[self pageViewWithText:word button:NSLocalizedString(@"Next word", @"") action:@selector(nextPage:)]];
-        }
-
-        MYCBackupPageView* validatePage = [self pageViewWithText:NSLocalizedString(@"Please enter all words separated by space to verify they are written correctly", @"") button:NSLocalizedString(@"Next", @"") action:@selector(verifyWords:)];
-        validatePage.textField.hidden = NO;
-        self.verifyTextField = validatePage.textField;
-        [self.verifyTextField addTarget:self action:@selector(didUpdateVerifyTextField:) forControlEvents:UIControlEventEditingChanged];
-        [self.scrollView addSubview:validatePage];
-
-        self.pageControl.numberOfPages = self.scrollView.subviews.count;
-        [self scrollViewDidScroll:self.scrollView];
     }
     [self nextPage:_];
 }
