@@ -99,42 +99,45 @@
 
 - (void) start:(id)_
 {
-    if (!self.words)
+    if (self.words)
     {
-        [[MYCWallet currentWallet] bestEffortAuthenticateWithTouchID:^(MYCUnlockedWallet *uw, BOOL authenticated) {
-
-            if (!uw) { // user not authorized, do nothing.
-                return;
-            }
-
-            BTCMnemonic* mnemonic = [uw readMnemonic];
-
-            if (!mnemonic) {
-                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
-                                            message:[NSString stringWithFormat:@"You may need to restore wallet from backup. %@", uw.error.localizedDescription ?: @""] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
-                return;
-            }
-
-            self.words = mnemonic.words;
-
-            for (NSString* word in self.words)
-            {
-                [self.scrollView addSubview:[self pageViewWithText:word button:NSLocalizedString(@"Next word", @"") action:@selector(nextPage:)]];
-            }
-
-            MYCBackupPageView* validatePage = [self pageViewWithText:NSLocalizedString(@"Please enter all words separated by space to verify they are written correctly", @"") button:NSLocalizedString(@"Next", @"") action:@selector(verifyWords:)];
-            validatePage.textField.hidden = NO;
-            self.verifyTextField = validatePage.textField;
-            [self.verifyTextField addTarget:self action:@selector(didUpdateVerifyTextField:) forControlEvents:UIControlEventEditingChanged];
-            [self.scrollView addSubview:validatePage];
-
-            self.pageControl.numberOfPages = self.scrollView.subviews.count;
-            [self scrollViewDidScroll:self.scrollView];
-
-        } reason:NSLocalizedString(@"Authorize access to the backup", @"")];
-
+        [self nextPage:_];
     }
-    [self nextPage:_];
+
+    [[MYCWallet currentWallet] bestEffortAuthenticateWithTouchID:^(MYCUnlockedWallet *uw, BOOL authenticated) {
+
+        if (!uw) { // user not authorized, do nothing.
+            return;
+        }
+
+        BTCMnemonic* mnemonic = [uw readMnemonic];
+
+        if (!mnemonic) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+                                        message:[NSString stringWithFormat:@"You may need to restore wallet from backup. %@", uw.error.localizedDescription ?: @""] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+            return;
+        }
+
+        self.words = mnemonic.words;
+
+        for (NSString* word in self.words)
+        {
+            [self.scrollView addSubview:[self pageViewWithText:word button:NSLocalizedString(@"Next word", @"") action:@selector(nextPage:)]];
+        }
+
+        MYCBackupPageView* validatePage = [self pageViewWithText:NSLocalizedString(@"Please enter all words separated by space to verify they are written correctly", @"") button:NSLocalizedString(@"Next", @"") action:@selector(verifyWords:)];
+        validatePage.textField.hidden = NO;
+        self.verifyTextField = validatePage.textField;
+        [self.verifyTextField addTarget:self action:@selector(didUpdateVerifyTextField:) forControlEvents:UIControlEventEditingChanged];
+        [self.scrollView addSubview:validatePage];
+
+        self.pageControl.numberOfPages = self.scrollView.subviews.count;
+        [self scrollViewDidScroll:self.scrollView];
+
+        [self nextPage:_];
+
+    } reason:NSLocalizedString(@"Authorize access to the backup", @"")];
+
 }
 
 - (void) nextPage:(id)_
