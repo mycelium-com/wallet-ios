@@ -142,6 +142,7 @@
 
         [wallet setupDatabaseWithMnemonic:mnemonic];
 
+        // We do not support keychain passcode-based protection in v1.2.
         //unlockedWallet.probeItem = YES;
         //wallet.migratedToTouchID = YES;
 

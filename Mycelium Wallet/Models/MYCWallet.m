@@ -580,6 +580,15 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         [self unlockWallet:^(MYCUnlockedWallet *uw) {
             block(uw, NO);
         } reason:reason];
+        return;
+    }
+
+    // Only for a few v1.1 users who installed from scratch.
+    if (self.isMigratedToTouchID) {
+        [self unlockWallet:^(MYCUnlockedWallet *uw) {
+            block(uw, NO);
+        } reason:reason];
+        return;
     }
 
     context.localizedFallbackTitle = @""; // so the app-specific password option is not displayed.
