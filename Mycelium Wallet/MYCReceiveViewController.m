@@ -106,7 +106,6 @@
         return NO;
     }
 
-    [MYCRestoreSeedViewController promptToRestoreWallet:nil in:self];
     UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Wallet Locked Out", @"")
                                                                 message:[NSString stringWithFormat:@"Do not send any funds to this wallet. You may need to restore wallet from backup."]
                                                          preferredStyle:UIAlertControllerStyleAlert];

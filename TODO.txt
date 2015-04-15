@@ -2,6 +2,23 @@ Todo:
 
 v1.2 - fix and hardening of Keychain handling
 
+Tests:
++ new wallet: catalog way tower dinosaur ostrich harvest another plastic dance champion bargain sing 
++ restore wallet
++ monthly reminder + backup verification flow
++ send: see how UI handles missing seed
++ receive: see how UI handles missing seed
++ cold storage: see how UI handles missing seed
++ settings: see how UI handles missing seed
++ check that restore actually restores the seed
++ check that cancelling restore shows correct alert
++ check plain prompt UI without TouchID
++ check TouchID prompt UI
+- create new wallet with v1.1 so TouchID-protected keychain item is set
+  - update with v1.2 and see how UI handles lockout.
+  - update with v1.2recovery and see if item becomes accessible again.
+
+
 + make migration to TouchID manual with dialog "Do you want to update to Passcode/TouchID protection?"
   + if not backed up, warn about it and ask if they want to Cancel migration or Back up Now.
 + log keychain error messages to crashlytics (without secret data).

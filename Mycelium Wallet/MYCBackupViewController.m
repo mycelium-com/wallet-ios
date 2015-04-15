@@ -30,7 +30,7 @@
 {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
-        self.title = NSLocalizedString(@"Backup your wallet", @"");
+        self.title = NSLocalizedString(@"Back up your wallet", @"");
         self.pageNib = [UINib nibWithNibName:@"MYCBackupPageView" bundle:nil];
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                               target:self
