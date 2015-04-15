@@ -9,5 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface MYCRestoreSeedViewController : UIViewController
+@property(nonatomic, strong) void(^completionBlock)(BOOL restored, UIAlertController* alert);
+- (UIAlertController*) notRestoredAlert;
+- (UIAlertController*) restoredAlert;
 
++ (void) promptToRestoreWallet:(NSError *)error in:(UIViewController*)hostVC;
 @end

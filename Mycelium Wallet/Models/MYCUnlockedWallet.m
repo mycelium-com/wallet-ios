@@ -39,7 +39,8 @@ static BOOL MYCBypassMissingPasscode = 0;
 
     MYCError(@"Keychain-based mnemonic not found or cannot be accessed: %@", self.error);
 
-    return self.fileBasedMnemonic;
+    // do not return fileBasedMnemonic
+    return nil;
 }
 
 - (BTCMnemonic*) mnemonic {

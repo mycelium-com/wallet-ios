@@ -4,7 +4,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MYCVerifyBackupViewController">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MYCRestoreSeedViewController">
             <connections>
                 <outlet property="descriptionLabel" destination="YV9-3X-Cmp" id="WVr-Ae-YNh"/>
                 <outlet property="textView" destination="GpT-UJ-2hu" id="5Ob-25-Ap4"/>
@@ -26,13 +26,13 @@
                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="done"/>
                 </textView>
                 <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gQd-An-rgt">
-                    <rect key="frame" x="138" y="231" width="44" height="33"/>
+                    <rect key="frame" x="129" y="231" width="62" height="33"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
-                    <state key="normal" title="Verify">
+                    <state key="normal" title="Restore">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
-                        <action selector="verify:" destination="-1" eventType="touchUpInside" id="qHt-Dw-QlH"/>
+                        <action selector="restore:" destination="-1" eventType="touchUpInside" id="MSt-TW-fXw"/>
                     </connections>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Type in your 12-word backup phrase (separated by spaces)" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="YV9-3X-Cmp">

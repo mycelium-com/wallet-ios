@@ -452,18 +452,13 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     __block BOOL result = NO;
     [self unlockWallet:^(MYCUnlockedWallet *uw) {
 
-        result = uw.probeItem;
+        result = [uw readMnemonic] ? YES : NO;
 
-        if (!result && uw.fileBasedMnemonic) {
-            result = YES;
+        if (!result) {
+            MYCError(@"MYCWallet verifySeedIntegrity: seed cannot be read: %@", uw.error);
         }
 
-        // If we updated from v1.0, try reading mnemonic itself (it won't trigger passcode/touchid dialog).
-        if (!result && !self.migratedToTouchID) {
-            result = [uw readMnemonic] ? YES : NO;
-        }
-
-        // Note: normally this prompt should never be triggered.
+        // Note: normally this prompt should never be triggered, only on 1.1 build for those who have migrated to TouchID already by installing from scratch.
     } reason:NSLocalizedString(@"Verifying wallet integrity.", @"")];
 
     return result;

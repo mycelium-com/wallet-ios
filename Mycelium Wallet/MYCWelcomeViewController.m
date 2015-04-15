@@ -130,20 +130,20 @@
             return;
         }
 
-        // This will write the mnemonic to iOS data-protected file.
-        if (![unlockedWallet makeFileBasedMnemonic:mnemonic]) {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
-                                        message:unlockedWallet.error.localizedDescription ?: @""
-                                       delegate:nil
-                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
-                              otherButtonTitles:nil] show];
-            return;
-        }
+//        // This will write the mnemonic to iOS data-protected file.
+//        if (![unlockedWallet makeFileBasedMnemonic:mnemonic]) {
+//            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+//                                        message:unlockedWallet.error.localizedDescription ?: @""
+//                                       delegate:nil
+//                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
+//                              otherButtonTitles:nil] show];
+//            return;
+//        }
 
         [wallet setupDatabaseWithMnemonic:mnemonic];
 
-        unlockedWallet.probeItem = YES;
-        wallet.migratedToTouchID = YES;
+        //unlockedWallet.probeItem = YES;
+        //wallet.migratedToTouchID = YES;
 
         void(^updateWallet)() = ^{
             [wallet updateActiveAccounts:^(BOOL success, NSError *error) {}];
@@ -295,6 +295,7 @@
 
     if (mnemonic && mnemonic.keychain)
     {
+        [MYCWallet currentWallet].walletSetupInProgress = NO;
         [self setupWalletWithMnemonic:mnemonic newWallet:NO];
         
         // Remember that the wallet is backed up now.

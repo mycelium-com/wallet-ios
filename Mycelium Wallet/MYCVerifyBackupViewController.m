@@ -14,7 +14,6 @@
 @interface MYCVerifyBackupViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
 @property (weak, nonatomic) IBOutlet UITextView *textView;
-
 @end
 
 @implementation MYCVerifyBackupViewController

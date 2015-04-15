@@ -15,20 +15,20 @@
 @property(nonatomic) BTCMnemonic* mnemonic;
 
 // Mnemonic read from a file.
-@property(nonatomic) BTCMnemonic* fileBasedMnemonic;
+@property(nonatomic) BTCMnemonic* fileBasedMnemonic DEPRECATED_ATTRIBUTE;
 
 - (BTCMnemonic*) readMnemonic;
 
-@property(nonatomic, readonly) BOOL fileBasedMnemonicIsStored;
+@property(nonatomic, readonly) BOOL fileBasedMnemonicIsStored DEPRECATED_ATTRIBUTE;
 
-- (BOOL) makeFileBasedMnemonic:(BTCMnemonic*)mnemonic;
-- (BOOL) makeFileBasedMnemonicIfNeededWithMnemonic:(BTCMnemonic*)mnemonic;
+- (BOOL) makeFileBasedMnemonic:(BTCMnemonic*)mnemonic DEPRECATED_ATTRIBUTE;
+- (BOOL) makeFileBasedMnemonicIfNeededWithMnemonic:(BTCMnemonic*)mnemonic DEPRECATED_ATTRIBUTE;
 
-- (BOOL) removeFileBasedMnemonic:(NSString*)reason;
+- (BOOL) removeFileBasedMnemonic:(NSString*)reason DEPRECATED_ATTRIBUTE;
 
 
 // Returns YES if can successfully read the probe item that does not require user interaction.
-@property(nonatomic) BOOL probeItem;
+@property(nonatomic) BOOL probeItem DEPRECATED_ATTRIBUTE;
 
 // Returns a BIP32 keychain for current wallet configuration (seed/purpose'/coin_type').
 // To get an address for a given account, you should drill in with "account'/change/address_index".

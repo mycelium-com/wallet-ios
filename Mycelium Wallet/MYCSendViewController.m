@@ -15,6 +15,7 @@
 #import "MYCUnspentOutput.h"
 #import "MYCCurrenciesViewController.h"
 #import "MYCCurrencyFormatter.h"
+#import "MYCRestoreSeedViewController.h"
 
 #if 0 && DEBUG
 #warning DEBUG: Zero fees
@@ -311,6 +312,7 @@ static BTCAmount MYCFeeRate = 10000;
     }
 }
 
+
 - (void) confirmAndSend {
 
     NSString* authString = [NSString stringWithFormat:NSLocalizedString(@"Confirm payment of %@", @""),
@@ -325,9 +327,7 @@ static BTCAmount MYCFeeRate = 10000;
         BTCKeychain* kc = uw.keychain;
 
         if (!kc) {
-#warning TODO: offer a way to re-enter the seed from backup to continue. Check if it matches account xpub.
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
-                                        message:[NSString stringWithFormat:@"You may need to restore wallet from backup. %@", uw.error.localizedDescription ?: @""] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+            [MYCRestoreSeedViewController promptToRestoreWallet:uw.error in:self];
             return;
         }
 

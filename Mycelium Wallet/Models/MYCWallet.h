@@ -132,8 +132,9 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 // Returns YES if the keychain or file data is stored correctly.
 - (BOOL) verifySeedIntegrity;
-- (void) makeFileBasedSeedIfNeeded:(void(^)(BOOL result, NSError* error))completionBlock;
-- (void) migrateToTouchID:(void(^)(BOOL result, NSError* error))completionBlock;
+
+- (void) makeFileBasedSeedIfNeeded:(void(^)(BOOL result, NSError* error))completionBlock DEPRECATED_ATTRIBUTE;
+- (void) migrateToTouchID:(void(^)(BOOL result, NSError* error))completionBlock DEPRECATED_ATTRIBUTE;
 
 // Unlocks wallet with a human-readable reason.
 - (void) unlockWallet:(void(^)(MYCUnlockedWallet*))block reason:(NSString*)reason;

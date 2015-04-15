@@ -97,65 +97,65 @@
     if (![self promptToBackupIfNeeded]) {
         if (![self promptToVerifyBackupIfNeeded]) {
             //if (![self promptToMigrateToTouchIDIfNeeded]) {
-                [self makeFileBasedSeedCopy];
+            // [self makeFileBasedSeedCopy];
             //}
         }
     }
 }
 
-- (BOOL) makeFileBasedSeedCopy {
-
-    if ([[MYCUnlockedWallet alloc] init].fileBasedMnemonicIsStored) {
-        return NO;
-    }
-
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Upgrade wallet storage", @"")
-                                                                   message:NSLocalizedString(@"The wallet master seed will be stored in an alternative location on your device for better reliability (in addition to iOS Keychain). It will not be sent over the network. It will be protected by your device passcode.", @"")
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Later", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-    }]];
-    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-
-        if (![MYCWallet currentWallet].isBackedUp) {
-
-            UIAlertController* bakalert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please back up your wallet", @"")
-                                                                              message:NSLocalizedString(@"Without backup you will not be able to access funds if you remove your device passcode.", @"")
-                                                                       preferredStyle:UIAlertControllerStyleAlert];
-            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-                // Do not migrate.
-            }]];
-            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                [self backup:nil];
-            }]];
-            [self presentViewController:bakalert animated:YES completion:nil];
-            return;
-        }
-
-        [[MYCWallet currentWallet] makeFileBasedSeedIfNeeded:^(BOOL result, NSError *error) {
-
-            if (!result) {
-                // DO NOT LOG THIS ERROR AS IT MAY CONTAIN SEED FOR USER TO WRITE DOWN
-                // XXXLog(@"Failed to migrate to touch id / passcode: %@", error);
-                if (error) {
-                    NSString* title = NSLocalizedString(@"Error", @"");
-                    NSString* message = [error localizedDescription] ?: @"";
-                    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
-                } else {
-                    NSString* title = NSLocalizedString(@"Can't update master seed storage.", @"");
-                    NSString* message = @"";
-                    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
-                }
-            } else {
-                NSString* title = NSLocalizedString(@"Wallet storage updated.", @"");
-                NSString* message = NSLocalizedString(@"Your bitcoins are protected when your device is locked with passcode. If you remove the passcode and someone gets access to your device they could take all your funds.", @"");
-                [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
-            }
-        }];
-    }]];
-    [self presentViewController:alert animated:YES completion:nil];
-
-    return YES;
-}
+//- (BOOL) makeFileBasedSeedCopy {
+//
+//    if ([[MYCUnlockedWallet alloc] init].fileBasedMnemonicIsStored) {
+//        return NO;
+//    }
+//
+//    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Upgrade wallet storage", @"")
+//                                                                   message:NSLocalizedString(@"The wallet master seed will be stored in an alternative location on your device for better reliability (in addition to iOS Keychain). It will not be sent over the network. It will be protected by your device passcode.", @"")
+//                                                            preferredStyle:UIAlertControllerStyleAlert];
+//    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Later", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+//    }]];
+//    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//
+//        if (![MYCWallet currentWallet].isBackedUp) {
+//
+//            UIAlertController* bakalert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please back up your wallet", @"")
+//                                                                              message:NSLocalizedString(@"Without backup you will not be able to access funds if you remove your device passcode.", @"")
+//                                                                       preferredStyle:UIAlertControllerStyleAlert];
+//            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+//                // Do not migrate.
+//            }]];
+//            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//                [self backup:nil];
+//            }]];
+//            [self presentViewController:bakalert animated:YES completion:nil];
+//            return;
+//        }
+//
+//        [[MYCWallet currentWallet] makeFileBasedSeedIfNeeded:^(BOOL result, NSError *error) {
+//
+//            if (!result) {
+//                // DO NOT LOG THIS ERROR AS IT MAY CONTAIN SEED FOR USER TO WRITE DOWN
+//                // XXXLog(@"Failed to migrate to touch id / passcode: %@", error);
+//                if (error) {
+//                    NSString* title = NSLocalizedString(@"Error", @"");
+//                    NSString* message = [error localizedDescription] ?: @"";
+//                    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+//                } else {
+//                    NSString* title = NSLocalizedString(@"Can't update master seed storage.", @"");
+//                    NSString* message = @"";
+//                    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+//                }
+//            } else {
+//                NSString* title = NSLocalizedString(@"Wallet storage updated.", @"");
+//                NSString* message = NSLocalizedString(@"Your bitcoins are protected when your device is locked with passcode. If you remove the passcode and someone gets access to your device they could take all your funds.", @"");
+//                [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+//            }
+//        }];
+//    }]];
+//    [self presentViewController:alert animated:YES completion:nil];
+//
+//    return YES;
+//}
 
 - (BOOL) promptToVerifyBackupIfNeeded {
     // Only prompt if backup was made
@@ -189,7 +189,7 @@
                 UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Backup is not verified", @"")
                                                                                message:NSLocalizedString(@"You have full responsibility for security of your backup. ", @"")
                                                                         preferredStyle:UIAlertControllerStyleAlert];
-                [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"I agree, proceed without verification", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+                [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"I agree, do not verify", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
                     // Proceed.
                 }]];
                 [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
@@ -245,76 +245,76 @@
     return YES;
 }
 
-- (BOOL) promptToMigrateToTouchIDIfNeeded {
-
-    if ([MYCWallet currentWallet].isMigratedToTouchID) return NO;
-    if ([[NSDate date] timeIntervalSinceDate:[MYCWallet currentWallet].dateLastAskedAboutMigratingToTouchID] < 24*3600) return NO;
-
-    BOOL touchid = [MYCWallet currentWallet].isTouchIDEnabled;
-    BOOL passcode = [MYCWallet currentWallet].isDevicePasscodeEnabled;
-
-    if (!touchid && !passcode) {
-        MYCLog(@"MYCBalanceView: neither touch ID nor passcode seem to be enabled; not migrating to new keychain storage.");
-        return NO;
-    }
-
-    NSString* title = NSLocalizedString(@"Enable Touch ID wallet protection?", @"");
-    NSString* message = NSLocalizedString(@"You will use TouchID or device passcode to authenticate payments.\nIMPORTANT: if you remove your passcode, wallet will need to be restored from backup.", @"");
-    if (!touchid) {
-        title = NSLocalizedString(@"Enable Passcode wallet protection?", @"");
-        message = NSLocalizedString(@"You will use device passcode to authenticate payments.\nIMPORTANT: if you remove your passcode, wallet will need to be restored from backup.", @"");
-    }
-
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
-                                                                   message:message
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Later", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-        [MYCWallet currentWallet].dateLastAskedAboutMigratingToTouchID = [NSDate date];
-    }]];
-    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-
-        if (![MYCWallet currentWallet].isBackedUp) {
-
-            UIAlertController* bakalert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please back up your wallet", @"")
-                                                                           message:NSLocalizedString(@"Without backup you will not be able to access funds if you remove your device passcode.", @"")
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-                // Do not migrate.
-            }]];
-            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                [self backup:nil];
-            }]];
-            [self presentViewController:bakalert animated:YES completion:nil];
-            return;
-        }
-
-        [[MYCWallet currentWallet] migrateToTouchID:^(BOOL result, NSError *error) {
-            if (!result) {
-                // DO NOT LOG THIS ERROR AS IT MAY CONTAIN SEED FOR USER TO WRITE DOWN
-                // XXXLog(@"Failed to migrate to touch id / passcode: %@", error);
-                if (error) {
-                    NSString* title = NSLocalizedString(@"Error", @"");
-                    NSString* message = [error localizedDescription] ?: @"";
-                    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
-                } else {
-                    NSString* title = NSLocalizedString(@"Can't enable passcode/TouchID", @"");
-                    NSString* message = @"";
-                    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
-                }
-            } else {
-                NSString* title = NSLocalizedString(@"Passcode/Touch ID is now enabled", @"");
-                NSString* message = NSLocalizedString(@"If you remove your device passcode, you will need to use backup to restore access to your funds.", @"");
-                if (!touchid) {
-                    title = NSLocalizedString(@"Passcode protection enabled", @"");
-                }
-                [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
-            }
-        }];
-    }]];
-    [self presentViewController:alert animated:YES completion:nil];
-
-    return YES;
-}
+//- (BOOL) promptToMigrateToTouchIDIfNeeded {
+//
+//    if ([MYCWallet currentWallet].isMigratedToTouchID) return NO;
+//    if ([[NSDate date] timeIntervalSinceDate:[MYCWallet currentWallet].dateLastAskedAboutMigratingToTouchID] < 24*3600) return NO;
+//
+//    BOOL touchid = [MYCWallet currentWallet].isTouchIDEnabled;
+//    BOOL passcode = [MYCWallet currentWallet].isDevicePasscodeEnabled;
+//
+//    if (!touchid && !passcode) {
+//        MYCLog(@"MYCBalanceView: neither touch ID nor passcode seem to be enabled; not migrating to new keychain storage.");
+//        return NO;
+//    }
+//
+//    NSString* title = NSLocalizedString(@"Enable Touch ID wallet protection?", @"");
+//    NSString* message = NSLocalizedString(@"You will use TouchID or device passcode to authenticate payments.\nIMPORTANT: if you remove your passcode, wallet will need to be restored from backup.", @"");
+//    if (!touchid) {
+//        title = NSLocalizedString(@"Enable Passcode wallet protection?", @"");
+//        message = NSLocalizedString(@"You will use device passcode to authenticate payments.\nIMPORTANT: if you remove your passcode, wallet will need to be restored from backup.", @"");
+//    }
+//
+//    UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
+//                                                                   message:message
+//                                                            preferredStyle:UIAlertControllerStyleAlert];
+//    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Later", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+//        [MYCWallet currentWallet].dateLastAskedAboutMigratingToTouchID = [NSDate date];
+//    }]];
+//    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//
+//        if (![MYCWallet currentWallet].isBackedUp) {
+//
+//            UIAlertController* bakalert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please back up your wallet", @"")
+//                                                                           message:NSLocalizedString(@"Without backup you will not be able to access funds if you remove your device passcode.", @"")
+//                                                                    preferredStyle:UIAlertControllerStyleAlert];
+//            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+//                // Do not migrate.
+//            }]];
+//            [bakalert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//                [self backup:nil];
+//            }]];
+//            [self presentViewController:bakalert animated:YES completion:nil];
+//            return;
+//        }
+//
+//        [[MYCWallet currentWallet] migrateToTouchID:^(BOOL result, NSError *error) {
+//            if (!result) {
+//                // DO NOT LOG THIS ERROR AS IT MAY CONTAIN SEED FOR USER TO WRITE DOWN
+//                // XXXLog(@"Failed to migrate to touch id / passcode: %@", error);
+//                if (error) {
+//                    NSString* title = NSLocalizedString(@"Error", @"");
+//                    NSString* message = [error localizedDescription] ?: @"";
+//                    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+//                } else {
+//                    NSString* title = NSLocalizedString(@"Can't enable passcode/TouchID", @"");
+//                    NSString* message = @"";
+//                    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+//                }
+//            } else {
+//                NSString* title = NSLocalizedString(@"Passcode/Touch ID is now enabled", @"");
+//                NSString* message = NSLocalizedString(@"If you remove your device passcode, you will need to use backup to restore access to your funds.", @"");
+//                if (!touchid) {
+//                    title = NSLocalizedString(@"Passcode protection enabled", @"");
+//                }
+//                [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+//            }
+//        }];
+//    }]];
+//    [self presentViewController:alert animated:YES completion:nil];
+//
+//    return YES;
+//}
 
 - (void) walletDidReload:(NSNotification*)notif
 {

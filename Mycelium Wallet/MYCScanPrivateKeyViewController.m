@@ -16,6 +16,7 @@
 #import "MYCScannerView.h"
 #import "MYCSendViewController.h"
 #import "MYCBackupViewController.h"
+#import "MYCRestoreSeedViewController.h"
 
 @interface MYCScanPrivateKeyViewController () <UITextFieldDelegate>
 
@@ -294,13 +295,31 @@
         return NO;
     }
 
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Wallet may be locked out!", @"")
-                                                                   message:NSLocalizedString(@"Do not send any funds to this wallet. Restore wallet from backup or contact Mycelium Support.", @"")
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [self cancel:nil];
-    }]];
-    [self presentViewController:alert animated:YES completion:nil];
+    [MYCRestoreSeedViewController promptToRestoreWallet:nil in:self];
+    UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Wallet Locked Out", @"")
+                                                                message:[NSString stringWithFormat:@"Do not send any funds to this wallet. You may need to restore wallet from backup."]
+                                                         preferredStyle:UIAlertControllerStyleAlert];
+    [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"")
+                                           style:UIAlertActionStyleCancel
+                                         handler:^(UIAlertAction *action) {
+                                             [self cancel:nil];
+                                         }]];
+    [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Restore", @"")
+                                           style:UIAlertActionStyleDefault
+                                         handler:^(UIAlertAction *action) {
+
+                                             MYCRestoreSeedViewController* vb = [[MYCRestoreSeedViewController alloc] initWithNibName:nil bundle:nil];
+
+                                             vb.completionBlock = ^(BOOL restored, UIAlertController* alert) {
+                                                 [self dismissViewControllerAnimated:YES completion:nil];
+                                                 [self presentViewController:alert animated:YES completion:nil];
+                                             };
+
+                                             UINavigationController* navC = [[UINavigationController alloc] initWithRootViewController:vb];
+                                             [self presentViewController:navC animated:YES completion:nil];
+                                         }]];
+    
+    [self presentViewController:ac animated:YES completion:nil];
     return YES;
 }
 

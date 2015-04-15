@@ -14,12 +14,14 @@
 #import "MYCWebViewController.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
+#import "MYCRestoreSeedViewController.h"
 #import "PTableViewSource.h"
 #import "PColor.h"
 
 @interface MYCSettingsViewController ()<UITableViewDelegate, UITableViewDataSource>
 @property(nonatomic, weak) IBOutlet UITableView* tableView;
 @property(nonatomic) PTableViewSource* tableViewSource;
+@property(nonatomic) BOOL isWalletOkay;
 @end
 
 @implementation MYCSettingsViewController
@@ -53,6 +55,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
+    self.isWalletOkay = self.isWalletOkay ?: [[MYCWallet currentWallet] verifySeedIntegrity];
 
     [self updateSections];
     [self.tableView reloadData];
@@ -151,7 +155,7 @@
         section.headerTitle = NSLocalizedString(@"Backup", @"");
 
         [section item:^(PTableViewSourceItem *item) {
-            item.title = NSLocalizedString(@"Export Wallet Master Key", @"");
+            item.title = NSLocalizedString(@"Back up the wallet", @"");
             item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
 
@@ -164,6 +168,26 @@
 
             };
         }];
+
+        if (!self.isWalletOkay) {
+
+            [section item:^(PTableViewSourceItem *item) {
+                item.title = NSLocalizedString(@"Restore wallet from backup", @"");
+                item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+
+                    MYCRestoreSeedViewController* vb = [[MYCRestoreSeedViewController alloc] initWithNibName:nil bundle:nil];
+
+                    vb.completionBlock = ^(BOOL restored, UIAlertController* alert) {
+                        [weakself dismissViewControllerAnimated:YES completion:nil];
+                        [weakself presentViewController:alert animated:YES completion:nil];
+                    };
+
+                    UINavigationController* navC = [[UINavigationController alloc] initWithRootViewController:vb];
+                    [weakself presentViewController:navC animated:YES completion:nil];
+                };
+            }];
+        }
     }];
 
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
@@ -175,7 +199,7 @@
 
         [section item:^(PTableViewSourceItem *item) {
             item.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleNameKey];
-            item.detailTitle = [NSString stringWithFormat:NSLocalizedString(@"version %@", @""), [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]];
+            item.detailTitle = [NSString stringWithFormat:NSLocalizedString(@"v%@", @""), [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]];
             item.cellStyle = UITableViewCellStyleValue1;
             item.accessoryType = UITableViewCellAccessoryNone;
             item.detailTextColor = [UIColor grayColor];
