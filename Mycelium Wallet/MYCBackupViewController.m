@@ -8,6 +8,7 @@
 
 #import "MYCBackupPageView.h"
 #import "MYCBackupViewController.h"
+#import "MYCRestoreSeedViewController.h"
 #import "MYCWallet.h"
 #import "MYCErrorAnimation.h"
 
@@ -113,8 +114,7 @@
         BTCMnemonic* mnemonic = [uw readMnemonic];
 
         if (!mnemonic) {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
-                                        message:[NSString stringWithFormat:@"You may need to restore wallet from backup. %@", uw.error.localizedDescription ?: @""] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+            [MYCRestoreSeedViewController promptToRestoreWallet:uw.error in:self];
             return;
         }
 
