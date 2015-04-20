@@ -168,7 +168,7 @@
     }
 
     // Asked in 30 days only.
-    const NSTimeInterval reminderPeriod = 5;//30*24*3600;
+    const NSTimeInterval reminderPeriod = 30*24*3600;
     if ([[NSDate date] timeIntervalSinceDate:lastAskedDate] < reminderPeriod) return NO;
 
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Check your backup", @"")
