@@ -174,7 +174,6 @@
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Check your backup", @"")
                                                                    message:NSLocalizedString(@"This is a monthly reminder. Make sure your wallet backup is stored in a safe place and not lost or destroyed. If you are not sure, you should back up immediately.", @"")
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    if ((0)) {
     [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Verify", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
 
         [MYCWallet currentWallet].dateLastAskedToVerifyBackupAccess = [NSDate date];
@@ -203,10 +202,6 @@
 
         UINavigationController* navC = [[UINavigationController alloc] initWithRootViewController:vb];
         [self presentViewController:navC animated:YES completion:nil];
-    }]];
-    }
-    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"My backup is safe", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [MYCWallet currentWallet].dateLastAskedToVerifyBackupAccess = [NSDate date];
     }]];
     [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [MYCWallet currentWallet].dateLastAskedToVerifyBackupAccess = [NSDate date];

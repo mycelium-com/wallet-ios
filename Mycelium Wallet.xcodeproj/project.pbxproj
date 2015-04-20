@@ -56,6 +56,7 @@
 		2095C44D19FF985100635C85 /* MYCTransactionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2095C44B19FF985100635C85 /* MYCTransactionTableViewCell.xib */; };
 		2095C44F19FFF50A00635C85 /* MYCTransactionDetails.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2095C44E19FFF50A00635C85 /* MYCTransactionDetails.storyboard */; };
 		2095C45219FFF52400635C85 /* MYCTransactionDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2095C45119FFF52400635C85 /* MYCTransactionDetailsViewController.m */; };
+		20A1C6AD1AD2AF6900284EDA /* MYCRecoveryInfo0415.html in Resources */ = {isa = PBXBuildFile; fileRef = 20A1C6AC1AD2AF6900284EDA /* MYCRecoveryInfo0415.html */; };
 		20A4F1C21ADEE066009027A0 /* MYCRestoreSeedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20A4F1C11ADEE066009027A0 /* MYCRestoreSeedViewController.xib */; };
 		20A9C06E19F50CBF00AF61DE /* MYCUpdateAccountOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 20A9C06D19F50CBF00AF61DE /* MYCUpdateAccountOperation.m */; };
 		20A9C07119F5349500AF61DE /* MYCTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 20A9C07019F5349500AF61DE /* MYCTransaction.m */; };
@@ -172,6 +173,7 @@
 		2095C44E19FFF50A00635C85 /* MYCTransactionDetails.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MYCTransactionDetails.storyboard; sourceTree = "<group>"; };
 		2095C45019FFF52400635C85 /* MYCTransactionDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCTransactionDetailsViewController.h; sourceTree = "<group>"; };
 		2095C45119FFF52400635C85 /* MYCTransactionDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCTransactionDetailsViewController.m; sourceTree = "<group>"; };
+		20A1C6AC1AD2AF6900284EDA /* MYCRecoveryInfo0415.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MYCRecoveryInfo0415.html; sourceTree = "<group>"; };
 		20A4F1C11ADEE066009027A0 /* MYCRestoreSeedViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCRestoreSeedViewController.xib; sourceTree = "<group>"; };
 		20A9C06C19F50CBF00AF61DE /* MYCUpdateAccountOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCUpdateAccountOperation.h; path = Networking/MYCUpdateAccountOperation.h; sourceTree = "<group>"; };
 		20A9C06D19F50CBF00AF61DE /* MYCUpdateAccountOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCUpdateAccountOperation.m; path = Networking/MYCUpdateAccountOperation.m; sourceTree = "<group>"; };
@@ -289,6 +291,7 @@
 				207647161A0D080A000F00F2 /* MYCWebViewController.h */,
 				207647171A0D080A000F00F2 /* MYCWebViewController.m */,
 				207647181A0D080A000F00F2 /* MYCWebViewController.xib */,
+				20A1C6AC1AD2AF6900284EDA /* MYCRecoveryInfo0415.html */,
 			);
 			name = "Settings Tab";
 			sourceTree = "<group>";
@@ -649,6 +652,7 @@
 				2064E38819D9A0E400CD81B8 /* MYCAccountsViewController.xib in Resources */,
 				311D632B1AADEE6600798450 /* MYCCurrencyTableViewCell.xib in Resources */,
 				2076471A1A0D080A000F00F2 /* MYCWebViewController.xib in Resources */,
+				20A1C6AD1AD2AF6900284EDA /* MYCRecoveryInfo0415.html in Resources */,
 				208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */,
 				208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */,
 				2076471C1A0D0A40000F00F2 /* Credits.html in Resources */,

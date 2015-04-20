@@ -161,6 +161,8 @@
                               stringByReplacingOccurrencesOfString:@"  " withString:@" "]
                              componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
+    // Note on April 9, 2015: if we failed to read the seed, self.words would be nil.
+    // And empty string yields enteredWords equal array of one empty string: @[@""].
     if ([enteredWords isEqual:self.words])
     {
         // Remember that the wallet is backed up now.

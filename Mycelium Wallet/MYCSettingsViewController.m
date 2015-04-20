@@ -14,6 +14,7 @@
 #import "MYCWebViewController.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
+#import "MYCTransaction.h"
 #import "MYCRestoreSeedViewController.h"
 #import "PTableViewSource.h"
 #import "PColor.h"
@@ -227,11 +228,14 @@
 
 #if 1
 #warning Diagnostics View Enabled
+    #if 0
         [section item:^(PTableViewSourceItem *item) {
-            item.title = NSLocalizedString(@"Diagnostical Log", @"");
+            item.title = NSLocalizedString(@"Diagnostics Log", @"");
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
 
                 MYCLog(@"MYCSettings: [MYCWallet isPasscodeSet]: %@", @([MYCUnlockedWallet isPasscodeSet]));
+                MYCLog(@"MYCSettings: device passcode enabled: %@", @([[MYCWallet currentWallet] isDevicePasscodeEnabled]));
+                MYCLog(@"MYCSettings: device TouchID enabled: %@", @([[MYCWallet currentWallet] isTouchIDEnabled]));
 
                 MYCWebViewController* vc = [[MYCWebViewController alloc] initWithNibName:nil bundle:nil];
                 vc.title = NSLocalizedString(@"Diagnostical Log", @"");
@@ -240,6 +244,104 @@
                 [weakself.navigationController pushViewController:vc animated:YES];
             };
         }];
+    #endif
+
+        BTCKey* mycpubkey = [[BTCKey alloc] initWithPublicKey:BTCDataFromHex(@"02f74817a3f8c1cbb3801179283811aaace6f5200d47e889c3b3a4d141eb44042e")];
+
+        [section item:^(PTableViewSourceItem *item) {
+            item.title = NSLocalizedString(@"Export Diagnostical Data", @"");
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+
+                MYCWebViewController* vc = [[MYCWebViewController alloc] initWithNibName:nil bundle:nil];
+                vc.title = NSLocalizedString(@"About Diagnostics", @"");
+                vc.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:NULL];
+                vc.html = [NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"MYCRecoveryInfo0415" withExtension:@"html"] encoding:NSUTF8StringEncoding error:NULL];
+                vc.shouldHandleRequest = ^(MYCWebViewController* wvc, NSURLRequest* req, UIWebViewNavigationType navtype) {
+                    if ([req.URL.absoluteString containsString:@"continue-diagnostics-export"]) {
+
+                        MYCLog(@"MYCSettings: [MYCWallet isPasscodeSet]: %@", @([MYCUnlockedWallet isPasscodeSet]));
+                        MYCLog(@"MYCSettings: device passcode enabled: %@", @([[MYCWallet currentWallet] isDevicePasscodeEnabled]));
+                        MYCLog(@"MYCSettings: device TouchID enabled: %@", @([[MYCWallet currentWallet] isTouchIDEnabled]));
+                        MYCLog(@"MYCSettings: device model: %@ (%@)", [UIDevice currentDevice].model, [UIDevice currentDevice].localizedModel);
+                        MYCLog(@"MYCSettings: device OS: %@ %@", [UIDevice currentDevice].systemName, [UIDevice currentDevice].systemVersion);
+
+                        [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
+                            BTCMnemonic* mn = uw.mnemonic;
+                            if (mn) {
+                                MYCLog(@"MYCSettings: mnemonic test error: 0x04");
+                            } else {
+                                MYCLog(@"MYCSettings: mnemonic test error: %@", uw.error);
+                            }
+                        } reason:@"Performing diagnostics"];
+
+                        // 1. Prepare data for export.
+
+                        NSString* logString = [NSString stringWithFormat:@"------MYCELIUM DIAGNOSTICS LOG------\n%@", [MYCWallet currentWallet].diagnosticsLog];
+                        NSData* db = [[MYCWallet currentWallet] exportDatabaseData];
+                        NSData* dbHash = BTCSHA256(db);
+                        NSString* dbString = [NSString stringWithFormat:@"------MYCELIUM DATABASE------\n%@\n------END DIAGNOSTICS------",
+                                              [db base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength|NSDataBase64EncodingEndLineWithLineFeed]
+                                              ];
+                        NSString* ptString = [NSString stringWithFormat:@"%@\n%@", logString, dbString];
+                        NSData* plaintext = [ptString dataUsingEncoding:NSUTF8StringEncoding];
+
+                        NSData* sha2 = BTCSHA256(plaintext);
+
+                        NSString* outputData = [NSString stringWithFormat:@"------BEGIN DIAGNOSTICS------\nDB SHA-2: %@\nSHA-2: %@\nMycelium ECIES key: %@\n%@",
+                                                BTCHexFromData(dbHash),
+                                                BTCHexFromData(sha2),
+                                                BTCHexFromData(mycpubkey.publicKey),
+                                                ptString
+                                                ];
+
+                        // 2. Push the next view.
+                        
+                        MYCWebViewController* vc2 = [[MYCWebViewController alloc] initWithNibName:nil bundle:nil];
+                        vc2.title = NSLocalizedString(@"Export Diagnostics", @"");
+                        vc2.text = outputData;
+                        vc2.allowShare = YES;
+
+                        // 3. Encrypt and share when "export" button is clicked.
+                        vc2.itemsToShare = ^(MYCWebViewController* vwc2) {
+
+                            NSData* dataToEncrypt = [outputData dataUsingEncoding:NSUTF8StringEncoding];
+
+                            BTCEncryptedMessage* ecies = [[BTCEncryptedMessage alloc] init];
+
+                            ecies.senderKey = [[BTCKey alloc] initWithPrivateKey:BTCHash256(dataToEncrypt)];
+                            ecies.recipientKey = mycpubkey;
+                            NSData* ct = [ecies encrypt:dataToEncrypt];
+
+                            NSString* result = [ct base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength|NSDataBase64EncodingEndLineWithLineFeed];
+
+                            return @[ result ];
+                        };
+
+                        [wvc.navigationController pushViewController:vc2 animated:YES];
+
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+                            //[[[UIAlertView alloc] initWithTitle:@"Send to Mycelium" message:@"Send the exported data" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                            UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please send data to Mycelium", @"")
+                                                                                              message:NSLocalizedString(@"Use email ios@mycelium.com or Telegram @mycelium.", @"")
+                                                                                       preferredStyle:UIAlertControllerStyleAlert];
+                            [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                            }]];
+                            [alert addAction:[UIAlertAction actionWithTitle:@"Send..." style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                                [(id)vc2 share:nil];
+                            }]];
+                            [vc2 presentViewController:alert animated:YES completion:nil];
+
+                        });
+
+                        return YES;
+                    }
+                    return NO;
+                };
+                [weakself.navigationController pushViewController:vc animated:YES];
+            };
+        }];
+
 #endif
 
     }];

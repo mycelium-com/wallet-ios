@@ -39,7 +39,7 @@
     else if (self.text) {
         // maybe need to wrap in <html><body>...
         [self.webView loadHTMLString:[NSString stringWithFormat:@""
-                                      "<html><body><pre style='font-family:Menlo;font-size:12px;'>" // white-space: pre-wrap;
+                                      "<html><body><pre style='font-family:Menlo;font-size:9px;'>" // white-space: pre-wrap;
                                       "%@"
                                       "</pre></body></html>"
                                       , self.text] baseURL:self.URL];
@@ -52,7 +52,7 @@
 
 - (void) share:(id)_ {
 
-    NSArray* items = @[ self.text ?: self.html ?: self.URL ?: @"" ];
+    NSArray* items = self.itemsToShare ? self.itemsToShare(self) : @[ self.text ?: self.html ?: self.URL ?: @"" ];
     UIActivityViewController* activityController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     activityController.excludedActivityTypes = @[];
     [self presentViewController:activityController animated:YES completion:nil];
@@ -61,7 +61,18 @@
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
-    if (navigationType == UIWebViewNavigationTypeLinkClicked && ![[request.URL absoluteString] containsString:self.URL.absoluteString])
+    if (self.shouldHandleRequest) {
+        if (self.shouldHandleRequest(self, request, navigationType)) {
+            if (self.handleRequest) {
+                return self.handleRequest(self, request, navigationType);
+            }
+        } else {
+            // Let the default work.
+        }
+    } else if (self.handleRequest) {
+        return self.handleRequest(self, request, navigationType);
+    }
+    if (navigationType == UIWebViewNavigationTypeLinkClicked && (!self.URL || ![[request.URL absoluteString] containsString:self.URL.absoluteString]))
     {
         [[UIApplication sharedApplication] openURL:request.URL];
         return NO;

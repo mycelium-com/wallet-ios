@@ -706,6 +706,9 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     {
         MYCError(@"[%@ %@] error:%@", [self class], NSStringFromSelector(_cmd), error);
 
+        [NSException raise:@"CANNOT OPEN DATABASE" format:@"%@", error];
+
+#if 0
         // Could not open the database: suppress the database file, and restart from scratch
         if ([fm removeItemAtURL:database.URL error:&error])
         {
@@ -721,6 +724,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         {
             [NSException raise:NSInternalInconsistencyException format:@"Give up because can not delete database file (%@)", error];
         }
+#endif
     }
 
     // Database file flags
@@ -745,6 +749,48 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     });
 
     return database;
+}
+
+- (NSData*) exportDatabaseData {
+
+    NSURL* dburl = self.database.URL;
+    if (!dburl) {
+        MYCError(@"Cannot get the database path on disk!");
+        return nil;
+    }
+    NSData* data1 = [NSData dataWithContentsOfURL:dburl];
+    if (!data1) {
+        MYCError(@"Cannot read database from disk while it's open.");
+        return nil;
+    }
+    [self.database close];
+    self.database = nil;
+
+    NSData* data2 = [NSData dataWithContentsOfURL:dburl];
+    if (!data2) {
+        MYCError(@"Cannot read database from disk while it's closed.");
+        return nil;
+    }
+    if (![data1 isEqual:data2]) {
+        MYCError(@"Have read different data after closing DB (%@ -> %@ bytes)", @(data1.length), @(data2.length));
+        return data2;
+    }
+
+    _database = [self openDatabase];
+    return data2;
+}
+
+- (void) importDatabaseData:(NSData*)data {
+
+    if (!data) [NSException raise:@"No data for importing to DB" format:@"Called -[MYCWallet importDatabaseData]"];
+    NSURL* dburl = self.database.URL;
+
+    [self.database close];
+    self.database = nil;
+
+    [data writeToURL:dburl atomically:YES];
+
+    _database = [self openDatabase];
 }
 
 // Removes database from disk.

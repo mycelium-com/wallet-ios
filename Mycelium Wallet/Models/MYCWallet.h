@@ -152,6 +152,15 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Creates database and populates with default account.
 - (void) setupDatabaseWithMnemonic:(BTCMnemonic*)mnemonic;
 
+
+// DEBUGGING API
+
+// Closes, exports DB file and reopens DB again.
+- (NSData*) exportDatabaseData;
+
+// Closes, writes data to DB path and reopens it.
+- (void) importDatabaseData:(NSData*)data;
+
 // Removes database from disk.
 - (void) removeDatabase;
 
