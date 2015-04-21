@@ -1,6 +1,7 @@
 # FMDB
 This is an Objective-C wrapper around SQLite: http://sqlite.org/
 
+[![Build Status](https://travis-ci.org/ccgus/fmdb.png?branch=master)](https://travis-ci.org/ccgus/fmdb)
 
 ## The FMDB Mailing List:
 http://groups.google.com/group/fmdb
@@ -9,6 +10,20 @@ http://groups.google.com/group/fmdb
 http://www.sqlite.org/faq.html
 
 Since FMDB is built on top of SQLite, you're going to want to read this page top to bottom at least once.  And while you're there, make sure to bookmark the SQLite Documentation page: http://www.sqlite.org/docs.html
+
+## CocoaPods
+
+FMDB can be installed using [CocoaPods](http://cocoapods.org/).
+
+```
+pod 'FMDB'
+# pod 'FMDB/SQLCipher'   # If using FMDB with SQLCipher
+```
+
+**If using FMDB with [SQLCipher](http://sqlcipher.net/) you must use the FMDB/SQLCipher subspec. The FMDB/SQLCipher subspec declares SQLCipher as a dependency, allowing FMDB to be compiled with the `-DSQLITE_HAS_CODEC` flag.**
+
+## FMDB Class Reference:
+http://ccgus.github.io/fmdb/html/index.html
 
 ## Automatic Reference Counting (ARC) or Manual Memory Management?
 You can use either style in your Cocoa project.  FMDB Will figure out which you are using at compile time and do the right thing.
@@ -77,8 +92,8 @@ You must always invoke `-[FMResultSet next]` before attempting to access the val
 - `dateForColumn:`
 - `dataForColumn:`
 - `dataNoCopyForColumn:`
-- `UTF8StringForColumnIndex:`
-- `objectForColumn:`
+- `UTF8StringForColumnName:`
+- `objectForColumnName:`
 
 Each of these methods also has a `{type}ForColumnIndex:` variant that is used to retrieve the data based on the position of the column in the results, as opposed to the column's name.
 

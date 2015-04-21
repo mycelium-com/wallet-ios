@@ -23,7 +23,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   CoreBitcoin:
-    :commit: 0b0c8a5ce82ca02045b67b986a3ef32bc09516e3
+    :commit: d1ce1af904cc6517f4e1cc133f517af7c7bad6c4
     :git: https://github.com/oleganza/CoreBitcoin.git
   FMDB:
     :commit: 9264dec1133c646af5c59ed8ad12a647599a99be
