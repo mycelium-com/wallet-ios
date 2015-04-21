@@ -62,6 +62,8 @@
 		20A9C07119F5349500AF61DE /* MYCTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 20A9C07019F5349500AF61DE /* MYCTransaction.m */; };
 		20A9C07419F534AB00AF61DE /* MYCUnspentOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 20A9C07319F534AB00AF61DE /* MYCUnspentOutput.m */; };
 		20A9C07719F5520C00AF61DE /* MYCParentOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 20A9C07619F5520C00AF61DE /* MYCParentOutput.m */; };
+		20BDE1C71AE6878A00EBC09D /* MYCWalletBackup.m in Sources */ = {isa = PBXBuildFile; fileRef = 20BDE1C61AE6878A00EBC09D /* MYCWalletBackup.m */; };
+		20BDE1C91AE687E600EBC09D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 20BDE1C81AE687E600EBC09D /* libz.dylib */; };
 		20C0F6FF19EEAF7300DD0748 /* MYCAccountTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C0F6FD19EEAF7300DD0748 /* MYCAccountTableViewCell.m */; };
 		20C0F70019EEAF7300DD0748 /* MYCAccountTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20C0F6FE19EEAF7300DD0748 /* MYCAccountTableViewCell.xib */; };
 		20C0F70419EEB37D00DD0748 /* MYCAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C0F70219EEB37D00DD0748 /* MYCAccountViewController.m */; };
@@ -183,6 +185,9 @@
 		20A9C07319F534AB00AF61DE /* MYCUnspentOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCUnspentOutput.m; path = Models/MYCUnspentOutput.m; sourceTree = "<group>"; };
 		20A9C07519F5520C00AF61DE /* MYCParentOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCParentOutput.h; path = Models/MYCParentOutput.h; sourceTree = "<group>"; };
 		20A9C07619F5520C00AF61DE /* MYCParentOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCParentOutput.m; path = Models/MYCParentOutput.m; sourceTree = "<group>"; };
+		20BDE1C51AE6878A00EBC09D /* MYCWalletBackup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCWalletBackup.h; path = Models/MYCWalletBackup.h; sourceTree = "<group>"; };
+		20BDE1C61AE6878A00EBC09D /* MYCWalletBackup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWalletBackup.m; path = Models/MYCWalletBackup.m; sourceTree = "<group>"; };
+		20BDE1C81AE687E600EBC09D /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		20C0F6FC19EEAF7300DD0748 /* MYCAccountTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCAccountTableViewCell.h; sourceTree = "<group>"; };
 		20C0F6FD19EEAF7300DD0748 /* MYCAccountTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCAccountTableViewCell.m; sourceTree = "<group>"; };
 		20C0F6FE19EEAF7300DD0748 /* MYCAccountTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCAccountTableViewCell.xib; sourceTree = "<group>"; };
@@ -224,6 +229,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20BDE1C91AE687E600EBC09D /* libz.dylib in Frameworks */,
 				200AAE3919F93FFB0004F908 /* AVFoundation.framework in Frameworks */,
 				20DAD9DB1ACECD9700EBC85F /* Crashlytics.framework in Frameworks */,
 				13DC93D53302498C84E6F0E9 /* libPods-Mycelium Wallet.a in Frameworks */,
@@ -469,6 +475,8 @@
 			children = (
 				2064E37519D9858F00CD81B8 /* MYCWallet.h */,
 				2064E37619D9858F00CD81B8 /* MYCWallet.m */,
+				20BDE1C51AE6878A00EBC09D /* MYCWalletBackup.h */,
+				20BDE1C61AE6878A00EBC09D /* MYCWalletBackup.m */,
 				20C2D81519E573B00022CAAC /* MYCUnlockedWallet.h */,
 				20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */,
 				203AA49319DC364200572BD9 /* MYCWalletAccount.h */,
@@ -527,6 +535,7 @@
 		2D8A166B7A734937ACF4ACCC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				20BDE1C81AE687E600EBC09D /* libz.dylib */,
 				20DAD9DA1ACECD9700EBC85F /* Crashlytics.framework */,
 				200AAE3819F93FFB0004F908 /* AVFoundation.framework */,
 				BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */,
@@ -764,6 +773,7 @@
 				203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */,
 				2095C44C19FF985100635C85 /* MYCTransactionTableViewCell.m in Sources */,
 				200AAE3719F91EE50004F908 /* MYCTextFieldLiveFormatter.m in Sources */,
+				20BDE1C71AE6878A00EBC09D /* MYCWalletBackup.m in Sources */,
 				206EA4C01ADC154700F37019 /* MYCVerifyBackupViewController.m in Sources */,
 				311D63291AADE8F700798450 /* MYCCurrencyTableViewCell.m in Sources */,
 				20C0F70419EEB37D00DD0748 /* MYCAccountViewController.m in Sources */,

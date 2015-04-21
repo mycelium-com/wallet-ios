@@ -227,7 +227,7 @@
 
     [self.accountButton setTitle:self.account.label ?: @"?" forState:UIControlStateNormal];
 
-    NSString* address = self.account.externalAddress.base58String;
+    NSString* address = self.account.externalAddress.string;
     self.addressLabel.text = address;
 
     NSString* qrString = address;
@@ -260,11 +260,11 @@
     if (self.requestedAmount > 0)
     {
         NSString* amount = [self.wallet.primaryCurrencyFormatter stringFromAmount:self.requestedAmount];
-        items = @[[NSString stringWithFormat:NSLocalizedString(@"Please send me %@ to %@", @""), amount, self.account.externalAddress.base58String]];
+        items = @[[NSString stringWithFormat:NSLocalizedString(@"Please send %@ to %@", @""), amount, self.account.externalAddress.string]];
     }
     else
     {
-        items = @[self.account.externalAddress.base58String];
+        items = @[self.account.externalAddress.string];
     }
 
     UIActivityViewController* activityController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];

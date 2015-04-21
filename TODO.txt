@@ -1,5 +1,13 @@
 Todo:
 
+v1.3 - Part 3.
+
++ BIP70 (Payment Requests) support.
+- Storing various metadata in transactions (BIP70 memo, recipient, arbitrary label etc.).
+- Allowing editing transaction labels.
+- Backing up and restoring wallet metadata (txs, accounts, currency settings, but not master seed) automatically to iCloud & Mycelium Backend.
+
+
 v1.2 - fix and hardening of Keychain handling
 
 Tests:

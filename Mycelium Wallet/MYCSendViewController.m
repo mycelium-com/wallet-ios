@@ -134,7 +134,7 @@ static BTCAmount MYCFeeRate = 10000;
 
     if (self.defaultAddress)
     {
-        self.addressField.text = self.defaultAddressLabel ?: self.defaultAddress.base58String;
+        self.addressField.text = self.defaultAddressLabel ?: self.defaultAddress.string;
         self.spendingAddress = self.defaultAddress;
         [self updateAddressView];
     }
@@ -554,7 +554,7 @@ static BTCAmount MYCFeeRate = 10000;
         self.scannerView = [MYCScannerView presentFromRect:rect inView:targetView detection:^(NSString *message) {
 
             // 1. Try to read a valid address.
-            BTCAddress* address = [[BTCAddress addressWithBase58String:message] publicAddress];
+            BTCAddress* address = [[BTCAddress addressWithString:message] publicAddress];
             BTCAmount amount = -1;
 
             if (!address)
@@ -575,7 +575,7 @@ static BTCAmount MYCFeeRate = 10000;
             {
                 if (!!address.isTestnet == !!self.wallet.isTestnet)
                 {
-                    self.addressField.text = address.base58String;
+                    self.addressField.text = address.string;
                     [self updateAddressView];
 
                     if (amount >= 0)
@@ -738,7 +738,7 @@ static BTCAmount MYCFeeRate = 10000;
     if (addrString.length > 0)
     {
         // Check if that's the valid address.
-        BTCAddress* addr = [BTCAddress addressWithBase58String:addrString];
+        BTCAddress* addr = [BTCAddress addressWithString:addrString];
         if (!addr) // parse failure or checksum failure
         {
             // Show in red only when not editing or when it's surely incorrect.

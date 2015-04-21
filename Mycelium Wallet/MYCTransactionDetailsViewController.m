@@ -177,7 +177,7 @@
             [section item:^(PTableViewSourceItem *item) {
                 item.cellIdentifier = @"keyvalue2";
                 item.key = [btcfmt stringFromAmount:txout.value];
-                item.value = [[[MYCWallet currentWallet] addressForAddress:txout.script.standardAddress] base58String];
+                item.value = [[MYCWallet currentWallet] addressForAddress:txout.script.standardAddress].string;
                 item.userInfo = @{@"path": [@"/address/" stringByAppendingString:item.value],
                                   @"pathtestnet": [@"/addresses/" stringByAppendingString:item.value],
                                   @"myoutput": @([self.transaction.account matchesScriptData:txout.script.data change:NULL keyIndex:NULL])};

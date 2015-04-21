@@ -88,7 +88,7 @@
     if (privkeystring.length > 0)
     {
         // Check if that's the valid address.
-        BTCAddress* addr = [BTCAddress addressWithBase58String:privkeystring];
+        BTCAddress* addr = [BTCAddress addressWithString:privkeystring];
         if (!addr) // parse failure or checksum failure
         {
             // Show in red only when not editing or when it's certainly incorrect.
@@ -244,7 +244,7 @@
         }
 
         self.scannerView = [MYCScannerView presentFromRect:rect inView:targetView detection:^(NSString *message) {
-            BTCAddress* address = [BTCAddress addressWithBase58String:message];
+            BTCAddress* address = [BTCAddress addressWithString:message];
 
             if (!address)
             {

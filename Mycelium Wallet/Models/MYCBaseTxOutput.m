@@ -63,7 +63,7 @@
 
 - (NSString*) addressBase58
 {
-    return [[[MYCWallet currentWallet] addressForAddress:self.script.standardAddress] base58String];
+    return [[MYCWallet currentWallet] addressForAddress:self.script.standardAddress].string;
 }
 
 - (BOOL) isMyOutput

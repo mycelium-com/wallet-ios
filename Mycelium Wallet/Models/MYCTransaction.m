@@ -175,7 +175,7 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
     // Convert to Testnet/Mainnet as needed.
     BTCAddress* address = [[MYCWallet currentWallet] addressForAddress:script.standardAddress];
 
-    self.label = address.base58String;
+    self.label = address.string;
     self.label = self.label ?: @"—";
     return YES;
 }
