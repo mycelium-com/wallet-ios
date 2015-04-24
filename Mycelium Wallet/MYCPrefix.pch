@@ -15,6 +15,7 @@
         #import <CoreBitcoin/CoreBitcoin.h>
         #import <Crashlytics/Crashlytics.h>
 
+        #define MYC_ASSERT_MAIN_THREAD  NSAssert([NSThread isMainThread], @"Must be on main thread");
         #ifdef DEBUG
             #define MYCDebugHexDatabaseFields 1
             #define MYCDebug(expression) expression

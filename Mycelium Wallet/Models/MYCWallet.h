@@ -46,6 +46,7 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // When the value is changed, wallet re-opens another database and posts
 // MYCWalletDidReloadNotification notification.
 @property(nonatomic, getter=isTestnet) BOOL testnet;
+@property(nonatomic) BTCNetwork* network;
 
 // Set to YES once the user has backed up the wallet.
 @property(nonatomic, getter=isBackedUp) BOOL backedUp;
@@ -142,6 +143,21 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Uses LocalAuthentication API to auth with TouchID if it's available and enabled.
 // If user has only passcode or not passcode, then the block is simply being called without extra checks.s
 - (void) bestEffortAuthenticateWithTouchID:(void(^)(MYCUnlockedWallet* uw, BOOL authenticated))block reason:(NSString*)reason;
+
+
+
+// Managing the automatic backup
+
+- (NSString*) backupWalletID;
+- (BTCKey*) backupAuthenticationKey;
+- (NSData*) backupKey;
+- (NSData*) backupData;
+
+// TODO: add importing method
+
+- (void) uploadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock;
+
+
 
 // Accessing Database
 

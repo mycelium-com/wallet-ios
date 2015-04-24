@@ -11,6 +11,7 @@
 #import <Security/Security.h>
 
 #define kMasterSeedName @"MasterSeed"
+#define kBackupMasterKeyName @"BackupMasterKeyV1"
 #define kProbeItemName  @"ProbeItem"
 
 static BOOL MYCBypassMissingPasscode = 0;
@@ -22,6 +23,7 @@ static BOOL MYCBypassMissingPasscode = 0;
 }
 
 @synthesize mnemonic=_mnemonic;
+@synthesize backupMasterKey=_backupMasterKey;
 
 + (void) setBypassMissingPasscode {
     MYCBypassMissingPasscode = YES;
@@ -68,6 +70,49 @@ static BOOL MYCBypassMissingPasscode = 0;
      requireUserPresence:NO
                    error:&error]) {
         MYCError(@"MYCUnlockedWallet: Cannot write mnemonic to keychain: %@", error);
+        self.error = error;
+        return;
+    }
+
+    // Also save the backup master key so we don't need to access mnemonic needlessly (good for forward compatibility).
+    self.backupMasterKey = [self backupMasterKeyFromMnemonic:mnemonic];
+}
+
+- (NSData*) backupMasterKey {
+    if (!_backupMasterKey) {
+        NSError* error = nil;
+        NSData* data = [self readItemWithName:kBackupMasterKeyName error:&error];
+        if (!data) {
+            data = [self backupMasterKeyFromMnemonic:self.mnemonic];
+            if (data) {
+                MYCError(@"MYCUnlockedWallet: Cannot read backupMasterKey from keychain: %@", error);
+                self.backupMasterKey = data;
+            } else {
+                MYCError(@"MYCUnlockedWallet: Cannot read backupMasterKey from keychain: %@ (also cannot read mnemonic: %@)", error, self.error);
+                self.error = error;
+                return nil;
+            }
+        }
+        _backupMasterKey = data;
+    }
+    return _backupMasterKey;
+}
+
+- (NSData*) backupMasterKeyFromMnemonic:(BTCMnemonic*)mnemonic {
+    if (!mnemonic) return nil;
+    return BTCHMACSHA256(mnemonic.seed, [@"Automatic Backup Master Key" dataUsingEncoding:NSASCIIStringEncoding]);
+}
+
+- (void) setBackupMasterKey:(NSData *)backupMasterKey {
+
+    _backupMasterKey = backupMasterKey;
+    NSError* error = nil;
+    if (![self writeItem:backupMasterKey
+                withName:kBackupMasterKeyName
+           accessibility:kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+     requireUserPresence:NO
+                   error:&error]) {
+        MYCError(@"MYCUnlockedWallet: Cannot write backupMasterKey to keychain: %@", error);
         self.error = error;
         return;
     }

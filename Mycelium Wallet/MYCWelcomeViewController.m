@@ -154,6 +154,9 @@
         if (newWallet) {
             updateWallet();
         } else {
+
+#warning TODO: download available backups and choose the latest one.
+
             [wallet discoverAccounts:unlockedWallet.keychain completion:^(BOOL success, NSError *error) {
                 if (!success) {
                     MYCError(@"MYCWelcomeViewController: failed to discover accounts. Please add them manually. %@", error);

@@ -65,6 +65,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     MYCCurrencyFormatter* formatter = _formatters[indexPath.row];
     [[MYCWallet currentWallet] selectPrimaryCurrencyFormatter:formatter];
+    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
+        // Show alert?
+    }];
     [self cancel:self];
 }
 

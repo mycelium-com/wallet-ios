@@ -24,6 +24,8 @@
 		203AA4B419DC525100572BD9 /* MYCReceiveViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 203AA4B219DC525100572BD9 /* MYCReceiveViewController.xib */; };
 		203AA4B919DC53C900572BD9 /* MYCBackupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4B719DC53C900572BD9 /* MYCBackupViewController.m */; };
 		203AA4BA19DC53C900572BD9 /* MYCBackupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 203AA4B819DC53C900572BD9 /* MYCBackupViewController.xib */; };
+		204FFD671AE8E35800720447 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 204FFD661AE8E35800720447 /* CloudKit.framework */; };
+		204FFD6A1AE8E68E00720447 /* MYCCloudKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 204FFD691AE8E68E00720447 /* MYCCloudKit.m */; };
 		2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E37619D9858F00CD81B8 /* MYCWallet.m */; };
 		2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */; };
 		2064E38319D9A0D000CD81B8 /* MYCBalanceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */; };
@@ -122,6 +124,9 @@
 		203AA4B619DC53C900572BD9 /* MYCBackupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCBackupViewController.h; sourceTree = "<group>"; };
 		203AA4B719DC53C900572BD9 /* MYCBackupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCBackupViewController.m; sourceTree = "<group>"; };
 		203AA4B819DC53C900572BD9 /* MYCBackupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCBackupViewController.xib; sourceTree = "<group>"; };
+		204FFD661AE8E35800720447 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		204FFD681AE8E68E00720447 /* MYCCloudKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCCloudKit.h; sourceTree = "<group>"; };
+		204FFD691AE8E68E00720447 /* MYCCloudKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCCloudKit.m; sourceTree = "<group>"; };
 		2064E37519D9858F00CD81B8 /* MYCWallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCWallet.h; path = Models/MYCWallet.h; sourceTree = "<group>"; };
 		2064E37619D9858F00CD81B8 /* MYCWallet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWallet.m; path = Models/MYCWallet.m; sourceTree = "<group>"; };
 		2064E37F19D9A0D000CD81B8 /* MYCBalanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCBalanceViewController.h; sourceTree = "<group>"; };
@@ -229,6 +234,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				204FFD671AE8E35800720447 /* CloudKit.framework in Frameworks */,
 				20BDE1C91AE687E600EBC09D /* libz.dylib in Frameworks */,
 				200AAE3919F93FFB0004F908 /* AVFoundation.framework in Frameworks */,
 				20DAD9DB1ACECD9700EBC85F /* Crashlytics.framework in Frameworks */,
@@ -475,10 +481,10 @@
 			children = (
 				2064E37519D9858F00CD81B8 /* MYCWallet.h */,
 				2064E37619D9858F00CD81B8 /* MYCWallet.m */,
-				20BDE1C51AE6878A00EBC09D /* MYCWalletBackup.h */,
-				20BDE1C61AE6878A00EBC09D /* MYCWalletBackup.m */,
 				20C2D81519E573B00022CAAC /* MYCUnlockedWallet.h */,
 				20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */,
+				20BDE1C51AE6878A00EBC09D /* MYCWalletBackup.h */,
+				20BDE1C61AE6878A00EBC09D /* MYCWalletBackup.m */,
 				203AA49319DC364200572BD9 /* MYCWalletAccount.h */,
 				203AA49419DC364200572BD9 /* MYCWalletAccount.m */,
 				20203AD419F65E290085C01F /* MYCBaseTxOutput.h */,
@@ -504,6 +510,8 @@
 			children = (
 				203AA49619DC365D00572BD9 /* MYCBackend.h */,
 				203AA49719DC365D00572BD9 /* MYCBackend.m */,
+				204FFD681AE8E68E00720447 /* MYCCloudKit.h */,
+				204FFD691AE8E68E00720447 /* MYCCloudKit.m */,
 				20A9C06C19F50CBF00AF61DE /* MYCUpdateAccountOperation.h */,
 				20A9C06D19F50CBF00AF61DE /* MYCUpdateAccountOperation.m */,
 				20C2D82A19EBD6CB0022CAAC /* Reachability.h */,
@@ -535,6 +543,7 @@
 		2D8A166B7A734937ACF4ACCC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				204FFD661AE8E35800720447 /* CloudKit.framework */,
 				20BDE1C81AE687E600EBC09D /* libz.dylib */,
 				20DAD9DA1ACECD9700EBC85F /* Crashlytics.framework */,
 				200AAE3819F93FFB0004F908 /* AVFoundation.framework */,
@@ -623,6 +632,9 @@
 							};
 							com.apple.Keychain = {
 								enabled = 0;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
 							};
 						};
 					};
@@ -783,6 +795,7 @@
 				203AA4A519DC3C4500572BD9 /* PTableViewSource.m in Sources */,
 				2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */,
 				20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */,
+				204FFD6A1AE8E68E00720447 /* MYCCloudKit.m in Sources */,
 				203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */,
 				20A9C07419F534AB00AF61DE /* MYCUnspentOutput.m in Sources */,
 				203AA4A819DC4A2600572BD9 /* PColor.m in Sources */,

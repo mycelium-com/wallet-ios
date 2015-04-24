@@ -14,6 +14,9 @@
 // Root wallet seed encoded as a BIP39 mnemonic.
 @property(nonatomic) BTCMnemonic* mnemonic;
 
+// Master key for encrypting and authenticating automatic backups
+@property(nonatomic) NSData* backupMasterKey;
+
 // Mnemonic read from a file.
 @property(nonatomic) BTCMnemonic* fileBasedMnemonic DEPRECATED_ATTRIBUTE;
 

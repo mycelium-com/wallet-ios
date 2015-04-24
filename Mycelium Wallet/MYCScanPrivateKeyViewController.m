@@ -263,7 +263,7 @@
                 [self.scannerView dismiss];
                 self.scannerView = nil;
 
-                self.privkeyField.text = address.base58String;
+                self.privkeyField.text = address.string;
                 [self updateAddressView];
             }
             else

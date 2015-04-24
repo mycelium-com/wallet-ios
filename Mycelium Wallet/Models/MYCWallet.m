@@ -9,6 +9,7 @@
 #import "MYCWallet.h"
 #import "MYCUnlockedWallet.h"
 #import "MYCWalletAccount.h"
+#import "MYCWalletBackup.h"
 #import "MYCDatabase.h"
 #import "MYCBackend.h"
 #import "MYCDatabaseMigrations.h"
@@ -36,7 +37,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 @property(nonatomic) MYCCurrencyFormatter* primaryCurrencyFormatter;
 @property(nonatomic) MYCCurrencyFormatter* secondaryCurrencyFormatter;
 @property(nonatomic) NSMutableString* log;
-
 // Returns current database configuration.
 // Returns nil if database is not created yet.
 - (MYCDatabase*) database;
@@ -101,6 +101,17 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
             } reason:NSLocalizedString(@"Authorize change of network mode", @"")];
         }
     }
+}
+
+- (BTCNetwork*) network {
+    if (self.isTestnet) {
+        return [BTCNetwork testnet];
+    }
+    return [BTCNetwork mainnet];
+}
+
+- (void) setNetwork:(BTCNetwork *)network {
+    self.testnet = network.isTestnet;
 }
 
 - (void) setTestnetOnce
@@ -611,6 +622,91 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 
 
 
+
+
+
+// Backup Routines
+
+- (NSString*) backupWalletID {
+    return [BTCEncryptedBackup walletIDWithAuthenticationKey:self.backupAuthenticationKey.publicKey];
+}
+
+- (BTCKey*) backupAuthenticationKey {
+    return [BTCEncryptedBackup authenticationKeyWithBackupKey:[self backupKey]];
+}
+
+- (NSData*) backupData {
+    // Load previous backup if possible or create a new one.
+    MYCWalletBackup* bak = nil;
+    NSData* storedData = [self storedBackupData];
+    if (storedData) {
+        bak = [[MYCWalletBackup alloc] initWithData:storedData backupKey:self.backupKey];
+        if (!bak) {
+            MYCError(@"MYCWallet: Cannot initialize stored backup data. Making one from scratch.");
+            bak = [[MYCWalletBackup alloc] init];
+        }
+    } else {
+        bak = [[MYCWalletBackup alloc] init];
+    }
+
+#warning TODO: fill in accounts & transactions
+
+    bak.currencyFormatter = self.primaryCurrencyFormatter;
+
+    NSData* result = [bak dataWithBackupKey:self.backupKey]; // this sets required values if necessary.
+
+    MYCLog(@"MYCWallet Automatic Backup: %@", bak.dictionary);
+    return result;
+}
+
+- (NSData*) storedBackupData {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletStoredEncryptedBackupV1"];
+}
+
+- (void) setStoredBackupData:(NSData*)data {
+    if (data) {
+        [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"MYCWalletStoredEncryptedBackupV1"];
+    } else {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"MYCWalletStoredEncryptedBackupV1"];
+    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (NSData*) backupKey {
+    __block NSData* bakmaster = nil;
+    [self unlockWallet:^(MYCUnlockedWallet *uw) {
+        bakmaster = uw.backupMasterKey;
+    } reason:@"Accessing key for automatic wallet backups"];
+    return [BTCEncryptedBackup backupKeyForNetwork:self.network masterKey:bakmaster];
+}
+
+- (void) uploadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock {
+
+    NSData* data = [self backupData];
+
+    MYCWalletBackup* bak = [[MYCWalletBackup alloc] initWithData:data backupKey:self.backupKey];
+    NSDictionary* dict = bak.dictionary;
+
+    if (!dict || ![dict isKindOfClass:[NSDictionary class]]) {
+        MYCError(@"Cannot decrypt the encrypted backup");
+        completionBlock(NO, [NSError errorWithDomain:MYCErrorDomain code:-6 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Backup encryption inconsistency", @"Automatic backup for wallet data cannot be done.")}]);
+        return;
+    }
+
+#warning TODO: upload to iCloud Drive
+#warning TODO: upload to Mycelium server
+
+    MYCLog(@"TODO: upload to iCloud Drive: %@ bytes", @(data.length));
+
+    completionBlock(NO, nil);
+}
+
+
+
+
+
+
+// Database Access
 
 
 

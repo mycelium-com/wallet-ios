@@ -8,12 +8,32 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(uint8_t, MYCWalletBackupVersion) {
+    MYCWalletBackupVersion1 = 1,
+};
+
+@class MYCCurrencyFormatter;
 @interface MYCWalletBackup : NSObject
 
-// Encodes the backup into binary data with default compression setting.
-@property(nonnull, nonatomic, readonly) NSData* data;
+// Decrypts and decodes backup from binary data.
+- (nullable id) initWithData:(nonnull NSData*)data backupKey:(nonnull NSData*)backupKey;
 
-// Decodes backup from binary data (prefixed with a single-byte format version).
-- (nullable id) initWithData:(nonnull NSData*)data;
+// Instantiates a new instance.
+- (nonnull id) init;
+
+// Encodes and encrypts the backup with a given backup key.
+- (nonnull NSData*) dataWithBackupKey:(nonnull NSData*)backupKey;
+
+
+// Properties
+
+@property(nonatomic) MYCWalletBackupVersion version;
+@property(nonatomic, nonnull) BTCNetwork* network;
+// Timestamp of the backup.
+@property(nonatomic, nonnull) NSDate* date;
+
+@property(nonatomic, nullable) MYCCurrencyFormatter* currencyFormatter;
+
+- (nonnull NSDictionary*) dictionary;
 
 @end
