@@ -58,6 +58,7 @@ typedef NS_ENUM(uint8_t, MYCWalletBackupPayloadFormat) {
 @implementation MYCWalletBackup
 
 @synthesize network=_network;
+@synthesize currencyFormatter=_currencyFormatter;
 
 // Decodes backup from binary data (prefixed with a single-byte format version).
 - (nullable id) initWithData:(nonnull NSData*)data backupKey:(nonnull NSData*)backupKey {
@@ -139,6 +140,14 @@ typedef NS_ENUM(uint8_t, MYCWalletBackupPayloadFormat) {
         _payloadDictionary[@"currency"][@"fiat_code"] = fmt.currencyCode;
         _payloadDictionary[@"currency"][@"fiat_source"] = fmt.currencyConverter.sourceName;
     }
+}
+
+- (MYCCurrencyFormatter*) currencyFormatter {
+    if (!_currencyFormatter) {
+        NSString* code = _payloadDictionary[@"currency"][@"btc_unit"] ?: _payloadDictionary[@"currency"][@"fiat_code"];
+        _currencyFormatter = [[MYCWallet currentWallet] currencyFormatterForCode:code];
+    }
+    return _currencyFormatter;
 }
 
 - (nonnull NSDictionary*) dictionary {

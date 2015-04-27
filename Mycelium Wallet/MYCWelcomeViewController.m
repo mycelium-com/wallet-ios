@@ -112,7 +112,7 @@
     });
 }
 
-- (void) setupWalletWithMnemonic:(BTCMnemonic*)mnemonic newWallet:(BOOL)newWallet
+- (void) setupWalletWithMnemonic:(BTCMnemonic*)mnemonic newWallet:(BOOL)newWallet completionHandler:(void(^)(BOOL result))completionHandler
 {
     MYCWallet* wallet = [MYCWallet currentWallet];
 
@@ -127,6 +127,7 @@
                                        delegate:nil
                               cancelButtonTitle:NSLocalizedString(@"OK", @"")
                               otherButtonTitles:nil] show];
+            if (completionHandler) completionHandler(NO);
             return;
         }
 
@@ -137,6 +138,7 @@
 //                                       delegate:nil
 //                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
 //                              otherButtonTitles:nil] show];
+//            if (completionHandler) completionHandler(NO);
 //            return;
 //        }
 
@@ -146,30 +148,71 @@
         //unlockedWallet.probeItem = YES;
         //wallet.migratedToTouchID = YES;
 
+        BTCKeychain* rootKeychain = [unlockedWallet.keychain copy]; // so the copy won't get cleaned in async block.
+
         void(^updateWallet)() = ^{
             [wallet updateActiveAccounts:^(BOOL success, NSError *error) {}];
             [wallet updateExchangeRate:YES completion:^(BOOL success, NSError *error) {}];
         };
 
-        if (newWallet) {
-            updateWallet();
-        } else {
-
-#warning TODO: download available backups and choose the latest one.
-
-            [wallet discoverAccounts:unlockedWallet.keychain completion:^(BOOL success, NSError *error) {
+        void(^discoverAccounts)() = ^{
+            [wallet discoverAccounts:rootKeychain completion:^(BOOL success, NSError *error) {
                 if (!success) {
                     MYCError(@"MYCWelcomeViewController: failed to discover accounts. Please add them manually. %@", error);
                 } else {
                     updateWallet();
                 }
             }];
+        };
+
+        if (newWallet) {
+            updateWallet();
+            if (completionHandler) completionHandler(YES);
+            return;
         }
 
+        // Restoring wallet:
+#warning TODO: download available backups and choose the latest one.
+        [wallet downloadAutomaticBackup:^(BOOL result, NSError *error) {
+
+            if (result || !error) {
+                // Item is found or not found: not an error.
+                discoverAccounts();
+                if (completionHandler) completionHandler(YES);
+                return;
+            }
+
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Cannot restore additional data", @"Errors")
+                                                                           message:error.localizedDescription ?: @""
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+
+            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Ignore this error", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+
+                UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Payment data will be lost", @"Errors")
+                                                                                message:NSLocalizedString(@"If you saved some transaction notes or payment receipts, they will be permanently lost if you do not download them first.\nYour funds are not affected.", @"Errors")
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+
+                [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Retry download", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    if (completionHandler) completionHandler(NO);
+                }]];
+                [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Continue without data", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                    discoverAccounts();
+                    if (completionHandler) completionHandler(YES);
+                }]];
+                [self presentViewController:alert2 animated:YES completion:nil];
+            }]];
+            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Try again", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                if (completionHandler) completionHandler(NO);
+                [self finishRestore:nil];
+            }]];
+
+            [self presentViewController:alert animated:YES completion:nil];
+        }];
+
+
     } reason:NSLocalizedString(@"Authenticate storage for the wallet seed", @"")];
-
-
 }
+
 
 - (IBAction)createNewWallet:(id)sender
 {
@@ -189,8 +232,11 @@
 
         // Prepare a database and store the mnemonic in the keychain
 
-        [self setupWalletWithMnemonic:mnemonic newWallet:YES];
-        [self displayWarningAboutBackup];
+        [self setupWalletWithMnemonic:mnemonic newWallet:YES completionHandler:^(BOOL result) {
+            if (result) {
+                [self displayWarningAboutBackup];
+            }
+        }];
 
     } progress:^(double pr) {
         self.generatingProgressView.progress = pr;
@@ -299,13 +345,16 @@
 
     if (mnemonic && mnemonic.keychain)
     {
-        [MYCWallet currentWallet].walletSetupInProgress = NO;
-        [self setupWalletWithMnemonic:mnemonic newWallet:NO];
-        
-        // Remember that the wallet is backed up now.
-        [MYCWallet currentWallet].backedUp = YES;
+        [self setupWalletWithMnemonic:mnemonic newWallet:NO completionHandler:^(BOOL result) {
+            if (result) {
+                [MYCWallet currentWallet].walletSetupInProgress = NO;
 
-        [[MYCAppDelegate sharedInstance] displayMainView];
+                // Remember that the wallet is backed up now.
+                [MYCWallet currentWallet].backedUp = YES;
+
+                [[MYCAppDelegate sharedInstance] displayMainView];
+            }
+        }];
     }
     else
     {

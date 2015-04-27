@@ -77,6 +77,10 @@ typedef NS_ENUM(NSInteger, MYCBroadcastStatus) {
 - (void) broadcastTransaction:(BTCTransaction*)tx
                    completion:(void(^)(MYCBroadcastStatus status, NSError* error))completion;
 
-- (NSMutableURLRequest*) requestWithName:(NSString*)name;
+
+- (void) uploadDataBackup:(NSData*)encryptedData walletID:(NSString*)walletID completionHandler:(void(^)(BOOL result, NSError* error))completionHandler;
+
+- (void) downloadDataBackupForWalletID:(NSString*)walletID completionHandler:(void(^)(NSData* data, NSError* error))completionHandler;
+
 
 @end

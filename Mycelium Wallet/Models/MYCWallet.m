@@ -20,6 +20,7 @@
 #import "MYCUnspentOutput.h"
 #import "MYCCurrencyFormatter.h"
 #import "BTCPriceSourceMycelium.h"
+#import "MYCCloudKit.h"
 #include <pthread.h>
 #include <LocalAuthentication/LocalAuthentication.h>
 
@@ -270,6 +271,16 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         currencyConverter.currencyCode = code;
     }
     return currencyConverter;
+}
+
+- (MYCCurrencyFormatter*) currencyFormatterForCode:(NSString*)code {
+    if (!code) return nil;
+    for (MYCCurrencyFormatter* fmt in self.currencyFormatters) {
+        if ([fmt.currencyCode isEqual:code]) {
+            return fmt;
+        }
+    }
+    return nil;
 }
 
 - (NSString*) reformatString:(NSString*)amount forCurrency:(NSString*)currencyCode {
@@ -682,25 +693,99 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 
 - (void) uploadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock {
 
+    NSString* walletID = self.backupWalletID;
     NSData* data = [self backupData];
 
     MYCWalletBackup* bak = [[MYCWalletBackup alloc] initWithData:data backupKey:self.backupKey];
     NSDictionary* dict = bak.dictionary;
 
     if (!dict || ![dict isKindOfClass:[NSDictionary class]]) {
-        MYCError(@"Cannot decrypt the encrypted backup");
+        MYCError(@"Cannot decrypt the encrypted backup (sanity check)");
         completionBlock(NO, [NSError errorWithDomain:MYCErrorDomain code:-6 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Backup encryption inconsistency", @"Automatic backup for wallet data cannot be done.")}]);
         return;
     }
 
-#warning TODO: upload to iCloud Drive
-#warning TODO: upload to Mycelium server
-
-    MYCLog(@"TODO: upload to iCloud Drive: %@ bytes", @(data.length));
-
-    completionBlock(NO, nil);
+    MYCLog(@"MYCWallet: Uploading encrypted backup to iCloud Drive and Mycelium: %@ bytes (%@)", @(data.length), walletID);
+    [[[MYCCloudKit alloc] init] uploadDataBackup:data walletID:walletID completionHandler:^(BOOL icloudResult, NSError *icloudError) {
+        MYCLog(@"MYCWallet: iCloud upload status: %@ %@", @(icloudResult), icloudError ?: @"");
+        [self.backend uploadDataBackup:data walletID:walletID completionHandler:^(BOOL mycResult, NSError *mycError) {
+            MYCLog(@"MYCWallet: Mycelium upload status: %@ %@", @(mycResult), mycError ?: @"");
+            completionBlock(icloudResult || mycResult, icloudError ?: mycError);
+        }];
+    }];
 }
 
+- (void) downloadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock {
+
+    NSString* walletID = self.backupWalletID;
+
+    MYCLog(@"MYCWallet: Downloading encrypted backup from iCloud Drive and Mycelium: %@", walletID);
+    [[[MYCCloudKit alloc] init] downloadDataBackupForWalletID:walletID completionHandler:^(NSData *icloudData, NSError *icloudError) {
+        MYCLog(@"MYCWallet: iCloud download status: %@ bytes %@", @(icloudData.length), icloudError ?: @"");
+        [self.backend downloadDataBackupForWalletID:walletID completionHandler:^(NSData *mycData, NSError *mycError) {
+            MYCLog(@"MYCWallet: Mycelium download status: %@ bytes %@", @(mycData.length), mycError ?: @"");
+
+            NSMutableArray* datas = [NSMutableArray array];
+            if (icloudData) [datas addObject:icloudData];
+            if (mycData) [datas addObject:mycData];
+
+            MYCWalletBackup* backup = [self chooseLatestWalletBackupFromDatas:datas];
+
+            if (!backup) {
+                MYCError(@"MYCWallet: could not receive or decrypt any backup data: %@ %@", icloudError ?: @"", mycError ?: @"");
+                completionBlock(NO, icloudError ?: mycError);
+                return;
+            }
+
+            MYCLog(@"Applyign backup for %@ from %@", walletID, backup.date);
+            [self applyWalletBackup:backup];
+            completionBlock(YES, nil);
+        }];
+    }];
+}
+
+- (void) applyWalletBackup:(MYCWalletBackup*)backup {
+
+    // 1. Currency converter.
+    MYCCurrencyFormatter* fmt = backup.currencyFormatter;
+    if (fmt) {
+        MYCLog(@"MYCWallet: setting currency formatter to: %@", fmt.dictionary);
+        [self selectPrimaryCurrencyFormatter:fmt];
+    } else {
+        MYCError(@"MYCWallet: cannot restore currency formatter from backup: %@", backup.dictionary[@"currency"]);
+    }
+
+#warning TODO: put data in DB and user defaults from this backup
+
+    // 2. Tx labels and receipts.
+
+    // 3. Account labels.
+
+
+}
+
+- (MYCWalletBackup*) chooseLatestWalletBackupFromDatas:(NSArray*)datas {
+
+    MYCWalletBackup* latestBackup = nil;
+    NSUInteger i = 0;
+    for (NSData* data in datas) {
+        MYCWalletBackup* backup = [[MYCWalletBackup alloc] initWithData:data backupKey:self.backupKey];
+        if (!backup) {
+            MYCError(@"MYCWallet: Cannot decrypt backup data #%@ (%@ bytes)", @(i), @(data.length));
+        } else {
+            if (!latestBackup) {
+                latestBackup = backup;
+            } else {
+                NSTimeInterval time = [backup.date timeIntervalSinceDate:latestBackup.date];
+                if (time > 0) {
+                    MYCLog(@"Have backup with a different date: %@ > %@", backup.date, latestBackup.date);
+                }
+            }
+        }
+        i++;
+    }
+    return latestBackup;
+}
 
 
 

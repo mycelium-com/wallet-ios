@@ -93,6 +93,9 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Array of all supported MYCCurrencyFormatters.
 @property(nonatomic, readonly) NSArray* currencyFormatters;
 
+// Returns a matching currency formatter among the available ones for a given code.
+- (MYCCurrencyFormatter*) currencyFormatterForCode:(NSString*)code;
+
 // E.g. you have "1.23 EUR", it'll be stored as "1.23" and "EUR".
 - (NSString*) reformatString:(NSString*)amount forCurrency:(NSString*)currencyCode;
 
@@ -153,10 +156,9 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 - (NSData*) backupKey;
 - (NSData*) backupData;
 
-// TODO: add importing method
-
 - (void) uploadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock;
 
+- (void) downloadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock;
 
 
 // Accessing Database

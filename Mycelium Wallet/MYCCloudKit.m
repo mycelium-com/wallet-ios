@@ -79,7 +79,7 @@
             if (record) {
                 NSData* data = record[@"EncryptedData"];
                 MYCLog(@"MYCCloudKit: CloudKit returned record for WalletID: %@ (encrypted data: %@ bytes)",
-                       record[@"WalletID"], data.length);
+                       record[@"WalletID"], @(data.length));
                 completionHandler(data, nil);
                 return;
             }
@@ -90,7 +90,7 @@
                 return;
             }
             MYCError(@"MYCCloudKit: CloudKit returned error when fetching record for WalletID: %@", error);
-            completionHandler(NO, [self wrappedErrorForCKError:error]);
+            completionHandler(nil, [self wrappedErrorForCKError:error]);
         });
     }];
 }
@@ -104,7 +104,7 @@
             MYCError(@"MYCCloudKit: CloudKit failed to fetch WalletBackup record: %@", error);
             MYCError(@"MYCCloudKit: THIS MEANS: User must be logged-in AND upgraded to iCloud Drive.");
 
-            NSString* msg = NSLocalizedString(@"Please sign in to iCloud with your Apple ID. Make sure iCloud Drive is turned on.", @"");
+            NSString* msg = NSLocalizedString(@"Please sign in to iCloud and make sure iCloud Drive is turned on.", @"");
             NSError* error2 = [NSError errorWithDomain:error.domain
                                                   code:error.code
                                               userInfo:@{
@@ -130,7 +130,7 @@
 
             MYCError(@"MYCCloudKit: network failure or network not available. %@", error);
 
-            NSString* msg = NSLocalizedString(@"Cannot connect to iCloud.", @"");
+            NSString* msg = NSLocalizedString(@"Cannot connect to iCloud. Please check your network connection.", @"");
             NSError* error2 = [NSError errorWithDomain:error.domain
                                                   code:error.code
                                               userInfo:@{

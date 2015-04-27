@@ -18,6 +18,8 @@
 // E.g. B3:42:65:33:40:F5:B9:1B:DA:A2:C8:7A:F5:4C:7C:5D:A9:63:C4:C3.
 @property(atomic) NSData* SSLFingerprint;
 
+@property(atomic) BTCNetwork* btcNetwork;
+
 // Version of the API to be used.
 @property(atomic) NSNumber* version;
 
@@ -28,6 +30,8 @@
 @property(atomic) NSURL* currentEndpointURL;
 
 @property(atomic) int pendingTasksCount;
+
+- (NSMutableURLRequest*) requestWithName:(NSString*)name;
 
 @end
 
@@ -41,6 +45,7 @@
     dispatch_once(&onceToken, ^{
         instance = [[MYCBackend alloc] init];
         instance.version = @(1);
+        instance.btcNetwork = [BTCNetwork mainnet];
         instance.endpointURLs = @[
                                   [NSURL URLWithString:@"https://mws1.mycelium.com/wapi"],
                                   [NSURL URLWithString:@"https://188.40.12.226/wapi"],
@@ -62,6 +67,7 @@
     dispatch_once(&onceToken, ^{
         instance = [[MYCBackend alloc] init];
         instance.version = @(1);
+        instance.btcNetwork = [BTCNetwork testnet];
         instance.endpointURLs = @[
                         [NSURL URLWithString:@"https://node3.mycelium.com/wapitestnet"],
                         [NSURL URLWithString:@"https://144.76.165.115/wapitestnet"],
@@ -96,7 +102,7 @@
 - (void) loadExchangeRateForCurrencyCode:(NSString*)currencyCode
                                completion:(void(^)(NSDecimalNumber* btcPrice, NSString* marketName, NSDate* date, NSString* nativeCurrencyCode, NSError* error))completion
 {
-    NSAssert([NSThread isMainThread], @"Must be on main thread");
+    MYC_ASSERT_MAIN_THREAD;
     NSParameterAssert(currencyCode);
 
 //    curl  -k -X POST -H "Content-Type: application/json" -d '{"version":1,"currency":"USD"}' https://144.76.165.115/wapitestnet/wapi/queryExchangeRates
@@ -117,7 +123,7 @@
 //                "currency": "USD"
 //            },
 
-    [self makeJSONRequest:@"queryExchangeRates"
+    [self makeJSONRequestWithName:@"queryExchangeRates"
                   payload:@{ @"version": self.version,
                              @"currency": currencyCode ?: @"USD" }
                  template:@{@"currency": @"USD",
@@ -163,7 +169,7 @@
 // Fetches unspent outputs (BTCTransactionOutput) for given addresses (BTCAddress instances).
 - (void) loadUnspentOutputsForAddresses:(NSArray*)addresses completion:(void(^)(NSArray* outputs, NSInteger height, NSError* error))completion
 {
-    NSAssert([NSThread isMainThread], @"Must be on main thread");
+    MYC_ASSERT_MAIN_THREAD;
     NSParameterAssert(addresses);
 
     if (addresses.count == 0)
@@ -196,7 +202,7 @@
     //    }
     //}
 
-    [self makeJSONRequest:@"queryUnspentOutputs"
+    [self makeJSONRequestWithName:@"queryUnspentOutputs"
                   payload:@{// @"version": self.version,
                              @"addresses": [addresses valueForKeyPath:@"publicAddress.base58String"] }
                  template:@{
@@ -274,7 +280,7 @@
 // Results include both transactions spending and receiving to the given addresses.
 - (void) loadTransactionIDsForAddresses:(NSArray*)addresses limit:(NSInteger)limit completion:(void(^)(NSArray* txids, NSInteger height, NSError* error))completion
 {
-    NSAssert([NSThread isMainThread], @"Must be on main thread");
+    MYC_ASSERT_MAIN_THREAD;
     NSParameterAssert(addresses);
 
     if (addresses.count == 0)
@@ -299,7 +305,7 @@
     //      }
     //  }
 
-    [self makeJSONRequest:@"queryTransactionInventory"
+    [self makeJSONRequestWithName:@"queryTransactionInventory"
                   payload:@{// @"version": self.version,
                              @"addresses": [addresses valueForKeyPath:@"publicAddress.base58String"],
                              @"limit": @(limit)}
@@ -328,7 +334,7 @@
 
 - (void) loadTransactionsForAddresses:(NSArray*)addresses limit:(NSInteger)limit completion:(void(^)(NSArray* txs, NSInteger height, NSError* error))completion
 {
-    NSAssert([NSThread isMainThread], @"Must be on main thread");
+    MYC_ASSERT_MAIN_THREAD;
     NSParameterAssert(addresses);
 
     if (addresses.count == 0)
@@ -372,7 +378,7 @@
 // In case of error, `dicts` is nil and `error` contains NSError object.
 - (void) loadStatusForTransactions:(NSArray*)txids completion:(void(^)(NSArray* dicts, NSError* error))completion
 {
-    NSAssert([NSThread isMainThread], @"Must be on main thread");
+    MYC_ASSERT_MAIN_THREAD;
     NSParameterAssert(txids);
 
     if (txids.count == 0)
@@ -392,7 +398,7 @@
     //        ]
     //    }}
 
-    [self makeJSONRequest:@"checkTransactions"
+    [self makeJSONRequestWithName:@"checkTransactions"
                   payload:@{// @"version": self.version,
                              @"txIds": txids }
                  template:@{
@@ -437,7 +443,7 @@
 // See WapiResponse<GetTransactionsResponse> getTransactions(GetTransactionsRequest request);
 - (void) loadTransactions:(NSArray*)txids completion:(void(^)(NSArray* dicts, NSError* error))completion
 {
-    NSAssert([NSThread isMainThread], @"Must be on main thread");
+    MYC_ASSERT_MAIN_THREAD;
     NSParameterAssert(txids);
 
     if (txids.count == 0)
@@ -457,7 +463,7 @@
     //           }]
     // }}
 
-    [self makeJSONRequest:@"getTransactions"
+    [self makeJSONRequestWithName:@"getTransactions"
                   payload:@{// @"version": self.version,
                              @"txIds": txids }
                  template:@{
@@ -540,7 +546,7 @@
 // WapiResponse<BroadcastTransactionResponse> broadcastTransaction(BroadcastTransactionRequest request);
 - (void) broadcastTransaction:(BTCTransaction*)tx completion:(void(^)(MYCBroadcastStatus status, NSError* error))completion
 {
-    NSAssert([NSThread isMainThread], @"Must be on main thread");
+    MYC_ASSERT_MAIN_THREAD;
     NSParameterAssert(tx);
 
     // curl  -k -X POST -H "Content-Type: application/json" -d '{"version":1,"rawTransaction":"AQAAAAHqHGsQSIun5hjDDWm7iFMwm85xNLt+HBfI3LS3uQHnSQEAAABrSDBFAiEA6rlGk4wgIL3TvC2YHK4XiBW2vPYg82iCgnQi+YOUwqACIBpzVk756/07SRORT50iRZvEGUIn3Lh3bhaRE1aUMgZZASECDFl9wEYDCvB1cJY6MbsakfKQ9tbQhn0eH9C//RI2iE//////ApHwGgAAAAAAGXapFIzWtPXZR7lk8RtvE0FDMHaLtsLCiKyghgEAAAAAABl2qRSuzci59wapXUEzwDzqKV9nIaqwz4isAAAAAA=="}' https://144.76.165.115/wapitestnet/wapi/broadcastTransaction
@@ -561,7 +567,7 @@
         return;
     }
 
-    [self makeJSONRequest:@"broadcastTransaction"
+    [self makeJSONRequestWithName:@"broadcastTransaction"
                   payload:@{// @"version": self.version,
                              @"rawTransaction": base64tx }
                  template:@{
@@ -595,6 +601,96 @@
                }];
 }
 
+/*
+ 
+ curl -k -X POST -H "Content-Type: application/json" -d '{"backup":"XXXXXXXXXXXXXX", "apub":"1234"}' https://node3.mycelium.com/backup/v1/wallet_backup/12342342
+ curl -k https://node3.mycelium.com/backup/v1/wallet_backup/12342342
+ => {"errorCode":0,"r":{"backup":"XXXXXXXXXXXXXX"}}
+ curl -k -X POST -H "Content-Type: application/json" -d '{"backup":"Hello", "apub":"1234"}' https://node3.mycelium.com/backup/v1/wallet_backup/12342342
+ curl -k https://node3.mycelium.com/backup/v1/wallet_backup/12342342
+ => {"errorCode":0,"r":{"backup":"HelloXXXXXXXXX"}}
+
+ curl -k -X PUT -H "Content-Type: application/json" -d '{"backup":"BackupData", "apub":"1234"}' https://node3.mycelium.com/backup/v1/wallet_backup/12342342
+ => {"errorCode":0,"r":{"success":true}}
+ curl -k https://node3.mycelium.com/backup/v1/wallet_backup/12342342
+ => {"errorCode":0,"r":{"backup":"BackupData1"}}
+ */
+
+- (void) uploadDataBackup:(NSData*)encryptedData walletID:(NSString*)walletID completionHandler:(void(^)(BOOL result, NSError* error))completion {
+
+#warning FIXME: only testnet server supports backups for now.
+    if (![self.btcNetwork isTestnet]) {
+        [[MYCBackend testnetBackend] uploadDataBackup:encryptedData walletID:walletID completionHandler:completion];
+        return;
+    }
+
+    NSMutableURLRequest* req = [self backupRequestWithWalletID:walletID];
+    self.currentEndpointURL = req.URL;
+    [self makeJSONRequest:req
+                  payload:@{@"backup": [encryptedData base64EncodedStringWithOptions:0] }
+                 template:@{
+                            @"success":@YES
+                            }
+                       completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
+
+                           if (!result) {
+                               if (completion) completion(NO, error);
+                               return;
+                           }
+
+                           BOOL success = [result[@"success"] boolValue];
+
+                           if (!success)
+                           {
+                               // Unknown failure
+                               if (completion) completion(NO, error);
+                               return;
+                           }
+                           
+                           if (completion) completion(YES, error);
+                       }];
+}
+
+- (void) downloadDataBackupForWalletID:(NSString*)walletID completionHandler:(void(^)(NSData* data, NSError* error))completion {
+
+#warning FIXME: only testnet server supports backups for now.
+    if (![self.btcNetwork isTestnet]) {
+        [[MYCBackend testnetBackend] downloadDataBackupForWalletID:walletID completionHandler:completion];
+        return;
+    }
+
+    NSMutableURLRequest* req = [self backupRequestWithWalletID:walletID];
+    self.currentEndpointURL = req.URL;
+    [self makeJSONRequest:req
+                  payload:nil
+                 template:@{
+                            @"backup":@"base64-encoded string"
+                            }
+               completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
+
+                   if (!result) {
+                       if (completion) completion(nil, error);
+                       return;
+                   }
+
+                   NSData* data = [[NSData alloc] initWithBase64EncodedString:result[@"backup"] options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+                   if (!data)
+                   {
+                       // Base64 parser error
+                       MYCError(@"MYCBackend: cannot decode Base64-encoded backup data: %@ bytes (%@...)", @(data.length), BTCHexFromData([data subdataWithRange:NSMakeRange(0, MIN(data.length, 1024))]));
+                       if (completion) completion(nil, [NSError errorWithDomain:MYCErrorDomain
+                                                                           code:-91
+                                                                       userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Cannot decode downloaded backup data (malformed Base64 encoding).", @"Errors")}]);
+                       return;
+                   }
+
+                   if (completion) completion(data, nil);
+               }];
+}
+
+
+
 
 
 
@@ -603,19 +699,22 @@
 #pragma mark - Utils
 
 
-
-- (void) makeJSONRequest:(NSString*)name payload:(NSDictionary*)payload template:(id)template completion:(void(^)(NSDictionary* result, NSString* curlCommand, NSError* error))completion
+- (void) makeJSONRequestWithName:(NSString*)name payload:(NSDictionary*)payload template:(id)template completion:(void(^)(NSDictionary* result, NSString* curlCommand, NSError* error))completion
 {
-    NSAssert([NSThread isMainThread], @"Must be on main thread");
+    self.currentEndpointURL = self.endpointURLs.firstObject;
+    NSMutableURLRequest* req = [self requestWithName:name];
+    [self makeJSONRequest:req payload:payload template:template completion:completion];
+}
+
+
+- (void) makeJSONRequest:(NSMutableURLRequest*)req payload:(NSDictionary*)payload template:(id)template completion:(void(^)(NSDictionary* result, NSString* curlCommand, NSError* error))completion
+{
+    MYC_ASSERT_MAIN_THREAD;
     //MYCLog(@">>> INCREASING COUNT: %@", name);
     self.pendingTasksCount++;
 
-    self.currentEndpointURL = self.endpointURLs.firstObject;
-
     // Do json encoding on background thread.
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
-
-        NSMutableURLRequest* req = [self requestWithName:name];
 
         NSString* curlCommand = nil;
 
@@ -688,6 +787,26 @@
 - (NSMutableURLRequest*) requestWithName:(NSString*)name
 {
     NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/wapi/%@", self.currentEndpointURL.absoluteString, name]];
+
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
+
+    // Set the content defaults
+    [request setValue:@"gzip,deflate" forHTTPHeaderField:@"Accept-Encoding"];
+    NSString* locale = [[[NSLocale currentLocale] localeIdentifier] stringByReplacingOccurrencesOfString:@"_" withString:@"-"];
+    [request setValue:locale forHTTPHeaderField:@"Accept-Language"];
+
+    // Set the JSON defaults.
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [request setValue:@"utf-8" forHTTPHeaderField:@"Accept-Charset"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"]; // default, can be overriden later
+
+    return request;
+}
+
+- (NSMutableURLRequest*) backupRequestWithWalletID:(NSString*)walletID
+{
+#warning TODO: temporary endpoint for uploading/downloading backups.
+    NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"https://node3.mycelium.com/backup/v1/wallet_backup/%@", walletID]];
 
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
 
