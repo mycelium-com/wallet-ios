@@ -314,7 +314,7 @@
                                                             preferredStyle:UIAlertControllerStyleAlert];
 
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.text = [NSString stringWithFormat:NSLocalizedString(@"Account %@", @""), @(lastAccount.accountIndex + 1)];
+        textField.text = [NSString stringWithFormat:NSLocalizedString(@"Account %@", @""), @(lastAccount.accountIndex + 1 + 1)];
     }];
 
     [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
@@ -345,6 +345,8 @@
                 [acc saveInDatabase:db error:NULL];
             }];
 
+            [self updateBackup];
+
             [[MYCWallet currentWallet] updateAccount:acc force:YES completion:^(BOOL success, NSError *error) {
             }];
 
@@ -356,6 +358,21 @@
     }]];
     [self presentViewController:alert animated:YES completion:nil];
 }
+
+- (void) updateBackup {
+    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
+        if (!result) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up changes", @"")
+                                        message:error.localizedDescription ?: @""
+                                       delegate:nil
+                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
+                              otherButtonTitles:nil] show];
+        }
+    }];
+}
+
+
+
 
 #pragma mark - UITableView
 

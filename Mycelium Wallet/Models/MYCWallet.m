@@ -643,7 +643,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 }
 
 - (BTCKey*) backupAuthenticationKey {
-    return [BTCEncryptedBackup authenticationKeyWithBackupKey:[self backupKey]];
+    return [BTCEncryptedBackup authenticationKeyWithBackupKey:self.backupKey];
 }
 
 - (NSData*) backupData {
@@ -660,14 +660,117 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         bak = [[MYCWalletBackup alloc] init];
     }
 
-#warning TODO: fill in accounts & transactions
-
+    bak.network = self.network;
     bak.currencyFormatter = self.primaryCurrencyFormatter;
+
+    [self inDatabase:^(FMDatabase *db) {
+        [bak setAccounts:[MYCWalletAccount loadAccountsFromDatabase:db]];
+
+        #warning TODO: fill in transaction receipts and labels
+
+    }];
 
     NSData* result = [bak dataWithBackupKey:self.backupKey]; // this sets required values if necessary.
 
     MYCLog(@"MYCWallet Automatic Backup: %@", bak.dictionary);
     return result;
+}
+
+- (void) applyWalletBackup:(MYCWalletBackup*)backup {
+
+    MYC_ASSERT_MAIN_THREAD;
+
+    // 1. Currency converter.
+    MYCCurrencyFormatter* fmt = backup.currencyFormatter;
+    if (fmt) {
+        MYCLog(@"MYCWallet: setting currency formatter to: %@", fmt.dictionary);
+        [self selectPrimaryCurrencyFormatter:fmt];
+    } else {
+        MYCError(@"MYCWallet: cannot restore currency formatter from backup: %@", backup.dictionary[@"currency"]);
+    }
+
+    __block BTCKeychain* rootKeychain = nil;
+    [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
+        rootKeychain = [uw.keychain copy]; // so it's not cleared outside unlockWallet block.
+    } reason:NSLocalizedString(@"Restoring accounts from backup", @"")];
+
+    [self inTransaction:^(FMDatabase *db, BOOL *rollback) {
+
+        // 2. Account labels.
+        __block NSInteger maxIndex = -1;
+        [backup enumerateAccounts:^(NSString *label, NSInteger accIndex, BOOL archived, BOOL current) {
+            if (accIndex > maxIndex) maxIndex = accIndex;
+
+            MYCWalletAccount* acc = [MYCWalletAccount loadAccountAtIndex:accIndex fromDatabase:db];
+            acc = acc ?: [[MYCWalletAccount alloc] initWithKeychain:[rootKeychain keychainForAccount:(uint32_t)accIndex]];
+
+            if (label.length > 0) {
+                acc.label = label;
+            }
+            acc.archived = archived;
+            acc.current = current;
+
+            NSError* accerror = nil;
+            MYCLog(@"MYCWallet applyWalletBackup: restoring from backup account %@: %@ archived:%@ current:%@",
+                   @(acc.accountIndex),
+                   acc.label,
+                   @(acc.isArchived),
+                   @(acc.isCurrent));
+            if (![acc saveInDatabase:db error:&accerror]) {
+                MYCError(@"MYCWallet applyWalletBackup: cannot save account at index %@: %@", @(accIndex), accerror);
+                *rollback = YES;
+                return;
+            }
+        }];
+
+        // Check if cancelled.
+        if (*rollback) return;
+
+        // Make sure we don't have gaps in the accounts list (maxIndex is not checked because it's just created).
+        for (NSInteger i = 0; i < maxIndex; i++) {
+
+            MYCWalletAccount* acc = [MYCWalletAccount loadAccountAtIndex:i fromDatabase:db];
+            if (!acc) {
+                MYCError(@"MYCWallet applyWalletBackup: detected a gap in accounts list: %@; creating an account there.", @(i));
+                acc = [[MYCWalletAccount alloc] initWithKeychain:[rootKeychain keychainForAccount:(uint32_t)i]];
+                NSError* accerror = nil;
+                if (![acc saveInDatabase:db error:&accerror]) {
+                    MYCError(@"MYCWallet applyWalletBackup: cannot save account at index %@: %@", @(i), accerror);
+                    *rollback = YES;
+                    return;
+                }
+            }
+        }
+
+        // Make sure we have current account and it's not archived.
+        MYCWalletAccount* curAcc = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
+        if (!curAcc || curAcc.isArchived) {
+            if (curAcc) {
+                MYCError(@"MYCWallet applyWalletBackup: current account is archived, unarchiving it: %@", @(curAcc.accountIndex));
+            } else {
+                MYCError(@"MYCWallet applyWalletBackup: current account is missing, currentizing account 0.");
+            }
+            curAcc = curAcc ?: [MYCWalletAccount loadAccountAtIndex:0 fromDatabase:db];
+            curAcc.archived = NO;
+            curAcc.current = YES;
+            NSError* accerror = nil;
+            if (![curAcc saveInDatabase:db error:&accerror]) {
+                MYCError(@"MYCWallet applyWalletBackup: cannot save current account at index %@: %@", @(curAcc.accountIndex), accerror);
+                *rollback = YES;
+                return;
+            }
+        }
+
+
+#warning TODO: import transactions and receipts.
+        
+        // 3. Tx labels and receipts.
+
+    }];
+
+    [self setStoredBackupData:[backup dataWithBackupKey:self.backupKey]];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidReloadNotification object:self];
 }
 
 - (NSData*) storedBackupData {
@@ -710,6 +813,9 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         MYCLog(@"MYCWallet: iCloud upload status: %@ %@", @(icloudResult), icloudError ?: @"");
         [self.backend uploadDataBackup:data walletID:walletID completionHandler:^(BOOL mycResult, NSError *mycError) {
             MYCLog(@"MYCWallet: Mycelium upload status: %@ %@", @(mycResult), mycError ?: @"");
+            if (icloudResult || mycResult) {
+                [self setStoredBackupData:data];
+            }
             completionBlock(icloudResult || mycResult, icloudError ?: mycError);
         }];
     }];
@@ -737,6 +843,12 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
                 return;
             }
 
+            if (backup.network != self.network) {
+                MYCError(@"MYCWallet: backup network does not match the current one: %@ != %@", backup.network.paymentProtocolName, self.network.paymentProtocolName);
+                completionBlock(NO, [NSError errorWithDomain:MYCErrorDomain code:-573 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Backed up payment data was saved for the different bitcoin network.", @"Errors")}]);
+                return;
+            }
+
             MYCLog(@"Applyign backup for %@ from %@", walletID, backup.date);
             [self applyWalletBackup:backup];
             completionBlock(YES, nil);
@@ -744,25 +856,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     }];
 }
 
-- (void) applyWalletBackup:(MYCWalletBackup*)backup {
-
-    // 1. Currency converter.
-    MYCCurrencyFormatter* fmt = backup.currencyFormatter;
-    if (fmt) {
-        MYCLog(@"MYCWallet: setting currency formatter to: %@", fmt.dictionary);
-        [self selectPrimaryCurrencyFormatter:fmt];
-    } else {
-        MYCError(@"MYCWallet: cannot restore currency formatter from backup: %@", backup.dictionary[@"currency"]);
-    }
-
-#warning TODO: put data in DB and user defaults from this backup
-
-    // 2. Tx labels and receipts.
-
-    // 3. Account labels.
-
-
-}
 
 - (MYCWalletBackup*) chooseLatestWalletBackupFromDatas:(NSArray*)datas {
 

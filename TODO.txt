@@ -7,14 +7,14 @@ v1.3 - Part 3.
 + restore currency formatter from backup object
 + upload to mycelium backup
 + upload to iCloud
++ put account labels in backup object
++ restore account labels from backup object
 
 - add payment process object to handle BIP70 workflow in Send screen.
 - store various metadata in transactions (BIP70 memo, recipient, arbitrary label etc.).
 - allow editing transaction labels.
 - put tx labels and receipts in backup object
-- put account labels in backup object
 - restore tx labels and receipts from backup object
-- restore account labels from backup object
 
 
 

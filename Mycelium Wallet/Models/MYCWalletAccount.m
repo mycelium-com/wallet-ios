@@ -52,7 +52,7 @@
         //MYCLog(@"NEW ACCOUNT WITH KEYCHAIN: account:%d first address: %@  extpubkey: %@", (int)keychain.index, [[MYCWallet currentWallet] addressForKey:[keychain externalKeyAtIndex:0]].base58String, keychain);
         _accountIndex = keychain.index;
         _extendedPublicKey = keychain.extendedPublicKey;
-        _label = [NSString stringWithFormat:NSLocalizedString(@"Account %@", @""), @(_accountIndex)];
+        _label = [NSString stringWithFormat:NSLocalizedString(@"Account %@", @""), @(_accountIndex + 1)];
         _keychain = keychain.isPrivate ? keychain.publicKeychain : keychain;
         _syncTimestamp = 0.0;
 

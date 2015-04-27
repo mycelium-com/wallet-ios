@@ -181,6 +181,7 @@
         [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
             [self.account saveInDatabase:db error:NULL];
         }];
+        [self updateBackup];
         [self updateSections];
         [self.tableView reloadData];
         [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:self.account];
@@ -223,6 +224,7 @@
         }
     }];
 
+    [self updateBackup];
     [self updateSections];
     [self.tableView reloadData];
 
@@ -288,6 +290,7 @@
         }
     }];
 
+    [self updateBackup];
     [self updateSections];
     [self.tableView reloadData];
 
@@ -310,7 +313,8 @@
             return;
         }
     }];
-    
+
+    [self updateBackup];
     [self updateSections];
     [self.tableView reloadData];
 
@@ -370,7 +374,8 @@
             return;
         }
     }];
-    
+
+    [self updateBackup];
     [self updateSections];
     [self.tableView reloadData];
     
@@ -417,6 +422,19 @@
     }
     return NO;
 }
+
+- (void) updateBackup {
+    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
+        if (!result) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up changes", @"")
+                                        message:error.localizedDescription ?: @""
+                                       delegate:nil
+                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
+                              otherButtonTitles:nil] show];
+        }
+    }];
+}
+
 
 
 

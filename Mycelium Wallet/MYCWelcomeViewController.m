@@ -171,8 +171,7 @@
             return;
         }
 
-        // Restoring wallet:
-#warning TODO: download available backups and choose the latest one.
+        // Restoring wallet metadata from backup:
         [wallet downloadAutomaticBackup:^(BOOL result, NSError *error) {
 
             if (result || !error) {

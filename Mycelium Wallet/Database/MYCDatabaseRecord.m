@@ -561,6 +561,10 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     {
         primaryKeyValues = @[ primaryKeyValues ];
     }
+    if ([primaryKeyValues isKindOfClass:[NSNumber class]])
+    {
+        primaryKeyValues = @[ primaryKeyValues ];
+    }
 
     if (primaryKeyValues.count != primaryKey.count)
     {
@@ -581,6 +585,7 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     {
         MYCDatabaseRecord* mo = [[self alloc] init];
         [mo updateFromDictionary:rs.resultDictionary];
+        mo->_existingRecord = YES;
         [rs close];
         return mo;
     }

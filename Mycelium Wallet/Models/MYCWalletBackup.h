@@ -28,12 +28,23 @@ typedef NS_ENUM(uint8_t, MYCWalletBackupVersion) {
 // Properties
 
 @property(nonatomic) MYCWalletBackupVersion version;
+
+// For which network this data is assigned to.
 @property(nonatomic, nonnull) BTCNetwork* network;
+
 // Timestamp of the backup.
 @property(nonatomic, nonnull) NSDate* date;
 
+// Saved primary currency formatter.
 @property(nonatomic, nullable) MYCCurrencyFormatter* currencyFormatter;
 
 - (nonnull NSDictionary*) dictionary;
+
+// Saves accounts in this backup.
+- (void) setAccounts:(nonnull NSArray*)accounts;
+
+// {"type": "bip44",  "label": "label for bip44 account 0",  "path": "44'/0'/0'", "archived": false, "current": false},
+- (void) enumerateAccounts:(void(^ __nonnull)(NSString* __nullable label, NSInteger accountIndex, BOOL archived, BOOL current))block;
+
 
 @end

@@ -42,6 +42,7 @@
 
 #import "MYCWalletBackup.h"
 #import "MYCWallet.h"
+#import "MYCWalletAccount.h"
 #import "MYCCurrencyFormatter.h"
 #import <CoreBitcoin/CoreBitcoin.h>
 #import <zlib.h>
@@ -130,7 +131,7 @@ typedef NS_ENUM(uint8_t, MYCWalletBackupPayloadFormat) {
 
 - (void) setCurrencyFormatter:(MYCCurrencyFormatter*)fmt {
     _currencyFormatter = fmt;
-    _payloadDictionary[@"currency"] = _payloadDictionary[@"currency"] ?: [NSMutableDictionary dictionary];
+    _payloadDictionary[@"currency"] = [self filterNSNull:_payloadDictionary[@"currency"]] ?: [NSMutableDictionary dictionary];
     if (fmt.isBitcoinFormatter) {
         [_payloadDictionary[@"currency"] removeObjectForKey:@"fiat_code"];
         [_payloadDictionary[@"currency"] removeObjectForKey:@"fiat_source"];
@@ -144,10 +145,76 @@ typedef NS_ENUM(uint8_t, MYCWalletBackupPayloadFormat) {
 
 - (MYCCurrencyFormatter*) currencyFormatter {
     if (!_currencyFormatter) {
-        NSString* code = _payloadDictionary[@"currency"][@"btc_unit"] ?: _payloadDictionary[@"currency"][@"fiat_code"];
+        NSDictionary* currDict = [self filterNSNull:_payloadDictionary[@"currency"]];
+        NSString* code = [self filterNSNull:currDict[@"btc_unit"]] ?: [self filterNSNull:currDict[@"fiat_code"]];
         _currencyFormatter = [[MYCWallet currentWallet] currencyFormatterForCode:code];
     }
     return _currencyFormatter;
+}
+
+// Saves accounts in this backup.
+- (void) setAccounts:(NSArray*)accounts {
+
+    //   "accounts": [
+    //     {"type": "bip44",  "label": "label for bip44 account 0",  "path": "44'/0'/0'", "current": false, "archived": false},
+    //     {"type": "bip44",  "label": "label for bip44 account 1",  "path": "44'/0'/1'"},
+    //     {"type": "bip44",  "label": "label for bip44 account 17", "path": "44'/0'/17'"},
+    //     {"type": "single", "label": "Vanity Address", "wif": "5KQntKuh..."},
+    //     {"type": "single", "label": "Watch-Only",     "address": "1CBtcGiv..."},
+    //     {"type": "trezor", "label": "My Trezor",      "xpub": "xpub6FHa3pjLCk8..."},
+    //   ],
+
+    NSMutableArray* updatedAccounts = [NSMutableArray array];
+
+    for (MYCWalletAccount* acc in accounts) {
+
+        NSString* path = [NSString stringWithFormat:@"44'/%@'/%@'",
+                          self.network.isMainnet ? @"0" : @"1",
+                          @(acc.accountIndex)];
+        NSMutableDictionary* dict = [NSMutableDictionary dictionary];
+        dict[@"type"] = @"bip44";
+        dict[@"label"] = acc.label ?: @"";
+        dict[@"path"] = path;
+        if (acc.isArchived) dict[@"archived"] = @(YES);
+        if (acc.isCurrent) dict[@"current"] = @(YES);
+        [updatedAccounts addObject:dict];
+    }
+
+    // Preserve all other (non-bip44) accounts for compatibility with other wallets.
+    for (NSDictionary* dict in _payloadDictionary[@"accounts"]) {
+        if (![dict[@"type"] isEqual:@"bip44"]) {
+            [updatedAccounts addObject:dict];
+        }
+    }
+
+    _payloadDictionary[@"accounts"] = updatedAccounts;
+}
+
+// {"type": "bip44",  "label": "label for bip44 account 0",  "path": "44'/0'/0'", "archived": false, "current": false},
+- (void) enumerateAccounts:(void(^ __nonnull)(NSString* __nullable label, NSInteger accountIndex, BOOL archived, BOOL current))block {
+
+    for (NSDictionary* dict in _payloadDictionary[@"accounts"]) {
+        if ([dict[@"type"] isEqual:@"bip44"]) {
+            NSString* accIndexString = [[[[self filterNSNull:dict[@"path"]] componentsSeparatedByString:@"/"] lastObject] stringByReplacingOccurrencesOfString:@"'" withString:@""];
+            if (accIndexString) {
+                NSInteger i = [accIndexString integerValue];
+                block(
+                      dict[@"label"],
+                      i,
+                      [[self filterNSNull:dict[@"archived"]] boolValue],
+                      [[self filterNSNull:dict[@"current"]] boolValue]
+                );
+            } else {
+                MYCError(@"MYCWalletBackup: cannot decode account index from path: %@", dict);
+            }
+        }
+    }
+}
+
+- (id) filterNSNull:(id)objOrNil {
+    if (!objOrNil) return nil;
+    if (objOrNil == [NSNull null]) return nil;
+    return objOrNil;
 }
 
 - (nonnull NSDictionary*) dictionary {
@@ -165,7 +232,6 @@ typedef NS_ENUM(uint8_t, MYCWalletBackupPayloadFormat) {
 
     NSMutableDictionary* dict = [self payloadDictionary];
 
-#warning TODO: Fill in missing keys
     _payloadDictionary[@"version"] = @(self.version);
     _payloadDictionary[@"network"] = self.network.paymentProtocolName;
 
