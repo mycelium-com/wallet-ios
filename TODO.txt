@@ -13,11 +13,11 @@ v1.3 - Part 3.
 + store various metadata in transactions (BIP70 memo, recipient, arbitrary label etc.).
 + put tx labels and receipts in backup object
 + restore tx labels and receipts from backup object
++ display memo / sender / recipient in tx details view.
 
 - add payment process object to handle BIP70 workflow in Send screen.
 - store and format fiat amounts for transactions.
 - allow editing transaction memos, sender/recipient.
-
 
 
 

@@ -13,6 +13,7 @@
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "MYCTransaction.h"
+#import "MYCTransactionDetails.h"
 
 #import "PTableViewSource.h"
 
@@ -78,6 +79,7 @@
                              @"txid": @(86),
                              @"keyvalue": @(44),
                              @"keyvalue2": @(67),
+                             @"memo": @(104),
                              };
 
     // General info about transaction
@@ -92,6 +94,61 @@
                               @"pathtestnet": [@"/transactions/" stringByAppendingString:self.transaction.transactionID],
                               };
         }];
+
+        [section item:^(PTableViewSourceItem *item) {
+            item.cellIdentifier = @"keyvalue";
+            item.key = [NSLocalizedString(@"Date", @"") uppercaseString];
+
+            NSDateFormatter* df = [[NSDateFormatter alloc] init];
+            df.dateStyle = NSDateFormatterLongStyle;
+            df.timeStyle = NSDateFormatterLongStyle;
+            item.value = self.transaction.date ? [df stringFromDate:self.transaction.date] : @"—";
+        }];
+
+        // If received money, show Sender.
+        if (self.transaction.amountTransferred > 0) {
+
+            [section item:^(PTableViewSourceItem *item) {
+                item.cellIdentifier = @"keyvalue";
+                item.key = [NSLocalizedString(@"Sender", @"") uppercaseString];
+                item.value = self.transaction.transactionDetails.sender ?: @"";
+            }];
+
+        // If spent money, show Recipient.
+        } else {
+            [section item:^(PTableViewSourceItem *item) {
+                item.cellIdentifier = @"keyvalue";
+                item.key = [NSLocalizedString(@"Recipient", @"") uppercaseString];
+                item.value = self.transaction.transactionDetails.recipient ?: @"";
+            }];
+        }
+
+        [section item:^(PTableViewSourceItem *item) {
+            item.cellIdentifier = @"memo";
+            item.key = [NSLocalizedString(@"Memo", @"") uppercaseString];
+            item.value = self.transaction.transactionDetails.memo ?: @"";
+        }];
+
+        NSString* paymentReceiptMemo = nil;
+        if (self.transaction.transactionDetails.paymentACKData.length > 0) {
+            BTCPaymentACK* ack = [[BTCPaymentACK alloc] initWithData:self.transaction.transactionDetails.paymentACKData];
+            if (ack && ack.memo.length > 0) {
+                paymentReceiptMemo = ack.memo;
+            }
+        }
+        if (paymentReceiptMemo) {
+            [section item:^(PTableViewSourceItem *item) {
+                item.cellIdentifier = @"memo";
+                item.key = [NSLocalizedString(@"Payment Receipt", @"") uppercaseString];
+                item.value = paymentReceiptMemo;
+            }];
+        }
+    }];
+
+
+    [self.tableViewSource section:^(PTableViewSourceSection *section) {
+
+        section.headerTitle = NSLocalizedString(@"Status", @"");
 
         [section item:^(PTableViewSourceItem *item) {
             item.cellIdentifier = @"keyvalue";
@@ -115,16 +172,6 @@
             } else {
                 item.value = NSLocalizedString(@"Not confirmed yet", @"");
             }
-        }];
-
-        [section item:^(PTableViewSourceItem *item) {
-            item.cellIdentifier = @"keyvalue";
-            item.key = [NSLocalizedString(@"Date", @"") uppercaseString];
-
-            NSDateFormatter* df = [[NSDateFormatter alloc] init];
-            df.dateStyle = NSDateFormatterLongStyle;
-            df.timeStyle = NSDateFormatterLongStyle;
-            item.value = self.transaction.date ? [df stringFromDate:self.transaction.date] : @"—";
         }];
 
         [section item:^(PTableViewSourceItem *item) {

@@ -7,6 +7,7 @@
 //
 
 #import "MYCTransaction.h"
+#import "MYCTransactionDetails.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "MYCParentOutput.h"
@@ -100,6 +101,10 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 {
     BTCTransaction* tx = self.transaction;
     MYCWalletAccount* account = [self getAccount:db];
+
+    if (!self.transactionDetails) {
+        self.transactionDetails = [MYCTransactionDetails loadWithPrimaryKey:@[self.transactionHash] fromDatabase:db];
+    }
 
     self.amountTransferred = 0;
     self.inputsAmount = 0;

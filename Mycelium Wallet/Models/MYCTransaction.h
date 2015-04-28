@@ -11,6 +11,7 @@
 #import "MYCDatabaseRecord.h"
 
 @class MYCWalletAccount;
+@class MYCTransactionDetails;
 @interface MYCTransaction : MYCDatabaseRecord
 
 @property(nonatomic) NSData* transactionHash;
@@ -33,6 +34,7 @@
 @property(nonatomic) BTCAmount fee; // Mining fee spent by this transaction
 @property(nonatomic) NSArray* transactionInputs; // BTCTransactionInput instances with userInfo @"value" and @"address"
 @property(nonatomic) NSArray* transactionOutputs; // BTCTransactionOutput instances directly from `-transaction`.
+@property(nonatomic) MYCTransactionDetails* transactionDetails;
 
 // Loads basic details about transaction from database (label, amountTransferred).
 - (BOOL) loadDetailsFromDatabase:(FMDatabase*)db;
