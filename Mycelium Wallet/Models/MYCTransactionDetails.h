@@ -24,4 +24,6 @@
 @property(nonatomic) NSString* fiatAmount;
 @property(nonatomic) NSString* fiatCode;
 
+@property(nonatomic, readonly) NSString* receiptMemo;
+
 @end

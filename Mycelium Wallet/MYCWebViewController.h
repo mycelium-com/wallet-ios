@@ -12,6 +12,7 @@
 
 @property(nonatomic) NSURL* URL;
 @property(nonatomic) NSString* text;
+@property(nonatomic) NSString* plainText;
 @property(nonatomic) NSString* html;
 @property(nonatomic) BOOL allowShare;
 

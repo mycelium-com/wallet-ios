@@ -8,17 +8,19 @@
 
 #import "MYCTransactionDetailsViewController.h"
 #import "MYCTransactionsViewController.h"
-#import "MYCCurrencyFormatter.h"
+#import "MYCWebViewController.h"
 
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "MYCTransaction.h"
 #import "MYCTransactionDetails.h"
+#import "MYCCurrencyFormatter.h"
 
 #import "PTableViewSource.h"
 
 @interface MYCTransactionDetailsViewController ()
 @property(nonatomic) PTableViewSource* tableViewSource;
+@property(nonatomic, weak) IBOutlet UITableView* tableView;
 @property(nonatomic) NSDictionary* cellHeightsById;
 @end
 
@@ -112,6 +114,9 @@
                 item.cellIdentifier = @"keyvalue";
                 item.key = [NSLocalizedString(@"Sender", @"") uppercaseString];
                 item.value = self.transaction.transactionDetails.sender ?: @"";
+                item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                    [weakself editSender];
+                };
             }];
 
         // If spent money, show Recipient.
@@ -120,6 +125,9 @@
                 item.cellIdentifier = @"keyvalue";
                 item.key = [NSLocalizedString(@"Recipient", @"") uppercaseString];
                 item.value = self.transaction.transactionDetails.recipient ?: @"";
+                item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                    [weakself editRecipient];
+                };
             }];
         }
 
@@ -127,20 +135,20 @@
             item.cellIdentifier = @"memo";
             item.key = [NSLocalizedString(@"Memo", @"") uppercaseString];
             item.value = self.transaction.transactionDetails.memo ?: @"";
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                [weakself editMemo];
+            };
         }];
 
-        NSString* paymentReceiptMemo = nil;
-        if (self.transaction.transactionDetails.paymentACKData.length > 0) {
-            BTCPaymentACK* ack = [[BTCPaymentACK alloc] initWithData:self.transaction.transactionDetails.paymentACKData];
-            if (ack && ack.memo.length > 0) {
-                paymentReceiptMemo = ack.memo;
-            }
-        }
+        NSString* paymentReceiptMemo = self.transaction.transactionDetails.receiptMemo;
         if (paymentReceiptMemo) {
             [section item:^(PTableViewSourceItem *item) {
                 item.cellIdentifier = @"memo";
-                item.key = [NSLocalizedString(@"Payment Receipt", @"") uppercaseString];
+                item.key = [NSLocalizedString(@"Receipt", @"") uppercaseString];
                 item.value = paymentReceiptMemo;
+                item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                    [weakself viewReceipt];
+                };
             }];
         }
     }];
@@ -235,7 +243,103 @@
 }
 
 
+
+
+
+
+
+
+#pragma mark - Actions
+
+
+
+
+
+- (void) editSender {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Sender", @"")
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.text = self.transaction.transactionDetails.sender ?: @"";
+    }];
+
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel",@"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {}]];
+
+    __typeof(alert) __weak weakalert = alert;
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Save", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        self.transaction.transactionDetails.sender = [weakalert.textFields.firstObject text];
+        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+            NSError* dberror = nil;
+            if (![self.transaction.transactionDetails saveInDatabase:db error:&dberror]) {
+                MYCError(@"Failed to update tx details in DB: %@", dberror);
+            }
+        }];
+        [self updateTableViewSource];
+        [self.tableView reloadData];
+        [self updateBackup];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void) editRecipient {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Recipient", @"")
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.text = self.transaction.transactionDetails.recipient ?: @"";
+    }];
+
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel",@"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {}]];
+
+    __typeof(alert) __weak weakalert = alert;
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Save", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        self.transaction.transactionDetails.recipient = [weakalert.textFields.firstObject text];
+        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+            NSError* dberror = nil;
+            if (![self.transaction.transactionDetails saveInDatabase:db error:&dberror]) {
+                MYCError(@"Failed to update tx details in DB: %@", dberror);
+            }
+        }];
+        [self updateTableViewSource];
+        [self.tableView reloadData];
+        [self updateBackup];
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void) editMemo {
+#warning TODO: show editing view controller with space for full text.
+}
+
+- (void) viewReceipt {
+    MYCWebViewController* vc = [[MYCWebViewController alloc] initWithNibName:nil bundle:nil];
+    vc.title = NSLocalizedString(@"Payment Receipt", @"");
+    vc.plainText = self.transaction.transactionDetails.receiptMemo ?: @"";
+    vc.allowShare = YES;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void) updateBackup {
+    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
+        if (!result) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up changes", @"")
+                                        message:error.localizedDescription ?: @""
+                                       delegate:nil
+                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
+                              otherButtonTitles:nil] show];
+        }
+    }];
+}
+
+
+
+
+
 #pragma mark - UITableView
+
+
 
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView

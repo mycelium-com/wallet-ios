@@ -144,6 +144,10 @@
                     </tableView>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="667"/>
+                    <connections>
+                        <outlet property="tableView" destination="I1d-f9-cKc" id="aUC-hf-tJE"/>
+                        <outlet property="view" destination="I1d-f9-cKc" id="QYc-oM-dIX"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MFn-DZ-t8w" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

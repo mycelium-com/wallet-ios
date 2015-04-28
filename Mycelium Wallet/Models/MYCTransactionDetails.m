@@ -7,6 +7,7 @@
 //
 
 #import "MYCTransactionDetails.h"
+#import <CoreBitcoin/CoreBitcoin.h>
 
 @implementation MYCTransactionDetails
 
@@ -38,6 +39,20 @@
     if (self.paymentACKData)      dict[@"payment_ack"]     = BTCHexFromData(self.paymentACKData);
     if (self.fiatAmount)          dict[@"fiat_amount"]     = self.fiatAmount;
     if (self.fiatCode)            dict[@"fiat_code"]       = self.fiatCode;
+}
+
+- (NSString*) receiptMemo {
+    if (self.paymentACKData.length > 0) {
+        BTCPaymentACK* ack = [[BTCPaymentACK alloc] initWithData:self.paymentACKData];
+        if (ack && ack.memo.length > 0) {
+            return ack.memo;
+        }
+    }
+#if DEBUG && 0
+#warning FIXME: using test receipt instead of nil
+    return @"Payment of 1 BTC for eleven tribbles accepted for processing. (This is test receipt.) Some long text always goes there to test limits of the text fields and cells.";
+#endif
+    return nil;
 }
 
 - (NSString*) transactionID {

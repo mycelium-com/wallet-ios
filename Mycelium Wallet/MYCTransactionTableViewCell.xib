@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -15,36 +15,35 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="800" text="+1 234 567,89" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FOT-vB-4xF">
-                        <rect key="frame" x="190.5" y="10" width="109.5" height="20.5"/>
-                        <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
+                        <rect key="frame" x="196" y="10" width="104" height="19"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                         <color key="textColor" red="0.11398790102517316" green="0.61852820444915257" blue="0.16996326382269497" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="740" text="Oct 11, 2014" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pzG-aA-dZ8">
-                        <rect key="frame" x="20" y="10" width="98.5" height="20"/>
-                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                        <rect key="frame" x="20" y="10" width="93" height="19"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                         <color key="textColor" red="0.92005670070648193" green="0.20382490754127502" blue="0.025508658960461617" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="240" verticalCompressionResistancePriority="740" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wN7-9T-Okm">
-                        <rect key="frame" x="20" y="36" width="280.5" height="33.5"/>
+                        <rect key="frame" x="20" y="36" width="281" height="34"/>
                         <string key="text">1CBtc456gSGiK348gf2ks4ldqf8ds0gds
 2 confirmations</string>
-                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
-                        <color key="textColor" red="0.42920547723770142" green="0.42917695641517639" blue="0.42919367551803589" alpha="1" colorSpace="calibratedRGB"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="FOT-vB-4xF" firstAttribute="trailing" secondItem="wN7-9T-Okm" secondAttribute="trailing" id="6TL-OX-Uzr"/>
+                    <constraint firstItem="FOT-vB-4xF" firstAttribute="trailing" secondItem="wN7-9T-Okm" secondAttribute="trailing" constant="-1" id="6TL-OX-Uzr"/>
                     <constraint firstItem="FOT-vB-4xF" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="2" id="RI4-Mc-Kyi"/>
                     <constraint firstItem="pzG-aA-dZ8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="SzY-da-PxM"/>
                     <constraint firstItem="pzG-aA-dZ8" firstAttribute="leading" secondItem="wN7-9T-Okm" secondAttribute="leading" id="XXg-NW-zDQ"/>
                     <constraint firstItem="pzG-aA-dZ8" firstAttribute="baseline" secondItem="FOT-vB-4xF" secondAttribute="baseline" id="bvn-2a-3u3"/>
-                    <constraint firstItem="wN7-9T-Okm" firstAttribute="top" secondItem="pzG-aA-dZ8" secondAttribute="bottom" constant="6" id="cqs-Wh-ndE"/>
+                    <constraint firstItem="wN7-9T-Okm" firstAttribute="top" secondItem="pzG-aA-dZ8" secondAttribute="bottom" constant="7" id="cqs-Wh-ndE"/>
                     <constraint firstAttribute="trailing" secondItem="FOT-vB-4xF" secondAttribute="trailing" constant="20" id="ky0-LI-778"/>
                     <constraint firstItem="FOT-vB-4xF" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="pzG-aA-dZ8" secondAttribute="trailing" constant="10" id="lcO-17-cZN"/>
-                    <constraint firstAttribute="bottom" secondItem="wN7-9T-Okm" secondAttribute="bottom" constant="8" id="moe-cH-Rad"/>
+                    <constraint firstAttribute="bottom" secondItem="wN7-9T-Okm" secondAttribute="bottom" constant="7" id="moe-cH-Rad"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

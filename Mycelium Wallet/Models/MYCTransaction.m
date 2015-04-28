@@ -104,6 +104,10 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
 
     if (!self.transactionDetails) {
         self.transactionDetails = [MYCTransactionDetails loadWithPrimaryKey:@[self.transactionHash] fromDatabase:db];
+        if (!self.transactionDetails) {
+            self.transactionDetails = [[MYCTransactionDetails alloc] init];
+            self.transactionDetails.transactionHash = self.transactionHash;
+        }
     }
 
     self.amountTransferred = 0;
@@ -167,21 +171,24 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
     // 2. We are receiving: one output is ours, others could be anything.
 
     BTCScript* script = nil;
+    NSString* counterparty = nil;
     if (self.amountTransferred  > 0)
     {
         // Getting money, prefer our address.
         script = ourDestinationScript ?: changeScript ?: destinationScript;
+        counterparty = self.transactionDetails.sender;
     }
     else
     {
+        // Sending money, use destination address.
         script = destinationScript ?: ourDestinationScript ?: changeScript;
+        counterparty = self.transactionDetails.recipient;
     }
 
     // Convert to Testnet/Mainnet as needed.
     BTCAddress* address = [[MYCWallet currentWallet] addressForAddress:script.standardAddress];
 
-    self.label = address.string;
-    self.label = self.label ?: @"—";
+    self.label = (counterparty.length > 0 ? counterparty : nil) ?: address.string ?: @"—";
     return YES;
 }
 

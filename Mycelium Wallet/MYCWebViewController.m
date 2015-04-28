@@ -37,12 +37,18 @@
         [self.webView loadHTMLString:self.html baseURL:self.URL];
     }
     else if (self.text) {
-        // maybe need to wrap in <html><body>...
         [self.webView loadHTMLString:[NSString stringWithFormat:@""
                                       "<html><body><pre style='font-family:Menlo;font-size:9px;'>" // white-space: pre-wrap;
                                       "%@"
                                       "</pre></body></html>"
                                       , self.text] baseURL:self.URL];
+    }
+    else if (self.plainText) {
+        [self.webView loadHTMLString:[NSString stringWithFormat:@""
+                                      "<html><body><code style='font-family:Menlo;font-size:13px;'>"
+                                      "%@"
+                                      "</code></body></html>"
+                                      , self.plainText] baseURL:self.URL];
     }
     else if (self.URL)
     {

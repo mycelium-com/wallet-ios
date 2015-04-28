@@ -78,17 +78,17 @@
     {
         NSInteger confirmations = 1 + wallet.blockchainHeight - self.transaction.blockHeight;
 
-        if (confirmations == 1)
-        {
+        if (confirmations == 1) {
             self.statusLabel.text = [NSString stringWithFormat:@"%@\n%@",
                                      self.statusLabel.text,
                                      NSLocalizedString(@"1 confirmation", @"")];
         }
-        else if (confirmations <= 999)
-        {
+        else if (confirmations < 100) {
             self.statusLabel.text = [NSString stringWithFormat:@"%@\n%@",
                                      self.statusLabel.text,
                                      [NSString stringWithFormat:NSLocalizedString(@"%@ confirmations", @""), @(confirmations)]];
+        } else {
+            // Do not show confirmation status for well-confirmed transactions.
         }
     }
 
