@@ -44,6 +44,7 @@
 		2076471A1A0D080A000F00F2 /* MYCWebViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 207647181A0D080A000F00F2 /* MYCWebViewController.xib */; };
 		2076471C1A0D0A40000F00F2 /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 2076471B1A0D0A39000F00F2 /* Credits.html */; };
 		2076471E1A0D0A93000F00F2 /* Legal.html in Resources */ = {isa = PBXBuildFile; fileRef = 2076471D1A0D0A93000F00F2 /* Legal.html */; };
+		208BFFFA1AEFB03C00774AF9 /* MYCTransactionDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 208BFFF91AEFB03C00774AF9 /* MYCTransactionDetails.m */; };
 		208FFB9519D9802000D4C159 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9419D9802000D4C159 /* main.m */; };
 		208FFB9819D9802000D4C159 /* MYCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFB9719D9802000D4C159 /* MYCAppDelegate.m */; };
 		208FFBA019D9802000D4C159 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 208FFB9F19D9802000D4C159 /* Images.xcassets */; };
@@ -156,6 +157,8 @@
 		207647181A0D080A000F00F2 /* MYCWebViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCWebViewController.xib; sourceTree = "<group>"; };
 		2076471B1A0D0A39000F00F2 /* Credits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Credits.html; sourceTree = SOURCE_ROOT; };
 		2076471D1A0D0A93000F00F2 /* Legal.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Legal.html; sourceTree = SOURCE_ROOT; };
+		208BFFF81AEFB03C00774AF9 /* MYCTransactionDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCTransactionDetails.h; path = Models/MYCTransactionDetails.h; sourceTree = "<group>"; };
+		208BFFF91AEFB03C00774AF9 /* MYCTransactionDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCTransactionDetails.m; path = Models/MYCTransactionDetails.m; sourceTree = "<group>"; };
 		208FFB8F19D9802000D4C159 /* Mycelium Wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mycelium Wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		208FFB9319D9802000D4C159 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		208FFB9419D9802000D4C159 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -485,6 +488,8 @@
 				20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */,
 				20BDE1C51AE6878A00EBC09D /* MYCWalletBackup.h */,
 				20BDE1C61AE6878A00EBC09D /* MYCWalletBackup.m */,
+				311D63241AADD8AF00798450 /* MYCCurrencyFormatter.h */,
+				311D63251AADD8AF00798450 /* MYCCurrencyFormatter.m */,
 				203AA49319DC364200572BD9 /* MYCWalletAccount.h */,
 				203AA49419DC364200572BD9 /* MYCWalletAccount.m */,
 				20203AD419F65E290085C01F /* MYCBaseTxOutput.h */,
@@ -495,12 +500,12 @@
 				20A9C07619F5520C00AF61DE /* MYCParentOutput.m */,
 				20A9C06F19F5349500AF61DE /* MYCTransaction.h */,
 				20A9C07019F5349500AF61DE /* MYCTransaction.m */,
+				208BFFF81AEFB03C00774AF9 /* MYCTransactionDetails.h */,
+				208BFFF91AEFB03C00774AF9 /* MYCTransactionDetails.m */,
 				2095C44619FE779900635C85 /* MYCOutgoingTransaction.h */,
 				2095C44719FE779900635C85 /* MYCOutgoingTransaction.m */,
 				20203ADA19F665F80085C01F /* MYCDatabaseMigrations.h */,
 				20203ADB19F665F80085C01F /* MYCDatabaseMigrations.m */,
-				311D63241AADD8AF00798450 /* MYCCurrencyFormatter.h */,
-				311D63251AADD8AF00798450 /* MYCCurrencyFormatter.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -796,6 +801,7 @@
 				2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */,
 				20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */,
 				204FFD6A1AE8E68E00720447 /* MYCCloudKit.m in Sources */,
+				208BFFFA1AEFB03C00774AF9 /* MYCTransactionDetails.m in Sources */,
 				203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */,
 				20A9C07419F534AB00AF61DE /* MYCUnspentOutput.m in Sources */,
 				203AA4A819DC4A2600572BD9 /* PColor.m in Sources */,

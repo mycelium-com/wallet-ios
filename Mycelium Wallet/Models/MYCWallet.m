@@ -16,6 +16,7 @@
 #import "MYCUpdateAccountOperation.h"
 #import "MYCOutgoingTransaction.h"
 #import "MYCTransaction.h"
+#import "MYCTransactionDetails.h"
 #import "MYCParentOutput.h"
 #import "MYCUnspentOutput.h"
 #import "MYCCurrencyFormatter.h"
@@ -665,9 +666,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 
     [self inDatabase:^(FMDatabase *db) {
         [bak setAccounts:[MYCWalletAccount loadAccountsFromDatabase:db]];
-
-        #warning TODO: fill in transaction receipts and labels
-
+        [bak setTransactionDetails:[MYCTransactionDetails loadAllFromDatabase:db]];
     }];
 
     NSData* result = [bak dataWithBackupKey:self.backupKey]; // this sets required values if necessary.
@@ -710,14 +709,14 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
             acc.archived = archived;
             acc.current = current;
 
-            NSError* accerror = nil;
+            NSError* dberror = nil;
             MYCLog(@"MYCWallet applyWalletBackup: restoring from backup account %@: %@ archived:%@ current:%@",
                    @(acc.accountIndex),
                    acc.label,
                    @(acc.isArchived),
                    @(acc.isCurrent));
-            if (![acc saveInDatabase:db error:&accerror]) {
-                MYCError(@"MYCWallet applyWalletBackup: cannot save account at index %@: %@", @(accIndex), accerror);
+            if (![acc saveInDatabase:db error:&dberror]) {
+                MYCError(@"MYCWallet applyWalletBackup: cannot save account at index %@: %@", @(accIndex), dberror);
                 *rollback = YES;
                 return;
             }
@@ -733,9 +732,9 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
             if (!acc) {
                 MYCError(@"MYCWallet applyWalletBackup: detected a gap in accounts list: %@; creating an account there.", @(i));
                 acc = [[MYCWalletAccount alloc] initWithKeychain:[rootKeychain keychainForAccount:(uint32_t)i]];
-                NSError* accerror = nil;
-                if (![acc saveInDatabase:db error:&accerror]) {
-                    MYCError(@"MYCWallet applyWalletBackup: cannot save account at index %@: %@", @(i), accerror);
+                NSError* dberror = nil;
+                if (![acc saveInDatabase:db error:&dberror]) {
+                    MYCError(@"MYCWallet applyWalletBackup: cannot save account at index %@: %@", @(i), dberror);
                     *rollback = YES;
                     return;
                 }
@@ -753,19 +752,26 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
             curAcc = curAcc ?: [MYCWalletAccount loadAccountAtIndex:0 fromDatabase:db];
             curAcc.archived = NO;
             curAcc.current = YES;
-            NSError* accerror = nil;
-            if (![curAcc saveInDatabase:db error:&accerror]) {
-                MYCError(@"MYCWallet applyWalletBackup: cannot save current account at index %@: %@", @(curAcc.accountIndex), accerror);
+            NSError* dberror = nil;
+            if (![curAcc saveInDatabase:db error:&dberror]) {
+                MYCError(@"MYCWallet applyWalletBackup: cannot save current account at index %@: %@", @(curAcc.accountIndex), dberror);
                 *rollback = YES;
                 return;
             }
         }
 
-
-#warning TODO: import transactions and receipts.
-        
         // 3. Tx labels and receipts.
-
+        NSArray* txdetails = backup.transactionDetails;
+        for (MYCTransactionDetails* txdet in txdetails) {
+            NSError* dberror = nil;
+            if (![txdet saveInDatabase:db error:&dberror]) {
+                MYCError(@"MYCWallet applyWalletBackup: cannot save transaction details %@: %@", txdet.transactionID, dberror);
+                *rollback = YES;
+                return;
+            } else {
+                MYCError(@"MYCWallet applyWalletBackup: saved transaction details for tx %@", txdet.transactionID);
+            }
+        }
     }];
 
     [self setStoredBackupData:[backup dataWithBackupKey:self.backupKey]];
@@ -799,6 +805,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     NSString* walletID = self.backupWalletID;
     NSData* data = [self backupData];
 
+    // Verify that we can decrypt the backup we just created.
     MYCWalletBackup* bak = [[MYCWalletBackup alloc] initWithData:data backupKey:self.backupKey];
     NSDictionary* dict = bak.dictionary;
 
@@ -811,7 +818,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     MYCLog(@"MYCWallet: Uploading encrypted backup to iCloud Drive and Mycelium: %@ bytes (%@)", @(data.length), walletID);
     [[[MYCCloudKit alloc] init] uploadDataBackup:data walletID:walletID completionHandler:^(BOOL icloudResult, NSError *icloudError) {
         MYCLog(@"MYCWallet: iCloud upload status: %@ %@", @(icloudResult), icloudError ?: @"");
-        [self.backend uploadDataBackup:data walletID:walletID completionHandler:^(BOOL mycResult, NSError *mycError) {
+        [self.backend uploadDataBackup:data apub:self.backupAuthenticationKey.publicKey completionHandler:^(BOOL mycResult, NSError *mycError) {
             MYCLog(@"MYCWallet: Mycelium upload status: %@ %@", @(mycResult), mycError ?: @"");
             if (icloudResult || mycResult) {
                 [self setStoredBackupData:data];

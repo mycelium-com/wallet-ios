@@ -616,18 +616,22 @@
  => {"errorCode":0,"r":{"backup":"BackupData1"}}
  */
 
-- (void) uploadDataBackup:(NSData*)encryptedData walletID:(NSString*)walletID completionHandler:(void(^)(BOOL result, NSError* error))completion {
+- (void) uploadDataBackup:(NSData*)encryptedData apub:(NSData*)apubkey completionHandler:(void(^)(BOOL result, NSError* error))completion {
 
 #warning FIXME: only testnet server supports backups for now.
     if (![self.btcNetwork isTestnet]) {
-        [[MYCBackend testnetBackend] uploadDataBackup:encryptedData walletID:walletID completionHandler:completion];
+        [[MYCBackend testnetBackend] uploadDataBackup:encryptedData apub:apubkey completionHandler:completion];
         return;
     }
+
+    NSString* walletID = [BTCEncryptedBackup walletIDWithAuthenticationKey:apubkey];
 
     NSMutableURLRequest* req = [self backupRequestWithWalletID:walletID];
     self.currentEndpointURL = req.URL;
     [self makeJSONRequest:req
-                  payload:@{@"backup": [encryptedData base64EncodedStringWithOptions:0] }
+                  payload:@{
+                            @"backup": [encryptedData base64EncodedStringWithOptions:0],
+                            @"apub": BTCHexFromData(apubkey)}
                  template:@{
                             @"success":@YES
                             }

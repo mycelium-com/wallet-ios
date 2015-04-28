@@ -9,12 +9,15 @@ v1.3 - Part 3.
 + upload to iCloud
 + put account labels in backup object
 + restore account labels from backup object
++ add apub to request.
++ store various metadata in transactions (BIP70 memo, recipient, arbitrary label etc.).
++ put tx labels and receipts in backup object
++ restore tx labels and receipts from backup object
 
 - add payment process object to handle BIP70 workflow in Send screen.
-- store various metadata in transactions (BIP70 memo, recipient, arbitrary label etc.).
-- allow editing transaction labels.
-- put tx labels and receipts in backup object
-- restore tx labels and receipts from backup object
+- store and format fiat amounts for transactions.
+- allow editing transaction memos, sender/recipient.
+
 
 
 

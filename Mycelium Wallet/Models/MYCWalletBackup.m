@@ -43,6 +43,7 @@
 #import "MYCWalletBackup.h"
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
+#import "MYCTransactionDetails.h"
 #import "MYCCurrencyFormatter.h"
 #import <CoreBitcoin/CoreBitcoin.h>
 #import <zlib.h>
@@ -152,6 +153,27 @@ typedef NS_ENUM(uint8_t, MYCWalletBackupPayloadFormat) {
     return _currencyFormatter;
 }
 
+// {"type": "bip44",  "label": "label for bip44 account 0",  "path": "44'/0'/0'", "archived": false, "current": false},
+- (void) enumerateAccounts:(void(^ __nonnull)(NSString* __nullable label, NSInteger accountIndex, BOOL archived, BOOL current))block {
+
+    for (NSDictionary* dict in _payloadDictionary[@"accounts"]) {
+        if ([dict[@"type"] isEqual:@"bip44"]) {
+            NSString* accIndexString = [[[[self filterNSNull:dict[@"path"]] componentsSeparatedByString:@"/"] lastObject] stringByReplacingOccurrencesOfString:@"'" withString:@""];
+            if (accIndexString) {
+                NSInteger i = [accIndexString integerValue];
+                block(
+                      dict[@"label"],
+                      i,
+                      [[self filterNSNull:dict[@"archived"]] boolValue],
+                      [[self filterNSNull:dict[@"current"]] boolValue]
+                      );
+            } else {
+                MYCError(@"MYCWalletBackup: cannot decode account index from path: %@", dict);
+            }
+        }
+    }
+}
+
 // Saves accounts in this backup.
 - (void) setAccounts:(NSArray*)accounts {
 
@@ -190,24 +212,50 @@ typedef NS_ENUM(uint8_t, MYCWalletBackupPayloadFormat) {
     _payloadDictionary[@"accounts"] = updatedAccounts;
 }
 
-// {"type": "bip44",  "label": "label for bip44 account 0",  "path": "44'/0'/0'", "archived": false, "current": false},
-- (void) enumerateAccounts:(void(^ __nonnull)(NSString* __nullable label, NSInteger accountIndex, BOOL archived, BOOL current))block {
+- (NSArray*) transactionDetails {
+    // "transactions": {
+    //     /* txid is reversed transaction hash in hex, see BTCTransactionIDFromHash */
+    //     /* transactions without any data do not need to be included at all*/
+    //     "txid1":  {
+    //         "memo": "Hotel in Lisbon",
+    //         "recipient": "Expedia, Inc.",
+    //         "payment_request": "1200849c11778f127d66...",
+    //         "payment_ack": "478e8a0e260976a30b26...",
+    //         "fiat_amount": "-265.10",
+    //         "fiat_code": "EUR",
+    //         /* unknown keys must be preserved */
+    //     },
+    // },
 
-    for (NSDictionary* dict in _payloadDictionary[@"accounts"]) {
-        if ([dict[@"type"] isEqual:@"bip44"]) {
-            NSString* accIndexString = [[[[self filterNSNull:dict[@"path"]] componentsSeparatedByString:@"/"] lastObject] stringByReplacingOccurrencesOfString:@"'" withString:@""];
-            if (accIndexString) {
-                NSInteger i = [accIndexString integerValue];
-                block(
-                      dict[@"label"],
-                      i,
-                      [[self filterNSNull:dict[@"archived"]] boolValue],
-                      [[self filterNSNull:dict[@"current"]] boolValue]
-                );
-            } else {
-                MYCError(@"MYCWalletBackup: cannot decode account index from path: %@", dict);
-            }
+    NSDictionary* txdicts = _payloadDictionary[@"transactions"];
+    if (!txdicts) {
+        return @[];
+    }
+    if (![txdicts isKindOfClass:[NSDictionary class]]) {
+        MYCError(@"MYCWalletBackup: payload['transactions'] is not a dictionary: %@", txdicts);
+        return @[];
+    }
+    NSMutableArray* txdetails = [NSMutableArray array];
+    for (NSString* txid in txdicts) {
+        NSDictionary* dict = txdicts[txid];
+        if ([dict isKindOfClass:[NSDictionary class]]) {
+            MYCTransactionDetails* txdet = [[MYCTransactionDetails alloc] initWithTxID:txid backupDictionary:dict];
+            [txdetails addObject:txdet];
+        } else {
+            MYCError(@"MYCWalletBackup: payload['transactions']['%@'] is not a dictionary: %@", txid, dict);
         }
+    }
+    return txdetails;
+}
+
+- (void) setTransactionDetails:(NSArray * __nonnull)transactionDetails {
+
+    _payloadDictionary[@"transactions"] = _payloadDictionary[@"transactions"] ?: [NSMutableDictionary dictionary];
+    NSMutableDictionary* txdetails = _payloadDictionary[@"transactions"];
+
+    for (MYCTransactionDetails* txdet in transactionDetails) {
+        txdetails[txdet.transactionID] = txdetails[txdet.transactionID] ?: [NSMutableDictionary dictionary];
+        [txdet fillBackupDictionary:txdetails[txdet.transactionID]];
     }
 }
 

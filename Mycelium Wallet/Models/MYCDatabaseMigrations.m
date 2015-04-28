@@ -91,6 +91,20 @@
                 ")"];
     }];
 
+    [mycdatabase registerMigration:@"Create MYCTransactionDetails" withBlock:^BOOL(FMDatabase *db, NSError *__autoreleasing *outError) {
+        return [db executeUpdate:
+                @"CREATE TABLE MYCTransactionDetails("
+                "transactionHash    BLOB NOT NULL,"
+                "memo               TEXT," // arbitrary note on transaction
+                "recipient          TEXT," // for sent payments to Payment Requests contains signerName or potentially an address book-based identity
+                "sender             TEXT," // for received payments contains sender name from an address book (as of April 2015 this is always empty unless filled in manually)
+                "paymentRequestData BLOB,"
+                "paymentACKData     BLOB,"
+                "fiatAmount         TEXT," // sent or received in fiat currency that was current when transaction created/arrived (string with dot as a decimal separator) (sent amount must be negative). Sent amount should not include the fee (so it'll be "-10.00" instead of "-10.03" if the fee is 0.03)
+                "fiatCode           TEXT," // ISO 4217 currency code in (string "USD", "EUR", "CNY", "GBP" etc)
+                "PRIMARY KEY (transactionHash) ON CONFLICT REPLACE"
+                ")"];
+    }];
 }
 
 @end

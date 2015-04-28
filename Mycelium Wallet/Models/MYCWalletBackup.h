@@ -40,6 +40,9 @@ typedef NS_ENUM(uint8_t, MYCWalletBackupVersion) {
 
 - (nonnull NSDictionary*) dictionary;
 
+// Payment details and receipts, array of MYCTransactionDetails instances.
+@property(nonatomic, nonnull) NSArray* transactionDetails;
+
 // Saves accounts in this backup.
 - (void) setAccounts:(nonnull NSArray*)accounts;
 
