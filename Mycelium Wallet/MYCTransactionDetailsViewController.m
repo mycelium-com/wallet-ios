@@ -323,8 +323,11 @@
                     MYCError(@"Failed to update tx memo in DB: %@", dberror);
                 }
             }];
+            [self updateBackup];
         }
         [sender dismissViewControllerAnimated:YES completion:nil];
+        [self updateTableViewSource];
+        [self.tableView reloadData];
     };
     UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
     [self presentViewController:navc animated:YES completion:nil];

@@ -16,8 +16,16 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.automaticallyAdjustsScrollViewInsets = YES;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+
+    self.automaticallyAdjustsScrollViewInsets = NO; // does not work with XIB, so we'll use notifications to update it manually
     self.textView.text = @"";
+}
+
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -29,11 +37,6 @@
     [self.textView becomeFirstResponder];
 }
 
-//- (BOOL) automaticallyAdjustsScrollViewInsets {
-//#warning TODO: this does not adjust insets of a textview.
-//    return YES;
-//}
-
 - (void) cancel:(id)_ {
     if (self.completionHandler) self.completionHandler(NO, self);
     self.completionHandler = nil;
@@ -43,6 +46,30 @@
     self.text = self.textView.text;
     if (self.completionHandler) self.completionHandler(YES, self);
     self.completionHandler = nil;
+}
+
+- (void)notifyKeyboardWillShow:(NSNotification *)notification {
+    CGRect windowKeyboardFrameEnd = [(NSValue *)[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGRect keyboardFrameEnd = [self.textView convertRect:windowKeyboardFrameEnd fromView:self.view.window];
+
+    CGFloat inset = CGRectIntersection(keyboardFrameEnd, self.textView.bounds).size.height;
+    self.textView.scrollIndicatorInsets = self.textView.contentInset = UIEdgeInsetsMake(64, 0, inset, 0);
+
+//    [UIView beginAnimations:nil context:NULL];
+//    [UIView setAnimationDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+//    [UIView setAnimationCurve:[notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue]];
+//    [UIView setAnimationBeginsFromCurrentState:YES];
+//
+//    // <update the view here>
+//
+//    [self.view setNeedsLayout];
+//    [self.view layoutIfNeeded];
+//
+//    [UIView commitAnimations];
+}
+
+- (void)notifyKeyboardWillHide:(NSNotification *)notification {
+    self.textView.scrollIndicatorInsets = self.textView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
 }
 
 
