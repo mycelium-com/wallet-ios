@@ -100,7 +100,8 @@ static BOOL MYCBypassMissingPasscode = 0;
 
 - (NSData*) backupMasterKeyFromMnemonic:(BTCMnemonic*)mnemonic {
     if (!mnemonic) return nil;
-    return BTCHMACSHA256(mnemonic.seed, [@"Automatic Backup Master Key" dataUsingEncoding:NSASCIIStringEncoding]);
+    // We use Mycelium-specific derivation here to avoid clashes with alternative backup schemas.
+    return BTCHMACSHA256(mnemonic.seed, [@"Mycelium Backup Master Key" dataUsingEncoding:NSASCIIStringEncoding]);
 }
 
 - (void) setBackupMasterKey:(NSData *)backupMasterKey {
