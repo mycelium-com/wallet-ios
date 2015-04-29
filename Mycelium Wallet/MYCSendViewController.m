@@ -474,7 +474,7 @@ static BTCAmount MYCFeeRate = 10000;
         }];
     }
 
-//#if DEBUG && 0
+//#if DEBUG && 1
 //#warning DEBUG: disabled broadcasting transaction
 //    return;
 //#else
@@ -509,22 +509,27 @@ static BTCAmount MYCFeeRate = 10000;
             [BTCPaymentProtocol postPayment:payment URL:self.paymentRequest.details.paymentURL completionHandler:^(BTCPaymentACK *ack, NSError *error) {
                 if (ack) {
                     [self.wallet inDatabase:^(FMDatabase *db) {
-                        MYCTransactionDetails* txdet = [MYCTransactionDetails loadWithPrimaryKey:@[ tx.transactionID ] fromDatabase:db];
+                        MYCTransactionDetails* txdet = [MYCTransactionDetails loadWithPrimaryKey:@[ tx.transactionHash ] fromDatabase:db];
                         if (!txdet) {
                             MYCError(@"MYCSendVC: Unexpectedly MYCTransactionDetails record for %@ is not retrieved", tx.transactionID);
                         } else {
                             txdet.paymentACKData = ack.data;
                         }
-                        MYCError(@"MYCSendVC: updating tx details with ACK receipt: %@ %@", txdet.transactionID, txdet.receiptMemo);
+                        MYCLog(@"MYCSendVC: updating tx details with ACK receipt: %@ %@", txdet.transactionID, txdet.receiptMemo);
                         NSError* dberror = nil;
                         if (![txdet saveInDatabase:db error:&dberror]) {
                             MYCError(@"MYCSendVC: cannot save tx details in DB with ACK data: %@", dberror);
                         }
                     }];
                     [self updateBackup];
+
                 } else {
                     MYCError(@"MYCSendVC: cannot receive ACK from payment: %@", error);
                 }
+
+                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Payment Completed", @"Errors")
+                                            message:ack.memo ?: @"No receipt received." delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+
                 [self complete:YES];
             }];
             return;
@@ -774,7 +779,15 @@ static BTCAmount MYCFeeRate = 10000;
         // Even when invalid, this may be interesting for UI to inspect and provide more details on why it is so.
         self.paymentRequest = pr;
 
-        if (pr.status == BTCPaymentRequestStatusValid) {
+        if (!!pr.details.network.isTestnet != !!self.wallet.isTestnet) {
+
+            self.scannerView.errorMessage = NSLocalizedString(@"Invalid network", @"Errors");
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self dismissScannerView];
+            });
+            return;
+
+        } else if (pr.status == BTCPaymentRequestStatusValid) {
 
             [self proceedWithPaymentRequest:pr];
             return;
@@ -841,8 +854,13 @@ static BTCAmount MYCFeeRate = 10000;
 
 - (void) proceedWithPaymentRequest:(BTCPaymentRequest*)pr {
 
-    // TODO: set the address and amount, save metadata.
     self.paymentRequest = pr;
+
+//#if DEBUG && 1
+//#warning DEBUG: overriding the price
+//    BTCTransactionOutput* txout = pr.details.outputs[0];
+//    txout.value = 1000;
+//#endif
 
     self.spendingAmount = [self totalAmountInOutputs:pr.details.outputs];
     self.amountField.text = [self.wallet.primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(self.spendingAmount)];

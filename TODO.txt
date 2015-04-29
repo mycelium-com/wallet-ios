@@ -17,8 +17,8 @@ v1.3 - Part 3.
 + edit tx recipient / sender
 + allow editing transaction memo
 + display transaction receipt full-size
++ add payment process object to handle BIP70 workflow in Send screen.
 
-- add payment process object to handle BIP70 workflow in Send screen.
 - store and format fiat amounts for transactions.
 - delay backups until going to background
 
