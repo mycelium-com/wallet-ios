@@ -11,6 +11,8 @@
 		200AAE3719F91EE50004F908 /* MYCTextFieldLiveFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 200AAE3619F91EE50004F908 /* MYCTextFieldLiveFormatter.m */; };
 		200AAE3919F93FFB0004F908 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 200AAE3819F93FFB0004F908 /* AVFoundation.framework */; };
 		200AAE3C19F9440C0004F908 /* MYCScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 200AAE3B19F9440C0004F908 /* MYCScannerView.m */; };
+		200C3D091AF0B559001E40EE /* MYCTextEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 200C3D081AF0B559001E40EE /* MYCTextEditViewController.m */; };
+		200C3D0B1AF0B570001E40EE /* MYCTextEditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 200C3D0A1AF0B570001E40EE /* MYCTextEditViewController.xib */; };
 		20203AD619F65E290085C01F /* MYCBaseTxOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 20203AD519F65E290085C01F /* MYCBaseTxOutput.m */; };
 		20203ADC19F665F80085C01F /* MYCDatabaseMigrations.m in Sources */ = {isa = PBXBuildFile; fileRef = 20203ADB19F665F80085C01F /* MYCDatabaseMigrations.m */; };
 		203AA49519DC364200572BD9 /* MYCWalletAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA49419DC364200572BD9 /* MYCWalletAccount.m */; };
@@ -102,6 +104,9 @@
 		200AAE3819F93FFB0004F908 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		200AAE3A19F9440C0004F908 /* MYCScannerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCScannerView.h; sourceTree = "<group>"; };
 		200AAE3B19F9440C0004F908 /* MYCScannerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCScannerView.m; sourceTree = "<group>"; };
+		200C3D071AF0B559001E40EE /* MYCTextEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCTextEditViewController.h; sourceTree = "<group>"; };
+		200C3D081AF0B559001E40EE /* MYCTextEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCTextEditViewController.m; sourceTree = "<group>"; };
+		200C3D0A1AF0B570001E40EE /* MYCTextEditViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCTextEditViewController.xib; sourceTree = "<group>"; };
 		20203AD419F65E290085C01F /* MYCBaseTxOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCBaseTxOutput.h; path = Models/MYCBaseTxOutput.h; sourceTree = "<group>"; };
 		20203AD519F65E290085C01F /* MYCBaseTxOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCBaseTxOutput.m; path = Models/MYCBaseTxOutput.m; sourceTree = "<group>"; };
 		20203ADA19F665F80085C01F /* MYCDatabaseMigrations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCDatabaseMigrations.h; path = Models/MYCDatabaseMigrations.h; sourceTree = "<group>"; };
@@ -293,6 +298,9 @@
 				2095C45019FFF52400635C85 /* MYCTransactionDetailsViewController.h */,
 				2095C45119FFF52400635C85 /* MYCTransactionDetailsViewController.m */,
 				2095C44E19FFF50A00635C85 /* MYCTransactionDetails.storyboard */,
+				200C3D071AF0B559001E40EE /* MYCTextEditViewController.h */,
+				200C3D081AF0B559001E40EE /* MYCTextEditViewController.m */,
+				200C3D0A1AF0B570001E40EE /* MYCTextEditViewController.xib */,
 			);
 			name = "Transactions Tab";
 			sourceTree = "<group>";
@@ -681,6 +689,7 @@
 				20A1C6AD1AD2AF6900284EDA /* MYCRecoveryInfo0415.html in Resources */,
 				208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */,
 				208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */,
+				200C3D0B1AF0B570001E40EE /* MYCTextEditViewController.xib in Resources */,
 				2076471C1A0D0A40000F00F2 /* Credits.html in Resources */,
 				203AA4AE19DC517200572BD9 /* MYCSendViewController.xib in Resources */,
 				206EA4C51ADC17C500F37019 /* MYCVerifyBackupViewController.xib in Resources */,
@@ -801,6 +810,7 @@
 				2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */,
 				20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */,
 				204FFD6A1AE8E68E00720447 /* MYCCloudKit.m in Sources */,
+				200C3D091AF0B559001E40EE /* MYCTextEditViewController.m in Sources */,
 				208BFFFA1AEFB03C00774AF9 /* MYCTransactionDetails.m in Sources */,
 				203AA4A419DC3C4500572BD9 /* MYCRoundedView.m in Sources */,
 				20A9C07419F534AB00AF61DE /* MYCUnspentOutput.m in Sources */,

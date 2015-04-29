@@ -194,14 +194,15 @@
 
     NSString* amountString = [[MYCWallet currentWallet].primaryCurrencyFormatter stringFromAmount:ABS(tx.amountTransferred)];
 
-    if (tx.amountTransferred > 0) {
-        amountString = [@"+ " stringByAppendingString:amountString];
+    if (amountString) {
+        if (tx.amountTransferred > 0) {
+            amountString = [@"+ " stringByAppendingString:amountString];
+        }
+        else if (tx.amountTransferred < 0) {
+            amountString = [@"– " stringByAppendingString:amountString];
+        }
     }
-    else if (tx.amountTransferred < 0) {
-        amountString = [@"– " stringByAppendingString:amountString];
-    }
-
-    cell.formattedAmount = amountString;
+    cell.formattedAmount = amountString ?: @"—";
 
     return cell;
 }

@@ -9,6 +9,7 @@
 #import "MYCTransactionDetailsViewController.h"
 #import "MYCTransactionsViewController.h"
 #import "MYCWebViewController.h"
+#import "MYCTextEditViewController.h"
 
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
@@ -133,7 +134,7 @@
 
         [section item:^(PTableViewSourceItem *item) {
             item.cellIdentifier = @"memo";
-            item.key = [NSLocalizedString(@"Memo", @"") uppercaseString];
+            item.key = [NSLocalizedString(@"Notes", @"") uppercaseString];
             item.value = self.transaction.transactionDetails.memo ?: @"";
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
                 [weakself editMemo];
@@ -272,7 +273,7 @@
         [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
             NSError* dberror = nil;
             if (![self.transaction.transactionDetails saveInDatabase:db error:&dberror]) {
-                MYCError(@"Failed to update tx details in DB: %@", dberror);
+                MYCError(@"Failed to update tx sender in DB: %@", dberror);
             }
         }];
         [self updateTableViewSource];
@@ -299,7 +300,7 @@
         [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
             NSError* dberror = nil;
             if (![self.transaction.transactionDetails saveInDatabase:db error:&dberror]) {
-                MYCError(@"Failed to update tx details in DB: %@", dberror);
+                MYCError(@"Failed to update tx recipient in DB: %@", dberror);
             }
         }];
         [self updateTableViewSource];
@@ -310,7 +311,23 @@
 }
 
 - (void) editMemo {
-#warning TODO: show editing view controller with space for full text.
+    MYCTextEditViewController* vc = [[MYCTextEditViewController alloc] initWithNibName:nil bundle:nil];
+    vc.title = NSLocalizedString(@"Transaction Notes", @"");
+    vc.text = self.transaction.transactionDetails.memo ?: @"";
+    vc.completionHandler = ^(BOOL result, MYCTextEditViewController* sender) {
+        if (result) {
+            self.transaction.transactionDetails.memo = sender.text;
+            [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+                NSError* dberror = nil;
+                if (![self.transaction.transactionDetails saveInDatabase:db error:&dberror]) {
+                    MYCError(@"Failed to update tx memo in DB: %@", dberror);
+                }
+            }];
+        }
+        [sender dismissViewControllerAnimated:YES completion:nil];
+    };
+    UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self presentViewController:navc animated:YES completion:nil];
 }
 
 - (void) viewReceipt {
