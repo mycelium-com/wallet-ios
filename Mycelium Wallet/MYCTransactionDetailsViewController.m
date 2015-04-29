@@ -342,15 +342,16 @@
 }
 
 - (void) updateBackup {
-    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
-        if (!result) {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up changes", @"")
-                                        message:error.localizedDescription ?: @""
-                                       delegate:nil
-                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
-                              otherButtonTitles:nil] show];
-        }
-    }];
+    [[MYCWallet currentWallet] setNeedsBackup];
+//    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
+//        if (!result) {
+//            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up changes", @"")
+//                                        message:error.localizedDescription ?: @""
+//                                       delegate:nil
+//                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
+//                              otherButtonTitles:nil] show];
+//        }
+//    }];
 }
 
 

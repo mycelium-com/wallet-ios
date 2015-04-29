@@ -48,6 +48,11 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 @implementation MYCWallet {
     int _updatingExchangeRate;
     NSMutableArray* _accountUpdateOperations;
+    BOOL _needsBackup;
+    BOOL _backingUp;
+    NSDate* _lastBackupDate;
+    NSError* _lastBackupError;
+    UIBackgroundTaskIdentifier _backgroundTaskIdentifier;
 }
 
 + (instancetype) currentWallet
@@ -815,6 +820,10 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         return;
     }
 
+    // Ask system for some background goodness.
+    _backgroundTaskIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"MYCWallet_backup" expirationHandler:^{
+    }];
+
     MYCLog(@"MYCWallet: Uploading encrypted backup to iCloud Drive and Mycelium: %@ bytes (%@)", @(data.length), walletID);
     [[[MYCCloudKit alloc] init] uploadDataBackup:data walletID:walletID completionHandler:^(BOOL icloudResult, NSError *icloudError) {
         MYCLog(@"MYCWallet: iCloud upload status: %@ %@", @(icloudResult), icloudError ?: @"");
@@ -823,6 +832,12 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
             if (icloudResult || mycResult) {
                 [self setStoredBackupData:data];
             }
+
+            if (_backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
+                [[UIApplication sharedApplication] endBackgroundTask:_backgroundTaskIdentifier];
+                _backgroundTaskIdentifier = UIBackgroundTaskInvalid;
+            }
+
             completionBlock(icloudResult || mycResult, icloudError ?: mycError);
         }];
     }];
@@ -863,21 +878,75 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     }];
 }
 
+- (NSTimeInterval) backupDelay {
+    return 10;
+}
+
 - (void) setNeedsBackup {
 
-    MYCLog(@"MYCWallet: SET NEEDS BACKUP.");
-#warning TODO: mark "need to backup" and do it if it's time to do.
+    _needsBackup = YES;
+    MYCLog(@"MYCWallet: NEEDS BACKUP.");
 
+    if (!_lastBackupDate) _lastBackupDate = [NSDate date];
+    NSTimeInterval remainingTime = [self backupDelay] - [[NSDate date] timeIntervalSinceDate:_lastBackupDate];
+    if (remainingTime <= 0) {
+        [self backupIfNeeded];
+    } else {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(remainingTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self backupIfNeeded];
+        });
+    }
 }
 
 - (void) backupIfNeeded {
 
+    if (!_needsBackup) return;
+    if (_backingUp) return;
+
+    _needsBackup = NO;
+    _backingUp = YES;
+    MYCLog(@"MYCWallet: BACKING UP NOW.");
+    [self uploadAutomaticBackup:^(BOOL result, NSError *error) {
+        if (result) {
+            _lastBackupError = nil;
+        } else {
+            _lastBackupError = error;
+        }
+        // Even in case of error, do not backup immediately after scheduling.
+        _lastBackupDate = [NSDate date];
+        _backingUp = NO;
+
+        // If asked to backup while we were backing up, do it again.
+        [self backupIfNeeded];
+
+        [self showLastBackupErrorAlertIfNeeded];
+    }];
 }
 
 // Returns and erases most recent error during backup.
 // So the UI can show the user "Cannot backup, please check your network or iCloud settings."
 - (NSError*) popBackupError {
+    if (_lastBackupError) {
+        NSError* err = _lastBackupError;
+        _lastBackupDate = nil;
+        return err;
+    }
     return nil;
+}
+
+- (BOOL) showLastBackupErrorAlertIfNeeded {
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+        NSError* error = [self popBackupError];
+        if (error) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up wallet", @"")
+                                        message:error.localizedDescription ?: @""
+                                       delegate:nil
+                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
+                              otherButtonTitles:nil] show];
+            return YES;
+        }
+    }
+    return NO;
 }
 
 

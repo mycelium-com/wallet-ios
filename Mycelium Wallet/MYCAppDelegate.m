@@ -116,11 +116,14 @@
                 MYCError(@"MYCAppDelegate: Automatic update of exchange rate failed: %@", error);
             }
         }];
+
+        [[MYCWallet currentWallet] showLastBackupErrorAlertIfNeeded];
     }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
+    [[MYCWallet currentWallet] backupIfNeeded];
     if (self.previousSystemBrightness)
     {
         [UIScreen mainScreen].brightness = self.previousSystemBrightness.doubleValue;

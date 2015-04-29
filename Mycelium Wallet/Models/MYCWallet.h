@@ -169,6 +169,7 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Returns and erases most recent error during backup.
 // So the UI can show the user "Cannot backup, please check your network or iCloud settings."
 - (NSError*) popBackupError;
+- (BOOL) showLastBackupErrorAlertIfNeeded;
 
 
 // Accessing Database

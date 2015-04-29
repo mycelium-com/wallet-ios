@@ -9,6 +9,7 @@
 #import "MYCWallet.h"
 #import "MYCWalletAccount.h"
 #import "MYCTransaction.h"
+#import "MYCTransactionDetails.h"
 #import "MYCCurrencyFormatter.h"
 #import "MYCRoundedView.h"
 #import "MYCCurrenciesViewController.h"
@@ -192,7 +193,17 @@
     }];
     cell.transaction = tx;
 
-    NSString* amountString = [[MYCWallet currentWallet].primaryCurrencyFormatter stringFromAmount:ABS(tx.amountTransferred)];
+    NSString* amountString = nil;
+    if ([MYCWallet currentWallet].primaryCurrencyFormatter.isFiatFormatter &&
+        tx.transactionDetails.fiatAmount.length > 0 &&
+        tx.transactionDetails.fiatCode.length > 0) {
+        amountString = [[MYCWallet currentWallet] reformatString:[tx.transactionDetails.fiatAmount stringByReplacingOccurrencesOfString:@"-" withString:@""] forCurrency:tx.transactionDetails.fiatCode];
+        //MYCLog(@">>>> re-formatted historical amount: %@", amountString);
+    }
+
+    if (!amountString) {
+        amountString = [[MYCWallet currentWallet].primaryCurrencyFormatter stringFromAmount:ABS(tx.amountTransferred)];
+    }
 
     if (amountString) {
         if (tx.amountTransferred > 0) {
