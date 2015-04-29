@@ -635,7 +635,7 @@
                  template:@{
                             @"success":@YES
                             }
-                       completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
+                       completion:^(NSDictionary* result, NSString* uploadCurlCommand, NSError* error){
 
                            if (!result) {
                                if (completion) completion(NO, error);
@@ -650,8 +650,17 @@
                                if (completion) completion(NO, error);
                                return;
                            }
-                           
-                           if (completion) completion(YES, error);
+
+                           [self downloadDataBackupForWalletID:walletID completionHandler:^(NSData *data, NSError *error2) {
+
+                               if (!data || ![data isEqual:encryptedData]) {
+                                   MYCError(@"MYCBackend: Backup upload succeeded, but later download failed. Upload command:\n%@", uploadCurlCommand);
+                                   if (completion) completion(NO, error2 ?: [NSError errorWithDomain:MYCErrorDomain code:-31
+                                                                                            userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Failed to validated uploaded backup", @"")}]);
+                                   return;
+                               }
+                               if (completion) completion(YES, nil);
+                           }];
                        }];
 }
 
@@ -673,6 +682,11 @@
                completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
 
                    if (!result) {
+                       if ([error.domain isEqual:NSURLErrorDomain] && error.code == 404) {
+                           // Not Found - not an error.
+                           if (completion) completion(nil, nil);
+                           return;
+                       }
                        if (completion) completion(nil, error);
                        return;
                    }
@@ -829,12 +843,12 @@
 
 - (NSError*) formatError:(NSString*)errorString
 {
-    return [NSError errorWithDomain:MYCErrorDomain code:1 userInfo: errorString ? @{NSLocalizedDescriptionKey: errorString} : nil];
+    return [NSError errorWithDomain:MYCErrorDomain code:1001 userInfo: errorString ? @{NSLocalizedDescriptionKey: errorString} : nil];
 }
 
 - (NSError*) dataError:(NSString*)errorString
 {
-    return [NSError errorWithDomain:MYCErrorDomain code:2 userInfo: errorString ? @{NSLocalizedDescriptionKey: errorString} : nil];
+    return [NSError errorWithDomain:MYCErrorDomain code:1002 userInfo: errorString ? @{NSLocalizedDescriptionKey: errorString} : nil];
 }
 
 - (NSDecimalNumber*) ensureDecimalNumber:(NSNumber*)num
@@ -887,45 +901,42 @@
         return nil;
     }
 
-    if (httpResponse.statusCode >= 200 && httpResponse.statusCode <= 299)
-    {
-        // Check if response is correctly formatted with "errorCode" and "r" slots present.
-        NSError* formatError = nil;
-        BOOL validFormat = [self validatePlist:dict matchingTemplate:@{@"errorCode": @0, @"r": @{ }, @"message": @""} error:&formatError];
-        if (!validFormat)
-        {
-            failureBlock(formatError);
-            return nil;
-        }
+    // Handle various HTTP errors (non-2xx codes).
+    if (httpResponse.statusCode < 200 || httpResponse.statusCode > 299) {
+        MYCLog(@"MYCBackend: received HTTP code %ld: %@", (long)httpResponse.statusCode, dict[@"localizedError"] ?: dict[@"error"] ?: dict[@"message"] ?: @"Server Error");
 
-        if ([dict[@"errorCode"] integerValue] == 0 && dict[@"r"])
-        {
-            return dict[@"r"];
-        }
-        else
-        {
-            MYCLog(@"MYCBackend: received errorCode %@: %@ [%@]", dict[@"errorCode"], dict, httpResponse.URL);
-            NSError* apiError = [NSError errorWithDomain:MYCErrorDomain
-                                                     code:[dict[@"errorCode"] integerValue]
-                                                 userInfo:@{
-                                                            NSLocalizedDescriptionKey: [NSString stringWithFormat:NSLocalizedString(@"Mycelium server responded with error %@", @""), dict[@"errorCode"]]
-                                                            }];
+        NSError* httpError = [NSError errorWithDomain:NSURLErrorDomain
+                                                 code:httpResponse.statusCode
+                                             userInfo:@{
+                                                        NSLocalizedDescriptionKey: dict[@"localizedError"] ?: dict[@"error"] ?: dict[@"message"] ?: @"Server Error",
+                                                        @"debugMessage": dict[@"error"] ?: dict[@"message"] ?: @"unknown error from backend",
+                                                        }];
 
-            failureBlock(apiError);
-            return nil;
-        }
+        failureBlock(httpError);
+        return nil;
     }
 
-    MYCLog(@"MYCBackend: received HTTP code %ld: %@", (long)httpResponse.statusCode, dict[@"localizedError"] ?: dict[@"error"] ?: dict[@"message"] ?: @"Server Error");
+    // Check if response is correctly formatted with "errorCode" and "r" slots present.
+    NSError* formatError = nil;
+    BOOL validFormat = [self validatePlist:dict matchingTemplate:@{@"errorCode": @0, @"r": @{ }, @"message": @""} error:&formatError];
+    if (!validFormat) {
+        failureBlock(formatError);
+        return nil;
+    }
 
-    NSError* httpError = [NSError errorWithDomain:NSURLErrorDomain
-                                            code:httpResponse.statusCode
-                                        userInfo:@{
-                                                   NSLocalizedDescriptionKey: dict[@"localizedError"] ?: dict[@"error"] ?: dict[@"message"] ?: @"Server Error",
-                                                   @"debugMessage": dict[@"error"] ?: dict[@"message"] ?: @"unknown error from backend",
-                                                   }];
+    // Success code - return result dictionary.
+    if ([dict[@"errorCode"] integerValue] == 0 && dict[@"r"]) {
+        return dict[@"r"];
+    }
 
-    failureBlock(httpError);
+    MYCLog(@"MYCBackend: received errorCode %@: %@ [%@]", dict[@"errorCode"], dict, httpResponse.URL);
+    NSError* apiError = [NSError errorWithDomain:MYCErrorDomain
+                                             code:[dict[@"errorCode"] integerValue]
+                                         userInfo:@{
+                                                    NSLocalizedDescriptionKey: [NSString stringWithFormat:NSLocalizedString(@"Mycelium server responded with error %@", @""), dict[@"errorCode"]]
+                                                    }];
+
+    failureBlock(apiError);
     return nil;
 }
 

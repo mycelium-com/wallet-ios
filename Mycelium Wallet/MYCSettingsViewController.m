@@ -86,7 +86,7 @@
         section.detailFont = [UIFont systemFontOfSize:15.0];
         section.detailTextColor = [UIColor grayColor];
 
-        BTCAmount amount = currentAccount.confirmedAmount;
+        BTCAmount amount = currentAccount.spendableAmount;
         if (amount == 0) amount = 1; // sample amount in case wallet is empty.
 
         MYCCurrencyFormatter* formatter = [MYCWallet currentWallet].primaryCurrencyFormatter;

@@ -287,7 +287,7 @@ static BTCAmount MYCFeeRate = 10000;
         [MYCErrorAnimation animateError:self.scanButton radius:10.0];
     }
 
-    if (self.addressValid && self.amountValid && self.spendingAddress && self.spendingAmount > 0)
+    if (self.addressValid && self.amountValid && (self.spendingAddress || self.paymentRequest) && self.spendingAmount > 0)
     {
         [self updateAccountIfNeeded:^(BOOL success, BOOL updated, NSError *error) {
 
@@ -320,6 +320,19 @@ static BTCAmount MYCFeeRate = 10000;
 
     NSString* authString = [NSString stringWithFormat:NSLocalizedString(@"Confirm payment of %@", @""),
                             [self formatAmountInSelectedCurrency:self.spendingAmount]];
+
+    if (self.paymentRequest.details.memo.length > 0 &&
+        self.paymentRequest.details.memo.length < 100) {
+
+        authString = [NSString stringWithFormat:NSLocalizedString(@"Confirm payment of %@. %@", @""),
+                      [self formatAmountInSelectedCurrency:self.spendingAmount],
+                      self.paymentRequest.details.memo];
+    } else if (self.paymentRequest.signerName.length > 0) {
+
+        authString = [NSString stringWithFormat:NSLocalizedString(@"Confirm payment of %@ to %@", @""),
+                      [self formatAmountInSelectedCurrency:self.spendingAmount],
+                      self.paymentRequest.signerName];
+    }
 
     [self.wallet bestEffortAuthenticateWithTouchID:^(MYCUnlockedWallet *uw, BOOL authenticated) {
         if (!uw) {
@@ -375,8 +388,6 @@ static BTCAmount MYCFeeRate = 10000;
         txout.value = amount;
     }
 
-#warning FIXME: have to fill in copied txouts here so we don't have inconsistency on re-adding the same outputs to a different transaction.
-    NSMutableArray* copies = [NSMutableArray array];
     for (BTCTransactionOutput* txout in txouts) {
         if (txout.value == BTCUnspecifiedPaymentAmount) {
             txout.value = 0;
@@ -449,11 +460,12 @@ static BTCAmount MYCFeeRate = 10000;
             txdet.memo = self.paymentRequest.details.memo;
             txdet.paymentRequestData = self.paymentRequest.data;
 
-            MYCLog(@"Saving metadata for tx %@: recipient = %@, memo = %@, prdata = %@ bytes",
+            MYCLog(@"Saving metadata for tx %@: recipient = %@, memo = %@, prdata = %@ bytes (payment url: %@)",
                    txdet.transactionID,
                    txdet.recipient,
                    txdet.memo,
-                   @(txdet.paymentRequestData.length));
+                   @(txdet.paymentRequestData.length),
+                   self.paymentRequest.details.paymentURL);
 
             NSError* dberror = nil;
             if (![txdet saveInDatabase:db error:&dberror]) {
@@ -462,12 +474,12 @@ static BTCAmount MYCFeeRate = 10000;
         }];
     }
 
-#if DEBUG && 1
-#warning DEBUG: disabled broadcasting transaction
-    return;
-#else
+//#if DEBUG && 0
+//#warning DEBUG: disabled broadcasting transaction
+//    return;
+//#else
     [self broadcastTransaction:tx];
-#endif
+//#endif
 }
 
 - (void) broadcastTransaction:(BTCTransaction*)tx
@@ -478,16 +490,43 @@ static BTCAmount MYCFeeRate = 10000;
 
         if (success)
         {
-            if (self.paymentRequest) {
-                #warning TODO: send payment ACK and get the receipt, save it in DB.
+            [self updateBackup];
 
-
-
+            if (!self.paymentRequest) {
                 [self complete:YES];
-
-            } else {
-                [self complete:YES];
+                return;
             }
+
+            if (!self.paymentRequest.details.paymentURL) {
+                MYCLog(@"MYCSendVC: do not have payment URL to receive payment ACK.");
+                [self complete:YES];
+                return;
+            }
+
+            // Send payment ACK and get the receipt, save it in DB.
+            MYCLog(@"MYCSendVC: sending payment object to URL: %@", self.paymentRequest.details.paymentURL);
+            BTCPayment* payment = [self.paymentRequest paymentWithTransaction:tx];
+            [BTCPaymentProtocol postPayment:payment URL:self.paymentRequest.details.paymentURL completionHandler:^(BTCPaymentACK *ack, NSError *error) {
+                if (ack) {
+                    [self.wallet inDatabase:^(FMDatabase *db) {
+                        MYCTransactionDetails* txdet = [MYCTransactionDetails loadWithPrimaryKey:@[ tx.transactionID ] fromDatabase:db];
+                        if (!txdet) {
+                            MYCError(@"MYCSendVC: Unexpectedly MYCTransactionDetails record for %@ is not retrieved", tx.transactionID);
+                        } else {
+                            txdet.paymentACKData = ack.data;
+                        }
+                        MYCError(@"MYCSendVC: updating tx details with ACK receipt: %@ %@", txdet.transactionID, txdet.receiptMemo);
+                        NSError* dberror = nil;
+                        if (![txdet saveInDatabase:db error:&dberror]) {
+                            MYCError(@"MYCSendVC: cannot save tx details in DB with ACK data: %@", dberror);
+                        }
+                    }];
+                    [self updateBackup];
+                } else {
+                    MYCError(@"MYCSendVC: cannot receive ACK from payment: %@", error);
+                }
+                [self complete:YES];
+            }];
             return;
         }
 
@@ -527,6 +566,19 @@ static BTCAmount MYCFeeRate = 10000;
         [self presentViewController:ac animated:YES completion:nil];
     }];
 }
+
+- (void) updateBackup {
+    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
+        if (!result) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up changes", @"")
+                                        message:error.localizedDescription ?: @""
+                                       delegate:nil
+                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
+                              otherButtonTitles:nil] show];
+        }
+    }];
+}
+
 
 - (void) updateAccountIfNeeded:(void(^)(BOOL success, BOOL updated, NSError* error))completion
 {
@@ -886,7 +938,11 @@ static BTCAmount MYCFeeRate = 10000;
                                         message:[NSString stringWithFormat:@"Payment address is not specified."] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
             return nil;
         }
-        builder.outputs = [self filledInOutputs:self.paymentRequest.details.outputs amount:self.spendingAmount];
+        NSMutableArray* txouts = [NSMutableArray array];
+        for (BTCTransactionOutput* txout in self.paymentRequest.details.outputs) {
+            [txouts addObject:[txout copyWithZone:nil]];
+        }
+        builder.outputs = [self filledInOutputs:txouts amount:self.spendingAmount];
     } else if (self.spendingAddress) {
         builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:self.spendingAddress] ];
     } else {
@@ -937,8 +993,9 @@ static BTCAmount MYCFeeRate = 10000;
         self.addressValid = YES;
         self.addressField.text = self.paymentRequest.signerName ?: @"";
         if (self.addressField.text.length == 0) {
-            self.addressField.text = [[MYCWallet currentWallet] addressForAddress:[[self.paymentRequest.details.outputs.firstObject script] standardAddress]];
+            self.addressField.text = [[MYCWallet currentWallet] addressForAddress:[[self.paymentRequest.details.outputs.firstObject script] standardAddress]].string ?: @"—";
         }
+        self.scanButton.hidden = YES;
         return;
     }
 
