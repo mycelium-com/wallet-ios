@@ -691,6 +691,21 @@
         // but for consistency and extensibility we check the destination via the output script.
         [self fetchRelevantParentOutputsFromTransactions:transactions completion:^(BOOL success, NSError *error) {
 
+            if (success) {
+                [self.wallet inDatabase:^(FMDatabase *db) {
+                    for (BTCTransaction* tx in transactions) {
+                        NSArray* mtxs = [MYCTransaction loadWithCondition:@"transactionHash = ?" params:@[tx.transactionHash] fromDatabase:db];
+                        if (mtxs.count > 0) {
+                            for (MYCTransaction* mtx in mtxs) {
+                                [self.wallet updateFiatAmountForTransaction:mtx force:NO database:db];
+                            }
+                        } else {
+                            MYCError(@"Cannot find MYCTransaction %@ to update fiat amount", tx.transactionID);
+                        }
+                    }
+                }];
+
+            }
             if (completion) completion(success, error);
 
         }];
@@ -925,14 +940,13 @@
                 mtx.accountIndex    = accountIndex;
 
                 NSError* dberror = nil;
-                if (![mtx insertInDatabase:db error:&dberror])
-                {
+                if (![mtx insertInDatabase:db error:&dberror]) {
                     error = dberror ?: [NSError errorWithDomain:MYCErrorDomain code:666 userInfo:@{NSLocalizedDescriptionKey: @"Unknown DB error"}];
                     MYCError(@"MYCWallet: failed to save transaction %@ for account %d in database: %@", tx.transactionID, (int)accountIndex, dberror);
                     return;
-                }
-                else
-                {
+                } else {
+                    // NOTE: we do not call updateFiatAmountForTransaction here because we do not have all parents yet.
+                    // See below when parent outputs are fetched where we try to compute proper amounts.
                     //MYCLog(@"MYCUpdateAccountOperation: saved transaction: %@", tx.transactionID);
                 }
 

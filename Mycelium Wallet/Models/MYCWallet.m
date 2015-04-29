@@ -769,7 +769,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
                 *rollback = YES;
                 return;
             } else {
-                MYCError(@"MYCWallet applyWalletBackup: saved transaction details for tx %@", txdet.transactionID);
+                MYCLog(@"MYCWallet applyWalletBackup: saved transaction details for tx %@", txdet.transactionID);
             }
         }
     }];
@@ -862,6 +862,24 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         }];
     }];
 }
+
+- (void) setNeedsBackup {
+
+    MYCLog(@"MYCWallet: SET NEEDS BACKUP.");
+#warning TODO: mark "need to backup" and do it if it's time to do.
+
+}
+
+- (void) backupIfNeeded {
+
+}
+
+// Returns and erases most recent error during backup.
+// So the UI can show the user "Cannot backup, please check your network or iCloud settings."
+- (NSError*) popBackupError {
+    return nil;
+}
+
 
 
 - (MYCWalletBackup*) chooseLatestWalletBackupFromDatas:(NSArray*)datas {
@@ -1494,6 +1512,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         else
         {
             MYCLog(@"MYCUpdateAccountOperation: saved new transaction: %@", tx.transactionID);
+            [self updateFiatAmountForTransaction:mtx force:NO database:db];
         }
     }];
 
@@ -1700,6 +1719,62 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     }];
 
     return result;
+}
+
+// Updates tx details with up-to-date fiat amount and code.
+// If force is NO, it will note overwrite existing record should it exist already.
+- (void) updateFiatAmountForTransaction:(MYCTransaction*)tx force:(BOOL)force database:(FMDatabase *)db {
+
+    if (!tx || !tx.transactionHash) return;
+
+    [tx loadDetailsFromDatabase:db];
+
+    if (tx.amountTransferred == 0) {
+        MYCError(@"MYCWallet: amountTransferred for tx %@ is zero, cannot update fiat amount/code.", tx.transactionID);
+        return;
+    }
+
+    MYCTransactionDetails* txdet = tx.transactionDetails ?:
+    [MYCTransactionDetails loadWithPrimaryKey:@[tx.transactionHash] fromDatabase:db] ?: [[MYCTransactionDetails alloc] init];
+
+    // If we have data already and we do not need to force update, do nothing.
+    if (!force && txdet.fiatAmount.length > 0 && txdet.fiatCode.length > 0) {
+        return;
+    }
+
+    BTCCurrencyConverter* converter = [MYCWallet currentWallet].fiatCurrencyFormatter.currencyConverter;
+
+    if (!converter) {
+        MYCError(@"MYCWallet: do not have fiatCurrencyFormatter.currencyConverter to store fiat amount+code.");
+        return;
+    }
+
+    txdet.transactionHash = tx.transactionHash;
+    NSDecimalNumber* num = [converter fiatFromBitcoin:tx.amountTransferred];
+    txdet.fiatAmount = num.stringValue;
+    if ([txdet.fiatAmount isEqualToString:@"0"] || [num isEqual:[NSDecimalNumber zero]]) {
+        MYCError(@"MYCWallet: fiatAmount is zero. Not updating.");
+        return;
+    }
+    txdet.fiatCode = converter.currencyCode;
+
+    MYCLog(@"MYCWallet: updating tx %@ fiat amount: %@ %@",
+           txdet.transactionID,
+           txdet.fiatAmount,
+           txdet.fiatCode);
+
+    NSError* dberror = nil;
+    if (![txdet saveInDatabase:db error:&dberror]) {
+        MYCError(@"MYCWallet: cannot save tx details for %@ with %@ %@: %@",
+                 txdet.transactionID,
+                 txdet.fiatAmount,
+                 txdet.fiatCode,
+                 dberror
+                 );
+        return;
+    }
+
+    [self setNeedsBackup];
 }
 
 

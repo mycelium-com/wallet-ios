@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 @class MYCBackend;
 @class MYCWalletAccount;
+@class MYCTransaction;
 @class MYCCurrencyFormatter;
 
 @interface MYCWallet : NSObject
@@ -160,6 +161,15 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 - (void) downloadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock;
 
+- (void) setNeedsBackup;
+
+// Force backup if needed.
+- (void) backupIfNeeded;
+
+// Returns and erases most recent error during backup.
+// So the UI can show the user "Cannot backup, please check your network or iCloud settings."
+- (NSError*) popBackupError;
+
 
 // Accessing Database
 
@@ -229,6 +239,10 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // we need a root keychain with private key to derive accounts' addresses.
 // Newly discovered accounts are created automatically with default names.
 - (void) discoverAccounts:(BTCKeychain*)rootKeychain completion:(void(^)(BOOL success, NSError *error))completion;
+
+// Updates tx details with up-to-date fiat amount and code.
+// If force is NO, it will note overwrite existing record should it exist already.
+- (void) updateFiatAmountForTransaction:(MYCTransaction*)tx force:(BOOL)force database:(FMDatabase *)db;
 
 // Returns YES if this new account if within a window of empty accounts.
 - (BOOL) canAddAccount;
