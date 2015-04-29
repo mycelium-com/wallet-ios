@@ -11,7 +11,7 @@
 #import <Security/Security.h>
 
 #define kMasterSeedName @"MasterSeed"
-#define kBackupMasterKeyName @"BackupMasterKeyV1"
+#define kBackupMasterKeyName @"BackupMasterKeyV2"
 #define kProbeItemName  @"ProbeItem"
 
 static BOOL MYCBypassMissingPasscode = 0;

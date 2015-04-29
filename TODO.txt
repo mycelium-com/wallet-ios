@@ -15,12 +15,12 @@ v1.3 - Part 3.
 + restore tx labels and receipts from backup object
 + display memo / sender / recipient in tx details view.
 + edit tx recipient / sender
++ allow editing transaction memo
++ display transaction receipt full-size
 
 - add payment process object to handle BIP70 workflow in Send screen.
 - store and format fiat amounts for transactions.
-- allow editing transaction memo
-- display transaction receipt full-size
-
+- delay backups until going to background
 
 
 v1.2 - fix and hardening of Keychain handling
