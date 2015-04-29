@@ -7,6 +7,7 @@
 //
 
 #import "MYCTextEditViewController.h"
+#import "MYCWallet.h"
 
 @interface MYCTextEditViewController ()
 @property(nonatomic, weak) IBOutlet UITextView* textView;
@@ -34,6 +35,10 @@
     self.textView.text = self.text;
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
+}
+
+- (void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     [self.textView becomeFirstResponder];
 }
 
@@ -53,7 +58,9 @@
     CGRect keyboardFrameEnd = [self.textView convertRect:windowKeyboardFrameEnd fromView:self.view.window];
 
     CGFloat inset = CGRectIntersection(keyboardFrameEnd, self.textView.bounds).size.height;
-    self.textView.scrollIndicatorInsets = self.textView.contentInset = UIEdgeInsetsMake(64, 0, inset, 0);
+    MYCLog(@"MYCTextEditVC: keyboard will show: %@", @(inset));
+    self.textView.contentInset = UIEdgeInsetsMake(64, 0, inset, 0);
+    self.textView.scrollIndicatorInsets = self.textView.contentInset;
 
 //    [UIView beginAnimations:nil context:NULL];
 //    [UIView setAnimationDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
@@ -69,7 +76,9 @@
 }
 
 - (void)notifyKeyboardWillHide:(NSNotification *)notification {
-    self.textView.scrollIndicatorInsets = self.textView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
+    MYCLog(@"MYCTextEditVC: keyboard will hide.");
+    self.textView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
+    self.textView.scrollIndicatorInsets = self.textView.contentInset;
 }
 
 
