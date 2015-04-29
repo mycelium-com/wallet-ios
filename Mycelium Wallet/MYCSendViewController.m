@@ -16,6 +16,8 @@
 #import "MYCCurrenciesViewController.h"
 #import "MYCCurrencyFormatter.h"
 #import "MYCRestoreSeedViewController.h"
+#import "MYCTransaction.h"
+#import "MYCTransactionDetails.h"
 
 #if 0 && DEBUG
 #warning DEBUG: Zero fees
@@ -58,7 +60,8 @@ static BTCAmount MYCFeeRate = 10000;
 @property(weak, nonatomic) MYCScannerView* scannerView;
 
 @property(nonatomic) BTCKeychain* accountKeychain; // when wallet is unlocked.
-
+@property(nonatomic) BTCPaymentRequest* paymentRequest;
+@property(nonatomic) BOOL scanning; // while YES prevents triggering scanning multiple times.
 @end
 
 @implementation MYCSendViewController
@@ -362,6 +365,45 @@ static BTCAmount MYCFeeRate = 10000;
     } reason:authString];
 }
 
+- (NSArray*) filledInOutputs:(NSArray*)txouts amount:(BTCAmount)amount {
+
+    if (txouts.count == 0) return txouts;
+
+    // Fill-in the amount in the first output if all outputs are unspecified.
+    if (![self someAmountsSpecified:txouts]) {
+        BTCTransactionOutput* txout = txouts[0];
+        txout.value = amount;
+    }
+
+#warning FIXME: have to fill in copied txouts here so we don't have inconsistency on re-adding the same outputs to a different transaction.
+    NSMutableArray* copies = [NSMutableArray array];
+    for (BTCTransactionOutput* txout in txouts) {
+        if (txout.value == BTCUnspecifiedPaymentAmount) {
+            txout.value = 0;
+        }
+    }
+    return txouts;
+}
+
+- (BTCAmount) totalAmountInOutputs:(NSArray*)txouts {
+    BTCAmount total = 0;
+    for (BTCTransactionOutput* txout in txouts) {
+        if (txout.value > 0 && txout.value != BTCUnspecifiedPaymentAmount) {
+            total += txout.value;
+        }
+    }
+    return total;
+}
+
+- (BOOL) someAmountsSpecified:(NSArray*)txouts {
+    for (BTCTransactionOutput* txout in txouts) {
+        if (txout.value != BTCUnspecifiedPaymentAmount) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 - (void) actuallySend {
 
     if (!self.accountKeychain) {
@@ -370,17 +412,7 @@ static BTCAmount MYCFeeRate = 10000;
         return;
     }
 
-    BTCAddress* changeAddress = self.changeAddress ?: self.account.internalAddress;
-
-    if (!changeAddress) {
-        [NSException raise:@"No change address" format:@"This should not happen"];
-    }
-
-    BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
-    builder.dataSource = self;
-    builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:self.spendingAddress] ];
-    builder.changeAddress = changeAddress;
-    builder.feeRate = MYCFeeRate;
+    BTCTransactionBuilder* builder = [self makeTransactionBuilder];
 
     NSError* berror = nil;
     BTCTransactionBuilderResult* result = nil;
@@ -402,11 +434,40 @@ static BTCAmount MYCFeeRate = 10000;
 
     [self.view endEditing:YES];
 
-    MYCLog(@"signed tx: %@", BTCHexFromData(result.transaction.data));
+    BTCTransaction* tx = result.transaction;
+
+    MYCLog(@"signed tx: %@", BTCHexFromData(tx.data));
 
     [self beginSpinning];
 
-    [self broadcastTransaction:result.transaction];
+    if (self.paymentRequest) {
+        // save payment metadata (see below for how we save the receipt)
+        [[MYCWallet currentWallet] inDatabase:^(FMDatabase *db) {
+            MYCTransactionDetails* txdet = [[MYCTransactionDetails alloc] init];
+            txdet.transactionHash = tx.transactionHash;
+            txdet.recipient = self.paymentRequest.signerName;
+            txdet.memo = self.paymentRequest.details.memo;
+            txdet.paymentRequestData = self.paymentRequest.data;
+
+            MYCLog(@"Saving metadata for tx %@: recipient = %@, memo = %@, prdata = %@ bytes",
+                   txdet.transactionID,
+                   txdet.recipient,
+                   txdet.memo,
+                   @(txdet.paymentRequestData.length));
+
+            NSError* dberror = nil;
+            if (![txdet saveInDatabase:db error:&dberror]) {
+                MYCError(@"MYCSendVC: cannot save tx details in DB: %@", dberror);
+            }
+        }];
+    }
+
+#if DEBUG && 1
+#warning DEBUG: disabled broadcasting transaction
+    return;
+#else
+    [self broadcastTransaction:tx];
+#endif
 }
 
 - (void) broadcastTransaction:(BTCTransaction*)tx
@@ -417,7 +478,16 @@ static BTCAmount MYCFeeRate = 10000;
 
         if (success)
         {
-            [self complete:YES];
+            if (self.paymentRequest) {
+                #warning TODO: send payment ACK and get the receipt, save it in DB.
+
+
+
+                [self complete:YES];
+
+            } else {
+                [self complete:YES];
+            }
             return;
         }
 
@@ -513,11 +583,19 @@ static BTCAmount MYCFeeRate = 10000;
     // Address may not be entered yet, so use dummy address.
     BTCAddress* address = self.spendingAddress ?: [BTCPublicKeyAddress addressWithData:BTCZero160()];
 
-    BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
-    builder.dataSource = self;
+    if (self.paymentRequest) {
+        if ([self someAmountsSpecified:self.paymentRequest.details.outputs]) {
+            // Cannot use all funds if payment request is specified.
+            return;
+        }
+        address = [[self.paymentRequest.details.outputs.firstObject script] standardAddress];
+        address = [[MYCWallet currentWallet] addressForAddress:address];
+    }
+
+    BTCTransactionBuilder* builder = [self makeTransactionBuilder];
+    builder.outputs = @[];
     builder.changeAddress = address; // outputs is empty array, spending all to change address which must be destination address.
     builder.shouldSign = NO;
-    builder.feeRate = MYCFeeRate;
 
     NSError* berror = nil;
     BTCTransactionBuilderResult* result = [builder buildTransaction:&berror];
@@ -551,61 +629,184 @@ static BTCAmount MYCFeeRate = 10000;
             return;
         }
 
-        self.scannerView = [MYCScannerView presentFromRect:rect inView:targetView detection:^(NSString *message) {
-
-            // 1. Try to read a valid address.
-            BTCAddress* address = [[BTCAddress addressWithString:message] publicAddress];
-            BTCAmount amount = -1;
-
-            if (!address)
-            {
-                // 2. Try to read a valid 'bitcoin:' URL.
-                NSURL* url = [NSURL URLWithString:message];
-
-                BTCBitcoinURL* bitcoinURL = [[BTCBitcoinURL alloc] initWithURL:url];
-
-                if (bitcoinURL)
-                {
-                    address = [bitcoinURL.address publicAddress];
-                    amount = bitcoinURL.amount;
-                }
-            }
-
-            if (address)
-            {
-                if (!!address.isTestnet == !!self.wallet.isTestnet)
-                {
-                    self.addressField.text = address.string;
-                    [self updateAddressView];
-
-                    if (amount >= 0)
-                    {
-                        self.spendingAmount = amount;
-                        self.amountField.text = [self.wallet.primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(amount)];
-                        [self didEditBtc:nil];
-                        [self updateAmounts];
-                    }
-
-                    // Jump in amount field.
-                    [self.amountField becomeFirstResponder];
-
-                    [self.scannerView dismiss];
-                    self.scannerView = nil;
-                }
-                else
-                {
-                    self.scannerView.errorMessage = NSLocalizedString(@"Address does not belong to Bitcoin network", @"");
-                }
-            }
-            else
-            {
-                self.scannerView.errorMessage = NSLocalizedString(@"Not a valid Bitcoin address or payment request", @"");
-            }
-
+        self.scannerView = [MYCScannerView presentFromRect:rect inView:targetView detection:^(NSString *code) {
+            [self scanPaymentCode:code];
         }];
     }];
 }
 
+- (void) scanPaymentCode:(NSString*)code {
+
+    if (!self.scannerView) return;
+    if (self.scanning) return;
+    self.scanning = YES;
+
+    self.paymentRequest = nil;
+
+    // 1. Try to read a valid address.
+    BTCAddress* address = [[BTCAddress addressWithString:code] publicAddress];
+    BTCAmount amount = -1;
+
+    if (!address) {
+        // 2. Try to read a valid 'bitcoin:' URL.
+        NSURL* url = [NSURL URLWithString:code];
+
+        BTCBitcoinURL* bitcoinURL = [[BTCBitcoinURL alloc] initWithURL:url];
+
+        if (!bitcoinURL || !bitcoinURL.isValid) {
+            self.scannerView.errorMessage = NSLocalizedString(@"Payment address is not valid", @"");
+            self.scanning = NO;
+            return;
+        }
+
+        if (bitcoinURL.paymentRequestURL) {
+            [self processPaymentRequestWithURL:bitcoinURL.paymentRequestURL];
+            return;
+        }
+
+        address = [bitcoinURL.address publicAddress];
+        amount = bitcoinURL.amount;
+    }
+
+    if (address)
+    {
+        if (!!address.isTestnet == !!self.wallet.isTestnet)
+        {
+            self.addressField.text = address.string;
+            [self updateAddressView];
+
+            if (amount >= 0)
+            {
+                self.spendingAmount = amount;
+                self.amountField.text = [self.wallet.primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(amount)];
+                [self didEditBtc:nil];
+                [self updateAmounts];
+            }
+
+            // Jump in amount field.
+            [self.amountField becomeFirstResponder];
+
+            [self dismissScannerView];
+        }
+        else
+        {
+            self.scannerView.errorMessage = NSLocalizedString(@"Address does not belong to Bitcoin network", @"");
+        }
+    }
+    else
+    {
+        self.scannerView.errorMessage = NSLocalizedString(@"Not a valid Bitcoin address or payment request", @"");
+    }
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.scanning = NO;
+    });
+}
+
+
+- (void) processPaymentRequestWithURL:(NSURL*)paymentRequestURL {
+    NSParameterAssert(paymentRequestURL);
+
+    [BTCPaymentProtocol loadPaymentRequestFromURL:paymentRequestURL completionHandler:^(BTCPaymentRequest *pr, NSError *error) {
+
+        if (!pr) {
+            if ([error.domain isEqual:BTCErrorDomain]) {
+                self.scannerView.errorMessage = NSLocalizedString(@"Payment request is invalid", @"Errors");
+            } else {
+                self.scannerView.errorMessage = NSLocalizedString(@"Connection failed", @"Errors");
+            }
+
+            return;
+        }
+
+        // Even when invalid, this may be interesting for UI to inspect and provide more details on why it is so.
+        self.paymentRequest = pr;
+
+        if (pr.status == BTCPaymentRequestStatusValid) {
+
+            [self proceedWithPaymentRequest:pr];
+            return;
+
+        } else if (pr.status == BTCPaymentRequestStatusUnknown ||
+                   pr.status == BTCPaymentRequestStatusUnsigned) {
+
+            NSString* msg = nil;
+            if (pr.signerName.length > 0) {
+                msg = NSLocalizedString(@"The recipient’s claimed name %@ is not signed by a trusted authority.", @"Errors");
+            } else {
+                msg = NSLocalizedString(@"The request for payment is not signed by a trusted authority.", @"Errors");
+            }
+
+            msg = [NSString stringWithFormat:NSLocalizedString(@"%@ Do you wish to continue?",@""), msg];
+
+            UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Cannot verify recipient", @"Errors")
+                                                                        message:msg
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                [self dismissScannerView];
+            }]];
+            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Continue", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [self proceedWithPaymentRequest:pr];
+            }]];
+
+            [self presentViewController:ac animated:YES completion:nil];
+            return;
+
+        } else if (pr.status == BTCPaymentRequestStatusExpired) {
+
+#if DEBUG
+            UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Payment request expired", @"Errors")
+                                                                        message:NSLocalizedString(@"Do you wish to pay anyway?", @"")
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                [self dismissScannerView];
+            }]];
+            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Continue", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [self proceedWithPaymentRequest:pr];
+            }]];
+            [self presentViewController:ac animated:YES completion:nil];
+#else
+            self.scannerView.errorMessage = NSLocalizedString(@"Payment request expired", @"Errors");
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self dismissScannerView];
+            });
+#endif
+        } else {
+            self.scannerView.errorMessage = NSLocalizedString(@"Payment request is invalid", @"Errors");
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self dismissScannerView];
+            });
+        }
+    }];
+}
+
+
+- (void) dismissScannerView {
+    [self.scannerView dismiss];
+    self.scannerView = nil;
+    self.scanning = NO;
+}
+
+- (void) proceedWithPaymentRequest:(BTCPaymentRequest*)pr {
+
+    // TODO: set the address and amount, save metadata.
+    self.paymentRequest = pr;
+
+    self.spendingAmount = [self totalAmountInOutputs:pr.details.outputs];
+    self.amountField.text = [self.wallet.primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(self.spendingAmount)];
+    [self updateAmounts];
+
+    [self dismissScannerView];
+
+    MYCLog(@"MYCSendVC: Processing payment request for %@ -> %@ (%@)", [self.wallet.btcCurrencyFormatter stringFromAmount:self.spendingAmount], pr.signerName, pr.details.memo);
+
+    if ([self someAmountsSpecified:pr.details.outputs]) {
+        // Proceed with payment immediately.
+        [self send:nil];
+    } else {
+        // Show the send view so the user can review / edit the amount.
+    }
+}
 
 
 
@@ -673,6 +874,30 @@ static BTCAmount MYCFeeRate = 10000;
 
 
 
+- (BTCTransactionBuilder*) makeTransactionBuilder {
+
+    BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
+    builder.dataSource = self;
+    builder.feeRate = MYCFeeRate;
+
+    if (self.paymentRequest) {
+        if (self.paymentRequest.details.outputs.count == 0) {
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"Errors")
+                                        message:[NSString stringWithFormat:@"Payment address is not specified."] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+            return nil;
+        }
+        builder.outputs = [self filledInOutputs:self.paymentRequest.details.outputs amount:self.spendingAmount];
+    } else if (self.spendingAddress) {
+        builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:self.spendingAddress] ];
+    } else {
+        builder.outputs = @[];
+    }
+
+    builder.changeAddress = self.changeAddress ?: self.account.internalAddress;
+
+    return builder;
+}
+
 - (NSString*) formatAmountInSelectedCurrency:(BTCAmount)amount
 {
     return [self.wallet.primaryCurrencyFormatter stringFromAmount:amount];
@@ -708,16 +933,21 @@ static BTCAmount MYCFeeRate = 10000;
 {
     NSString* addrString = self.addressField.text;
 
+    if (self.paymentRequest) {
+        self.addressValid = YES;
+        self.addressField.text = self.paymentRequest.signerName ?: @"";
+        if (self.addressField.text.length == 0) {
+            self.addressField.text = [[MYCWallet currentWallet] addressForAddress:[[self.paymentRequest.details.outputs.firstObject script] standardAddress]];
+        }
+        return;
+    }
+
+    // Check if we have default label & address to override the address.
     if (self.defaultAddress && self.defaultAddressLabel &&
         ([addrString isEqualToString:self.defaultAddressLabel] || [addrString isEqualToString:@""]))
     {
-        if (self.addressField.isFirstResponder)
-        {
-            self.addressField.text = @"";
-            addrString = @"";
-        }
-        else
-        {
+        //
+        if (!self.addressField.isFirstResponder) {
             self.scanButton.hidden = NO;
             self.addressField.text = self.defaultAddressLabel;
             self.addressField.textColor = [UIColor blackColor];
@@ -726,6 +956,10 @@ static BTCAmount MYCFeeRate = 10000;
             [self updateSendButton];
             return;
         }
+
+        // If first responder, ignore the value.
+        self.addressField.text = @"";
+        addrString = @"";
     }
 
     self.scanButton.hidden = (addrString.length > 0);
@@ -787,15 +1021,12 @@ static BTCAmount MYCFeeRate = 10000;
         // Update fee and color amounts.
         // Set self.amountValid to YES if everything is okay.
 
-        // Address may not be entered yet, so use dummy address.
-        BTCAddress* address = self.spendingAddress ?: [BTCPublicKeyAddress addressWithData:BTCZero160()];
-
-        BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
-        builder.dataSource = self;
-        builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:address] ];
-        builder.changeAddress = self.changeAddress ?: self.account.internalAddress;
+        BTCTransactionBuilder* builder = [self makeTransactionBuilder];
+        if (builder.outputs.count == 0) {
+            // Address may not be entered yet, so use dummy address.
+            builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:self.spendingAmount address:[BTCPublicKeyAddress addressWithData:BTCZero160()]] ];
+        }
         builder.shouldSign = NO;
-        builder.feeRate = MYCFeeRate;
 
         NSError* berror = nil;
         BTCTransactionBuilderResult* result = [builder buildTransaction:&berror];
@@ -840,17 +1071,20 @@ static BTCAmount MYCFeeRate = 10000;
 
 - (IBAction)didBeginEditingAddress:(id)sender
 {
+    self.paymentRequest = nil;
     [self updateAddressView];
 }
 
 - (IBAction)didEditAddress:(id)sender
 {
+    self.paymentRequest = nil;
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"MYCSendWithScanner"];
     [self updateAddressView];
 }
 
 - (IBAction)didEndEditingAddress:(id)sender
 {
+    self.paymentRequest = nil;
     [self updateAddressView];
 }
 
