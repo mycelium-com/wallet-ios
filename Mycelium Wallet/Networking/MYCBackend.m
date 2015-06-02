@@ -614,15 +614,15 @@
  => {"errorCode":0,"r":{"success":true}}
  curl -k https://node3.mycelium.com/backup/v1/wallet_backup/12342342
  => {"errorCode":0,"r":{"backup":"BackupData1"}}
+ 
+ 
+ 
+ curl -k -X GET https://mws2.mycelium.com/backup/v1/wallet_backup/WXTfCYUGVgZCCydTR1RDWhAGRKWQ4G5bt3
+ 
+ curl -k -X GET https://node3.mycelium.com/backup/v1/wallet_backup/WXTfCYUGVgZCCydTR1RDWhAGRKWQ4G5bt3
  */
 
 - (void) uploadDataBackup:(NSData*)encryptedData apub:(NSData*)apubkey completionHandler:(void(^)(BOOL result, NSError* error))completion {
-
-#warning FIXME: only testnet server supports backups for now.
-    if (![self.btcNetwork isTestnet]) {
-        [[MYCBackend testnetBackend] uploadDataBackup:encryptedData apub:apubkey completionHandler:completion];
-        return;
-    }
 
     NSString* walletID = [BTCEncryptedBackup walletIDWithAuthenticationKey:apubkey];
 
@@ -665,12 +665,6 @@
 }
 
 - (void) downloadDataBackupForWalletID:(NSString*)walletID completionHandler:(void(^)(NSData* data, NSError* error))completion {
-
-#warning FIXME: only testnet server supports backups for now.
-    if (![self.btcNetwork isTestnet]) {
-        [[MYCBackend testnetBackend] downloadDataBackupForWalletID:walletID completionHandler:completion];
-        return;
-    }
 
     NSMutableURLRequest* req = [self backupRequestWithWalletID:walletID];
     self.currentEndpointURL = req.URL;
@@ -823,8 +817,8 @@
 
 - (NSMutableURLRequest*) backupRequestWithWalletID:(NSString*)walletID
 {
-#warning TODO: temporary endpoint for uploading/downloading backups.
-    NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"https://node3.mycelium.com/backup/v1/wallet_backup/%@", walletID]];
+    NSString* hostname = self.currentEndpointURL.host;
+    NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@/backup/v1/wallet_backup/%@", hostname, walletID]];
 
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
 

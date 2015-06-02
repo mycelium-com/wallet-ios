@@ -879,7 +879,11 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 }
 
 - (NSTimeInterval) backupDelay {
+#if DEBUG
+    return 2;
+#else
     return 10;
+#endif
 }
 
 - (void) setNeedsBackup {

@@ -227,7 +227,7 @@
         }];
 
 #if 1
-#warning Diagnostics View Enabled
+        //#warning Diagnostics View Enabled
     #if 0
         [section item:^(PTableViewSourceItem *item) {
             item.title = NSLocalizedString(@"Diagnostics Log", @"");
