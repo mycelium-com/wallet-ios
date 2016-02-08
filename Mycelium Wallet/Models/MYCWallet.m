@@ -1806,11 +1806,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     MYCTransactionDetails* txdet = tx.transactionDetails ?:
     [MYCTransactionDetails loadWithPrimaryKey:@[tx.transactionHash] fromDatabase:db] ?: [[MYCTransactionDetails alloc] init];
 
-    // If we have data already and we do not need to force update, do nothing.
-    if (!force && txdet.fiatAmount.length > 0 && txdet.fiatCode.length > 0) {
-        return;
-    }
-
     BTCCurrencyConverter* converter = [MYCWallet currentWallet].fiatCurrencyFormatter.currencyConverter;
 
     if (!converter) {
@@ -1820,6 +1815,12 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 
     txdet.transactionHash = tx.transactionHash;
     NSDecimalNumber* num = [converter fiatFromBitcoin:tx.amountTransferred];
+    
+    // If the previously converted amount is the same then don't update the database
+    if (!force && [txdet.fiatAmount isEqualToString:num.stringValue] && [txdet.fiatCode isEqualToString:converter.currencyCode]) {
+        return;
+    }
+    
     txdet.fiatAmount = num.stringValue;
     if ([txdet.fiatAmount isEqualToString:@"0"] || [num isEqual:[NSDecimalNumber zero]]) {
         MYCError(@"MYCWallet: fiatAmount is zero. Not updating.");
