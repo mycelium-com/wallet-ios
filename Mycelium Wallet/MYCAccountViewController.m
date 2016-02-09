@@ -72,7 +72,7 @@
         }];
         [section item:^(PTableViewSourceItem *item) {
             item.title = NSLocalizedString(@"Public key", @"");
-            item.detailTitle = self.account.externalKeychain.extendedPublicKey;
+            item.detailTitle = self.account.keychain.extendedPublicKey;
             item.cellStyle = UITableViewCellStyleValue1;
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
                 [weakself copyPubKeyAtIndexPath:indexPath];
