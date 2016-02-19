@@ -575,19 +575,18 @@
 
 - (IBAction) refresh:(id)sender
 {
+    if (!self.account) {
+        [self showSynchronizationError];
+        return;
+    }
+ 
     [self setRefreshing:YES animated:YES];
 
     [self.wallet updateAccount:self.account force:YES completion:^(BOOL success, NSError *error) {
 
         if (!success)
         {
-            UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
-                                                                        message:NSLocalizedString(@"Can't synchronize the account. Try again later.", @"")
-                                                                 preferredStyle:UIAlertControllerStyleAlert];
-            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
-                                                   style:UIAlertActionStyleCancel
-                                                 handler:^(UIAlertAction *action) {}]];
-            [self presentViewController:ac animated:YES completion:nil];
+            [self showSynchronizationError];
         }
 
         [self.wallet updateExchangeRate:YES completion:^(BOOL success, NSError *error2) {
@@ -595,6 +594,16 @@
             //MYCLog(@"currency updated: %@", error2);
         }];
     }];
+}
+
+- (void)showSynchronizationError {
+    UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
+                                                                message:NSLocalizedString(@"Can't synchronize the account. Try again later.", @"")
+                                                         preferredStyle:UIAlertControllerStyleAlert];
+    [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                           style:UIAlertActionStyleCancel
+                                         handler:^(UIAlertAction *action) {}]];
+    [self presentViewController:ac animated:YES completion:nil];
 }
 
 //- (IBAction)tapAddress:(UILongPressGestureRecognizer*)gr
