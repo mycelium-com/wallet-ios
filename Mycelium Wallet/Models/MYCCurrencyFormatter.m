@@ -23,12 +23,12 @@
 @implementation MYCMyMultiplierNSNumberFormatter
 
 - (NSString*) stringFromNumber:(NSNumber *)number {
-    if (!_myMultiplier) return [super stringFromNumber:number];
+    if (!_myMultiplier || _myMultiplier.doubleValue == 0) return [super stringFromNumber:number];
     return [super stringFromNumber:[[self decForNum:number] decimalNumberByMultiplyingBy:_myMultiplier]];
 }
 
 - (NSNumber*) numberFromString:(NSString *)string {
-    if (!_myMultiplier) return [super numberFromString:string];
+    if (!_myMultiplier || _myMultiplier.doubleValue == 0) return [super numberFromString:string];
     NSDecimalNumber* num = [self decForNum:[super numberFromString:string]];
     return [num decimalNumberByDividingBy:_myMultiplier];
 }
