@@ -140,7 +140,7 @@ typedef NS_ENUM(uint8_t, MYCWalletBackupPayloadFormat) {
     } else {
         [_payloadDictionary[@"currency"] removeObjectForKey:@"btc_unit"];
         _payloadDictionary[@"currency"][@"fiat_code"] = fmt.currencyCode;
-        _payloadDictionary[@"currency"][@"fiat_source"] = fmt.currencyConverter.sourceName;
+        _payloadDictionary[@"currency"][@"fiat_source"] = fmt.currencyConverter.sourceName ?: @"-";
     }
 }
 
