@@ -659,6 +659,9 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
 
 
 
+- (id)valueForUndefinedKey:(NSString *)key {
+    return NSUndefinedKeyException;
+}
 
 - (BOOL)validateColumnNames:(NSArray*)columnNames returningError:(NSError **)outError
 {
@@ -666,6 +669,9 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     {
         NSError* error = nil;
         id value = [self valueForKey:columnName];
+        if ([value isEqual:NSUndefinedKeyException]) {
+            return NO;
+        }
         id previousValue = value;
         BOOL validKey = [self validateValue:&value forKey:columnName error:&error];
         if (validKey)
