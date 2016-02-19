@@ -78,15 +78,16 @@
     else
     {
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
-            if (granted)
-            {
-                completion(YES);
-            }
-            else
-            {
-                completion(NO);
-                return;
-            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (granted)
+                {
+                    completion(YES);
+                }
+                else
+                {
+                    completion(NO);
+                }
+            });
         }];
     }
 }
