@@ -22,6 +22,7 @@ typedef NS_ENUM(NSInteger, MYCBroadcastStatus) {
     MYCBroadcastStatusSuccess         = 200,
 };
 
+@class MYCMinerFeeEstimations;
 
 @interface MYCBackend : NSObject
 
@@ -77,6 +78,7 @@ typedef NS_ENUM(NSInteger, MYCBroadcastStatus) {
 - (void) broadcastTransaction:(BTCTransaction*)tx
                    completion:(void(^)(MYCBroadcastStatus status, NSError* error))completion;
 
+- (void) loadMinerFeeEstimatationsWithCompletion:(void(^)(MYCMinerFeeEstimations* minerFeeEstimations, NSError* error))completion;
 
 - (void) uploadDataBackup:(NSData*)encryptedData apub:(NSData*)apubkey completionHandler:(void(^)(BOOL result, NSError* error))completion;
 

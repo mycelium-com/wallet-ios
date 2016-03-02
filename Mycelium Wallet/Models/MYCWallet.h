@@ -32,6 +32,7 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 @class MYCWalletAccount;
 @class MYCTransaction;
 @class MYCCurrencyFormatter;
+@class MYCMinerFeeEstimations;
 
 @interface MYCWallet : NSObject
 
@@ -109,6 +110,7 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Selects this formatter as a primary one. Sends CNWalletDidUpdateCurrencyNotification.
 - (void) selectPrimaryCurrencyFormatter:(MYCCurrencyFormatter*)formatter;
 
+- (void) loadMinerFeeEstimationsWithCompletion:(void(^)(MYCMinerFeeEstimations* estimations, NSError* error))completion;
 
 // Date formatters
 @property(nonatomic) NSDateFormatter* compactDateFormatter;

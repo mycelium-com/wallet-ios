@@ -379,6 +379,10 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     }
 }
 
+- (void) loadMinerFeeEstimationsWithCompletion:(void(^)(MYCMinerFeeEstimations* estimations, NSError* error))completion {
+    [self.backend loadMinerFeeEstimatationsWithCompletion:completion];
+}
+
 - (BTCCurrencyConverter*) currencyConverter {
     return self.fiatCurrencyFormatter.currencyConverter;
 }

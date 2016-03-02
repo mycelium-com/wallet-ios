@@ -8,6 +8,7 @@
 
 #import "MYCBackend.h"
 #import "MYCWallet.h"
+#import "MYCMinerFeeEstimations.h"
 
 @interface MYCBackend () <NSURLSessionDelegate>
 
@@ -599,6 +600,64 @@
 
                    if (completion) completion(MYCBroadcastStatusSuccess, error);
                }];
+}
+
+- (void) loadMinerFeeEstimatationsWithCompletion:(void (^)(MYCMinerFeeEstimations *, NSError *))completion
+{
+    MYC_ASSERT_MAIN_THREAD;
+    
+    //    curl  -k -X POST -H "Content-Type: application/json" -d '{"version":1,"currency":"USD"}' https://144.76.165.115/wapitestnet/wapi/getMinerFeeEstimations
+    //    {
+    //        "errorCode": 0,
+    //        "r": {
+    //            "feeEstimation": {
+    //                "feeForNBlocks": {
+    //                    "1": "58639",
+    //                    "2": "39877",
+    //                    "3": "29190",
+    //                    "4": "23784",
+    //                    "5": "21452",
+    //                    "10": "19678",
+    //                    "15": "17945",
+    //                    "20": "16032"
+    //                },
+    //                "validFor": 1456935054018
+    //            }
+    //        }
+    
+    [self makeJSONRequestWithName:@"getMinerFeeEstimations"
+                          payload:@{}
+                         template:@{@"feeEstimation": @{
+                                            @"feeForNBlocks": @{
+                                                    @"1": @"58639",
+                                                    @"2": @"39877",
+                                                    @"3": @"29190",
+                                                    @"4": @"23784",
+                                                    @"5": @"21452",
+                                                    @"10": @"19678",
+                                                    @"15": @"17945",
+                                                    @"20": @"16032"
+                                            },
+                                            @"validFor": @1456935054018
+                                    }}
+                       completion:^(NSDictionary* result, NSString* curlCommand, NSError* error){
+                           
+                           if (!result)
+                           {
+                               if (completion) completion(nil, error);
+                               return;
+                           }
+                           
+                           if (![result[@"feeEstimation"] isKindOfClass:[NSDictionary class]] || ![result[@"feeEstimation"][@"feeForNBlocks"] isKindOfClass:[NSDictionary class]])
+                           {
+                               if (completion) completion(nil, [self dataError:NSLocalizedString(@"No miner fee estimates returned", nil)]);
+                               return;
+                           }
+                           
+                           NSDictionary * estimations = result[@"feeEstimation"][@"feeForNBlocks"];
+                           
+                           if (completion) completion([MYCMinerFeeEstimations estimationsWithDictionary:estimations], nil);
+                       }];
 }
 
 /*

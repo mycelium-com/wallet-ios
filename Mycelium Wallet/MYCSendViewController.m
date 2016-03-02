@@ -18,13 +18,12 @@
 #import "MYCRestoreSeedViewController.h"
 #import "MYCTransaction.h"
 #import "MYCTransactionDetails.h"
+#import "MYCMinerFeeEstimations.h"
 
-#if 0 && DEBUG
-#warning DEBUG: Zero fees
-static BTCAmount MYCFeeRate = 0;
-#else
-static BTCAmount MYCFeeRate = 10000;
-#endif
+static BTCAmount MYCLowPriorityFeeRate = 8000;
+static BTCAmount MYCEconomyFeeRate = 15000;
+static BTCAmount MYCNormalFeeRate = 20000;
+static BTCAmount MYCPriorityFeeRate = 100000;
 
 @interface MYCSendViewController () <UITextFieldDelegate, BTCTransactionBuilderDataSource>
 
@@ -32,6 +31,8 @@ static BTCAmount MYCFeeRate = 10000;
 
 @property(nonatomic) BTCAmount spendingAmount;
 @property(nonatomic) BTCAddress* spendingAddress;
+@property(nonatomic) MYCMinerFeeEstimations* minerFeeEstimations;
+@property(nonatomic) BTCAmount minerFeeRate;
 
 @property(nonatomic) BOOL addressValid;
 @property(nonatomic) BOOL amountValid;
@@ -54,6 +55,8 @@ static BTCAmount MYCFeeRate = 10000;
 
 @property (weak, nonatomic) IBOutlet UIButton *allFundsButton;
 @property (weak, nonatomic) IBOutlet UILabel *allFundsLabel;
+
+@property (weak, nonatomic) IBOutlet UILabel *minerFeeLabel;
 
 @property (strong, nonatomic) IBOutletCollection(NSLayoutConstraint)  NSArray*borderHeightConstraints;
 
@@ -116,7 +119,12 @@ static BTCAmount MYCFeeRate = 10000;
 - (void) viewDidLoad
 {
     [super viewDidLoad];
-
+    
+    [self.wallet loadMinerFeeEstimationsWithCompletion:^(MYCMinerFeeEstimations * estimations, NSError * error) {
+        self.minerFeeEstimations = estimations;
+    }];
+    self.minerFeeRate = MYCNormalFeeRate;
+    
     self.accountNameLabel.text = NSLocalizedString(@"Send", @"");
 
     [self reloadAccount];
@@ -665,6 +673,45 @@ static BTCAmount MYCFeeRate = 10000;
     }
 }
 
+- (IBAction)changeMinerFee:(id)sender {
+    UIAlertController * actionSheet = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Set Miner Fee", nil)
+                                                                          message:NSLocalizedString(@"Low Priority or Economy may result in longer confirmation time", nil)
+                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertAction * lowPriority = [UIAlertAction actionWithTitle:NSLocalizedString(@"Low Priority", nil)
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.lowPriority : MYCLowPriorityFeeRate;
+                                                             [self updateAmounts];
+                                                             self.minerFeeLabel.text = action.title;
+    }];
+    UIAlertAction * economy = [UIAlertAction actionWithTitle:NSLocalizedString(@"Economy", nil)
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+                                                         self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.economy : MYCEconomyFeeRate;
+                                                         [self updateAmounts];
+                                                         self.minerFeeLabel.text = action.title;
+    }];
+    UIAlertAction * normal = [UIAlertAction actionWithTitle:NSLocalizedString(@"Normal", nil)
+                                                      style:UIAlertActionStyleDefault
+                                                    handler:^(UIAlertAction * action) {
+                                                        self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.normal : MYCNormalFeeRate;
+                                                        [self updateAmounts];
+                                                        self.minerFeeLabel.text = action.title;
+    }];
+    UIAlertAction * priority = [UIAlertAction actionWithTitle:NSLocalizedString(@"Priority", nil)
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction * action) {
+                                                          self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.priority : MYCPriorityFeeRate;
+                                                          [self updateAmounts];
+                                                          self.minerFeeLabel.text = action.title;
+    }];
+    [actionSheet addAction:lowPriority];
+    [actionSheet addAction:economy];
+    [actionSheet addAction:normal];
+    [actionSheet addAction:priority];
+    [self presentViewController:actionSheet animated:YES completion:nil];
+}
+
 - (IBAction)scan:(id)sender
 {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MYCSendWithScanner"];
@@ -949,7 +996,7 @@ static BTCAmount MYCFeeRate = 10000;
 
     BTCTransactionBuilder* builder = [[BTCTransactionBuilder alloc] init];
     builder.dataSource = self;
-    builder.feeRate = MYCFeeRate;
+    builder.feeRate = self.minerFeeRate;
 
     if (self.paymentRequest) {
         if (self.paymentRequest.details.outputs.count == 0) {

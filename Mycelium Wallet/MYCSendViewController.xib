@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
@@ -16,6 +17,7 @@
                 <outlet property="cancelButton" destination="PgE-Wo-9nb" id="Wqd-OR-cBv"/>
                 <outlet property="currencyButton" destination="Alr-FU-WiU" id="XS4-1X-mIn"/>
                 <outlet property="feeLabel" destination="qTt-2c-8V1" id="WyR-gQ-dbh"/>
+                <outlet property="minerFeeLabel" destination="c6L-p4-3N0" id="jOM-g1-4DJ"/>
                 <outlet property="scanButton" destination="Fgj-5a-6hx" id="hd1-O1-tOe"/>
                 <outlet property="sendButton" destination="Vvc-u8-Kig" id="yHf-BN-be1"/>
                 <outlet property="spinner" destination="TaN-TD-uq9" id="4an-47-dem"/>
@@ -37,8 +39,8 @@
                         <constraint firstAttribute="height" constant="1" id="rBg-LU-LnO"/>
                     </constraints>
                 </view>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2xo-SL-GVo">
-                    <rect key="frame" x="105" y="210" width="109" height="32"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2xo-SL-GVo">
+                    <rect key="frame" x="203" y="210" width="109" height="32"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                     <state key="normal" title="Send all funds">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -47,10 +49,26 @@
                         <action selector="useAllFunds:" destination="-1" eventType="touchUpInside" id="9PF-go-S4k"/>
                     </connections>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 042 234 bits" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="heC-AM-0sz">
-                    <rect key="frame" x="112" y="242" width="95.5" height="17.5"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 042 234 bits" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="heC-AM-0sz">
+                    <rect key="frame" x="216" y="242" width="96" height="18"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                     <color key="textColor" red="0.53916865587234497" green="0.53910815715789795" blue="0.53914463520050049" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mLa-Ny-DlO">
+                    <rect key="frame" x="8" y="210" width="71" height="32"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                    <state key="normal" title="Miner fee">
+                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="changeMinerFee:" destination="-1" eventType="touchUpInside" id="m9q-da-367"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Normal" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c6L-p4-3N0">
+                    <rect key="frame" x="8" y="242" width="49" height="18"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                    <color key="textColor" red="0.53916865589999996" green="0.53910815720000005" blue="0.5391446352" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9jj-0h-6H4" userLabel="Keyboard Placeholder">
@@ -77,8 +95,8 @@
                                 <constraint firstAttribute="height" constant="1" id="OQ9-Js-tJV"/>
                             </constraints>
                         </view>
-                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="0 000 000" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="U14-Fb-xG0">
-                            <rect key="frame" x="0.0" y="113" width="261.5" height="32"/>
+                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="0 000 000" textAlignment="right" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="U14-Fb-xG0">
+                            <rect key="frame" x="0.0" y="113" width="262" height="32"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="27"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
                             <connections>
@@ -87,8 +105,8 @@
                                 <outlet property="delegate" destination="-1" id="oaG-3v-2bs"/>
                             </connections>
                         </textField>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PgE-Wo-9nb">
-                            <rect key="frame" x="10" y="27.5" width="51" height="32"/>
+                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PgE-Wo-9nb">
+                            <rect key="frame" x="10" y="28" width="51" height="32"/>
                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                             <state key="normal" title="Cancel">
                                 <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -97,8 +115,8 @@
                                 <action selector="cancel:" destination="-1" eventType="touchUpInside" id="U31-fv-TJd"/>
                             </connections>
                         </button>
-                        <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vvc-u8-Kig">
-                            <rect key="frame" x="271" y="27.5" width="39" height="32"/>
+                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vvc-u8-Kig">
+                            <rect key="frame" x="271" y="28" width="39" height="32"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                             <state key="normal" title="Send">
                                 <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -108,7 +126,7 @@
                             </connections>
                         </button>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Main Account" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c4H-3C-XyI">
-                            <rect key="frame" x="105" y="32" width="109" height="20.5"/>
+                            <rect key="frame" x="105" y="32" width="109" height="21"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="17"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
@@ -127,7 +145,7 @@
                                 <outlet property="delegate" destination="-1" id="s1f-5u-Avy"/>
                             </connections>
                         </textField>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fgj-5a-6hx">
+                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fgj-5a-6hx">
                             <rect key="frame" x="214" y="67" width="96" height="30"/>
                             <state key="normal" title="Scan Address">
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -148,10 +166,10 @@
                             </connections>
                         </button>
                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="TaN-TD-uq9">
-                            <rect key="frame" x="280" y="33.5" width="20" height="20"/>
+                            <rect key="frame" x="280" y="34" width="20" height="20"/>
                         </activityIndicatorView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Fee: 5 000 bits" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qTt-2c-8V1">
-                            <rect key="frame" x="162" y="153" width="99.5" height="17.5"/>
+                            <rect key="frame" x="162" y="153" width="100" height="18"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                             <color key="textColor" red="0.70039774723050008" green="0.70039774723050008" blue="0.70355269160583944" alpha="1" colorSpace="deviceRGB"/>
                             <nil key="highlightedColor"/>
@@ -204,15 +222,28 @@
                 <constraint firstItem="9jj-0h-6H4" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="8d9-0z-scN"/>
                 <constraint firstItem="4Xo-xP-PBe" firstAttribute="leading" secondItem="BDk-Vc-NZZ" secondAttribute="leading" id="9LL-fZ-XY6"/>
                 <constraint firstAttribute="trailing" secondItem="BDk-Vc-NZZ" secondAttribute="trailing" id="LhM-NW-Vyb"/>
+                <constraint firstAttribute="trailing" secondItem="heC-AM-0sz" secondAttribute="trailing" constant="8" id="OWd-g2-Jzo"/>
+                <constraint firstItem="mLa-Ny-DlO" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="QH3-FM-k1k"/>
                 <constraint firstItem="4Xo-xP-PBe" firstAttribute="trailing" secondItem="BDk-Vc-NZZ" secondAttribute="trailing" id="RON-6g-TwP"/>
                 <constraint firstItem="BDk-Vc-NZZ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="U19-Xk-50z"/>
+                <constraint firstItem="2xo-SL-GVo" firstAttribute="top" secondItem="4Xo-xP-PBe" secondAttribute="bottom" constant="9" id="USE-vE-TRh"/>
                 <constraint firstAttribute="bottom" secondItem="9jj-0h-6H4" secondAttribute="bottom" id="cLu-LM-oQT"/>
+                <constraint firstAttribute="trailing" secondItem="2xo-SL-GVo" secondAttribute="trailing" constant="8" id="dV0-k9-iQi"/>
+                <constraint firstItem="mLa-Ny-DlO" firstAttribute="top" secondItem="4Xo-xP-PBe" secondAttribute="bottom" constant="9" id="hh0-JE-TsY"/>
+                <constraint firstItem="c6L-p4-3N0" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="hmN-5B-Qmt"/>
+                <constraint firstItem="c6L-p4-3N0" firstAttribute="top" secondItem="mLa-Ny-DlO" secondAttribute="bottom" id="pOQ-H1-PQ1"/>
                 <constraint firstItem="BDk-Vc-NZZ" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="pny-5h-DHG"/>
                 <constraint firstItem="heC-AM-0sz" firstAttribute="top" secondItem="2xo-SL-GVo" secondAttribute="bottom" id="uR4-V6-vcu"/>
                 <constraint firstAttribute="trailing" secondItem="9jj-0h-6H4" secondAttribute="trailing" id="uTr-qN-SRI"/>
                 <constraint firstItem="2xo-SL-GVo" firstAttribute="top" secondItem="BDk-Vc-NZZ" secondAttribute="bottom" constant="10" id="xI9-dM-9fj"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="20s-Td-xD0"/>
+                    <exclude reference="3GY-Gs-GqZ"/>
+                </mask>
+            </variation>
             <point key="canvasLocation" x="-1480" y="367"/>
         </view>
     </objects>
