@@ -111,8 +111,7 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
 
     [self.view setNeedsLayout];
 
-    [self updateAmounts];
-    [self updateTotalBalance];
+    [self updateAmountsAndTotalBalance];
 }
 
 
@@ -136,7 +135,7 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
                 self.minerFeeRate = self.minerFeeEstimations.priority;
                 break;
         }
-        [self updateAmounts];
+        [self updateAmountsAndTotalBalance];
     }];
     self.minerFeeRate = MYCNormalFeeRate;
     
@@ -172,8 +171,7 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
         [self didEditBtc:nil];
     }
 
-    [self updateAmounts];
-    [self updateTotalBalance];
+    [self updateAmountsAndTotalBalance];
 }
 
 - (void) viewWillAppear:(BOOL)animated
@@ -265,8 +263,7 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
     if (self.isViewLoaded && account)
     {
         self.accountNameLabel.text = _account.label;
-        [self updateAmounts];
-        [self updateTotalBalance];
+        [self updateAmountsAndTotalBalance];
     }
 }
 
@@ -696,28 +693,28 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
                                                            style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction * action) {
                                                              self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.lowPriority : MYCLowPriorityFeeRate;
-                                                             [self updateAmounts];
+                                                             [self updateAmountsAndTotalBalance];
                                                              self.minerFeeLabel.text = action.title;
     }];
     UIAlertAction * economy = [UIAlertAction actionWithTitle:NSLocalizedString(@"Economy", nil)
                                                        style:UIAlertActionStyleDefault
                                                      handler:^(UIAlertAction * action) {
                                                          self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.economy : MYCEconomyFeeRate;
-                                                         [self updateAmounts];
+                                                         [self updateAmountsAndTotalBalance];
                                                          self.minerFeeLabel.text = action.title;
     }];
     UIAlertAction * normal = [UIAlertAction actionWithTitle:NSLocalizedString(@"Normal", nil)
                                                       style:UIAlertActionStyleDefault
                                                     handler:^(UIAlertAction * action) {
                                                         self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.normal : MYCNormalFeeRate;
-                                                        [self updateAmounts];
+                                                        [self updateAmountsAndTotalBalance];
                                                         self.minerFeeLabel.text = action.title;
     }];
     UIAlertAction * priority = [UIAlertAction actionWithTitle:NSLocalizedString(@"Priority", nil)
                                                         style:UIAlertActionStyleDefault
                                                       handler:^(UIAlertAction * action) {
                                                           self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.priority : MYCPriorityFeeRate;
-                                                          [self updateAmounts];
+                                                          [self updateAmountsAndTotalBalance];
                                                           self.minerFeeLabel.text = action.title;
     }];
     [actionSheet addAction:lowPriority];
@@ -1041,6 +1038,11 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
 }
 
 
+- (void)updateAmountsAndTotalBalance {
+    [self updateAmounts];
+    [self updateTotalBalance];
+}
+
 - (void) updateTotalBalance
 {
     BTCAmount spendableAmount = [self spendableAmount];
@@ -1193,8 +1195,7 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
 
 - (void) setFiatInput:(BOOL)fiatInput
 {
-    [self updateAmounts];
-    [self updateTotalBalance];
+    [self updateAmountsAndTotalBalance];
 }
 
 - (IBAction)didBeginEditingBtc:(id)sender
