@@ -20,10 +20,10 @@
 #import "MYCTransactionDetails.h"
 #import "MYCMinerFeeEstimations.h"
 
-static BTCAmount MYCLowPriorityFeeRate = 8000;
-static BTCAmount MYCEconomyFeeRate = 15000;
-static BTCAmount MYCNormalFeeRate = 20000;
-static BTCAmount MYCPriorityFeeRate = 100000;
+static const BTCAmount MYCLowPriorityFeeRate = 8000;
+static const BTCAmount MYCEconomyFeeRate = 15000;
+static const BTCAmount MYCNormalFeeRate = 20000;
+static const BTCAmount MYCPriorityFeeRate = 100000;
 
 @interface MYCSendViewController () <UITextFieldDelegate, BTCTransactionBuilderDataSource>
 
@@ -122,6 +122,21 @@ static BTCAmount MYCPriorityFeeRate = 100000;
     
     [self.wallet loadMinerFeeEstimationsWithCompletion:^(MYCMinerFeeEstimations * estimations, NSError * error) {
         self.minerFeeEstimations = estimations;
+        switch (self.minerFeeRate) {
+            case MYCLowPriorityFeeRate:
+                self.minerFeeRate = self.minerFeeEstimations.lowPriority;
+                break;
+            case MYCEconomyFeeRate:
+                self.minerFeeRate = self.minerFeeEstimations.economy;
+                break;
+            case MYCNormalFeeRate:
+                self.minerFeeRate = self.minerFeeEstimations.normal;
+                break;
+            case MYCPriorityFeeRate:
+                self.minerFeeRate = self.minerFeeEstimations.priority;
+                break;
+        }
+        [self updateAmounts];
     }];
     self.minerFeeRate = MYCNormalFeeRate;
     
