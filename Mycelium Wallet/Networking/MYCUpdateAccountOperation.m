@@ -72,7 +72,7 @@
         _wallet = wallet;
         _backend = wallet.backend;
         _externalAddressesLookAhead = 20;
-        _internalAddressesLookAhead = 2;
+        _internalAddressesLookAhead = 4;
         _discoveryEnabled = YES;
     }
     return self;
