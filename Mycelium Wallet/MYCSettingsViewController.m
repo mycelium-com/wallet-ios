@@ -246,7 +246,7 @@
         }];
     #endif
 
-        BTCKey* mycpubkey = [[BTCKey alloc] initWithPublicKey:BTCDataFromHex(@"02f74817a3f8c1cbb3801179283811aaace6f5200d47e889c3b3a4d141eb44042e")];
+        BTCKey* mycpubkey = [[BTCKey alloc] initWithPublicKey:BTCDataFromHex(@"023b127259858902971a997230181c95ffed3f9b5df0046472f3632fc2fa646edc")];
 
         [section item:^(PTableViewSourceItem *item) {
             item.title = NSLocalizedString(@"Export Diagnostical Data", @"");
