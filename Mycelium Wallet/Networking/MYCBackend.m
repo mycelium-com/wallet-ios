@@ -29,6 +29,7 @@
 
 // Currently used endpoint URL.
 @property(atomic) NSURL* currentEndpointURL;
+@property(atomic) NSInteger currentEndpointIndex;
 
 @property(atomic) int pendingTasksCount;
 
@@ -54,6 +55,7 @@
                                   [NSURL URLWithString:@"https://88.198.17.7/wapi"],
                                   ];
         instance.currentEndpointURL = instance.endpointURLs.firstObject;
+        instance.currentEndpointIndex = 0;
         instance.SSLFingerprint = BTCDataFromHex([@"B3:42:65:33:40:F5:B9:1B:DA:A2:C8:7A:F5:4C:7C:5D:A9:63:C4:C3" stringByReplacingOccurrencesOfString:@":" withString:@""]);
     });
     return instance;
@@ -74,6 +76,7 @@
                         [NSURL URLWithString:@"https://144.76.165.115/wapitestnet"],
                         ];
         instance.currentEndpointURL = instance.endpointURLs.firstObject;
+        instance.currentEndpointIndex = 0;
         instance.SSLFingerprint = BTCDataFromHex([@"E5:70:76:B2:67:3A:89:44:7A:48:14:81:DF:BD:A0:58:C8:82:72:4F" stringByReplacingOccurrencesOfString:@":" withString:@""]);
     });
     return instance;
@@ -772,7 +775,7 @@
 
 - (void) makeJSONRequestWithName:(NSString*)name payload:(NSDictionary*)payload template:(id)template completion:(void(^)(NSDictionary* result, NSString* curlCommand, NSError* error))completion
 {
-    self.currentEndpointURL = self.endpointURLs.firstObject;
+    self.currentEndpointURL = self.endpointURLs[self.currentEndpointIndex];
     NSMutableURLRequest* req = [self requestWithName:name];
     [self makeJSONRequest:req payload:payload template:template completion:completion];
 }
@@ -919,16 +922,11 @@
 {
     if (!data)
     {
-        // TODO: make this error more readable for user
-        failureBlock(error);
-        return nil;
-    }
-
-    // Timeout special case: received an empty response
-    if (data.length == 0 && response == nil && error)
-    {
-        MYCLog(@"Timeout-like error: %@", error);
-    // TODO: should switch to another hostname after timeout error.
+        NSInteger nextEndpoint = rand() % self.endpointURLs.count;
+        if (nextEndpoint == self.currentEndpointIndex) {
+            nextEndpoint = (nextEndpoint + 1) % self.endpointURLs.count;
+        }
+        self.currentEndpointIndex = nextEndpoint;
         failureBlock(error);
         return nil;
     }
