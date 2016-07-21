@@ -1851,8 +1851,9 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
                  );
         return;
     }
-
-    [self setNeedsBackup];
+    dispatch_async(dispatch_get_main_queue(), ^{
+       [self setNeedsBackup];
+    });
 }
 
 
