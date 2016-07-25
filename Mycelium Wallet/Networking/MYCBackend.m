@@ -879,7 +879,8 @@
 
 - (NSMutableURLRequest*) backupRequestWithWalletID:(NSString*)walletID
 {
-    NSString* hostname = self.currentEndpointURL.host;
+    NSURL* endpointURL = self.endpointURLs[self.currentEndpointIndex];
+    NSString* hostname = endpointURL.host;
     NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@/backup/v1/wallet_backup/%@", hostname, walletID]];
 
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
