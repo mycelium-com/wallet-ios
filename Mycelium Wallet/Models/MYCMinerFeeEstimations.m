@@ -36,7 +36,7 @@
 }
 
 - (BTCAmount)priority {
-    return self.block1;
+    return self.block2;
 }
 
 @end
