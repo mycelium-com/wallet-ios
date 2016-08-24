@@ -692,28 +692,28 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
     UIAlertAction * lowPriority = [UIAlertAction actionWithTitle:NSLocalizedString(@"Low Priority", nil)
                                                            style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction * action) {
-                                                             self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.lowPriority : MYCLowPriorityFeeRate;
+                                                             self.minerFeeRate = self.minerFeeEstimations.lowPriority > 0 ? self.minerFeeEstimations.lowPriority : MYCLowPriorityFeeRate;
                                                              [self updateAmountsAndTotalBalance];
                                                              self.minerFeeLabel.text = action.title;
     }];
     UIAlertAction * economy = [UIAlertAction actionWithTitle:NSLocalizedString(@"Economy", nil)
                                                        style:UIAlertActionStyleDefault
                                                      handler:^(UIAlertAction * action) {
-                                                         self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.economy : MYCEconomyFeeRate;
+                                                         self.minerFeeRate = self.minerFeeEstimations.economy > 0 ? self.minerFeeEstimations.economy : MYCEconomyFeeRate;
                                                          [self updateAmountsAndTotalBalance];
                                                          self.minerFeeLabel.text = action.title;
     }];
     UIAlertAction * normal = [UIAlertAction actionWithTitle:NSLocalizedString(@"Normal", nil)
                                                       style:UIAlertActionStyleDefault
                                                     handler:^(UIAlertAction * action) {
-                                                        self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.normal : MYCNormalFeeRate;
+                                                        self.minerFeeRate = self.minerFeeEstimations.normal > 0 ? self.minerFeeEstimations.normal : MYCNormalFeeRate;
                                                         [self updateAmountsAndTotalBalance];
                                                         self.minerFeeLabel.text = action.title;
     }];
     UIAlertAction * priority = [UIAlertAction actionWithTitle:NSLocalizedString(@"Priority", nil)
                                                         style:UIAlertActionStyleDefault
                                                       handler:^(UIAlertAction * action) {
-                                                          self.minerFeeRate = self.minerFeeEstimations ? self.minerFeeEstimations.priority : MYCPriorityFeeRate;
+                                                          self.minerFeeRate = self.minerFeeEstimations.priority > 0 ? self.minerFeeEstimations.priority : MYCPriorityFeeRate;
                                                           [self updateAmountsAndTotalBalance];
                                                           self.minerFeeLabel.text = action.title;
     }];
