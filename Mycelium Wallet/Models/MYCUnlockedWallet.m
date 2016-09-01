@@ -14,8 +14,6 @@
 #define kBackupMasterKeyName @"BackupMasterKeyV2"
 #define kProbeItemName  @"ProbeItem"
 
-static BOOL MYCBypassMissingPasscode = 0;
-
 @interface MYCUnlockedWallet ()
 @end
 
@@ -24,10 +22,6 @@ static BOOL MYCBypassMissingPasscode = 0;
 
 @synthesize mnemonic=_mnemonic;
 @synthesize backupMasterKey=_backupMasterKey;
-
-+ (void) setBypassMissingPasscode {
-    MYCBypassMissingPasscode = YES;
-}
 
 - (NSString*) serviceName {
     return @"MyceliumWallet";
@@ -66,8 +60,6 @@ static BOOL MYCBypassMissingPasscode = 0;
     NSData* data = mnemonic.dataWithSeed ?: [NSData data];
     if (![self writeItem:data
                 withName:kMasterSeedName
-           accessibility:kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-     requireUserPresence:NO
                    error:&error]) {
         MYCError(@"MYCUnlockedWallet: Cannot write mnemonic to keychain: %@", error);
         self.error = error;
@@ -110,8 +102,6 @@ static BOOL MYCBypassMissingPasscode = 0;
     NSError* error = nil;
     if (![self writeItem:backupMasterKey
                 withName:kBackupMasterKeyName
-           accessibility:kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-     requireUserPresence:NO
                    error:&error]) {
         MYCError(@"MYCUnlockedWallet: Cannot write backupMasterKey to keychain: %@", error);
         self.error = error;
@@ -146,8 +136,6 @@ static BOOL MYCBypassMissingPasscode = 0;
     NSError* error = nil;
     if (![self writeItem:data
                 withName:kProbeItemName
-           accessibility:kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly
-     requireUserPresence:NO
                    error:&error]) {
         MYCError(@"MYCUnlockedWallet: Cannot write probe item to keychain: %@", error);
         self.error = error;
@@ -438,7 +426,9 @@ static BOOL MYCBypassMissingPasscode = 0;
 
     MYCLog(@"MYCUnlockedWallet: Reading item with name: %@", name);
     CFDictionaryRef value = NULL;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)[self keychainSearchRequestForItemNamed:name],
+    NSMutableDictionary * dict = [self keychainBaseDictForItemNamed:name];
+    dict[(__bridge id)kSecReturnData] = @YES;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)dict,
                                           (CFTypeRef *)&value);
     if (status == errSecSuccess) {
         return ( __bridge_transfer NSData *)value;
@@ -457,42 +447,18 @@ static BOOL MYCBypassMissingPasscode = 0;
     return nil;
 }
 
-- (BOOL) itemExistsWithName:(NSString*)name error:(NSError**)errorOut {
-
-    //MYCLog(@"MYCUnlockedWallet: Checking if item exists with name: %@", name);
-    CFDictionaryRef value = NULL;
-
-    NSMutableDictionary* requestDict = [self keychainBaseDictForItemNamed:name];
-    requestDict[(__bridge id)kSecReturnRef] = @YES;
-    requestDict[(__bridge id)kSecUseNoAuthenticationUI] = @YES;
-
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)[self keychainSearchRequestForItemNamed:name],
-                                          (CFTypeRef *)&value);
-
-    if (status == errSecSuccess) {
-        return YES;
-    }
-    else if (status == errSecItemNotFound) {
-        return NO;
-    }
-
-    if (errorOut) *errorOut = [self errorForOSStatus:status];
-    return NO;
-}
-
 - (BOOL) writeItem:(NSData*)data
           withName:(NSString*)name
-     accessibility:(CFTypeRef)accessibility
-requireUserPresence:(BOOL)requireUserPresence
              error:(NSError**)errorOut {
 
     MYCLog(@"MYCUnlockedWallet: Writing %@ bytes with name: %@", @(data.length), name);
     NSParameterAssert(name);
-    NSParameterAssert(accessibility);
 
     // We cannot update the value, only attributes of the keychain items.
     // So to update value we delete the item and add a new one.
-    OSStatus status1 = SecItemDelete((__bridge CFDictionaryRef)[self keychainSearchRequestForItemNamed:name]);
+    NSMutableDictionary * dict = [self keychainBaseDictForItemNamed:name];
+    dict[(__bridge id)kSecReturnData] = @YES;
+    OSStatus status1 = SecItemDelete((__bridge CFDictionaryRef)dict);
 
     if (status1 != errSecSuccess && status1 != errSecItemNotFound) {
         if (errorOut) *errorOut = [self errorForOSStatus:status1];
@@ -503,13 +469,15 @@ requireUserPresence:(BOOL)requireUserPresence
         MYCLog(@"MYCUnlockedWallet: Writing nil data for name %@", name);
         return YES;
     }
+    
+    [dict removeObjectForKey:(__bridge id)kSecReturnData];
+    
+    if (!data || data.length == 0) [NSException raise:@"Unexpected value!" format:@"Must provide data to make an iOS keychain create request"];
+    dict[(__bridge id)kSecValueData] = data;
+    dict[(__bridge id)kSecAttrAccessible] = (__bridge id)kSecAttrAccessibleWhenUnlockedThisDeviceOnly;
 
-    NSDictionary* createRequest = [self keychainCreateRequestForItemNamed:name
-                                                                     data:data
-                                                            accessibility:accessibility
-                                                      requireUserPresence:requireUserPresence];
     CFDictionaryRef attributes = NULL;
-    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)createRequest, (CFTypeRef *)&attributes);
+    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)dict, (CFTypeRef *)&attributes);
     if (status != errSecSuccess) {
         if (errorOut) *errorOut = [self errorForOSStatus:status];
         return NO;
@@ -535,61 +503,6 @@ requireUserPresence:(BOOL)requireUserPresence
 
     return dict;
 }
-
-- (NSMutableDictionary*) keychainSearchRequestForItemNamed:(NSString*)name {
-
-    NSMutableDictionary* dict = [self keychainBaseDictForItemNamed:name];
-    if (self.reason) dict[(__bridge id)kSecUseOperationPrompt] = self.reason;
-    dict[(__bridge id)kSecReturnData] = @YES;
-
-    return dict;
-}
-
-- (NSMutableDictionary*) keychainCreateRequestForItemNamed:(NSString*)name
-                                                      data:(NSData*)data
-                                             accessibility:(CFTypeRef)accessibility
-                                       requireUserPresence:(BOOL)requireUserPresence {
-
-    NSMutableDictionary* dict = [self keychainBaseDictForItemNamed:name];
-
-    if (!data || data.length == 0) [NSException raise:@"Unexpected value!" format:@"Must provide data to make an iOS keychain create request"];
-    dict[(__bridge id)kSecValueData] = data;
-
-#if TARGET_IPHONE_SIMULATOR
-    // Simulator does not support touch id or passcode, but we need to test the UI on simulator,
-    // so lets assume it's implicitly unlocked.
-    if (accessibility == kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly) {
-        accessibility = kSecAttrAccessibleWhenUnlockedThisDeviceOnly;
-    }
-    requireUserPresence = NO;
-#endif
-
-    if (MYCBypassMissingPasscode && (accessibility == kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly)) {
-        MYCLog(@"Downgrading security to WhenUnlockedThisDeviceOnly because passcode is not set.");
-        accessibility = kSecAttrAccessibleWhenUnlockedThisDeviceOnly;
-        requireUserPresence = NO;
-    }
-
-    // Need to set access control object to require user enter passcode / touch id every time.
-    // For all other accessibility modes we can read items any time device is unlocked.
-    if (requireUserPresence) {
-        SecAccessControlRef sac = SecAccessControlCreateWithFlags(kCFAllocatorDefault, accessibility, kSecAccessControlUserPresence, NULL);
-        NSAssert(sac, @"");
-        if (sac) {
-            dict[(__bridge id)kSecAttrAccessControl] = (__bridge_transfer id)sac;
-            dict[(__bridge id)kSecUseNoAuthenticationUI] = @YES; // we set the attribute kSecUseNoAuthenticationUI because we don't want to be prompted on Add.  (http://corinnekrych.blogspot.fr/2014/09/touchid-and-keychain-ios8-best-friends.html)
-            MYCLog(@"MYCUnlockedWallet: Using access control object with UserPresence flag to write %@.", name);
-        } else {
-            MYCLog(@"CANNOT CREATE SecAccessControlRef");
-        }
-    } else {
-        // For all other
-        dict[(__bridge id)kSecAttrAccessible] = (__bridge id)accessibility;
-    }
-    return dict;
-}
-
-
 
 // OSStatus values specific to Security framework.
 //enum

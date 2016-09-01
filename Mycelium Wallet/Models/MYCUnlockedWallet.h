@@ -42,7 +42,6 @@
 @property(nonatomic) NSString* reason;
 @property(nonatomic) NSError* error;
 
-+ (void) setBypassMissingPasscode;
 + (BOOL) isPasscodeSet;
 
 - (void) clear;

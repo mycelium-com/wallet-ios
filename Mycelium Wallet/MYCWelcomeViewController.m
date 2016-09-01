@@ -104,9 +104,7 @@
                                                                            message:NSLocalizedString(@"To protect your bitcoins please set up a passcode or Touch ID in System Settings.", @"")
                                                                     preferredStyle:UIAlertControllerStyleAlert];
 
-            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                [MYCUnlockedWallet setBypassMissingPasscode];
-            }]];
+            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"") style:UIAlertActionStyleDefault handler:nil]];
             [self presentViewController:alert animated:YES completion:nil];
         }
     });
