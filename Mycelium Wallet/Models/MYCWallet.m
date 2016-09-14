@@ -9,7 +9,6 @@
 #import "MYCWallet.h"
 #import "MYCUnlockedWallet.h"
 #import "MYCWalletAccount.h"
-#import "MYCWalletBackup.h"
 #import "MYCDatabase.h"
 #import "MYCBackend.h"
 #import "MYCDatabaseMigrations.h"
@@ -21,7 +20,6 @@
 #import "MYCUnspentOutput.h"
 #import "MYCCurrencyFormatter.h"
 #import "BTCPriceSourceMycelium.h"
-#import "MYCCloudKit.h"
 #include <pthread.h>
 #include <LocalAuthentication/LocalAuthentication.h>
 
@@ -48,11 +46,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 @implementation MYCWallet {
     int _updatingExchangeRate;
     NSMutableArray* _accountUpdateOperations;
-    BOOL _needsBackup;
-    BOOL _backingUp;
-    NSDate* _lastBackupDate;
-    NSError* _lastBackupError;
-    UIBackgroundTaskIdentifier _backgroundTaskIdentifier;
 }
 
 + (instancetype) currentWallet
@@ -644,348 +637,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 
 
 
-
-
-// Backup Routines
-
-- (NSString*) backupWalletID {
-    return [BTCEncryptedBackup walletIDWithAuthenticationKey:self.backupAuthenticationKey.publicKey];
-}
-
-- (BTCKey*) backupAuthenticationKey {
-    return [BTCEncryptedBackup authenticationKeyWithBackupKey:self.backupKey];
-}
-
-- (NSData*) backupData {
-    // Load previous backup if possible or create a new one.
-    MYCWalletBackup* bak = nil;
-    NSData* storedData = [self storedBackupData];
-    if (storedData) {
-        bak = [[MYCWalletBackup alloc] initWithData:storedData backupKey:self.backupKey];
-        if (!bak) {
-            MYCError(@"MYCWallet: Cannot initialize stored backup data. Making one from scratch.");
-            bak = [[MYCWalletBackup alloc] init];
-        }
-    } else {
-        bak = [[MYCWalletBackup alloc] init];
-    }
-
-    bak.network = self.network;
-    bak.currencyFormatter = self.primaryCurrencyFormatter;
-
-    [self inDatabase:^(FMDatabase *db) {
-        [bak setAccounts:[MYCWalletAccount loadAccountsFromDatabase:db]];
-        [bak setTransactionDetails:[MYCTransactionDetails loadAllFromDatabase:db]];
-    }];
-
-    NSData* result = [bak dataWithBackupKey:self.backupKey]; // this sets required values if necessary.
-
-    MYCLog(@"MYCWallet Automatic Backup: %@", bak.dictionary);
-    return result;
-}
-
-- (void) applyWalletBackup:(MYCWalletBackup*)backup {
-
-    MYC_ASSERT_MAIN_THREAD;
-
-    // 1. Currency converter.
-    MYCCurrencyFormatter* fmt = backup.currencyFormatter;
-    if (fmt) {
-        MYCLog(@"MYCWallet: setting currency formatter to: %@", fmt.dictionary);
-        [self selectPrimaryCurrencyFormatter:fmt];
-    } else {
-        MYCError(@"MYCWallet: cannot restore currency formatter from backup: %@", backup.dictionary[@"currency"]);
-    }
-
-    __block BTCKeychain* rootKeychain = nil;
-    [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {
-        rootKeychain = [uw.keychain copy]; // so it's not cleared outside unlockWallet block.
-    } reason:NSLocalizedString(@"Restoring accounts from backup", @"")];
-
-    [self inTransaction:^(FMDatabase *db, BOOL *rollback) {
-
-        // 2. Account labels.
-        __block NSInteger maxIndex = -1;
-        [backup enumerateAccounts:^(NSString *label, NSInteger accIndex, BOOL archived, BOOL current) {
-            if (accIndex > maxIndex) maxIndex = accIndex;
-
-            MYCWalletAccount* acc = [MYCWalletAccount loadAccountAtIndex:accIndex fromDatabase:db];
-            acc = acc ?: [[MYCWalletAccount alloc] initWithKeychain:[rootKeychain keychainForAccount:(uint32_t)accIndex]];
-
-            if (label.length > 0) {
-                acc.label = label;
-            }
-            acc.archived = archived;
-            acc.current = current;
-
-            NSError* dberror = nil;
-            MYCLog(@"MYCWallet applyWalletBackup: restoring from backup account %@: %@ archived:%@ current:%@",
-                   @(acc.accountIndex),
-                   acc.label,
-                   @(acc.isArchived),
-                   @(acc.isCurrent));
-            if (![acc saveInDatabase:db error:&dberror]) {
-                MYCError(@"MYCWallet applyWalletBackup: cannot save account at index %@: %@", @(accIndex), dberror);
-                *rollback = YES;
-                return;
-            }
-        }];
-
-        // Check if cancelled.
-        if (*rollback) return;
-
-        // Make sure we don't have gaps in the accounts list (maxIndex is not checked because it's just created).
-        for (NSInteger i = 0; i < maxIndex; i++) {
-
-            MYCWalletAccount* acc = [MYCWalletAccount loadAccountAtIndex:i fromDatabase:db];
-            if (!acc) {
-                MYCError(@"MYCWallet applyWalletBackup: detected a gap in accounts list: %@; creating an account there.", @(i));
-                acc = [[MYCWalletAccount alloc] initWithKeychain:[rootKeychain keychainForAccount:(uint32_t)i]];
-                NSError* dberror = nil;
-                if (![acc saveInDatabase:db error:&dberror]) {
-                    MYCError(@"MYCWallet applyWalletBackup: cannot save account at index %@: %@", @(i), dberror);
-                    *rollback = YES;
-                    return;
-                }
-            }
-        }
-
-        // Make sure we have current account and it's not archived.
-        MYCWalletAccount* curAcc = [MYCWalletAccount loadCurrentAccountFromDatabase:db];
-        if (!curAcc || curAcc.isArchived) {
-            if (curAcc) {
-                MYCError(@"MYCWallet applyWalletBackup: current account is archived, unarchiving it: %@", @(curAcc.accountIndex));
-            } else {
-                MYCError(@"MYCWallet applyWalletBackup: current account is missing, currentizing account 0.");
-            }
-            curAcc = curAcc ?: [MYCWalletAccount loadAccountAtIndex:0 fromDatabase:db];
-            curAcc.archived = NO;
-            curAcc.current = YES;
-            NSError* dberror = nil;
-            if (![curAcc saveInDatabase:db error:&dberror]) {
-                MYCError(@"MYCWallet applyWalletBackup: cannot save current account at index %@: %@", @(curAcc.accountIndex), dberror);
-                *rollback = YES;
-                return;
-            }
-        }
-
-        // 3. Tx labels and receipts.
-        NSArray* txdetails = backup.transactionDetails;
-        for (MYCTransactionDetails* txdet in txdetails) {
-            NSError* dberror = nil;
-            if (![txdet saveInDatabase:db error:&dberror]) {
-                MYCError(@"MYCWallet applyWalletBackup: cannot save transaction details %@: %@", txdet.transactionID, dberror);
-                *rollback = YES;
-                return;
-            } else {
-                MYCLog(@"MYCWallet applyWalletBackup: saved transaction details for tx %@", txdet.transactionID);
-            }
-        }
-    }];
-
-    [self setStoredBackupData:[backup dataWithBackupKey:self.backupKey]];
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidReloadNotification object:self];
-}
-
-- (NSData*) storedBackupData {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletStoredEncryptedBackupV1"];
-}
-
-- (void) setStoredBackupData:(NSData*)data {
-    if (data) {
-        [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"MYCWalletStoredEncryptedBackupV1"];
-    } else {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"MYCWalletStoredEncryptedBackupV1"];
-    }
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-- (NSData*) backupKey {
-    __block NSData* bakmaster = nil;
-    [self unlockWallet:^(MYCUnlockedWallet *uw) {
-        bakmaster = uw.backupMasterKey;
-    } reason:@"Accessing key for automatic wallet backups"];
-    return [BTCEncryptedBackup backupKeyForNetwork:self.network masterKey:bakmaster];
-}
-
-- (void) uploadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock {
-
-    NSString* walletID = self.backupWalletID;
-    NSData* data = [self backupData];
-
-    // Verify that we can decrypt the backup we just created.
-    MYCWalletBackup* bak = [[MYCWalletBackup alloc] initWithData:data backupKey:self.backupKey];
-    NSDictionary* dict = bak.dictionary;
-
-    if (!dict || ![dict isKindOfClass:[NSDictionary class]]) {
-        MYCError(@"Cannot decrypt the encrypted backup (sanity check)");
-        completionBlock(NO, [NSError errorWithDomain:MYCErrorDomain code:-6 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Backup encryption inconsistency", @"Automatic backup for wallet data cannot be done.")}]);
-        return;
-    }
-
-    // Ask system for some background goodness.
-    _backgroundTaskIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"MYCWallet_backup" expirationHandler:^{
-    }];
-
-    MYCLog(@"MYCWallet: Uploading encrypted backup to iCloud Drive and Mycelium: %@ bytes (%@)", @(data.length), walletID);
-    [[[MYCCloudKit alloc] init] uploadDataBackup:data walletID:walletID completionHandler:^(BOOL icloudResult, NSError *icloudError) {
-        MYCLog(@"MYCWallet: iCloud upload status: %@ %@", @(icloudResult), icloudError ?: @"");
-        [self.backend uploadDataBackup:data apub:self.backupAuthenticationKey.publicKey completionHandler:^(BOOL mycResult, NSError *mycError) {
-            MYCLog(@"MYCWallet: Mycelium upload status: %@ %@", @(mycResult), mycError ?: @"");
-            if (icloudResult || mycResult) {
-                [self setStoredBackupData:data];
-            }
-
-            if (_backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
-                [[UIApplication sharedApplication] endBackgroundTask:_backgroundTaskIdentifier];
-                _backgroundTaskIdentifier = UIBackgroundTaskInvalid;
-            }
-
-            completionBlock(icloudResult || mycResult, icloudError ?: mycError);
-        }];
-    }];
-}
-
-- (void) downloadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock {
-
-    NSString* walletID = self.backupWalletID;
-
-    MYCLog(@"MYCWallet: Downloading encrypted backup from iCloud Drive and Mycelium: %@", walletID);
-    [[[MYCCloudKit alloc] init] downloadDataBackupForWalletID:walletID completionHandler:^(NSData *icloudData, NSError *icloudError) {
-        MYCLog(@"MYCWallet: iCloud download status: %@ bytes %@", @(icloudData.length), icloudError ?: @"");
-        [self.backend downloadDataBackupForWalletID:walletID completionHandler:^(NSData *mycData, NSError *mycError) {
-            MYCLog(@"MYCWallet: Mycelium download status: %@ bytes %@", @(mycData.length), mycError ?: @"");
-
-            NSMutableArray* datas = [NSMutableArray array];
-            if (icloudData) [datas addObject:icloudData];
-            if (mycData) [datas addObject:mycData];
-
-            MYCWalletBackup* backup = [self chooseLatestWalletBackupFromDatas:datas];
-
-            if (!backup) {
-                MYCError(@"MYCWallet: could not receive or decrypt any backup data: %@ %@", icloudError ?: @"", mycError ?: @"");
-                completionBlock(NO, icloudError ?: mycError);
-                return;
-            }
-
-            if (backup.network != self.network) {
-                MYCError(@"MYCWallet: backup network does not match the current one: %@ != %@", backup.network.paymentProtocolName, self.network.paymentProtocolName);
-                completionBlock(NO, [NSError errorWithDomain:MYCErrorDomain code:-573 userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Backed up payment data was saved for the different bitcoin network.", @"Errors")}]);
-                return;
-            }
-
-            MYCLog(@"Applyign backup for %@ from %@", walletID, backup.date);
-            [self applyWalletBackup:backup];
-            completionBlock(YES, nil);
-        }];
-    }];
-}
-
-- (NSTimeInterval) backupDelay {
-#if DEBUG
-    return 2;
-#else
-    return 10;
-#endif
-}
-
-- (void) setNeedsBackup {
-
-    _needsBackup = YES;
-    MYCLog(@"MYCWallet: NEEDS BACKUP.");
-
-    if (!_lastBackupDate) _lastBackupDate = [NSDate date];
-    NSTimeInterval remainingTime = [self backupDelay] - [[NSDate date] timeIntervalSinceDate:_lastBackupDate];
-    if (remainingTime <= 0) {
-        [self backupIfNeeded];
-    } else {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(remainingTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self backupIfNeeded];
-        });
-    }
-}
-
-- (void) backupIfNeeded {
-
-    if (!_needsBackup) return;
-    if (_backingUp) return;
-
-    _needsBackup = NO;
-    _backingUp = YES;
-    MYCLog(@"MYCWallet: BACKING UP NOW.");
-    [self uploadAutomaticBackup:^(BOOL result, NSError *error) {
-        if (result) {
-            _lastBackupError = nil;
-        } else {
-            _lastBackupError = error;
-        }
-        // Even in case of error, do not backup immediately after scheduling.
-        _lastBackupDate = [NSDate date];
-        _backingUp = NO;
-
-        // If asked to backup while we were backing up, do it again.
-        [self backupIfNeeded];
-
-        [self showLastBackupErrorAlertIfNeeded];
-    }];
-}
-
-// Returns and erases most recent error during backup.
-// So the UI can show the user "Cannot backup, please check your network or iCloud settings."
-- (NSError*) popBackupError {
-    if (_lastBackupError) {
-        NSError* err = _lastBackupError;
-        _lastBackupDate = nil;
-        return err;
-    }
-    return nil;
-}
-
-- (BOOL) showLastBackupErrorAlertIfNeeded {
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
-        NSError* error = [self popBackupError];
-        if (error) {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up wallet", @"")
-                                        message:error.localizedDescription ?: @""
-                                       delegate:nil
-                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
-                              otherButtonTitles:nil] show];
-            return YES;
-        }
-    }
-    return NO;
-}
-
-
-
-- (MYCWalletBackup*) chooseLatestWalletBackupFromDatas:(NSArray*)datas {
-
-    MYCWalletBackup* latestBackup = nil;
-    NSUInteger i = 0;
-    for (NSData* data in datas) {
-        MYCWalletBackup* backup = [[MYCWalletBackup alloc] initWithData:data backupKey:self.backupKey];
-        if (!backup) {
-            MYCError(@"MYCWallet: Cannot decrypt backup data #%@ (%@ bytes)", @(i), @(data.length));
-        } else {
-            if (!latestBackup) {
-                latestBackup = backup;
-            } else {
-                NSTimeInterval time = [backup.date timeIntervalSinceDate:latestBackup.date];
-                if (time > 0) {
-                    MYCLog(@"Have backup with a different date: %@ > %@", backup.date, latestBackup.date);
-                }
-            }
-        }
-        i++;
-    }
-    return latestBackup;
-}
-
-
-
-
-
 // Database Access
 
 
@@ -1113,7 +764,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         if (![database.URL setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error])
         {
             MYCError(@"WARNING: Can not exclude database file from backup (%@)", error);
-            //[NSException raise:NSInternalInconsistencyException format:@"Can not exclude database file from backup (%@)", error];
         }
     }
 
@@ -1837,9 +1487,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
                  );
         return;
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
-       [self setNeedsBackup];
-    });
 }
 
 

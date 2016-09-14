@@ -278,7 +278,6 @@
         }];
         [self updateTableViewSource];
         [self.tableView reloadData];
-        [self updateBackup];
     }]];
     [self presentViewController:alert animated:YES completion:nil];
 }
@@ -305,7 +304,6 @@
         }];
         [self updateTableViewSource];
         [self.tableView reloadData];
-        [self updateBackup];
     }]];
     [self presentViewController:alert animated:YES completion:nil];
 }
@@ -323,7 +321,6 @@
                     MYCError(@"Failed to update tx memo in DB: %@", dberror);
                 }
             }];
-            [self updateBackup];
         }
         [sender dismissViewControllerAnimated:YES completion:nil];
         [self updateTableViewSource];
@@ -340,13 +337,6 @@
     vc.allowShare = YES;
     [self.navigationController pushViewController:vc animated:YES];
 }
-
-- (void) updateBackup {
-    [[MYCWallet currentWallet] setNeedsBackup];
-}
-
-
-
 
 
 #pragma mark - UITableView

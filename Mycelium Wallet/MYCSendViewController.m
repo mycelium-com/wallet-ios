@@ -510,8 +510,6 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
 
         if (success)
         {
-            [self updateBackup];
-
             if (!self.paymentRequest) {
                 [self complete:YES];
                 return;
@@ -541,8 +539,6 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
                             MYCError(@"MYCSendVC: cannot save tx details in DB with ACK data: %@", dberror);
                         }
                     }];
-                    [self updateBackup];
-
                 } else {
                     MYCError(@"MYCSendVC: cannot receive ACK from payment: %@", error);
                 }
@@ -591,11 +587,6 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
         [self presentViewController:ac animated:YES completion:nil];
     }];
 }
-
-- (void) updateBackup {
-    [[MYCWallet currentWallet] setNeedsBackup];
-}
-
 
 - (void) updateAccountIfNeeded:(void(^)(BOOL success, BOOL updated, NSError* error))completion
 {

@@ -150,28 +150,6 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // If user has only passcode or not passcode, then the block is simply being called without extra checks.s
 - (void) bestEffortAuthenticateWithTouchID:(void(^)(MYCUnlockedWallet* uw, BOOL authenticated))block reason:(NSString*)reason;
 
-
-
-// Managing the automatic backup
-
-- (NSString*) backupWalletID;
-- (BTCKey*) backupAuthenticationKey;
-- (NSData*) backupKey;
-- (NSData*) backupData;
-
-- (void) downloadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock;
-
-- (void) setNeedsBackup;
-
-// Force backup if needed.
-- (void) backupIfNeeded;
-
-// Returns and erases most recent error during backup.
-// So the UI can show the user "Cannot backup, please check your network or iCloud settings."
-- (NSError*) popBackupError;
-- (BOOL) showLastBackupErrorAlertIfNeeded;
-
-
 // Accessing Database
 
 

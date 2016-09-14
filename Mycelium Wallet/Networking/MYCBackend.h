@@ -80,9 +80,5 @@ typedef NS_ENUM(NSInteger, MYCBroadcastStatus) {
 
 - (void) loadMinerFeeEstimatationsWithCompletion:(void(^)(MYCMinerFeeEstimations* minerFeeEstimations, NSError* error))completion;
 
-- (void) uploadDataBackup:(NSData*)encryptedData apub:(NSData*)apubkey completionHandler:(void(^)(BOOL result, NSError* error))completion;
-
-- (void) downloadDataBackupForWalletID:(NSString*)walletID completionHandler:(void(^)(NSData* data, NSError* error))completionHandler;
-
 
 @end

@@ -341,8 +341,6 @@
                 [acc saveInDatabase:db error:NULL];
             }];
 
-            [self updateBackup];
-
             [[MYCWallet currentWallet] updateAccount:acc force:YES completion:^(BOOL success, NSError *error) {
             }];
 
@@ -354,11 +352,6 @@
     }]];
     [self presentViewController:alert animated:YES completion:nil];
 }
-
-- (void) updateBackup {
-    [[MYCWallet currentWallet] setNeedsBackup];
-}
-
 
 
 

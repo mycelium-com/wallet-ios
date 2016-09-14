@@ -150,47 +150,10 @@
 
         if (newWallet) {
             updateWallet();
-            if (completionHandler) completionHandler(YES);
-            return;
+        } else {
+            discoverAccounts();
         }
-
-        // Restoring wallet metadata from backup:
-        [wallet downloadAutomaticBackup:^(BOOL result, NSError *error) {
-
-            if (result || !error) {
-                // Item is found or not found: not an error.
-                discoverAccounts();
-                if (completionHandler) completionHandler(YES);
-                return;
-            }
-
-            UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Cannot restore additional data", @"Errors")
-                                                                           message:error.localizedDescription ?: @""
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-
-            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Ignore this error", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-
-                UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Payment data will be lost", @"Errors")
-                                                                                message:NSLocalizedString(@"If you saved some transaction notes or payment receipts, they will be permanently lost if you do not download them first.\nYour funds are not affected.", @"Errors")
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
-
-                [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Retry download", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                    if (completionHandler) completionHandler(NO);
-                }]];
-                [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Continue without data", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-                    discoverAccounts();
-                    if (completionHandler) completionHandler(YES);
-                }]];
-                [self presentViewController:alert2 animated:YES completion:nil];
-            }]];
-            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Try again", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                if (completionHandler) completionHandler(NO);
-                [self finishRestore:nil];
-            }]];
-
-            [self presentViewController:alert animated:YES completion:nil];
-        }];
-
+        if (completionHandler) completionHandler(YES);
 
     } reason:NSLocalizedString(@"Authenticate storage for the wallet seed", @"")];
 }
