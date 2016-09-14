@@ -185,19 +185,6 @@
 {
     PTableViewSourceItem* item = [self itemAtIndexPath:indexPath];
     
-//	UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-//	self.selectedCellFrameInView = [self.view convertRect:cell.bounds fromView:cell];
-    
-//    BOOL deselectOnSecondTap = item.deselectOnSecondTap;
-//    if (deselectOnSecondTap)
-//    {
-//        if ([self.editingIndexPathForTableView isEqual:indexPath])
-//        {
-//            self.editingIndexPath = nil;
-//            return;
-//        }
-//    }
-    
     if (item.action)
     {
         item.action(item, indexPath);
@@ -207,10 +194,6 @@
         [self.viewController performSegueWithIdentifier:item.segueIdentifier sender:item];
     }
     
-//	// Scroll later because the insets update happens also later (see keyboard notifications).
-//	dispatch_async(dispatch_get_main_queue(), ^{
-//		[tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
-//	});
 }
 
 
@@ -281,22 +264,6 @@
     // By default, do not move.
 	return sourceIndexPath;
 }
-
-
-
-// Index - NOT IMPLEMENTED YET
-
-//- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView                                                    // return list of section titles to display in section index view (e.g. "ABCD...Z#")
-//{
-//    [_sections valueForKey:@"indexTitle"];
-//}
-//
-//- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
-//{
-//    // Default implementation is to
-//
-//}
-
 
 
 

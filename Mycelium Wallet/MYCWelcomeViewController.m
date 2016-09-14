@@ -129,22 +129,7 @@
             return;
         }
 
-//        // This will write the mnemonic to iOS data-protected file.
-//        if (![unlockedWallet makeFileBasedMnemonic:mnemonic]) {
-//            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
-//                                        message:unlockedWallet.error.localizedDescription ?: @""
-//                                       delegate:nil
-//                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
-//                              otherButtonTitles:nil] show];
-//            if (completionHandler) completionHandler(NO);
-//            return;
-//        }
-
         [wallet setupDatabaseWithMnemonic:mnemonic];
-
-        // We do not support keychain passcode-based protection in v1.2.
-        //unlockedWallet.probeItem = YES;
-        //wallet.migratedToTouchID = YES;
 
         BTCKeychain* rootKeychain = [unlockedWallet.keychain copy]; // so the copy won't get cleaned in async block.
 
@@ -254,9 +239,7 @@
     UIAlertController* alert2 = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you understand the risk?", @"")
                                                                     message:NSLocalizedString(@"Without a backup, there is no guarantee that you will be able to access your funds after depositing them into the wallet. There is no warranty. Any software or hardware may fail any time. Your wallet is not linked to your email or phone number. Mycelium does not keep copies of your private keys. The only way to protect your funds is to make your own backup and store it in a safe place.\n\nIf you proceed without backup, you take full reposibility for any potential losses.", @"")
                                                              preferredStyle:UIAlertControllerStyleAlert];
-//    [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"I understand, proceed without backup", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
-//        [self beginUsingNewWallet];
-//    }]];
+
     [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [self backupNow:nil];
     }]];

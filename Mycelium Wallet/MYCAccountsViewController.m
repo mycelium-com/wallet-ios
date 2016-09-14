@@ -32,9 +32,6 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         self.title = NSLocalizedString(@"Accounts", @"");
-        //self.tintColor = [UIColor colorWithHue:38.0f/360.0f saturation:1.0f brightness:0.97f alpha:1.0f];
-        //self.tintColor = [UIColor colorWithHue:24.0f/360.0f saturation:0.9f brightness:1.00f alpha:1.0f];
-        //self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:0.7f brightness:0.65f alpha:1.0];
         self.tintColor = [UIColor colorWithHue:208.0f/360.0f saturation:1.0f brightness:1.0f alpha:1.0f];
 
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Accounts", @"") image:[UIImage imageNamed:@"TabAccounts"] selectedImage:[UIImage imageNamed:@"TabAccountsSelected"]];
@@ -262,7 +259,6 @@
     }
 }
 
-// NSArray* remainingAccounts = [self.activeAccounts arrayByAddingObjectsFromArray:self.archivedAccounts];
 - (void) recursivelyUpdateAccounts:(NSArray*)accs
 {
     if (accs.count == 0) return;
@@ -361,15 +357,6 @@
 
 - (void) updateBackup {
     [[MYCWallet currentWallet] setNeedsBackup];
-//    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
-//        if (!result) {
-//            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up changes", @"")
-//                                        message:error.localizedDescription ?: @""
-//                                       delegate:nil
-//                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
-//                              otherButtonTitles:nil] show];
-//        }
-//    }];
 }
 
 

@@ -368,38 +368,6 @@ static NSString * const MYCDatabaseRecordMethodKey = @"MYCDatabaseRecordMethod";
     return NO;
 }
 
-//+ (NSDictionary *)loadWithPrimaryKeys:(NSSet *)primaryKeys fromDatabase:(FMDatabase *)db
-//{
-//    NSString* tableName = [[self class] tableName];
-//    NSArray* primaryKey = [[self class] internalPrimaryKeyNames];
-//    
-//    if (!tableName) {
-//        [NSException raise:NSInvalidArgumentException format:@"Missing tableName for class %@", [self class]];
-//    }
-//    if (!primaryKey) {
-//        [NSException raise:NSInvalidArgumentException format:@"Missing primaryKeyName for class %@", [self class]];
-//    }
-//    
-//    NSMutableDictionary* res = [NSMutableDictionary dictionaryWithCapacity:256];
-//    NSMutableArray* conditionsArray = [NSMutableArray array];
-//    if ([primaryKeys count] > 0)
-//    {
-//        NSString* query = [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@ in (?)", tableName, primaryKey];
-//        FMResultSet* rs = [db executeQuery:query withArgumentsInArray:@[[primaryKeys allObjects]]];
-//        if (!rs) {
-//            [NSException raise:NSInternalInconsistencyException format:@"Unexpected database error: %@", db.lastError];
-//        }
-//        while ([rs next]) {
-//            MYCDatabaseRecord* mo = [[self alloc] init];
-//            [mo updateFromDictionary:rs.resultDictionary];
-//            id primaryKeyValue = [mo valueForKey:primaryKey];
-//            res[primaryKeyValue] = mo;
-//        }
-//    }
-//    return res;
-//}
-
-
 // Array of dictionaries with given attributes
 + (NSArray*) loadAttributes:(NSArray*)attrs condition:(NSString*)condition fromDatabase:(FMDatabase*)db
 {

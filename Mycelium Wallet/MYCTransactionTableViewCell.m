@@ -55,17 +55,6 @@
     UIColor* amountColor = (amount > 0 ? _greenColor : _redColor);
     self.amountLabel.textColor = amountColor;
 
-//    self.btcLabel.text = [wallet.btcFormatter stringFromAmount:ABS(amount)];
-//    if (amount >= 0)
-//    {
-//        self.btcLabel.text = [@"+ " stringByAppendingString:self.btcLabel.text];
-//    }
-//    else
-//    {
-//        self.btcLabel.text = [@"– " stringByAppendingString:self.btcLabel.text];
-//    }
-//    self.fiatLabel.text = [wallet.fiatFormatter stringFromNumber:[wallet.currencyConverter fiatFromBitcoin:ABS(amount)]];
-
     self.statusLabel.text = self.transaction.label ?: @"";
 
     if (self.transaction.blockHeight == -1)

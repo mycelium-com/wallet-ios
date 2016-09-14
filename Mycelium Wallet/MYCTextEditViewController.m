@@ -61,18 +61,6 @@
     MYCLog(@"MYCTextEditVC: keyboard will show: %@", @(inset));
     self.textView.contentInset = UIEdgeInsetsMake(64, 0, inset, 0);
     self.textView.scrollIndicatorInsets = self.textView.contentInset;
-
-//    [UIView beginAnimations:nil context:NULL];
-//    [UIView setAnimationDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
-//    [UIView setAnimationCurve:[notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue]];
-//    [UIView setAnimationBeginsFromCurrentState:YES];
-//
-//    // <update the view here>
-//
-//    [self.view setNeedsLayout];
-//    [self.view layoutIfNeeded];
-//
-//    [UIView commitAnimations];
 }
 
 - (void)notifyKeyboardWillHide:(NSNotification *)notification {

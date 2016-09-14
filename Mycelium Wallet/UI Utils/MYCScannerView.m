@@ -60,12 +60,7 @@
     UITapGestureRecognizer* tapGR = [[UITapGestureRecognizer alloc] initWithTarget:scannerView action:@selector(dismiss)];
     shadowView.userInteractionEnabled = YES;
     [shadowView addGestureRecognizer:tapGR];
-
-//    if ([AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == AVAuthorizationStatusDenied)
-//    {
-//        scannerView.errorMessage = NSLocalizedString(@"Please allow camera access in system settings.", @"");
-//    }
-
+    
     return scannerView;
 }
 
@@ -109,7 +104,7 @@
         self.messageLabel.font = [UIFont systemFontOfSize:17];
         self.messageLabel.adjustsFontSizeToFitWidth = YES;
         self.messageLabel.minimumScaleFactor = 0.5;
-        self.messageLabel.text = @""; //@"Very long text to test multiline message around QR code. Really long and wide text.";
+        self.messageLabel.text = @"";
         self.messageLabel.textColor = [UIColor whiteColor];
         [self addSubview:self.messageLabel];
 

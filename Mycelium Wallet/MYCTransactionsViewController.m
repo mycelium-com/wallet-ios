@@ -33,10 +33,6 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         self.title = NSLocalizedString(@"Transactions", @"");
-        //self.tintColor = [UIColor colorWithHue:13.0f/360.0f saturation:0.79f brightness:1.00f alpha:1.0f];
-        //self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:0.7f brightness:0.65f alpha:1.0];
-        //self.tintColor = [UIColor colorWithHue:28.0f/360.0f saturation:0.8f brightness:0.9f alpha:1.0f];
-        //self.tintColor = [UIColor colorWithHue:34.0f/360.0f saturation:0.8f brightness:0.96f alpha:1.0f];
         self.tintColor = [UIColor colorWithHue:208.0f/360.0f saturation:1.0f brightness:1.0f alpha:1.0f];
         
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Transactions", @"") image:[UIImage imageNamed:@"TabTransactions"] selectedImage:[UIImage imageNamed:@"TabTransactionsSelected"]];
@@ -143,18 +139,6 @@
 {
     NSString* title = [MYCWallet currentWallet].primaryCurrencyFormatter.currencyCode;
 
-//    MYCRoundedButton* currencyButton = [[MYCRoundedButton alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
-//    [currencyButton setTitle:title forState:UIControlStateNormal];
-//    currencyButton.borderRadius = 4;
-//    currencyButton.borderWidth = 1;
-//    currencyButton.borderColor = self.tintColor;
-//    currencyButton.tintColor = self.tintColor;
-//    [currencyButton sizeToFit];
-//
-//    [currencyButton addTarget:self action:@selector(selectCurrency:) forControlEvents:UIControlEventTouchUpInside];
-//
-//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:currencyButton];
-
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:title style:UIBarButtonItemStylePlain target:self action:@selector(selectCurrency:)];
 }
 
@@ -198,7 +182,6 @@
         tx.transactionDetails.fiatAmount.length > 0 &&
         tx.transactionDetails.fiatCode.length > 0) {
         amountString = [[MYCWallet currentWallet] reformatString:[tx.transactionDetails.fiatAmount stringByReplacingOccurrencesOfString:@"-" withString:@""] forCurrency:tx.transactionDetails.fiatCode];
-        //MYCLog(@">>>> re-formatted historical amount: %@", amountString);
     }
 
     if (!amountString) {

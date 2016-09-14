@@ -45,11 +45,6 @@
     UINavigationController* settingsNVC = [[UINavigationController alloc] initWithRootViewController:self.settingsController];
 
     self.viewControllers = @[ self.balanceController, accountsNVC, transactionsNVC, settingsNVC ];
-
-//    [self installSwipe:self.balanceController];
-//    [self installSwipe:self.accountsController];
-//    [self installSwipe:self.transactionsController];
-//    [self installSwipe:self.settingsController];
 }
 
 - (void)viewDidLoad

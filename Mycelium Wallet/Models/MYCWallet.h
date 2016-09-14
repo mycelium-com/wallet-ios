@@ -159,8 +159,6 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 - (NSData*) backupKey;
 - (NSData*) backupData;
 
-- (void) uploadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock;
-
 - (void) downloadAutomaticBackup:(void(^)(BOOL result, NSError* error))completionBlock;
 
 - (void) setNeedsBackup;

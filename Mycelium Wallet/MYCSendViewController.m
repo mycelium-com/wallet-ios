@@ -594,15 +594,6 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
 
 - (void) updateBackup {
     [[MYCWallet currentWallet] setNeedsBackup];
-//    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
-//        if (!result) {
-//            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up changes", @"")
-//                                        message:error.localizedDescription ?: @""
-//                                       delegate:nil
-//                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
-//                              otherButtonTitles:nil] show];
-//        }
-//    }];
 }
 
 
@@ -915,12 +906,6 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
 - (void) proceedWithPaymentRequest:(BTCPaymentRequest*)pr {
 
     self.paymentRequest = pr;
-
-//#if DEBUG && 1
-//#warning DEBUG: overriding the price
-//    BTCTransactionOutput* txout = pr.details.outputs[0];
-//    txout.value = 1000;
-//#endif
 
     self.spendingAmount = [self totalAmountInOutputs:pr.details.outputs];
     self.amountField.text = [self.wallet.primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(self.spendingAmount)];

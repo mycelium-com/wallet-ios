@@ -1242,9 +1242,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 }
 
 
-//- (void) inTransaction:(BOOL(^)(FMDatabase *db, BOOL *rollback, NSError** dberrorOut))block completion:(void(^)(BOOL result, NSError* dberror))completion;
-
-
 
 #pragma mark - Networking
 
@@ -1605,17 +1602,6 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
             [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:account];
         }
     }];
-
-//    MYCUpdateAccountOperation* op = [[MYCUpdateAccountOperation alloc] initWithAccount:account wallet:self];
-//    [_accountUpdateOperations addObject:op];
-//    [op updateLocalBalance:^(BOOL success, NSError *error) {
-//        [_accountUpdateOperations removeObjectIdenticalTo:op];
-//
-//        if (success)
-//        {
-//            [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletDidUpdateAccountNotification object:account];
-//        }
-//    }];
 
     return YES;
 }

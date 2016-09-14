@@ -32,8 +32,6 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         self.title = NSLocalizedString(@"Settings", @"");
-        //self.tintColor = [UIColor colorWithHue:280.0f/360.0f saturation:0.8f brightness:0.97f alpha:1.0];
-        //self.tintColor = [UIColor colorWithHue:130.0f/360.0f saturation:1.0f brightness:0.77f alpha:1.0];
         self.tintColor = [UIColor colorWithHue:208.0f/360.0f saturation:1.0f brightness:1.0f alpha:1.0f];
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:NSLocalizedString(@"Settings", @"") image:[UIImage imageNamed:@"TabSettings"] selectedImage:[UIImage imageNamed:@"TabSettingsSelected"]];
 
@@ -133,25 +131,6 @@
         }];
     }];
 
-//    [self.tableViewSource section:^(PTableViewSourceSection *section) {
-//        section.headerTitle = NSLocalizedString(@"Cold Storage", @"");
-//
-//        [section item:^(PTableViewSourceItem *item) {
-//            item.title = NSLocalizedString(@"Import Private Key", @"");
-//            item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
-//
-//                MYCScanPrivateKeyViewController* vc = [[MYCScanPrivateKeyViewController alloc] initWithNibName:nil bundle:nil];
-//                vc.completionBlock = ^(BOOL finished){
-//                    [weakself dismissViewControllerAnimated:YES completion:nil];
-//                };
-//                UINavigationController* navc = [[UINavigationController alloc] initWithRootViewController:vc];
-//                [weakself presentViewController:navc animated:YES completion:nil];
-//
-//            };
-//        }];
-//    }];
-
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
         section.headerTitle = NSLocalizedString(@"Backup", @"");
 
@@ -227,7 +206,6 @@
         }];
 
 #if 1
-        //#warning Diagnostics View Enabled
     #if 0
         [section item:^(PTableViewSourceItem *item) {
             item.title = NSLocalizedString(@"Diagnostics Log", @"");

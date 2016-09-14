@@ -343,15 +343,6 @@
 
 - (void) updateBackup {
     [[MYCWallet currentWallet] setNeedsBackup];
-//    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
-//        if (!result) {
-//            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up changes", @"")
-//                                        message:error.localizedDescription ?: @""
-//                                       delegate:nil
-//                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
-//                              otherButtonTitles:nil] show];
-//        }
-//    }];
 }
 
 
@@ -414,29 +405,6 @@
 {
     return [self.tableViewSource tableView:tableView titleForHeaderInSection:section];
 }
-
-
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPath:indexPath];
-//    return cell.frame.size.height;
-//}
-
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    NSString *cellIdentifier = [self.tableViewSource itemAtIndexPath:indexPath].cellIdentifier;
-//    static NSMutableDictionary *heightCache;
-//    if (!heightCache) heightCache = [[NSMutableDictionary alloc] init];
-//    NSNumber *cachedHeight = heightCache[cellIdentifier];
-//    if (!cachedHeight)
-//    {
-//        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-//        cachedHeight = @(cell.bounds.size.height);
-//        heightCache[cellIdentifier] = cachedHeight;
-//    }
-//    return cachedHeight.floatValue;
-//}
-
 
 // Menu
 

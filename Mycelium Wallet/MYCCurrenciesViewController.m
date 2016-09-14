@@ -66,15 +66,6 @@
     MYCCurrencyFormatter* formatter = _formatters[indexPath.row];
     [[MYCWallet currentWallet] selectPrimaryCurrencyFormatter:formatter];
     [[MYCWallet currentWallet] setNeedsBackup];
-//    [[MYCWallet currentWallet] uploadAutomaticBackup:^(BOOL result, NSError *error) {
-//        if (!result) {
-//            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot back up settings", @"")
-//                                        message:error.localizedDescription ?: @""
-//                                       delegate:nil
-//                              cancelButtonTitle:NSLocalizedString(@"OK", @"")
-//                              otherButtonTitles:nil] show];
-//        }
-//    }];
     [self cancel:self];
 }
 
