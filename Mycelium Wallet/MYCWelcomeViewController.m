@@ -203,6 +203,9 @@
                                                                     message:NSLocalizedString(@"Without a backup, there is no guarantee that you will be able to access your funds after depositing them into the wallet. There is no warranty. Any software or hardware may fail any time. Your wallet is not linked to your email or phone number. Mycelium does not keep copies of your private keys. The only way to protect your funds is to make your own backup and store it in a safe place.\n\nIf you proceed without backup, you take full reposibility for any potential losses.", @"")
                                                              preferredStyle:UIAlertControllerStyleAlert];
 
+    [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up later", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self beginUsingNewWallet];
+    }]];
     [alert2 addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Back up now", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [self backupNow:nil];
     }]];
