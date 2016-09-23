@@ -40,8 +40,8 @@ typedef NS_ENUM(NSInteger, MYCBroadcastStatus) {
 // It's the job of MYCWallet and related classes to make sense of these results.
 
 // Fetches exchange rate for a given currency code.
-- (void) loadExchangeRateForCurrencyCode:(NSString*)currencyCode
-                              completion:(void(^)(NSDecimalNumber* btcPrice, NSString* marketName, NSDate* date, NSString* nativeCurrencyCode, NSError* error))completion;
+- (void) loadExchangeRatesForCurrencyCode:(NSString*)currencyCode
+                              completion:(void(^)(NSArray* exchangeRates, NSError* error))completion;
 
 // Fetches unspent outputs (BTCTransactionOutput) for given addresses (BTCAddress instances)
 - (void) loadUnspentOutputsForAddresses:(NSArray*)addresses completion:(void(^)(NSArray* outputs, NSInteger height, NSError* error))completion;

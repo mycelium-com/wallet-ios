@@ -19,7 +19,7 @@
 #import "MYCParentOutput.h"
 #import "MYCUnspentOutput.h"
 #import "MYCCurrencyFormatter.h"
-#import "BTCPriceSourceMycelium.h"
+#import "MYCExchangeRate.h"
 #include <pthread.h>
 #include <LocalAuthentication/LocalAuthentication.h>
 
@@ -63,6 +63,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     if (self = [super init])
     {
         [self loadCurrencyFormatterSelection];
+        [self loadExchangeRate];
         
         self.compactDateFormatter = [[NSDateFormatter alloc] init];
         self.compactDateFormatter.dateStyle = NSDateFormatterLongStyle;
@@ -223,6 +224,14 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (MYCCurrencyFormatter*) primaryCurrencyFormatter {
+    return [_primaryCurrencyFormatter.currencyConverter.averageRate compare:[NSDecimalNumber zero]] > 0 ? _primaryCurrencyFormatter : _secondaryCurrencyFormatter;
+}
+
+- (MYCCurrencyFormatter*) secondaryCurrencyFormatter {
+    return [_secondaryCurrencyFormatter.currencyConverter.averageRate compare:[NSDecimalNumber zero]] > 0 ? _secondaryCurrencyFormatter : _primaryCurrencyFormatter;
+}
+
 - (MYCCurrencyFormatter*) fiatCurrencyFormatter {
     return self.primaryCurrencyFormatter.isFiatFormatter ? self.primaryCurrencyFormatter : self.secondaryCurrencyFormatter;
 }
@@ -299,17 +308,25 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         return;
     }
     
-    BTCPriceSourceMycelium* source = [[BTCPriceSourceMycelium alloc] init];
-    [source loadPriceForCurrency:formatter.currencyCode completionHandler:^(BTCPriceSourceResult *result, NSError *error) {
-        
-        if (!result) {
+    [self.backend loadExchangeRatesForCurrencyCode:formatter.currencyCode completion:^(NSArray * exchangeRates, NSError * error) {
+        if (!exchangeRates) {
             if (completionHandler) completionHandler(NO, error);
             return;
         }
         
-        formatter.currencyConverter.averageRate = result.averageRate;
-        formatter.currencyConverter.date = result.date;
-        formatter.currencyConverter.sourceName = source.name;
+        _exchangeRates = exchangeRates;
+        
+        MYCExchangeRate * exchangeRate;
+        for (MYCExchangeRate * rate in exchangeRates) {
+            if ([rate.provider isEqualToString:_exchangeRateProvider]) {
+                exchangeRate = rate;
+                break;
+            }
+        }
+        
+        formatter.currencyConverter.averageRate = exchangeRate.price;
+        formatter.currencyConverter.date = exchangeRate.time;
+        formatter.currencyConverter.sourceName = exchangeRate.provider;
         
         [self saveCurrencyFormatter:formatter];
         if (completionHandler) completionHandler(YES, nil);
@@ -349,6 +366,17 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     [[NSNotificationCenter defaultCenter] postNotificationName:MYCWalletCurrencyDidUpdateNotification object:formatter];
 }
 
+- (void)selectExchangeRate:(MYCExchangeRate *)exchangeRate {
+    [[NSUserDefaults standardUserDefaults] setObject:exchangeRate.provider forKey:@"MYCWalletExchangeRate"];
+}
+
+- (void)loadExchangeRate {
+    _exchangeRateProvider = [[NSUserDefaults standardUserDefaults] stringForKey:@"MYCWalletExchangeRate"];
+    if (!_exchangeRateProvider) {
+        _exchangeRateProvider = [self defaultExchangeRateProvider];
+    }
+}
+
 - (void) saveCurrencyFormatterSelection {
     [[NSUserDefaults standardUserDefaults] setObject:_primaryCurrencyFormatter.dictionary ?: @{} forKey:@"MYCWalletPrimaryCurrencyFormatter"];
     [[NSUserDefaults standardUserDefaults] setObject:_secondaryCurrencyFormatter.dictionary ?: @{} forKey:@"MYCWalletSecondaryCurrencyFormatter"];
@@ -378,6 +406,10 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 
 - (BTCCurrencyConverter*) currencyConverter {
     return self.fiatCurrencyFormatter.currencyConverter;
+}
+
+- (NSString*) defaultExchangeRateProvider {
+    return @"BitcoinAverage";
 }
 
 - (NSString*) defaultFiatCurrency {
@@ -929,13 +961,13 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 
     _updatingExchangeRate++;
 
-    [self updateCurrencyFormatter:self.primaryCurrencyFormatter completionHandler:^(BOOL result, NSError *error) {
+    [self updateCurrencyFormatter:_primaryCurrencyFormatter completionHandler:^(BOOL result, NSError *error) {
         if (!result) {
             if (completion) completion(NO, error);
             [self notifyNetworkActivity];
             return;
         }
-        [self updateCurrencyFormatter:self.secondaryCurrencyFormatter completionHandler:^(BOOL result, NSError *error) {
+        [self updateCurrencyFormatter:_secondaryCurrencyFormatter completionHandler:^(BOOL result, NSError *error) {
             if (!result) {
                 if (completion) completion(NO, error);
                 [self notifyNetworkActivity];

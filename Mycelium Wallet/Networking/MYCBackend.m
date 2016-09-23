@@ -9,6 +9,7 @@
 #import "MYCBackend.h"
 #import "MYCWallet.h"
 #import "MYCMinerFeeEstimations.h"
+#import "MYCExchangeRate.h";
 
 @interface MYCBackend () <NSURLSessionDelegate>
 
@@ -103,8 +104,8 @@
     return self.pendingTasksCount > 0;
 }
 
-- (void) loadExchangeRateForCurrencyCode:(NSString*)currencyCode
-                               completion:(void(^)(NSDecimalNumber* btcPrice, NSString* marketName, NSDate* date, NSString* nativeCurrencyCode, NSError* error))completion
+- (void) loadExchangeRatesForCurrencyCode:(NSString*)currencyCode
+                               completion:(void(^)(NSArray * exchangeRates, NSError* error))completion
 {
     MYC_ASSERT_MAIN_THREAD;
     NSParameterAssert(currencyCode);
@@ -141,31 +142,23 @@
 
                    if (!result)
                    {
-                       if (completion) completion(nil, nil, nil, nil, error);
+                       if (completion) completion(nil, error);
                        return;
                    }
 
-                   if ([result[@"exchangeRates"] count] < 1)
+                   NSArray * exchangeRateDicts = result[@"exchangeRates"];
+                   if (exchangeRateDicts.count < 1)
                    {
-                       if (completion) completion(nil, nil, nil, nil, [self dataError:@"No exchange rates returned"]);
+                       if (completion) completion(nil, [self dataError:@"No exchange rates returned"]);
                        return;
                    }
 
-                   // By default, pick the first one.
-                   NSDictionary* rateDict = [result[@"exchangeRates"] firstObject];
-                   // Try to find BitcoinAverage
-                   for (NSDictionary* dict in result[@"exchangeRates"]) {
-                       if ([dict[@"name"] isEqualToString:@"BitcoinAverage"]) {
-                           rateDict = dict;
-                           break;
-                       }
+                   NSMutableArray * exchangeRates = [NSMutableArray arrayWithCapacity:exchangeRateDicts.count];
+                   for (NSDictionary* dict in exchangeRateDicts) {
+                       [exchangeRates addObject:[MYCExchangeRate exchangeRateFromDictionary:dict]];
                    }
 
-                   if (completion) completion([self ensureDecimalNumber:rateDict[@"price"]],
-                                                       rateDict[@"name"],
-                                                       [NSDate dateWithTimeIntervalSince1970:[rateDict[@"time"] doubleValue]],
-                                                       rateDict[@"currency"],
-                                                       nil);
+                   if (completion) completion(exchangeRates, nil);
                }];
 }
 
@@ -779,16 +772,6 @@
 {
     return [NSError errorWithDomain:MYCErrorDomain code:1002 userInfo: errorString ? @{NSLocalizedDescriptionKey: errorString} : nil];
 }
-
-- (NSDecimalNumber*) ensureDecimalNumber:(NSNumber*)num
-{
-    if ([num isKindOfClass:[NSDecimalNumber class]])
-    {
-        return (id)num;
-    }
-    return [NSDecimalNumber decimalNumberWithDecimal:num.decimalValue];
-}
-
 
 // Generic error handling. Either returns a non-nil value or calls a block with error.
 - (NSDictionary*) handleReceivedJSON:(NSData*)data response:(NSURLResponse*)response error:(NSError*)error failure:(void(^)(NSError*))failureBlock

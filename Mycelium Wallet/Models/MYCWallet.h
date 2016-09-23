@@ -33,6 +33,7 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 @class MYCTransaction;
 @class MYCCurrencyFormatter;
 @class MYCMinerFeeEstimations;
+@class MYCExchangeRate;
 
 @interface MYCWallet : NSObject
 
@@ -72,6 +73,8 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 @property(nonatomic, readonly) MYCCurrencyFormatter* fiatCurrencyFormatter;
 @property(nonatomic, readonly) MYCCurrencyFormatter* btcCurrencyFormatter;
 
+@property(nonatomic, readonly) NSString* exchangeRateProvider;
+
 // Formatter for bitcoin values.
 // When formatter changes, notification MYCWalletFormatterDidUpdateNotification is posted.
 @property(nonatomic, readonly) BTCNumberFormatter* btcFormatter DEPRECATED_ATTRIBUTE;
@@ -95,6 +98,9 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 // Array of all supported MYCCurrencyFormatters.
 @property(nonatomic, readonly) NSArray* currencyFormatters;
 
+// Array of all supported MYCExchangeRates.
+@property(nonatomic, readonly) NSArray* exchangeRates;
+
 // Returns a matching currency formatter among the available ones for a given code.
 - (MYCCurrencyFormatter*) currencyFormatterForCode:(NSString*)code;
 
@@ -109,6 +115,9 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 // Selects this formatter as a primary one. Sends CNWalletDidUpdateCurrencyNotification.
 - (void) selectPrimaryCurrencyFormatter:(MYCCurrencyFormatter*)formatter;
+
+// Selects this exchange rate as a primary one.
+- (void) selectExchangeRate:(MYCExchangeRate*)exchangeRate;
 
 - (void) loadMinerFeeEstimationsWithCompletion:(void(^)(MYCMinerFeeEstimations* estimations, NSError* error))completion;
 
