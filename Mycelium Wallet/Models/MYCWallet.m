@@ -314,14 +314,18 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
             return;
         }
         
-        _exchangeRates = exchangeRates;
-        
-        MYCExchangeRate * exchangeRate;
+        // If we can't find the proper provider default to first provider
+        MYCExchangeRate * exchangeRate = exchangeRates.firstObject;
         for (MYCExchangeRate * rate in exchangeRates) {
-            if ([rate.provider isEqualToString:_exchangeRateProvider]) {
+            if ([rate.provider isEqualToString:_exchangeRate.provider]) {
                 exchangeRate = rate;
                 break;
             }
+        }
+        
+        if ([formatter.currencyCode isEqualToString:self.fiatCurrencyFormatter.currencyCode]) {
+            _exchangeRates = exchangeRates;
+            _exchangeRate = exchangeRate;
         }
         
         formatter.currencyConverter.averageRate = exchangeRate.price;
@@ -367,13 +371,22 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 }
 
 - (void)selectExchangeRate:(MYCExchangeRate *)exchangeRate {
-    [[NSUserDefaults standardUserDefaults] setObject:exchangeRate.provider forKey:@"MYCWalletExchangeRate"];
+    NSData * data = [NSKeyedArchiver archivedDataWithRootObject:exchangeRate];
+    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"MYCWalletExchangeRate"];
+    _exchangeRate = exchangeRate;
+    [self updateCurrencyFormatter:_primaryCurrencyFormatter completionHandler:nil];
 }
 
 - (void)loadExchangeRate {
-    _exchangeRateProvider = [[NSUserDefaults standardUserDefaults] stringForKey:@"MYCWalletExchangeRate"];
-    if (!_exchangeRateProvider) {
-        _exchangeRateProvider = [self defaultExchangeRateProvider];
+    NSData * data = [[NSUserDefaults standardUserDefaults] objectForKey:@"MYCWalletExchangeRate"];
+    _exchangeRate = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    if (!_exchangeRate) {
+        MYCExchangeRate * rate = [[MYCExchangeRate alloc] init];
+        rate.provider = [self defaultExchangeRateProvider];
+        rate.time = [NSDate date];
+        rate.currency = _primaryCurrencyFormatter.currencyCode;
+        rate.price = [NSDecimalNumber one];
+        _exchangeRate = rate;
     }
 }
 
@@ -381,6 +394,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     [[NSUserDefaults standardUserDefaults] setObject:_primaryCurrencyFormatter.dictionary ?: @{} forKey:@"MYCWalletPrimaryCurrencyFormatter"];
     [[NSUserDefaults standardUserDefaults] setObject:_secondaryCurrencyFormatter.dictionary ?: @{} forKey:@"MYCWalletSecondaryCurrencyFormatter"];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    [self updateCurrencyFormatter:_primaryCurrencyFormatter completionHandler:nil];
 }
 
 - (void) loadCurrencyFormatterSelection {

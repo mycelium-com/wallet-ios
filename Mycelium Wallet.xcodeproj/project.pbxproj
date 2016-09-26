@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E3832041D98E5AF00AFAF21 /* MYCExchangeRatesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E3832031D98E5AF00AFAF21 /* MYCExchangeRatesViewController.m */; };
+		0E3832061D98E86D00AFAF21 /* MYCExchangeRates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0E3832051D98E86D00AFAF21 /* MYCExchangeRates.storyboard */; };
 		0E3B738D1D935238005C631C /* MYCExchangeRate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E3B738C1D935238005C631C /* MYCExchangeRate.m */; };
 		0E8F0A6B1C874E3A00DD5D02 /* MYCMinerFeeEstimations.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E8F0A6A1C874E3A00DD5D02 /* MYCMinerFeeEstimations.m */; };
 		13DC93D53302498C84E6F0E9 /* libPods-Mycelium Wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */; };
@@ -97,6 +99,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0E3832021D98E5AF00AFAF21 /* MYCExchangeRatesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCExchangeRatesViewController.h; sourceTree = "<group>"; };
+		0E3832031D98E5AF00AFAF21 /* MYCExchangeRatesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCExchangeRatesViewController.m; sourceTree = "<group>"; };
+		0E3832051D98E86D00AFAF21 /* MYCExchangeRates.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MYCExchangeRates.storyboard; sourceTree = "<group>"; };
 		0E3B738B1D935238005C631C /* MYCExchangeRate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCExchangeRate.h; path = Models/MYCExchangeRate.h; sourceTree = "<group>"; };
 		0E3B738C1D935238005C631C /* MYCExchangeRate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCExchangeRate.m; path = Models/MYCExchangeRate.m; sourceTree = "<group>"; };
 		0E8F0A691C874E3A00DD5D02 /* MYCMinerFeeEstimations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCMinerFeeEstimations.h; path = Models/MYCMinerFeeEstimations.h; sourceTree = "<group>"; };
@@ -254,6 +259,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E3832011D98E56100AFAF21 /* Exchange Rate View */ = {
+			isa = PBXGroup;
+			children = (
+				0E3832021D98E5AF00AFAF21 /* MYCExchangeRatesViewController.h */,
+				0E3832031D98E5AF00AFAF21 /* MYCExchangeRatesViewController.m */,
+				0E3832051D98E86D00AFAF21 /* MYCExchangeRates.storyboard */,
+			);
+			name = "Exchange Rate View";
+			sourceTree = "<group>";
+		};
 		203AA48F19DC33CB00572BD9 /* Accounts Tab */ = {
 			isa = PBXGroup;
 			children = (
@@ -415,6 +430,7 @@
 				208FFBBD19D9848B00D4C159 /* Welcome Views */,
 				208FFBBE19D9849800D4C159 /* Main Views */,
 				311D631E1AADD6CF00798450 /* Currency View */,
+				0E3832011D98E56100AFAF21 /* Exchange Rate View */,
 				203AA4A919DC514C00572BD9 /* Send View */,
 				203AA4AF19DC523100572BD9 /* Receive View */,
 				203AA4B519DC53B200572BD9 /* Backup */,
@@ -681,6 +697,7 @@
 				208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */,
 				208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */,
 				200C3D0B1AF0B570001E40EE /* MYCTextEditViewController.xib in Resources */,
+				0E3832061D98E86D00AFAF21 /* MYCExchangeRates.storyboard in Resources */,
 				2076471C1A0D0A40000F00F2 /* Credits.html in Resources */,
 				203AA4AE19DC517200572BD9 /* MYCSendViewController.xib in Resources */,
 				206EA4C51ADC17C500F37019 /* MYCVerifyBackupViewController.xib in Resources */,
@@ -770,6 +787,7 @@
 				20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */,
 				207646A31A0249FF000F00F2 /* MYCScanPrivateKeyViewController.m in Sources */,
 				203AA49819DC365D00572BD9 /* MYCBackend.m in Sources */,
+				0E3832041D98E5AF00AFAF21 /* MYCExchangeRatesViewController.m in Sources */,
 				203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */,
 				2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */,
 				20203AD619F65E290085C01F /* MYCBaseTxOutput.m in Sources */,

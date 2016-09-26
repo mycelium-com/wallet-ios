@@ -73,7 +73,7 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 @property(nonatomic, readonly) MYCCurrencyFormatter* fiatCurrencyFormatter;
 @property(nonatomic, readonly) MYCCurrencyFormatter* btcCurrencyFormatter;
 
-@property(nonatomic, readonly) NSString* exchangeRateProvider;
+@property(nonatomic, readonly) MYCExchangeRate* exchangeRate;
 
 // Formatter for bitcoin values.
 // When formatter changes, notification MYCWalletFormatterDidUpdateNotification is posted.

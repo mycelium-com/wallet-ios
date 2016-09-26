@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface MYCExchangeRate : NSObject
+@interface MYCExchangeRate : NSObject <NSCoding>
 
 + (id)exchangeRateFromDictionary:(NSDictionary *)dictionary;
 

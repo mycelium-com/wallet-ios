@@ -10,6 +10,26 @@
 
 @implementation MYCExchangeRate
 
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    self = [super init];
+    if (self) {
+        self.currency = [coder decodeObjectForKey:@"currency"];
+        self.time = [coder decodeObjectForKey:@"time"];
+        self.provider = [coder decodeObjectForKey:@"provider"];
+        self.price = [coder decodeObjectForKey:@"price"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:self.currency forKey:@"currency"];
+    [coder encodeObject:self.time forKey:@"time"];
+    [coder encodeObject:self.provider forKey:@"provider"];
+    [coder encodeObject:self.price forKey:@"price"];
+}
+
 + (id)exchangeRateFromDictionary:(NSDictionary *)dictionary {
     MYCExchangeRate * rate = [[MYCExchangeRate alloc] init];
     rate.currency = dictionary[@"currency"];

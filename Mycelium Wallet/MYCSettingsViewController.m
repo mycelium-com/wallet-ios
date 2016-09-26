@@ -10,6 +10,7 @@
 #import "MYCCurrencyFormatter.h"
 #import "MYCCurrenciesViewController.h"
 #import "MYCBackupViewController.h"
+#import "MYCExchangeRate.h"
 #import "MYCScanPrivateKeyViewController.h"
 #import "MYCWebViewController.h"
 #import "MYCWallet.h"
@@ -109,6 +110,25 @@
         }];
     }];
 
+    [self.tableViewSource section:^(PTableViewSourceSection *section) {
+        section.headerTitle = NSLocalizedString(@"Exchange Rate Provider", @"");
+        section.rowHeight = 52.0;
+        section.cellStyle = UITableViewCellStyleValue1;
+        section.detailFont = [UIFont systemFontOfSize:15.0];
+        section.detailTextColor = [UIColor grayColor];
+        
+        [section item:^(PTableViewSourceItem *item) {
+            MYCExchangeRate * rate = [MYCWallet currentWallet].exchangeRate;
+            item.title = rate.provider;
+            MYCCurrencyFormatter* formatter = [MYCWallet currentWallet].primaryCurrencyFormatter;
+            item.detailTitle = [formatter stringFromAmount:100000000LL];
+            item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
+                [weakself showExchangeRates:nil];
+            };
+        }];
+    }];
+    
     [self.tableViewSource section:^(PTableViewSourceSection *section) {
         section.headerTitle = NSLocalizedString(@"Invite", @"");
 
@@ -429,6 +449,12 @@
     [self presentViewController:navC animated:YES completion:nil];
 }
 
+- (IBAction) showExchangeRates:(id)sender
+{
+    UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"MYCExchangeRates" bundle:nil];
+    UIViewController * vc = [storyboard instantiateInitialViewController];
+    [self presentViewController:vc animated:YES completion:nil];
+}
 
 - (void) switchTestnet:(UISwitch*)switchControl
 {
