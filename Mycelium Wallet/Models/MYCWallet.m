@@ -225,10 +225,12 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
 }
 
 - (MYCCurrencyFormatter*) primaryCurrencyFormatter {
+    if (_primaryCurrencyFormatter.isBitcoinFormatter) return _primaryCurrencyFormatter;
     return [_primaryCurrencyFormatter.currencyConverter.averageRate compare:[NSDecimalNumber zero]] > 0 ? _primaryCurrencyFormatter : _secondaryCurrencyFormatter;
 }
 
 - (MYCCurrencyFormatter*) secondaryCurrencyFormatter {
+    if (_secondaryCurrencyFormatter.isBitcoinFormatter) return _secondaryCurrencyFormatter;
     return [_secondaryCurrencyFormatter.currencyConverter.averageRate compare:[NSDecimalNumber zero]] > 0 ? _secondaryCurrencyFormatter : _primaryCurrencyFormatter;
 }
 
