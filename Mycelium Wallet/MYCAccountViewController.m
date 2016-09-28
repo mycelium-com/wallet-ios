@@ -404,7 +404,7 @@
 
 - (void) copy:(id)_
 {
-    [[UIPasteboard generalPasteboard] setValue:self.account.externalKeychain.extendedPublicKey
+    [[UIPasteboard generalPasteboard] setValue:self.account.keychain.extendedPublicKey
                              forPasteboardType:(id)kUTTypeUTF8PlainText];
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
