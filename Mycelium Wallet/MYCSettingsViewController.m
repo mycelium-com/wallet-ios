@@ -120,7 +120,7 @@
         [section item:^(PTableViewSourceItem *item) {
             MYCExchangeRate * rate = [MYCWallet currentWallet].exchangeRate;
             item.title = rate.provider;
-            MYCCurrencyFormatter* formatter = [MYCWallet currentWallet].primaryCurrencyFormatter;
+            MYCCurrencyFormatter* formatter = [MYCWallet currentWallet].fiatCurrencyFormatter;
             item.detailTitle = [formatter stringFromAmount:100000000LL];
             item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {

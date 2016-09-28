@@ -23,7 +23,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.exchangeRates = [MYCWallet currentWallet].exchangeRates;
-    self.formatter = [MYCWallet currentWallet].primaryCurrencyFormatter;
+    self.formatter = [MYCWallet currentWallet].fiatCurrencyFormatter;
 }
 
 - (IBAction)done:(id)sender {
