@@ -16,9 +16,9 @@
 // List of NSURL endpoints to which this client may connect.
 @property(atomic) NSArray* endpointURLs;
 
-// SHA-1 fingerprint of the SSL certificate to prevent MITM attacks.
+// SHA-1 fingerprints of the SSL certificates to prevent MITM attacks.
 // E.g. B3:42:65:33:40:F5:B9:1B:DA:A2:C8:7A:F5:4C:7C:5D:A9:63:C4:C3.
-@property(atomic) NSData* SSLFingerprint;
+@property(atomic) NSArray* SSLFingerprints;
 
 @property(atomic) BTCNetwork* btcNetwork;
 
@@ -29,7 +29,8 @@
 @property(atomic) NSURLSession* session;
 
 // Currently used endpoint URL.
-@property(atomic) NSURL* currentEndpointURL;
+@property(readonly) NSURL* currentEndpointURL;
+@property(readonly) NSData* currentSSLFingerprint;
 @property(atomic) NSInteger currentEndpointIndex;
 
 @property(atomic) int pendingTasksCount;
@@ -50,14 +51,18 @@
         instance.version = @(1);
         instance.btcNetwork = [BTCNetwork mainnet];
         instance.endpointURLs = @[
-                                  [NSURL URLWithString:@"https://mws1.mycelium.com/wapi"],
-                                  [NSURL URLWithString:@"https://188.40.12.226/wapi"],
-                                  [NSURL URLWithString:@"https://mws2.mycelium.com/wapi"],
-                                  [NSURL URLWithString:@"https://88.198.17.7/wapi"],
+                                  [NSURL URLWithString:@"https://mws20.mycelium.com/wapi"],
+                                  [NSURL URLWithString:@"https://mws60.mycelium.com/wapi"],
+                                  [NSURL URLWithString:@"https://mws70.mycelium.com/wapi"],
+                                  [NSURL URLWithString:@"https://mws80.mycelium.com/wapi"],
                                   ];
-        instance.currentEndpointURL = instance.endpointURLs.firstObject;
         instance.currentEndpointIndex = 0;
-        instance.SSLFingerprint = BTCDataFromHex([@"B3:42:65:33:40:F5:B9:1B:DA:A2:C8:7A:F5:4C:7C:5D:A9:63:C4:C3" stringByReplacingOccurrencesOfString:@":" withString:@""]);
+        instance.SSLFingerprints = @[
+                                     BTCDataFromHex([@"65:1B:FF:6B:8C:7F:C8:1C:8E:14:77:1E:74:9C:F7:E5:46:42:BA:E0" stringByReplacingOccurrencesOfString:@":" withString:@""]),
+                                     BTCDataFromHex([@"47:F1:F1:21:F3:90:39:05:D7:21:B6:1B:EB:79:B1:40:44:A1:6F:46" stringByReplacingOccurrencesOfString:@":" withString:@""]),
+                                     BTCDataFromHex([@"9E:90:62:24:F7:71:83:FB:B6:B1:D6:4D:C2:78:4A:5D:29:3F:B5:BB" stringByReplacingOccurrencesOfString:@":" withString:@""]),
+                                     BTCDataFromHex([@"EB:4C:27:A5:A3:8B:DF:E1:34:60:0A:97:57:3F:FA:FF:43:E0:EA:67" stringByReplacingOccurrencesOfString:@":" withString:@""])
+                                     ];
     });
     return instance;
 }
@@ -73,12 +78,12 @@
         instance.version = @(1);
         instance.btcNetwork = [BTCNetwork testnet];
         instance.endpointURLs = @[
-                        [NSURL URLWithString:@"https://node3.mycelium.com/wapitestnet"],
-                        [NSURL URLWithString:@"https://144.76.165.115/wapitestnet"],
-                        ];
-        instance.currentEndpointURL = instance.endpointURLs.firstObject;
+                                [NSURL URLWithString:@"https://mws30.mycelium.com/wapitestnet"]
+                                ];
         instance.currentEndpointIndex = 0;
-        instance.SSLFingerprint = BTCDataFromHex([@"E5:70:76:B2:67:3A:89:44:7A:48:14:81:DF:BD:A0:58:C8:82:72:4F" stringByReplacingOccurrencesOfString:@":" withString:@""]);
+        instance.SSLFingerprints = @[
+                                     BTCDataFromHex([@"ed:c2:82:16:65:8c:4e:e1:c7:f6:a2:2b:15:ec:30:f9:cd:48:f8:db" stringByReplacingOccurrencesOfString:@":" withString:@""])
+                                     ];
     });
     return instance;
 }
@@ -102,6 +107,14 @@
 {
     //MYCLog(@"isActive: tasks = %@", @(self.pendingTasksCount));
     return self.pendingTasksCount > 0;
+}
+
+- (NSURL *)currentEndpointURL {
+    return self.endpointURLs[self.currentEndpointIndex];
+}
+
+- (NSData *)currentSSLFingerprint {
+    return self.SSLFingerprints[self.currentEndpointIndex];
 }
 
 - (void) loadExchangeRatesForCurrencyCode:(NSString*)currencyCode
@@ -661,7 +674,6 @@
 
 - (void) makeJSONRequestWithName:(NSString*)name payload:(NSDictionary*)payload template:(id)template completion:(void(^)(NSDictionary* result, NSString* curlCommand, NSError* error))completion
 {
-    self.currentEndpointURL = self.endpointURLs[self.currentEndpointIndex];
     NSMutableURLRequest* req = [self requestWithName:name];
     [self makeJSONRequest:req payload:payload template:template completion:completion];
 }
@@ -956,7 +968,7 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
     NSURLCredential *credential = nil;
 
     if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust] &&
-        self.SSLFingerprint)
+        self.currentSSLFingerprint)
     {
         // Certificate is invalid unless proven valid.
         disposition = NSURLSessionAuthChallengeCancelAuthenticationChallenge;
@@ -972,7 +984,7 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
             {
                 SecCertificateRef cert = SecTrustGetCertificateAtIndex(serverTrust, i);
                 NSData* certData = CFBridgingRelease(SecCertificateCopyData(cert));
-                if ([BTCSHA1(certData) isEqual:self.SSLFingerprint])
+                if ([BTCSHA1(certData) isEqual:self.currentSSLFingerprint])
                 {
                     disposition = NSURLSessionAuthChallengeUseCredential;
                     credential = [NSURLCredential credentialForTrust:serverTrust];
