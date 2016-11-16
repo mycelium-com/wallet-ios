@@ -9,7 +9,7 @@
 #import "MYCBackend.h"
 #import "MYCWallet.h"
 #import "MYCMinerFeeEstimations.h"
-#import "MYCExchangeRate.h";
+#import "MYCExchangeRate.h"
 
 @interface MYCBackend () <NSURLSessionDelegate>
 
