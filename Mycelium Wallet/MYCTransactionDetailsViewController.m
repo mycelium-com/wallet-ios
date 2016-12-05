@@ -198,6 +198,15 @@
             item.key = [NSLocalizedString(@"Fee", @"") uppercaseString];
             item.value = [btcfmt stringFromAmount:self.transaction.fee];
         }];
+        
+        [section item:^(PTableViewSourceItem *item) {
+            item.cellIdentifier = @"keyvalue";
+            item.key = [NSLocalizedString(@"Fee rate", @"") uppercaseString];
+            BTCNumberFormatter * formatter = [[BTCNumberFormatter alloc] initWithBitcoinUnit:BTCNumberFormatterUnitSatoshi];
+            NSString * satoshisPerByte = NSLocalizedString(@"satoshis/byte", "");
+            NSString * value = [formatter stringFromAmount:self.transaction.fee / self.transaction.data.length];
+            item.value = [NSString stringWithFormat:@"%@ %@", value, satoshisPerByte];
+        }];
     }];
 
 
