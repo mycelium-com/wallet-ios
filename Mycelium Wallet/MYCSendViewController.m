@@ -661,8 +661,7 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
     BTCTransactionBuilderResult* result = [builder buildTransaction:&berror];
     if (result)
     {
-        self.spendingAmount = result.outputsAmount;
-        self.amountField.text = [self.wallet.primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(self.spendingAmount)];
+        self.amountField.text = [self.wallet.primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(result.outputsAmount)];
         [self didEditBtc:nil];
     }
 }
