@@ -640,21 +640,8 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
     // Compute transaction with all available unspent outputs,
     // figure the required fees and put the difference as a spending amount.
 
-    // Address may not be entered yet, so use dummy address.
-    BTCAddress* address = self.spendingAddress ?: [BTCPublicKeyAddress addressWithData:BTCZero160()];
-
-    if (self.paymentRequest) {
-        if ([self someAmountsSpecified:self.paymentRequest.details.outputs]) {
-            // Cannot use all funds if payment request is specified.
-            return;
-        }
-        address = [[self.paymentRequest.details.outputs.firstObject script] standardAddress];
-        address = [[MYCWallet currentWallet] addressForAddress:address];
-    }
-
     BTCTransactionBuilder* builder = [self makeTransactionBuilder];
-    builder.outputs = @[];
-    builder.changeAddress = address; // outputs is empty array, spending all to change address which must be destination address.
+    builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:0 address:[BTCPublicKeyAddress addressWithData:BTCZero160()]] ];
     builder.shouldSign = NO;
 
     NSError* berror = nil;
@@ -662,7 +649,7 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
     if (result)
     {
         self.amountField.text = [self.wallet.primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(result.outputsAmount)];
-        [self didEditBtc:nil];
+        self.spendingAmount = result.outputsAmount;
     }
 }
 
