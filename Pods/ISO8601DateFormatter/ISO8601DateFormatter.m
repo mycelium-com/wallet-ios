@@ -1,9 +1,10 @@
 /*ISO8601DateFormatter.m
  *
  *Created by Peter Hosey on 2009-04-11.
- *Copyright 2009–2013 Peter Hosey. All rights reserved.
+ *Copyright 2009–2016 Peter Hosey. All rights reserved.
  */
 
+#import <float.h>
 #import <Foundation/Foundation.h>
 #if TARGET_OS_IPHONE
 #	import <UIKit/UIKit.h>
@@ -20,16 +21,13 @@ const unichar ISO8601DefaultTimeSeparatorCharacter = DEFAULT_TIME_SEPARATOR;
 //#define ISO_WEEK_DATE_FORMAT @"YYYY-'W'ww-ee" //Doesn't actually work because NSDateComponents counts the weekday starting at 1.
 #define ISO_ORDINAL_DATE_FORMAT @"yyyy-DDD"
 #define ISO_TIME_FORMAT @"HH:mm:ss"
+#define ISO_TIME_FORMAT_MS_PRECISION @"HH:mm:ss.SSS"
 //printf formats.
 #define ISO_TIMEZONE_UTC_FORMAT @"Z"
 #define ISO_TIMEZONE_OFFSET_FORMAT_NO_SEPARATOR @"%+.2d%.2d"
 #define ISO_TIMEZONE_OFFSET_FORMAT_WITH_SEPARATOR @"%+.2d%C%.2d"
 
-@interface ISO8601DateFormatter ()
-+ (void) createGlobalCachesThatDoNotAlreadyExist;
-//Used when a memory warning occurs (if at least one ISO 8601 Date Formatter exists at the time).
-+ (void) purgeGlobalCaches;
-@end
+static NSString * const ISO8601TwoCharIntegerFormat = @"%.2d";
 
 @interface ISO8601DateFormatter(UnparsingPrivate)
 
@@ -40,49 +38,20 @@ const unichar ISO8601DefaultTimeSeparatorCharacter = DEFAULT_TIME_SEPARATOR;
 
 @end
 
-static NSMutableDictionary *timeZonesByOffset;
-
-#if ISO8601_TESTING_PURPOSES_ONLY
-//This method only exists for use by the project's test cases. DO NOT use this in an application.
-extern bool ISO8601DateFormatter_GlobalCachesAreWarm(void);
-
-bool ISO8601DateFormatter_GlobalCachesAreWarm(void) {
-	return (timeZonesByOffset != nil) && (timeZonesByOffset.count > 0);
-}
-#endif
+static NSCache *timeZonesByOffset;
 
 @implementation ISO8601DateFormatter
-{
-	NSString *lastUsedFormatString;
-	NSDateFormatter *unparsingFormatter;
-
-	NSCalendar *parsingCalendar, *unparsingCalendar;
-
-	NSTimeZone *defaultTimeZone;
-	ISO8601DateFormat format;
-	unichar timeSeparator;
-	BOOL includeTime;
-	BOOL parsesStrictly;
-}
 
 + (void) initialize {
-	[self createGlobalCachesThatDoNotAlreadyExist];
-}
-
-+ (void) createGlobalCachesThatDoNotAlreadyExist {
-	if (!timeZonesByOffset) {
-		timeZonesByOffset = [[NSMutableDictionary alloc] init];
-	}
+    timeZonesByOffset = [[NSCache alloc] init];
 }
 
 + (void) purgeGlobalCaches {
-	NSMutableDictionary *oldCache = timeZonesByOffset;
-	timeZonesByOffset = nil;
-	[oldCache release];
+    [timeZonesByOffset removeAllObjects];
 }
 
 - (NSCalendar *) makeCalendarWithDesiredConfiguration {
-	NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+	NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian] autorelease];
 	calendar.firstWeekday = 2; //Monday
 	calendar.timeZone = [NSTimeZone defaultTimeZone];
 	return calendar;
@@ -97,22 +66,12 @@ bool ISO8601DateFormatter_GlobalCachesAreWarm(void) {
 		timeSeparator = ISO8601DefaultTimeSeparatorCharacter;
 		includeTime = NO;
 		parsesStrictly = NO;
-
-#if TARGET_OS_IPHONE
-		[[NSNotificationCenter defaultCenter] addObserver:self
-			selector:@selector(didReceiveMemoryWarning:)
-			name:UIApplicationDidReceiveMemoryWarningNotification
-			object:nil];
-#endif
+		useMillisecondPrecision = NO;
 	}
 	return self;
 }
 
 - (void) dealloc {
-#if TARGET_OS_IPHONE
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
-#endif
-
 	[defaultTimeZone release];
 
 	[unparsingFormatter release];
@@ -121,10 +80,6 @@ bool ISO8601DateFormatter_GlobalCachesAreWarm(void) {
 	[unparsingCalendar release];
 
 	[super dealloc];
-}
-
-- (void) didReceiveMemoryWarning:(NSNotification *)notification {
-	[[self class] purgeGlobalCaches];
 }
 
 @synthesize defaultTimeZone;
@@ -213,18 +168,18 @@ static BOOL is_leap_year(NSUInteger year);
 	NSDate *now = [NSDate date];
 
 	NSDateComponents *components = [[[NSDateComponents alloc] init] autorelease];
-	NSDateComponents *nowComponents = [parsingCalendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:now];
+	NSDateComponents *nowComponents = [parsingCalendar components:NSCalendarUnitYear fromDate:now];
 
 	NSUInteger
 		//Date
-		year,
-		month_or_week = 0U,
-		day = 0U,
+		year = NSUndefinedDateComponent,
+		month_or_week = NSUndefinedDateComponent,
+		day = NSUndefinedDateComponent,
 		//Time
-		hour = 0U;
+		hour = NSUndefinedDateComponent;
 	NSTimeInterval
-		minute = 0.0,
-		second = 0.0;
+		minute = NAN,
+		second = NAN;
 	//Time zone
 	NSInteger tz_hour = 0;
 	NSInteger tz_minute = 0;
@@ -265,12 +220,8 @@ static BOOL is_leap_year(NSUInteger year);
 		NSUInteger num_leading_hyphens = 0U, num_digits = 0U;
 
 		if (*ch == 'T') {
-			//There is no date here, only a time. Set the date to now; then we'll parse the time.
+			//There is no date here, only a time.
 			isValidDate = isdigit(*++ch);
-
-			year = nowComponents.year;
-			month_or_week = nowComponents.month;
-			day = nowComponents.day;
 		} else {
 			while(*ch == '-') {
 				++num_leading_hyphens;
@@ -282,12 +233,10 @@ static BOOL is_leap_year(NSUInteger year);
 				case 0:
 					if (*ch == 'W') {
 						if ((ch[1] == '-') && isdigit(ch[2]) && ((num_leading_hyphens == 1U) || ((num_leading_hyphens == 2U) && !strict))) {
-							year = nowComponents.year;
 							month_or_week = 1U;
 							ch += 2;
 							goto parseDayAfterWeek;
 						} else if (num_leading_hyphens == 1U) {
-							year = nowComponents.year;
 							goto parseWeekAndDay;
 						} else
 							isValidDate = NO;
@@ -381,7 +330,6 @@ static BOOL is_leap_year(NSUInteger year);
 						case 2: //MMDD
 							day = segment % 100U;
 							month_or_week = segment / 100U;
-							year = nowComponents.year;
 
 							break;
 
@@ -496,7 +444,6 @@ static BOOL is_leap_year(NSUInteger year);
 							break;
 
 						case 2: //--MM; --MM-DD
-							year = nowComponents.year;
 							month_or_week = segment;
 							if (*ch == '-') {
 								++ch;
@@ -505,8 +452,6 @@ static BOOL is_leap_year(NSUInteger year);
 							break;
 
 						case 3: //---DD
-							year = nowComponents.year;
-							month_or_week = nowComponents.month;
 							day = segment;
 							break;
 
@@ -533,7 +478,6 @@ static BOOL is_leap_year(NSUInteger year);
 						isValidDate = NO;
 					else {
 						day = segment;
-						year = nowComponents.year;
 						dateSpecification = dateOnly;
 						if (strict && (day > (365U + is_leap_year(year))))
 							isValidDate = NO;
@@ -571,6 +515,8 @@ static BOOL is_leap_year(NSUInteger year);
 						else if (*ch == timeSep) {
 							++ch;
 							second = read_double(ch, &ch);
+						} else {
+							second = NAN;
 						}
 					}
 				}
@@ -612,15 +558,14 @@ static BOOL is_leap_year(NSUInteger year);
 								if (negative) tz_minute = -tz_minute;
 							}
 
-							[[self class] createGlobalCachesThatDoNotAlreadyExist];
-
 							NSInteger timeZoneOffset = (tz_hour * 3600) + (tz_minute * 60);
 							NSNumber *offsetNum = [NSNumber numberWithInteger:timeZoneOffset];
 							timeZone = [timeZonesByOffset objectForKey:offsetNum];
 							if (!timeZone) {
 								timeZone = [NSTimeZone timeZoneForSecondsFromGMT:timeZoneOffset];
-								if (timeZone)
-									[timeZonesByOffset setObject:timeZone forKey:offsetNum];
+								if (timeZone) {
+                                    [timeZonesByOffset setObject:timeZone forKey:offsetNum];
+                                }
 							}
 						}
 				}
@@ -631,11 +576,11 @@ static BOOL is_leap_year(NSUInteger year);
 			components.year = year;
 			components.day = day;
 			components.hour = hour;
-			components.minute = (NSInteger)minute;
-			components.second = (NSInteger)second;
+			components.minute = isnan(minute) ? NSUndefinedDateComponent : (NSInteger)minute;
+			components.second = isnan(second) ? NSUndefinedDateComponent : (NSInteger)second;
 
 			if (outFractionOfSecond != NULL) {
-				NSTimeInterval fractionOfSecond = second - components.second;
+				NSTimeInterval fractionOfSecond = second - (NSInteger)second;
 				if (fractionOfSecond > 0.0) {
 					*outFractionOfSecond = fractionOfSecond;
 				}
@@ -696,7 +641,13 @@ static BOOL is_leap_year(NSUInteger year);
 	if (components == nil)
 		return nil;
 
+	if (!timeZone) timeZone = self.defaultTimeZone;
+
 	parsingCalendar.timeZone = timeZone;
+	if ([components respondsToSelector:@selector(setTimeZone:)])
+		components.timeZone = timeZone;
+	if ([components respondsToSelector:@selector(setCalendar:)])
+		components.calendar = parsingCalendar;
 
 	NSDate *parsedDate = [parsingCalendar dateFromComponents:components];
 
@@ -718,7 +669,9 @@ static BOOL is_leap_year(NSUInteger year);
 
 @synthesize format;
 @synthesize includeTime;
+@synthesize useMillisecondPrecision;
 @synthesize timeSeparator;
+@synthesize timeZoneSeparator;
 
 - (NSString *) replaceColonsInString:(NSString *)timeFormat withTimeSeparator:(unichar)timeSep {
 	if (timeSep != ':') {
@@ -753,8 +706,11 @@ static BOOL is_leap_year(NSUInteger year);
 }
 
 - (NSString *) stringFromDate:(NSDate *)date formatString:(NSString *)dateFormat timeZone:(NSTimeZone *)timeZone {
-	if (includeTime)
-		dateFormat = [dateFormat stringByAppendingFormat:@"'T'%@", [self replaceColonsInString:ISO_TIME_FORMAT withTimeSeparator:self.timeSeparator]];
+	if (includeTime){
+		NSString *timeFormat = self.useMillisecondPrecision ? ISO_TIME_FORMAT_MS_PRECISION : ISO_TIME_FORMAT;
+		dateFormat = [dateFormat stringByAppendingFormat:@"'T'%@", [self replaceColonsInString:timeFormat withTimeSeparator:self.timeSeparator]];
+	}
+	
 
 	if ([dateFormat isEqualToString:lastUsedFormatString] == NO) {
 		[unparsingFormatter release];
@@ -772,6 +728,9 @@ static BOOL is_leap_year(NSUInteger year);
 		unparsingFormatter.locale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
 	}
 
+	NSTimeZone *_Nonnull const savedCalendarTimeZone = unparsingCalendar.timeZone;
+	NSTimeZone *_Nonnull const savedFormatterTimeZone = unparsingFormatter.timeZone;
+
 	unparsingCalendar.timeZone = timeZone;
 	unparsingFormatter.timeZone = timeZone;
 	NSString *str = [unparsingFormatter stringForObjectValue:date];
@@ -782,18 +741,23 @@ static BOOL is_leap_year(NSUInteger year);
 		if (offset == 0)
 			str = [str stringByAppendingString:ISO_TIMEZONE_UTC_FORMAT];
 		else {
-			int timeZoneOffsetHour = (int)(offset / 60);
-			int timeZoneOffsetMinute = (int)(offset % 60);
-			if (self.timeZoneSeparator)
-				str = [str stringByAppendingFormat:ISO_TIMEZONE_OFFSET_FORMAT_WITH_SEPARATOR, timeZoneOffsetHour, self.timeZoneSeparator, timeZoneOffsetMinute];
-			else
-				str = [str stringByAppendingFormat:ISO_TIMEZONE_OFFSET_FORMAT_NO_SEPARATOR, timeZoneOffsetHour, timeZoneOffsetMinute];
+			int timeZoneOffsetHour = abs((int)(offset / 60));
+			int timeZoneOffsetMinute = abs((int)(offset % 60));
+            
+            if (offset > 0) str = [str stringByAppendingString:@"+"];
+            else str = [str stringByAppendingString:@"-"];
+            
+            str = [str stringByAppendingFormat:ISO8601TwoCharIntegerFormat, timeZoneOffsetHour];
+            
+            if (self.timeZoneSeparator) str = [str stringByAppendingFormat:@"%C", self.timeZoneSeparator];
+            
+            str = [str stringByAppendingFormat:ISO8601TwoCharIntegerFormat, timeZoneOffsetMinute];
 		}
 	}
 
 	//Undo the change we made earlier
-	unparsingCalendar.timeZone = self.defaultTimeZone;
-	unparsingFormatter.timeZone = self.defaultTimeZone;
+	unparsingCalendar.timeZone = self.defaultTimeZone ?: savedCalendarTimeZone;
+	unparsingFormatter.timeZone = self.defaultTimeZone ?: savedFormatterTimeZone;
 
 	return str;
 }
@@ -814,13 +778,13 @@ static BOOL is_leap_year(NSUInteger year);
  */
 - (NSString *) weekDateStringForDate:(NSDate *)date timeZone:(NSTimeZone *)timeZone {
 	unparsingCalendar.timeZone = timeZone;
-	NSDateComponents *components = [unparsingCalendar components:NSYearCalendarUnit | NSWeekdayCalendarUnit | NSDayCalendarUnit fromDate:date];
+	NSDateComponents *components = [unparsingCalendar components:NSCalendarUnitYear | NSCalendarUnitWeekday | NSCalendarUnitDay fromDate:date];
 
 	//Determine the ordinal date.
-	NSDateComponents *startOfYearComponents = [unparsingCalendar components:NSYearCalendarUnit fromDate:date];
+	NSDateComponents *startOfYearComponents = [unparsingCalendar components:NSCalendarUnitYear fromDate:date];
 	startOfYearComponents.month = 1;
 	startOfYearComponents.day = 1;
-	NSDateComponents *ordinalComponents = [unparsingCalendar components:NSDayCalendarUnit fromDate:[unparsingCalendar dateFromComponents:startOfYearComponents] toDate:date options:0];
+	NSDateComponents *ordinalComponents = [unparsingCalendar components:NSCalendarUnitDay fromDate:[unparsingCalendar dateFromComponents:startOfYearComponents] toDate:date options:0];
 	ordinalComponents.day += 1;
 
 	enum {
@@ -872,7 +836,9 @@ static BOOL is_leap_year(NSUInteger year);
 		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 		unichar timeSep = self.timeSeparator;
 		if (!timeSep) timeSep = ISO8601DefaultTimeSeparatorCharacter;
-		formatter.dateFormat = [self replaceColonsInString:ISO_TIME_FORMAT withTimeSeparator:timeSep];
+		
+		NSString *timeFormat = self.useMillisecondPrecision ? ISO_TIME_FORMAT_MS_PRECISION : ISO_TIME_FORMAT;
+		formatter.dateFormat = [self replaceColonsInString:timeFormat withTimeSeparator:timeSep];
 		formatter.locale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
 		formatter.timeZone = timeZone;
 

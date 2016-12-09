@@ -11,7 +11,6 @@
 		0E3832061D98E86D00AFAF21 /* MYCExchangeRates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0E3832051D98E86D00AFAF21 /* MYCExchangeRates.storyboard */; };
 		0E3B738D1D935238005C631C /* MYCExchangeRate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E3B738C1D935238005C631C /* MYCExchangeRate.m */; };
 		0E8F0A6B1C874E3A00DD5D02 /* MYCMinerFeeEstimations.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E8F0A6A1C874E3A00DD5D02 /* MYCMinerFeeEstimations.m */; };
-		13DC93D53302498C84E6F0E9 /* libPods-Mycelium Wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */; };
 		200AAE3719F91EE50004F908 /* MYCTextFieldLiveFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 200AAE3619F91EE50004F908 /* MYCTextFieldLiveFormatter.m */; };
 		200AAE3919F93FFB0004F908 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 200AAE3819F93FFB0004F908 /* AVFoundation.framework */; };
 		200AAE3C19F9440C0004F908 /* MYCScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 200AAE3B19F9440C0004F908 /* MYCScannerView.m */; };
@@ -86,6 +85,7 @@
 		311D63261AADD8AF00798450 /* MYCCurrencyFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D63251AADD8AF00798450 /* MYCCurrencyFormatter.m */; };
 		311D63291AADE8F700798450 /* MYCCurrencyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D63281AADE8F700798450 /* MYCCurrencyTableViewCell.m */; };
 		311D632B1AADEE6600798450 /* MYCCurrencyTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 311D632A1AADEE6600798450 /* MYCCurrencyTableViewCell.xib */; };
+		B74E9BEB1836ACD1C0F0B780 /* libPods-Mycelium Wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD7880E55331BB60C383284 /* libPods-Mycelium Wallet.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -232,9 +232,9 @@
 		311D63271AADE8F700798450 /* MYCCurrencyTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCCurrencyTableViewCell.h; sourceTree = "<group>"; };
 		311D63281AADE8F700798450 /* MYCCurrencyTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCCurrencyTableViewCell.m; sourceTree = "<group>"; };
 		311D632A1AADEE6600798450 /* MYCCurrencyTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCCurrencyTableViewCell.xib; sourceTree = "<group>"; };
-		677B515CE201D7130F53029B /* Pods-Mycelium Wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.release.xcconfig"; sourceTree = "<group>"; };
-		BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mycelium Wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		FAB8F4EBE2F75284722E9193 /* Pods-Mycelium Wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.debug.xcconfig"; sourceTree = "<group>"; };
+		5BF328B65E8D41F25B2317A5 /* Pods-Mycelium Wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.debug.xcconfig"; sourceTree = "<group>"; };
+		BF97CDAFD46B44D6507A4B17 /* Pods-Mycelium Wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.release.xcconfig"; sourceTree = "<group>"; };
+		CDD7880E55331BB60C383284 /* libPods-Mycelium Wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mycelium Wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -245,7 +245,7 @@
 				20BDE1C91AE687E600EBC09D /* libz.dylib in Frameworks */,
 				200AAE3919F93FFB0004F908 /* AVFoundation.framework in Frameworks */,
 				20DAD9DB1ACECD9700EBC85F /* Crashlytics.framework in Frameworks */,
-				13DC93D53302498C84E6F0E9 /* libPods-Mycelium Wallet.a in Frameworks */,
+				B74E9BEB1836ACD1C0F0B780 /* libPods-Mycelium Wallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,7 +405,7 @@
 				208FFBAB19D9802000D4C159 /* Mycelium WalletTests */,
 				208FFB9019D9802000D4C159 /* Products */,
 				2D8A166B7A734937ACF4ACCC /* Frameworks */,
-				B854AA3614D7CE6D59DB9FA3 /* Pods */,
+				DED5412415A245A095EB3613 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -567,7 +567,7 @@
 				20BDE1C81AE687E600EBC09D /* libz.dylib */,
 				20DAD9DA1ACECD9700EBC85F /* Crashlytics.framework */,
 				200AAE3819F93FFB0004F908 /* AVFoundation.framework */,
-				BEF63E079F9D4BC58CFB5075 /* libPods-Mycelium Wallet.a */,
+				CDD7880E55331BB60C383284 /* libPods-Mycelium Wallet.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -584,11 +584,11 @@
 			name = "Currency View";
 			sourceTree = "<group>";
 		};
-		B854AA3614D7CE6D59DB9FA3 /* Pods */ = {
+		DED5412415A245A095EB3613 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				FAB8F4EBE2F75284722E9193 /* Pods-Mycelium Wallet.debug.xcconfig */,
-				677B515CE201D7130F53029B /* Pods-Mycelium Wallet.release.xcconfig */,
+				5BF328B65E8D41F25B2317A5 /* Pods-Mycelium Wallet.debug.xcconfig */,
+				BF97CDAFD46B44D6507A4B17 /* Pods-Mycelium Wallet.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -600,12 +600,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 208FFBB219D9802000D4C159 /* Build configuration list for PBXNativeTarget "Mycelium Wallet" */;
 			buildPhases = (
-				EAE4443B03794778906CC7CB /* Check Pods Manifest.lock */,
+				9453E2C3EA45FACCD5F43BC7 /* [CP] Check Pods Manifest.lock */,
 				208FFB8B19D9802000D4C159 /* Sources */,
 				208FFB8C19D9802000D4C159 /* Frameworks */,
 				208FFB8D19D9802000D4C159 /* Resources */,
-				D6DF2EDE39C94DEA9C818951 /* Copy Pods Resources */,
 				20DAD9D91ACECD6000EBC85F /* ShellScript */,
+				A4C87451C8509054AAB24042 /* [CP] Embed Pods Frameworks */,
+				001AE0F6624E0F030241E5ED /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -727,6 +728,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		001AE0F6624E0F030241E5ED /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		20DAD9D91ACECD6000EBC85F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -740,34 +756,34 @@
 			shellPath = /bin/sh;
 			shellScript = "./Crashlytics.framework/run a0449b892cadffe38ac3e11d7d564d916b905e5c 14a15ad0e654ac3560db0a9fba7a33be42877c2807a04761606aceb6ec7e2a74\n";
 		};
-		D6DF2EDE39C94DEA9C818951 /* Copy Pods Resources */ = {
+		9453E2C3EA45FACCD5F43BC7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet-resources.sh\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		EAE4443B03794778906CC7CB /* Check Pods Manifest.lock */ = {
+		A4C87451C8509054AAB24042 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -946,7 +962,7 @@
 		};
 		208FFBB319D9802000D4C159 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FAB8F4EBE2F75284722E9193 /* Pods-Mycelium Wallet.debug.xcconfig */;
+			baseConfigurationReference = 5BF328B65E8D41F25B2317A5 /* Pods-Mycelium Wallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Mycelium Wallet/Mycelium Wallet.entitlements";
@@ -976,7 +992,7 @@
 		};
 		208FFBB419D9802000D4C159 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 677B515CE201D7130F53029B /* Pods-Mycelium Wallet.release.xcconfig */;
+			baseConfigurationReference = BF97CDAFD46B44D6507A4B17 /* Pods-Mycelium Wallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Mycelium Wallet/Mycelium Wallet.entitlements";

@@ -54,6 +54,23 @@ Three test programs are included: unparse-date, unparse-weekdate, and unparse-or
 
 ### Version history
 
+This version is 0.8. Changes from 0.7:
+
+- watchOS is now officially supported. ba5cbc3 de905a1 45ab5eb (Thanks, Neil Daniels!)
+- tvOS is now officially supported. b56be72 (Thanks, Boris Bügling!)
+- Carthage is now officially supported. da460bf (Thanks, Agnes Vasarhelyi!)
+- Added support for millisecond precision. 065612a (Thanks, Rob Keniger!)
+- Fixed bug that could insert the sign character into the middle of time zone specifications. 7b189ae 5ceb8d6 (Thanks, Hector Zarate!)
+- Improved thread safety of time zone cache. 98bf9cb (Thanks, Peter Steinberger!)
+- Tests now use XCTest. 3cb3921 591ca75
+- API now declares nullability. 40ba01d
+- Header documentation should now be parseable by Xcode. a76f42c 54136ac
+- Updated link to Rick McCarty's week dates algorithm. 58f3d26 (Thanks, Christopher Bowns!)
+- Begun the move to newer API names. 446b9f3 (Thanks, William Kent!)
+- Maintained support for legacy runtime (i386 Mac) targets. c02cffe 01ea541 (Thanks, Mike Abdullah!)
+- Fixed a build error that was introduced by SDK changes. 6d01598 (Thanks, Kyle Fuller!)
+- Fixed an uninitialized variable. 1b09a6a (Thanks, Marcel Jackwerth!)
+
 This version is 0.7. Changes from 0.6:
 
 - Cocoa Touch is now officially supported. 4bc0a08 5d95233
@@ -134,6 +151,8 @@ ISO 8601 leaves quite a bit up to the parties exchanging dates. I hope I've chos
 * ISO 8601 permits the choice of either T0 or T24 for midnight. This implementation uses T0. T24 will get you T0 on the following day.
 * If no time-zone is specified, local time (as returned by [NSTimeZone localTimeZone]) is used.
 
+None of the above defaults apply if you're using the NSDateComponents-based API.
+
 When a date is parsed that has a year but no century, this implementation adds the current century.
 
 The implementation is tolerant of out-of-range numbers. For example, "2005-13-40T24:62:89" == 1:02 AM on 2006-02-10. Notice that the month (13 > 12), date (40 > 31), hour (24 > 23), minute (62 > 59), and second (89 > 59) are all out-of-range.
@@ -142,7 +161,7 @@ As mentioned above, there is a "strict" mode that enforces sanity checks. In par
 
 ### Unparsing
 
-I use [Rick McCarty's algorithm for converting calendar dates to week dates](http://personal.ecu.edu/mccartyr/ISOwdAlg.txt), slightly tweaked.
+I use [Rick McCarty's algorithm for converting calendar dates to week dates](http://lachy.id.au/dev/script/examples/datetime/ISOwdALG.txt), slightly tweaked.
 
 ## Bugs
 
@@ -156,4 +175,4 @@ I use [Rick McCarty's algorithm for converting calendar dates to week dates](htt
 
 ## Copyright
 
-This code is copyright 2006–2013 Peter Hosey. It is under the BSD license; see LICENSE.txt for the full text of the license.
+This code is copyright 2006–2016 Peter Hosey. It is under the BSD license; see LICENSE.txt for the full text of the license.

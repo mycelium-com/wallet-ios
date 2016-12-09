@@ -1,38 +1,40 @@
 PODS:
-  - CoreBitcoin (0.6.7):
+  - CoreBitcoin (0.6.8.1):
     - ISO8601DateFormatter
-    - OpenSSL-Universal (= 1.0.1.j-2)
+    - OpenSSL-Universal (= 1.0.1.16)
   - FMDB (2.1):
     - FMDB/standard (= 2.1)
   - FMDB/common (2.1)
   - FMDB/standard (2.1):
     - FMDB/common
-  - ISO8601DateFormatter (0.7)
-  - OpenSSL-Universal (1.0.1.j-2)
+  - ISO8601DateFormatter (0.8)
+  - OpenSSL-Universal (1.0.1.16)
 
 DEPENDENCIES:
-  - CoreBitcoin (from `https://github.com/oleganza/CoreBitcoin.git`)
+  - CoreBitcoin (from `https://github.com/andrewtoth/CoreBitcoin.git`)
   - FMDB (from `https://github.com/pierlis/fmdb.git`, commit `9264dec1133c646af5c59ed8ad12a647599a99be`)
 
 EXTERNAL SOURCES:
   CoreBitcoin:
-    :git: https://github.com/oleganza/CoreBitcoin.git
+    :git: https://github.com/andrewtoth/CoreBitcoin.git
   FMDB:
     :commit: 9264dec1133c646af5c59ed8ad12a647599a99be
     :git: https://github.com/pierlis/fmdb.git
 
 CHECKOUT OPTIONS:
   CoreBitcoin:
-    :commit: d1ce1af904cc6517f4e1cc133f517af7c7bad6c4
-    :git: https://github.com/oleganza/CoreBitcoin.git
+    :commit: ca5fde9f0aa729abd7fd1df8a9e0c15d3053c690
+    :git: https://github.com/andrewtoth/CoreBitcoin.git
   FMDB:
     :commit: 9264dec1133c646af5c59ed8ad12a647599a99be
     :git: https://github.com/pierlis/fmdb.git
 
 SPEC CHECKSUMS:
-  CoreBitcoin: 55bd890f6f867888ccdcec99d3e3a07c10840a8e
-  FMDB: ad42a866ee0fc9a40e9d9d565434c768ac5aaaa0
-  ISO8601DateFormatter: ab926648eebe497f4d167c0fd083992f959f1274
-  OpenSSL-Universal: 438433f1eaa4f7fbc787445c2e520c522ef0f024
+  CoreBitcoin: 4ac6f6a61e543f08399c2fe57496d4fdcbaf74f9
+  FMDB: d4b822d96a190121a8c90052a3c0d627f496b922
+  ISO8601DateFormatter: 4551b6ce4f83185425f583b0b3feb3c7b59b942c
+  OpenSSL-Universal: 85ef63bf81d0741b03c8719cd29685c37c59518d
 
-COCOAPODS: 0.36.1
+PODFILE CHECKSUM: dc14216d0eff8e2fb0d4acd328fff27c7e0c3f37
+
+COCOAPODS: 1.1.1

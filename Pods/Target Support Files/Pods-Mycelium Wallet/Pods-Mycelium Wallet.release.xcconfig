@@ -1,7 +1,9 @@
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/CoreBitcoin" "${PODS_ROOT}/Headers/Public/FMDB" "${PODS_ROOT}/Headers/Public/ISO8601DateFormatter" "${PODS_ROOT}/Headers/Public/OpenSSL-Universal" "${PODS_ROOT}/Headers/Public/OpenSSL-Universal/openssl"
-LIBRARY_SEARCH_PATHS = "$(PODS_ROOT)/OpenSSL-Universal/lib-ios" "$(PODS_ROOT)/OpenSSL-Universal/lib-ios"
-OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/CoreBitcoin" -isystem "${PODS_ROOT}/Headers/Public/FMDB" -isystem "${PODS_ROOT}/Headers/Public/ISO8601DateFormatter" -isystem "${PODS_ROOT}/Headers/Public/OpenSSL-Universal" -isystem "${PODS_ROOT}/Headers/Public/OpenSSL-Universal/openssl"
-OTHER_LDFLAGS = $(inherited) -ObjC -l"Pods-Mycelium Wallet-CoreBitcoin" -l"Pods-Mycelium Wallet-FMDB" -l"Pods-Mycelium Wallet-ISO8601DateFormatter" -l"Pods-Mycelium Wallet-OpenSSL-Universal" -l"crypto" -l"sqlite3" -l"ssl" -framework "Foundation" -framework "UIKit"
-OTHER_LIBTOOLFLAGS = $(OTHER_LDFLAGS)
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/CoreBitcoin" "${PODS_ROOT}/Headers/Public/FMDB" "${PODS_ROOT}/Headers/Public/ISO8601DateFormatter" "${PODS_ROOT}/Headers/Public/OpenSSL-Universal"
+LIBRARY_SEARCH_PATHS = $(inherited) "$PODS_CONFIGURATION_BUILD_DIR/CoreBitcoin" "$PODS_CONFIGURATION_BUILD_DIR/FMDB" "$PODS_CONFIGURATION_BUILD_DIR/ISO8601DateFormatter" $(inherited) "${PODS_ROOT}/OpenSSL-Universal/lib-ios"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/CoreBitcoin" -isystem "${PODS_ROOT}/Headers/Public/FMDB" -isystem "${PODS_ROOT}/Headers/Public/ISO8601DateFormatter" -isystem "${PODS_ROOT}/Headers/Public/OpenSSL-Universal"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"CoreBitcoin" -l"FMDB" -l"ISO8601DateFormatter" -l"crypto" -l"sqlite3" -l"ssl" -framework "Foundation" -framework "UIKit"
+PODS_BUILD_DIR = $BUILD_DIR
+PODS_CONFIGURATION_BUILD_DIR = $PODS_BUILD_DIR/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
 PODS_ROOT = ${SRCROOT}/Pods
