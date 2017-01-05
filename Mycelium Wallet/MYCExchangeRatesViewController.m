@@ -22,6 +22,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.navigationItem.title = NSLocalizedString(@"Exchange Rates", @"");
     self.exchangeRates = [MYCWallet currentWallet].exchangeRates;
     self.formatter = [MYCWallet currentWallet].fiatCurrencyFormatter;
 }

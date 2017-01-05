@@ -313,11 +313,11 @@
         textField.text = [NSString stringWithFormat:NSLocalizedString(@"Account %@", @""), @(lastAccount.accountIndex + 1 + 1)];
     }];
 
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
     }]];
 
     __typeof(alert) __weak weakalert = alert;
-    [alert addAction:[UIAlertAction actionWithTitle:@"Add" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Add", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
         __block MYCWalletAccount* acc = nil;
         [[MYCWallet currentWallet] unlockWallet:^(MYCUnlockedWallet *uw) {

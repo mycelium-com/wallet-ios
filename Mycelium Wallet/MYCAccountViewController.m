@@ -139,11 +139,11 @@
                 item.selectionStyle = UITableViewCellSelectionStyleDefault;
                 item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
                     UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Do you really want to delete this account?", @"") message:nil preferredStyle:UIAlertControllerStyleAlert];
-                    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
                         [weakself.tableView deselectRowAtIndexPath:[weakself.tableView indexPathForSelectedRow] animated:NO];
                         [weakself dismissViewControllerAnimated:YES completion:nil];
                     }]];
-                    [alert addAction:[UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+                    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Delete", @"") style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
                         [weakself deleteAccount];
                     }]];
                     [weakself presentViewController:alert animated:YES completion:nil];
