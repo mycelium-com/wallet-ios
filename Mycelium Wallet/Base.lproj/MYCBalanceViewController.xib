@@ -1,9 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MYCBalanceViewController">
@@ -29,13 +34,13 @@
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mcn-nK-j7d" customClass="MYCRoundedView">
                             <rect key="frame" x="29" y="10" width="261" height="172.5"/>
-                            <color key="backgroundColor" red="0.89037919044494629" green="0.88228923082351685" blue="0.83338344097137451" alpha="0.22" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" red="0.89037919044494629" green="0.88228923082351685" blue="0.83338344097137451" alpha="0.22" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="260" id="glL-V4-LHN"/>
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                    <color key="value" red="0.85493355989456177" green="0.85490798950195312" blue="0.85492247343063354" alpha="0.38" colorSpace="calibratedRGB"/>
+                                    <color key="value" red="0.85493355989456177" green="0.85490798950195312" blue="0.85492247343063354" alpha="0.38" colorSpace="custom" customColorSpace="sRGB"/>
                                 </userDefinedRuntimeAttribute>
                                 <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                     <real key="value" value="0.5"/>
@@ -54,7 +59,7 @@
                             <rect key="frame" x="107" y="84" width="106" height="32"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                             <state key="normal" title="Main Account">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <connections>
                                 <action selector="selectAccount:" destination="-1" eventType="touchUpInside" id="Xa0-c5-4gx"/>
@@ -62,9 +67,9 @@
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NNj-oR-Mer" userLabel="Switch Currency Button">
                             <rect key="frame" x="84" y="109" width="161" height="63"/>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             <state key="normal">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <connections>
                                 <action selector="showCurrencies:" destination="-1" eventType="touchUpInside" id="Zog-My-Ncd"/>
@@ -79,7 +84,7 @@
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="398.23 usd" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o2C-Sr-dwE">
                             <rect key="frame" x="122" y="145" width="75" height="17.5"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
-                            <color key="textColor" red="0.59027177095413208" green="0.59023207426071167" blue="0.5902552604675293" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="textColor" red="0.59027177095413208" green="0.59023207426071167" blue="0.5902552604675293" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="bE2-35-rUf">
@@ -92,7 +97,7 @@
                                 <constraint firstAttribute="height" constant="40" id="srv-la-Nto"/>
                             </constraints>
                             <state key="normal" image="RefreshIcon">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <connections>
                                 <action selector="refresh:" destination="-1" eventType="touchUpInside" id="3Qo-q5-yEq"/>
@@ -100,7 +105,7 @@
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qAK-Zb-AXQ" customClass="MYCRoundedButton">
                             <rect key="frame" x="29" y="198.5" width="261" height="44"/>
-                            <color key="backgroundColor" red="0.0" green="0.53333333333333321" blue="1" alpha="1" colorSpace="deviceRGB"/>
+                            <color key="backgroundColor" red="0.050128921866416931" green="0.4369625449180603" blue="0.99840229749679565" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="44" id="grE-cG-CRo"/>
                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="qvK-qB-V6c"/>
@@ -108,7 +113,7 @@
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="19"/>
                             <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
                             <state key="normal" title="Send">
-                                <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <connections>
                                 <action selector="send:" destination="-1" eventType="touchUpInside" id="Tpm-rv-8k0"/>
@@ -116,11 +121,11 @@
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MPE-AQ-jAs" customClass="MYCRoundedButton">
                             <rect key="frame" x="29" y="258.5" width="261" height="44"/>
-                            <color key="backgroundColor" red="0.0" green="0.53333333333333321" blue="1" alpha="1" colorSpace="deviceRGB"/>
+                            <color key="backgroundColor" red="0.050128921866416931" green="0.4369625449180603" blue="0.99840229749679565" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="19"/>
                             <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
                             <state key="normal" title="Receive">
-                                <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <connections>
                                 <action selector="receive:" destination="-1" eventType="touchUpInside" id="9mn-Ad-ZRC"/>
@@ -137,19 +142,19 @@
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o1L-jw-pA5" customClass="MYCRoundedButton">
                             <rect key="frame" x="29" y="318.5" width="261" height="44"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="19"/>
                             <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
                             <state key="normal" title="Cold Storage">
-                                <color key="titleColor" red="0.0" green="0.53333333329999999" blue="1" alpha="1" colorSpace="deviceRGB"/>
-                                <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="titleColor" red="0.050128921866416931" green="0.4369625449180603" blue="0.99840229749679565" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
                                     <real key="value" value="1.5"/>
                                 </userDefinedRuntimeAttribute>
                                 <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                    <color key="value" red="0.0" green="0.53333333329999999" blue="1" alpha="1" colorSpace="deviceRGB"/>
+                                    <color key="value" red="0.050128921866416931" green="0.4369625449180603" blue="0.99840229749679565" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                             <connections>
@@ -157,7 +162,7 @@
                             </connections>
                         </button>
                     </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="Yb0-XZ-Ygw" firstAttribute="top" secondItem="Enb-d0-ZL3" secondAttribute="bottom" id="4qW-IA-vmy"/>
                         <constraint firstItem="Yb0-XZ-Ygw" firstAttribute="top" secondItem="NNj-oR-Mer" secondAttribute="top" constant="7" id="BUD-en-3Rm"/>
@@ -200,7 +205,7 @@
                     </constraints>
                 </view>
             </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="4OY-pE-dSV" secondAttribute="trailing" id="cMe-pj-QgH"/>
                 <constraint firstItem="4OY-pE-dSV" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="gNJ-9p-PbF"/>

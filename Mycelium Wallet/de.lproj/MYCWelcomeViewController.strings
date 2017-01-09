@@ -1,0 +1,59 @@
+/* Class = "UILabel"; text = "Enter a passphrase (skip this if you did not use passphrase when generating a wallet)"; ObjectID = "8sj-xI-gox"; */
+"8sj-xI-gox.text" = "Kennwort eingeben (leer lassen sollten Sie bei der Erstellung keines gewählt haben)";
+
+/* Class = "UILabel"; text = "Shake your iPhone to generate a unique master key to your wallet."; ObjectID = "AQU-jP-I10"; */
+"AQU-jP-I10.text" = "Schütteln Sie Ihr %@ um einen einzigartigen Master-Schlüssel für Ihre Wallet zu erstellen.";
+
+/* Class = "UIButton"; normalTitle = "Restore"; ObjectID = "BTE-2P-Whg"; */
+"BTE-2P-Whg.normalTitle" = "Wiederherstellen";
+
+/* Class = "UILabel"; text = "mycelium"; ObjectID = "Bok-yr-jXV"; */
+"Bok-yr-jXV.text" = "mycelium";
+
+/* Class = "UIButton"; normalTitle = "Back up later"; ObjectID = "Qtb-8R-DC2"; */
+"Qtb-8R-DC2.normalTitle" = "Später sichern";
+
+/* Class = "UITextView"; text = "passphrase"; ObjectID = "RI8-vZ-RIs"; */
+"RI8-vZ-RIs.text" = "Kennwort";
+
+/* Class = "UIButton"; normalTitle = "Back"; ObjectID = "UBb-ZW-0gm"; */
+"UBb-ZW-0gm.normalTitle" = "Zurück";
+
+/* Class = "UIButton"; normalTitle = "Next"; ObjectID = "UaT-Wz-zig"; */
+"UaT-Wz-zig.normalTitle" = "Weiter";
+
+/* Class = "UITextView"; text = "chancellor brink second bailout banks chancellor brink second bailout banks test shmest"; ObjectID = "ZaI-mu-D2p"; */
+"ZaI-mu-D2p.text" = "chancellor on brink of second bailout for banks... chancellor on brink of second bailout for banks...";
+
+/* Class = "UILabel"; text = "mycelium"; ObjectID = "bNA-Jd-rew"; */
+"bNA-Jd-rew.text" = "mycelium";
+
+/* Class = "UILabel"; text = "mycelium"; ObjectID = "f2r-iT-WuL"; */
+"f2r-iT-WuL.text" = "mycelium";
+
+/* Class = "UIButton"; normalTitle = "New Wallet"; ObjectID = "f5C-7p-rC0"; */
+"f5C-7p-rC0.normalTitle" = "Neue Wallet";
+
+/* Class = "UILabel"; text = "To avoid losing your funds, you have to make a backup of your wallet — with it you will be able to easily restore your funds in case of loss, damage, or malfunction of your device.\n\nMaking a backup is very simple: just write down 12 words and keep them in a safe place."; ObjectID = "jwE-xX-QT1"; */
+"jwE-xX-QT1.text" = "Um den Verlust Ihrer Wallet zu verhindern, müssen Sie eine Sicherheitskopie erstellen! Damit sind Sie in der Lage im Falle von Verlust, Schaden oder Fehlfunktion Ihres Gerätes den Zugriff auf Ihre Wallet einfach wiederherzustellen.
+
+Eine Sicherheitskopie zu erstellen ist einfach: Notieren Sie sich 12 Wörter und bewahren Sie diese an einem sicheren Ort auf.";
+
+/* Class = "UILabel"; text = "Start by creating a new wallet or restoring one from backup."; ObjectID = "p7p-Ow-3x1"; */
+"p7p-Ow-3x1.text" = "Beginnen Sie durch Erstellen einer neuen Wallet oder indem Sie mittels einer Sicherheitskopie wiederherstellen.";
+
+/* Class = "UIButton"; normalTitle = "Back up now"; ObjectID = "sgc-Cu-i0s"; */
+"sgc-Cu-i0s.normalTitle" = "Jetzt sichern";
+
+/* Class = "UIButton"; normalTitle = "Restore from backup"; ObjectID = "uKo-X3-ODu"; */
+"uKo-X3-ODu.normalTitle" = "Von Sicherheitskopie wiederherstellen";
+
+/* Class = "UILabel"; text = "mycelium"; ObjectID = "ucd-ar-xew"; */
+"ucd-ar-xew.text" = "mycelium";
+
+/* Class = "UILabel"; text = "Type in your master seed (separated by spaces)"; ObjectID = "vIh-qV-MuP"; */
+"vIh-qV-MuP.text" = "Geben Sie Ihre Sicherheitskopie ein (durch Leerzeichen getrennt)";
+
+/* Class = "UIButton"; normalTitle = "Back"; ObjectID = "vrQ-D3-ash"; */
+"vrQ-D3-ash.normalTitle" = "Zurück";
+

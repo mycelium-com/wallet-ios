@@ -1,0 +1,36 @@
+/* Class = "UIButton"; normalTitle = "Send all funds"; ObjectID = "2xo-SL-GVo"; */
+"2xo-SL-GVo.normalTitle" = "Alles senden";
+
+/* Class = "UIButton"; normalTitle = "bits"; ObjectID = "Alr-FU-WiU"; */
+"Alr-FU-WiU.normalTitle" = "bits";
+
+/* Class = "UIButton"; normalTitle = "Scan Address"; ObjectID = "Fgj-5a-6hx"; */
+"Fgj-5a-6hx.normalTitle" = "Addresse scannen";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "PgE-Wo-9nb"; */
+"PgE-Wo-9nb.normalTitle" = "Abbruch";
+
+/* Class = "UITextField"; placeholder = "0 000 000"; ObjectID = "U14-Fb-xG0"; */
+"U14-Fb-xG0.placeholder" = "0 000 000";
+
+/* Class = "UIButton"; normalTitle = "Send"; ObjectID = "Vvc-u8-Kig"; */
+"Vvc-u8-Kig.normalTitle" = "Senden";
+
+/* Class = "UILabel"; text = "Main Account"; ObjectID = "c4H-3C-XyI"; */
+"c4H-3C-XyI.text" = "Haupt-Konto";
+
+/* Class = "UILabel"; text = "Normal"; ObjectID = "c6L-p4-3N0"; */
+"c6L-p4-3N0.text" = "Normal";
+
+/* Class = "UILabel"; text = "1 042 234 bits"; ObjectID = "heC-AM-0sz"; */
+"heC-AM-0sz.text" = "1 042 234 bits";
+
+/* Class = "UIButton"; normalTitle = "Miner fee"; ObjectID = "mLa-Ny-DlO"; */
+"mLa-Ny-DlO.normalTitle" = "Miner-Gebühr";
+
+/* Class = "UILabel"; text = "Fee: 5 000 bits"; ObjectID = "qTt-2c-8V1"; */
+"qTt-2c-8V1.text" = "Gebühr: 5 000 bits";
+
+/* Class = "UITextField"; placeholder = "Recipient Address"; ObjectID = "uJR-g2-4gX"; */
+"uJR-g2-4gX.placeholder" = "Empfänger-Addresse";
+

@@ -1,0 +1,24 @@
+/* Class = "UIButton"; normalTitle = "Close"; ObjectID = "0vX-Jh-BID"; */
+"0vX-Jh-BID.normalTitle" = "Schließen";
+
+/* Class = "UIButton"; normalTitle = "bits"; ObjectID = "3RM-6k-xvO"; */
+"3RM-6k-xvO.normalTitle" = "bits";
+
+/* Class = "UIButton"; normalTitle = "Back up"; ObjectID = "Fi5-8D-4bs"; */
+"Fi5-8D-4bs.normalTitle" = "Sichern";
+
+/* Class = "UIButton"; normalTitle = "Main Account"; ObjectID = "Uw4-md-gDa"; */
+"Uw4-md-gDa.normalTitle" = "Haupt-Konto";
+
+/* Class = "UILabel"; text = "Receive Payment"; ObjectID = "gJD-sZ-hFA"; */
+"gJD-sZ-hFA.text" = "Zahlung empfangen";
+
+/* Class = "UILabel"; text = "1CBtcGivXmHQ8ZqdPgeMfcpQNJrqTrSAcG"; ObjectID = "jya-1l-D26"; */
+"jya-1l-D26.text" = "1CBtcGivXmHQ8ZqdPgeMfcpQNJrqTrSAcG";
+
+/* Class = "UITextField"; placeholder = "0 000 000"; ObjectID = "kFl-8S-cfl"; */
+"kFl-8S-cfl.placeholder" = "0 000 000";
+
+/* Class = "UILabel"; text = "Please back up the wallet before depositing any funds in it."; ObjectID = "mNU-GW-e7I"; */
+"mNU-GW-e7I.text" = "Bitte erstellen Sie eine Sicherheitskopie ihrer Wallet bevor Sie etwas einzahlen.";
+

@@ -7,9 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E1188D91E0BBC4500E5A30C /* MYCSendViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0E1188DB1E0BBC4500E5A30C /* MYCSendViewController.xib */; };
 		0E3832041D98E5AF00AFAF21 /* MYCExchangeRatesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E3832031D98E5AF00AFAF21 /* MYCExchangeRatesViewController.m */; };
 		0E3832061D98E86D00AFAF21 /* MYCExchangeRates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0E3832051D98E86D00AFAF21 /* MYCExchangeRates.storyboard */; };
+		0E39A2E51E1DEE63001825C3 /* MYCWelcomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0E39A2E71E1DEE63001825C3 /* MYCWelcomeViewController.xib */; };
+		0E39A2EA1E1FF2FC001825C3 /* MYCReceiveViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0E39A2EC1E1FF2FC001825C3 /* MYCReceiveViewController.xib */; };
 		0E3B738D1D935238005C631C /* MYCExchangeRate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E3B738C1D935238005C631C /* MYCExchangeRate.m */; };
+		0E3B83971E09B36C0076EE5F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E3B83991E09B36C0076EE5F /* InfoPlist.strings */; };
+		0E3B839D1E09B36C0076EE5F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E3B839F1E09B36C0076EE5F /* InfoPlist.strings */; };
+		0E3B83A21E09B36C0076EE5F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E3B83A41E09B36C0076EE5F /* Localizable.strings */; };
+		0E3B83A51E09D1BA0076EE5F /* MYCBalanceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0E3B83A71E09D1BA0076EE5F /* MYCBalanceViewController.xib */; };
 		0E8F0A6B1C874E3A00DD5D02 /* MYCMinerFeeEstimations.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E8F0A6A1C874E3A00DD5D02 /* MYCMinerFeeEstimations.m */; };
 		200AAE3719F91EE50004F908 /* MYCTextFieldLiveFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 200AAE3619F91EE50004F908 /* MYCTextFieldLiveFormatter.m */; };
 		200AAE3919F93FFB0004F908 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 200AAE3819F93FFB0004F908 /* AVFoundation.framework */; };
@@ -24,14 +31,11 @@
 		203AA4A519DC3C4500572BD9 /* PTableViewSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A219DC3C4500572BD9 /* PTableViewSource.m */; };
 		203AA4A819DC4A2600572BD9 /* PColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4A719DC4A2600572BD9 /* PColor.m */; };
 		203AA4AD19DC517200572BD9 /* MYCSendViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4AB19DC517200572BD9 /* MYCSendViewController.m */; };
-		203AA4AE19DC517200572BD9 /* MYCSendViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 203AA4AC19DC517200572BD9 /* MYCSendViewController.xib */; };
 		203AA4B319DC525100572BD9 /* MYCReceiveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4B119DC525100572BD9 /* MYCReceiveViewController.m */; };
-		203AA4B419DC525100572BD9 /* MYCReceiveViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 203AA4B219DC525100572BD9 /* MYCReceiveViewController.xib */; };
 		203AA4B919DC53C900572BD9 /* MYCBackupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 203AA4B719DC53C900572BD9 /* MYCBackupViewController.m */; };
 		203AA4BA19DC53C900572BD9 /* MYCBackupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 203AA4B819DC53C900572BD9 /* MYCBackupViewController.xib */; };
 		2064E37719D9858F00CD81B8 /* MYCWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E37619D9858F00CD81B8 /* MYCWallet.m */; };
 		2064E38219D9A0D000CD81B8 /* MYCBalanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */; };
-		2064E38319D9A0D000CD81B8 /* MYCBalanceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */; };
 		2064E38719D9A0E400CD81B8 /* MYCAccountsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38519D9A0E400CD81B8 /* MYCAccountsViewController.m */; };
 		2064E38819D9A0E400CD81B8 /* MYCAccountsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2064E38619D9A0E400CD81B8 /* MYCAccountsViewController.xib */; };
 		2064E38C19D9A0F200CD81B8 /* MYCTransactionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2064E38A19D9A0F200CD81B8 /* MYCTransactionsViewController.m */; };
@@ -54,7 +58,6 @@
 		208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBA119D9802000D4C159 /* LaunchScreen.xib */; };
 		208FFBAF19D9802000D4C159 /* Mycelium_WalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFBAE19D9802000D4C159 /* Mycelium_WalletTests.m */; };
 		208FFBBB19D9848800D4C159 /* MYCWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFBB919D9848800D4C159 /* MYCWelcomeViewController.m */; };
-		208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBBA19D9848800D4C159 /* MYCWelcomeViewController.xib */; };
 		208FFBC419D984E700D4C159 /* MYCTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 208FFBC219D984E700D4C159 /* MYCTabBarController.m */; };
 		208FFBC519D984E700D4C159 /* MYCTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 208FFBC319D984E700D4C159 /* MYCTabBarController.xib */; };
 		2095C44819FE779900635C85 /* MYCOutgoingTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2095C44719FE779900635C85 /* MYCOutgoingTransaction.m */; };
@@ -99,11 +102,23 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0E1188DA1E0BBC4500E5A30C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MYCSendViewController.xib; sourceTree = "<group>"; };
+		0E1188DC1E0BBC4C00E5A30C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MYCSendViewController.strings; sourceTree = "<group>"; };
 		0E3832021D98E5AF00AFAF21 /* MYCExchangeRatesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCExchangeRatesViewController.h; sourceTree = "<group>"; };
 		0E3832031D98E5AF00AFAF21 /* MYCExchangeRatesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCExchangeRatesViewController.m; sourceTree = "<group>"; };
 		0E3832051D98E86D00AFAF21 /* MYCExchangeRates.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MYCExchangeRates.storyboard; sourceTree = "<group>"; };
+		0E39A2E61E1DEE63001825C3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MYCWelcomeViewController.xib; sourceTree = "<group>"; };
+		0E39A2E91E1DEE94001825C3 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MYCWelcomeViewController.strings; sourceTree = "<group>"; };
+		0E39A2EB1E1FF2FC001825C3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MYCReceiveViewController.xib; sourceTree = "<group>"; };
+		0E39A2EE1E1FF300001825C3 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MYCReceiveViewController.strings; sourceTree = "<group>"; };
 		0E3B738B1D935238005C631C /* MYCExchangeRate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCExchangeRate.h; path = Models/MYCExchangeRate.h; sourceTree = "<group>"; };
 		0E3B738C1D935238005C631C /* MYCExchangeRate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCExchangeRate.m; path = Models/MYCExchangeRate.m; sourceTree = "<group>"; };
+		0E3B83981E09B36C0076EE5F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0E3B839A1E09B36C0076EE5F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		0E3B839E1E09B36C0076EE5F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0E3B83A31E09B36C0076EE5F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		0E3B83A61E09D1BA0076EE5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MYCBalanceViewController.xib; sourceTree = "<group>"; };
+		0E3B83A91E09D1C40076EE5F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MYCBalanceViewController.strings; sourceTree = "<group>"; };
 		0E8F0A691C874E3A00DD5D02 /* MYCMinerFeeEstimations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCMinerFeeEstimations.h; path = Models/MYCMinerFeeEstimations.h; sourceTree = "<group>"; };
 		0E8F0A6A1C874E3A00DD5D02 /* MYCMinerFeeEstimations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCMinerFeeEstimations.m; path = Models/MYCMinerFeeEstimations.m; sourceTree = "<group>"; };
 		200AAE3519F91EE50004F908 /* MYCTextFieldLiveFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCTextFieldLiveFormatter.h; sourceTree = "<group>"; };
@@ -130,10 +145,8 @@
 		203AA4A719DC4A2600572BD9 /* PColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PColor.m; sourceTree = "<group>"; };
 		203AA4AA19DC517200572BD9 /* MYCSendViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCSendViewController.h; sourceTree = "<group>"; };
 		203AA4AB19DC517200572BD9 /* MYCSendViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCSendViewController.m; sourceTree = "<group>"; };
-		203AA4AC19DC517200572BD9 /* MYCSendViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCSendViewController.xib; sourceTree = "<group>"; };
 		203AA4B019DC525100572BD9 /* MYCReceiveViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCReceiveViewController.h; sourceTree = "<group>"; };
 		203AA4B119DC525100572BD9 /* MYCReceiveViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCReceiveViewController.m; sourceTree = "<group>"; };
-		203AA4B219DC525100572BD9 /* MYCReceiveViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCReceiveViewController.xib; sourceTree = "<group>"; };
 		203AA4B619DC53C900572BD9 /* MYCBackupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCBackupViewController.h; sourceTree = "<group>"; };
 		203AA4B719DC53C900572BD9 /* MYCBackupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCBackupViewController.m; sourceTree = "<group>"; };
 		203AA4B819DC53C900572BD9 /* MYCBackupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCBackupViewController.xib; sourceTree = "<group>"; };
@@ -141,7 +154,6 @@
 		2064E37619D9858F00CD81B8 /* MYCWallet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYCWallet.m; path = Models/MYCWallet.m; sourceTree = "<group>"; };
 		2064E37F19D9A0D000CD81B8 /* MYCBalanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCBalanceViewController.h; sourceTree = "<group>"; };
 		2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCBalanceViewController.m; sourceTree = "<group>"; };
-		2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCBalanceViewController.xib; sourceTree = "<group>"; };
 		2064E38419D9A0E400CD81B8 /* MYCAccountsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCAccountsViewController.h; sourceTree = "<group>"; };
 		2064E38519D9A0E400CD81B8 /* MYCAccountsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCAccountsViewController.m; sourceTree = "<group>"; };
 		2064E38619D9A0E400CD81B8 /* MYCAccountsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCAccountsViewController.xib; sourceTree = "<group>"; };
@@ -180,7 +192,6 @@
 		208FFBAE19D9802000D4C159 /* Mycelium_WalletTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Mycelium_WalletTests.m; sourceTree = "<group>"; };
 		208FFBB819D9848800D4C159 /* MYCWelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCWelcomeViewController.h; sourceTree = "<group>"; };
 		208FFBB919D9848800D4C159 /* MYCWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCWelcomeViewController.m; sourceTree = "<group>"; };
-		208FFBBA19D9848800D4C159 /* MYCWelcomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCWelcomeViewController.xib; sourceTree = "<group>"; };
 		208FFBC119D984E700D4C159 /* MYCTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCTabBarController.h; sourceTree = "<group>"; };
 		208FFBC219D984E700D4C159 /* MYCTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCTabBarController.m; sourceTree = "<group>"; };
 		208FFBC319D984E700D4C159 /* MYCTabBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCTabBarController.xib; sourceTree = "<group>"; };
@@ -290,7 +301,7 @@
 			children = (
 				2064E37F19D9A0D000CD81B8 /* MYCBalanceViewController.h */,
 				2064E38019D9A0D000CD81B8 /* MYCBalanceViewController.m */,
-				2064E38119D9A0D000CD81B8 /* MYCBalanceViewController.xib */,
+				0E3B83A71E09D1BA0076EE5F /* MYCBalanceViewController.xib */,
 			);
 			name = "Balance Tab";
 			sourceTree = "<group>";
@@ -352,7 +363,7 @@
 			children = (
 				203AA4AA19DC517200572BD9 /* MYCSendViewController.h */,
 				203AA4AB19DC517200572BD9 /* MYCSendViewController.m */,
-				203AA4AC19DC517200572BD9 /* MYCSendViewController.xib */,
+				0E1188DB1E0BBC4500E5A30C /* MYCSendViewController.xib */,
 			);
 			name = "Send View";
 			sourceTree = "<group>";
@@ -362,7 +373,7 @@
 			children = (
 				203AA4B019DC525100572BD9 /* MYCReceiveViewController.h */,
 				203AA4B119DC525100572BD9 /* MYCReceiveViewController.m */,
-				203AA4B219DC525100572BD9 /* MYCReceiveViewController.xib */,
+				0E39A2EC1E1FF2FC001825C3 /* MYCReceiveViewController.xib */,
 			);
 			name = "Receive View";
 			sourceTree = "<group>";
@@ -445,6 +456,8 @@
 		208FFB9219D9802000D4C159 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				0E3B83A41E09B36C0076EE5F /* Localizable.strings */,
+				0E3B839F1E09B36C0076EE5F /* InfoPlist.strings */,
 				208FFB9F19D9802000D4C159 /* Images.xcassets */,
 				208FFBA119D9802000D4C159 /* LaunchScreen.xib */,
 				208FFB9319D9802000D4C159 /* Info.plist */,
@@ -468,6 +481,7 @@
 		208FFBAC19D9802000D4C159 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				0E3B83991E09B36C0076EE5F /* InfoPlist.strings */,
 				208FFBAD19D9802000D4C159 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -478,7 +492,7 @@
 			children = (
 				208FFBB819D9848800D4C159 /* MYCWelcomeViewController.h */,
 				208FFBB919D9848800D4C159 /* MYCWelcomeViewController.m */,
-				208FFBBA19D9848800D4C159 /* MYCWelcomeViewController.xib */,
+				0E39A2E71E1DEE63001825C3 /* MYCWelcomeViewController.xib */,
 			);
 			name = "Welcome Views";
 			sourceTree = "<group>";
@@ -672,6 +686,7 @@
 			knownRegions = (
 				en,
 				Base,
+				de,
 			);
 			mainGroup = 208FFB8619D9802000D4C159;
 			productRefGroup = 208FFB9019D9802000D4C159 /* Products */;
@@ -690,7 +705,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				20C0F70019EEAF7300DD0748 /* MYCAccountTableViewCell.xib in Resources */,
-				203AA4B419DC525100572BD9 /* MYCReceiveViewController.xib in Resources */,
+				0E39A2EA1E1FF2FC001825C3 /* MYCReceiveViewController.xib in Resources */,
 				2064E38819D9A0E400CD81B8 /* MYCAccountsViewController.xib in Resources */,
 				311D632B1AADEE6600798450 /* MYCCurrencyTableViewCell.xib in Resources */,
 				2076471A1A0D080A000F00F2 /* MYCWebViewController.xib in Resources */,
@@ -700,18 +715,20 @@
 				200C3D0B1AF0B570001E40EE /* MYCTextEditViewController.xib in Resources */,
 				0E3832061D98E86D00AFAF21 /* MYCExchangeRates.storyboard in Resources */,
 				2076471C1A0D0A40000F00F2 /* Credits.html in Resources */,
-				203AA4AE19DC517200572BD9 /* MYCSendViewController.xib in Resources */,
 				206EA4C51ADC17C500F37019 /* MYCVerifyBackupViewController.xib in Resources */,
 				203AA4BA19DC53C900572BD9 /* MYCBackupViewController.xib in Resources */,
 				208FFBA019D9802000D4C159 /* Images.xcassets in Resources */,
 				20A4F1C21ADEE066009027A0 /* MYCRestoreSeedViewController.xib in Resources */,
+				0E3B839D1E09B36C0076EE5F /* InfoPlist.strings in Resources */,
+				0E3B83A21E09B36C0076EE5F /* Localizable.strings in Resources */,
 				2076471E1A0D0A93000F00F2 /* Legal.html in Resources */,
 				2095C44F19FFF50A00635C85 /* MYCTransactionDetails.storyboard in Resources */,
 				2064E38D19D9A0F200CD81B8 /* MYCTransactionsViewController.xib in Resources */,
-				208FFBBC19D9848800D4C159 /* MYCWelcomeViewController.xib in Resources */,
+				0E1188D91E0BBC4500E5A30C /* MYCSendViewController.xib in Resources */,
+				0E39A2E51E1DEE63001825C3 /* MYCWelcomeViewController.xib in Resources */,
 				207646A41A0249FF000F00F2 /* MYCScanPrivateKeyViewController.xib in Resources */,
 				20C2D7F419E290830022CAAC /* MYCBackupPageView.xib in Resources */,
-				2064E38319D9A0D000CD81B8 /* MYCBalanceViewController.xib in Resources */,
+				0E3B83A51E09D1BA0076EE5F /* MYCBalanceViewController.xib in Resources */,
 				20C0F70519EEB37D00DD0748 /* MYCAccountViewController.xib in Resources */,
 				2064E39219D9A10400CD81B8 /* MYCSettingsViewController.xib in Resources */,
 				2095C44D19FF985100635C85 /* MYCTransactionTableViewCell.xib in Resources */,
@@ -722,6 +739,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E3B83971E09B36C0076EE5F /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -863,10 +881,71 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		0E1188DB1E0BBC4500E5A30C /* MYCSendViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0E1188DA1E0BBC4500E5A30C /* Base */,
+				0E1188DC1E0BBC4C00E5A30C /* de */,
+			);
+			name = MYCSendViewController.xib;
+			sourceTree = "<group>";
+		};
+		0E39A2E71E1DEE63001825C3 /* MYCWelcomeViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0E39A2E61E1DEE63001825C3 /* Base */,
+				0E39A2E91E1DEE94001825C3 /* de */,
+			);
+			name = MYCWelcomeViewController.xib;
+			sourceTree = "<group>";
+		};
+		0E39A2EC1E1FF2FC001825C3 /* MYCReceiveViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0E39A2EB1E1FF2FC001825C3 /* Base */,
+				0E39A2EE1E1FF300001825C3 /* de */,
+			);
+			name = MYCReceiveViewController.xib;
+			sourceTree = "<group>";
+		};
+		0E3B83991E09B36C0076EE5F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0E3B83981E09B36C0076EE5F /* de */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		0E3B839F1E09B36C0076EE5F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0E3B839E1E09B36C0076EE5F /* de */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		0E3B83A41E09B36C0076EE5F /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0E3B83A31E09B36C0076EE5F /* de */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		0E3B83A71E09D1BA0076EE5F /* MYCBalanceViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0E3B83A61E09D1BA0076EE5F /* Base */,
+				0E3B83A91E09D1C40076EE5F /* de */,
+			);
+			name = MYCBalanceViewController.xib;
+			sourceTree = "<group>";
+		};
 		208FFBA119D9802000D4C159 /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				208FFBA219D9802000D4C159 /* Base */,
+				0E3B839A1E09B36C0076EE5F /* de */,
 			);
 			name = LaunchScreen.xib;
 			sourceTree = "<group>";

@@ -1,0 +1,597 @@
+/* No comment provided by engineer. */
+"%@ Do you wish to continue?" = "%@ Möchten Sie fortfahren?";
+
+/* No comment provided by engineer. */
+"%@: %@" = "%1$@: %2$@";
+
+/* No comment provided by engineer. */
+"1 confirmation" = "1 Bestätigung";
+
+/* No comment provided by engineer. */
+"About" = "Über";
+
+/* No comment provided by engineer. */
+"About Diagnostics" = "Über Diagnose";
+
+/* No comment provided by engineer. */
+"Account #%02d" = "Konto #%02d";
+
+/* No comment provided by engineer. */
+"Account %@" = "Konto %@";
+
+/* No comment provided by engineer. */
+"Account Details" = "Kontodetails";
+
+/* No comment provided by engineer. */
+"Account Label" = "Konto-Bezeichnung";
+
+/* No comment provided by engineer. */
+"Accounts" = "Konten";
+
+/* No comment provided by engineer. */
+"Activate Account" = "Konto aktivieren";
+
+/* No comment provided by engineer. */
+"Active" = "Aktiv";
+
+/* No comment provided by engineer. */
+"Active account is kept up to date." = "aktive Konten werden aktuell gehalten.";
+
+/* No comment provided by engineer. */
+"Address does not belong to Bitcoin network" = "Keine gültige Bitcoin-Addresse";
+
+/* No comment provided by engineer. */
+"Archive Account" = "Konto archivieren";
+
+/* No comment provided by engineer. */
+"Archived" = "Archiviert";
+
+/* No comment provided by engineer. */
+"Archived account is not kept up to date." = "archiviertes Konto wird nicht aktuell gehalten.";
+
+/* No comment provided by engineer. */
+"Attention" = "Achtung";
+
+/* No comment provided by engineer. */
+"Authenticate security upgrade." = "Authentifiziere Sicherheits-Aktualisierung.";
+
+/* No comment provided by engineer. */
+"Authenticate storage for the wallet seed" = "Authentifiziere Speicherplatz für wallet seed";
+
+/* No comment provided by engineer. */
+"Authenticate to store master key on the device" = "Authentifizieren um Master-Key auf Gerät zu speichern";
+
+/* No comment provided by engineer. */
+"Authorize access to the backup" = "Autorisiere Zugriff zu Sicherheitskopie";
+
+/* No comment provided by engineer. */
+"Authorize change of network mode" = "Autorisiere Änderung von Netzwerk-Modus";
+
+/* No comment provided by engineer. */
+"Authorize new account" = "Autorisiere neues Konto";
+
+/* No comment provided by engineer. */
+"Authorize removal of the master key" = "Autorisiere Löschung des Master-Key";
+
+/* No comment provided by engineer. */
+"Back" = "Zurück";
+
+/* No comment provided by engineer. */
+"Back up later" = "Später sichern";
+
+/* No comment provided by engineer. */
+"Back up now" = "Jetzt sichern";
+
+/* No comment provided by engineer. */
+"Back up the wallet" = "Wallet sichern";
+
+/* No comment provided by engineer. */
+"Back up your wallet" = "Sichern Sie ihre Wallet";
+
+/* No comment provided by engineer. */
+"Backup" = "Sicherheitskopie";
+
+/* No comment provided by engineer. */
+"Backup consists of a 12-word phrase that you have to write down. It allows you to recover your funds when you disable your device passcode, or in case of loss/damage/malfunction of the device. This takes only a minute." = "Die Sicherheitskopie ist eine Wortfolge von 12 Wörtern die Sie notieren müssen. Sie erlaubt ihnen das Wiederherstellen ihres Geldes bei Verlust ihres Passcodes oder im Falle von Verlust/Schaden/Fehlfunktion ihres Gerätes. Es dauert nicht länger als eine Minute.";
+
+/* No comment provided by engineer. */
+"Backup does not match" = "Sicherheitskopie stimmt nicht überein";
+
+/* No comment provided by engineer. */
+"Backup is invalid" = "Sicherheitskopie ungültig";
+
+/* No comment provided by engineer. */
+"Backup is not verified" = "Sicherheitskopie ist nicht verifiziert";
+
+/* No comment provided by engineer. */
+"Balance" = "Guthaben";
+
+/* No comment provided by engineer. */
+"Bitcoin Payment" = "Bitcoin-Zahlung";
+
+/* No comment provided by engineer. */
+"Block" = "Block";
+
+/* No comment provided by engineer. */
+"Camera Access" = "Kamera-Zugriff";
+
+/* No comment provided by engineer. */
+"Can't add an account because you have too many empty accounts." = "Kann kein Konto hinzufügen, da Sie zu viele leere Konten haben.";
+
+/* No comment provided by engineer. */
+"Can't synchronize accounts. Try again later." = "Konten nicht synchronisiert. Versuchen Sie es später erneut.";
+
+/* No comment provided by engineer. */
+"Can't synchronize the account. Try again later." = "Kann Konto nicht synchronisieren. Versuchen Sie es später erneut.";
+
+/* No comment provided by engineer. */
+"Cancel" = "Abbruch";
+
+/* No comment provided by engineer. */
+"Cannot make another copy of master seed while device is locked" = "Während Gerät gesperrt ist, kann keine neue Sicherheitskopie erstellt werden.";
+
+/* No comment provided by engineer. */
+"Cannot parse any transaction returned for txids %@" = "Kann keine Transaktion analysieren für TX-IDs %@";
+
+/* No comment provided by engineer. */
+"Cannot read the master seed from the file while device is locked (protected data is not available)." = "Master-Seed nicht lesbar während Gerät gesperrt ist (geschützte Daten sind nicht verfügbar).";
+
+/* No comment provided by engineer. */
+"Cannot read the master seed from the file." = "Kann Master-Seed nicht aus Datei auslesen.";
+
+/* No comment provided by engineer. */
+"Cannot restore wallet" = "Wallet nicht wiederherstellbar";
+
+/* Errors */
+"Cannot verify recipient" = "Empfänger nicht verifizierbar";
+
+/* No comment provided by engineer. */
+"Check your backup" = "Sicherheitskopie überprüfen";
+
+/* No comment provided by engineer. */
+"Checking public address..." = "Checke öffentlich Addresse...";
+
+/* No comment provided by engineer. */
+"Clear Database" = "Datenbank leeren";
+
+/* No comment provided by engineer. */
+"Clear Database?" = "Datenbank leeren?";
+
+/* No comment provided by engineer. */
+"Cold Storage" = "Cold Storage";
+
+/* No comment provided by engineer. */
+"Confirm payment of %@" = "Bestätige Zahlung von %@";
+
+/* No comment provided by engineer. */
+"Confirmations" = "Bestätigung";
+
+/* Errors */
+"Connection failed" = "Verbindung fehlgeschlagen";
+
+/* No comment provided by engineer. */
+"Continue" = "Fortfahren";
+
+/* No comment provided by engineer. */
+"Credits" = "Dank an";
+
+/* No comment provided by engineer. */
+"Currency" = "Währung";
+
+/* No comment provided by engineer. */
+"Current" = "Ausgewählt";
+
+/* No comment provided by engineer. */
+"Current account is used to send and receive funds." = "Ausgewähltes Konto wird zum Versand & Empfang von Geld verwendet.";
+
+/* No comment provided by engineer. */
+"Date" = "Datum";
+
+/* No comment provided by engineer. */
+"Delete Account" = "Konto löschen";
+
+/* No comment provided by engineer. */
+"Developer Build" = "Entwickler Version";
+
+/* No comment provided by engineer. */
+"Diagnostical Log" = "Diagnose-Log";
+
+/* No comment provided by engineer. */
+"Diagnostics Log" = "Diagnose-Log";
+
+/* No comment provided by engineer. */
+"Disabling your passcode, software or hardware failure may render your funds forever inaccessible. This takes only a minute." = "Deaktivieren des Passcodes, Software- oder Hardware-Fehler können ihr Geld nicht zugänglich machen. Dies dauert lediglich eine Minute.";
+
+/* No comment provided by engineer. */
+"Do you really want to delete this account?" = "Möchten Sie dieses Konto wirklich löschen?";
+
+/* No comment provided by engineer. */
+"Do you understand the risk?" = "Verstehen Sie das verbundene Risiko?";
+
+/* No comment provided by engineer. */
+"Do you wish to pay anyway?" = "Trotzdem bezahlen?";
+
+/* No comment provided by engineer. */
+"Economy" = "Ökonomisch";
+
+/* No comment provided by engineer. */
+"Enter your private key to spend funds from it." = "Geben Sie ihren privaten Schlüssel ein um über dessen Guthaben zu verfügen.";
+
+/* Errors */
+"Error" = "Fehler";
+
+/* No comment provided by engineer. */
+"Exchange Rate Provider" = "Wechselkurs von";
+
+/* No comment provided by engineer. */
+"Exchange rate" = "Wechselkurs";
+
+/* No comment provided by engineer. */
+"Export Diagnostical Data" = "Exportiere Diagnose-Daten";
+
+/* No comment provided by engineer. */
+"Export Diagnostics" = "Exportiere Diagnose";
+
+/* No comment provided by engineer. */
+"Failed to load coins. Please try again." = "Coins konnten nicht geladen werden. Versuchen Sie es erneut.";
+
+/* No comment provided by engineer. */
+"Failed to read a correct probe item value from iOS Keychain." = "Es konnte kein korrekter Wert des Testelements des iOS-Schlüsselbunds ausgelesen werden.";
+
+/* No comment provided by engineer. */
+"Failed to restore wallet with this mnemonic" = "Wiederherstellung mit Wortfolge ist fehlgeschlagen";
+
+/* No comment provided by engineer. */
+"Fee" = "Gebühr";
+
+/* No comment provided by engineer. */
+"Fee rate" = "Gebührenrate";
+
+/* No comment provided by engineer. */
+"Fee: %@" = "Gebühr: %@";
+
+/* No comment provided by engineer. */
+"Finish" = "Fertig";
+
+/* No comment provided by engineer. */
+"Hey, install %@ and I will send you some bitcoins." = "Hey, installiere %@ und ich sende dir ein paar bitcoins.";
+
+/* No comment provided by engineer. */
+"History of all transactions will be removed. Master key will be preserved." = "Historie aller Transaktionen wird entfern. Master-Key bleibt erhalten.";
+
+/* No comment provided by engineer. */
+"I agree, do not verify" = "Ich stimme zu, nicht verifizieren";
+
+/* No comment provided by engineer. */
+"I agree, proceed without backup" = "Ich stimme zu, fortfahren ohne Sicherheitskopie";
+
+/* No comment provided by engineer. */
+"I understand, proceed without backup" = "Ich verstehe, fortfahren ohne Sicherheitskopie";
+
+/* No comment provided by engineer. */
+"Inputs" = "Eingänge";
+
+/* No comment provided by engineer. */
+"Insufficient funds" = "Guthaben nicht ausreichend";
+
+/* Errors */
+"Invalid network" = "Ungültiges Netzwerk";
+
+/* No comment provided by engineer. */
+"Invite" = "Einladen";
+
+/* No comment provided by engineer. */
+"Invite a friend" = "Freund einladen";
+
+/* No comment provided by engineer. */
+"Key does not belong to Bitcoin network" = "Schlüssel gehört nicht zum Bitcoin Netzwerk";
+
+/* No comment provided by engineer. */
+"Key is invalid" = "Schlüssel ungültig";
+
+/* No comment provided by engineer. */
+"Label" = "Bezeichnung";
+
+/* No comment provided by engineer. */
+"Legal" = "Rechtliches";
+
+/* No comment provided by engineer. */
+"Loading coins..." = "Lade coins...";
+
+/* No comment provided by engineer. */
+"Low Priority" = "Niedrige Priorität";
+
+/* No comment provided by engineer. */
+"Low Priority or Economy may result in longer confirmation time" = "Niedrige und ökonomische Priorität können zu einer längeren Bestätigungszeit führen";
+
+/* No comment provided by engineer. */
+"Main Account" = "Haupt-Konto";
+
+/* No comment provided by engineer. */
+"Make Current" = "Konto auswählen";
+
+/* No comment provided by engineer. */
+"Making a file-based copy of the wallet seed" = "Erstelle Datei-basierte Kopie der Wallet-Seed";
+
+/* No comment provided by engineer. */
+"Master seed is correct." = "Master-Seed ist korrekt.";
+
+/* No comment provided by engineer. */
+"Master seed is incorrect." = "Master-Seed ist nicht korrekt.";
+
+/* No comment provided by engineer. */
+"Missing data" = "fehlende Daten";
+
+/* No comment provided by engineer. */
+"New Account" = "Neues Konto";
+
+/* No comment provided by engineer. */
+"Next" = "Weiter";
+
+/* No comment provided by engineer. */
+"Next word" = "Nächstes Wort";
+
+/* No comment provided by engineer. */
+"No account found" = "Kein Konto gefunden";
+
+/* No comment provided by engineer. */
+"No miner fee estimates returned" = "Keine Transaktionsgebühr-Schätzung erhalten";
+
+/* MYC */
+"Non-HTTP response received." = "Nicht-HTTP Antwort erhalten.";
+
+/* No comment provided by engineer. */
+"Normal" = "Normal";
+
+/* No comment provided by engineer. */
+"Not a valid Bitcoin address or payment request" = "Keine gültige Bitcoin Addresse oder Zahlungs-Aufforderung";
+
+/* No comment provided by engineer. */
+"Not confirmed yet" = "noch nicht bestätigt";
+
+/* No comment provided by engineer. */
+"Notes" = "Notizen";
+
+/* No comment provided by engineer. */
+"OK" = "OK";
+
+/* No comment provided by engineer. */
+"Outputs" = "Ausgänge";
+
+/* Errors */
+"Passcode is not set" = "Kein Passcode gesetzt";
+
+/* Errors */
+"Payment Completed" = "Zahlung abgeschlossen";
+
+/* No comment provided by engineer. */
+"Payment Error" = "Zahlungs-Fehler";
+
+/* No comment provided by engineer. */
+"Payment Receipt" = "Zahlungs-Beleg";
+
+/* No comment provided by engineer. */
+"Payment address is not valid" = "Zahlungs-Adresse ungültig";
+
+/* No comment provided by engineer. */
+"Payment invalid" = "Zahlung ungültig";
+
+/* Errors */
+"Payment request expired" = "Zahlungs-Aufforderung abgelaufen";
+
+/* Errors */
+"Payment request is invalid" = "Zahlungs-Aufforderung ungültig";
+
+/* No comment provided by engineer. */
+"Please allow camera access in system settings." = "Bitte erlauben Sie Kamera-Zugriff in den Systemeinstellungen.";
+
+/* No comment provided by engineer. */
+"Please check that you entered all words correctly." = "Bitte überprüfen Sie die korrekte Eingabe aller Worte.";
+
+/* No comment provided by engineer. */
+"Please enter all words separated by space to verify they are written correctly" = "Bitte geben Sie alle Worte durch ein Leerzeichen getrennt ein um diese zu verifizieren";
+
+/* No comment provided by engineer. */
+"Please re-install the app if you have the backup or contact Mycelium support." = "Bitten installieren Sie diese App erneut wenn sie eine Sicherheitskopie haben oder kontaktieren Sie Mycelium-Support.";
+
+/* No comment provided by engineer. */
+"Please send data to Mycelium" = "Senden Sie bitte Daten an Mycelium";
+
+/* No comment provided by engineer. */
+"Priority" = "Priorität";
+
+/* No comment provided by engineer. */
+"Private Key" = "privater Schlüssel";
+
+/* No comment provided by engineer. */
+"Public key" = "öffentlicher Schlüssel";
+
+/* No comment provided by engineer. */
+"Receipt" = "Beleg";
+
+/* No comment provided by engineer. */
+"Receive Bitcoins" = "Empfange Bitcoins";
+
+/* No comment provided by engineer. */
+"Receiving %@" = "Empfange %@";
+
+/* No comment provided by engineer. */
+"Recipient" = "Empfänger";
+
+/* No comment provided by engineer. */
+"Recipient Address" = "Empfänger-Adresse";
+
+/* No comment provided by engineer. */
+"Reset Wallet" = "Wallet zurücksetzen";
+
+/* No comment provided by engineer. */
+"Reset Wallet?" = "Wallet zurücksetzen?";
+
+/* No comment provided by engineer. */
+"Restore" = "Wiederherstellen";
+
+/* No comment provided by engineer. */
+"Restore Wallet" = "Wallet wiederherstellen";
+
+/* No comment provided by engineer. */
+"Restore wallet from backup" = "Wallet wiederherstellen aus Sicherheitskopie";
+
+/* No comment provided by engineer. */
+"Restoring the wallet seed" = "Wallet-Seed wiederherstellen";
+
+/* No comment provided by engineer. */
+"Save" = "Speichern";
+
+/* No comment provided by engineer. */
+"Scan Address" = "Addresse scannen";
+
+/* No comment provided by engineer. */
+"Scan QR code" = "QR-Code scannen";
+
+/* No comment provided by engineer. */
+"Send" = "Senden";
+
+/* No comment provided by engineer. */
+"Send Bitcoins" = "Send Bitcoins";
+
+/* No comment provided by engineer. */
+"Sender" = "Absender";
+
+/* No comment provided by engineer. */
+"Sending %@" = "Sende %@";
+
+/* No comment provided by engineer. */
+"Set Miner Fee" = "Setze Miner-Gebühr";
+
+/* No comment provided by engineer. */
+"Settings" = "Einstellungen";
+
+/* No comment provided by engineer. */
+"Shake your %@ to generate a unique master key to your wallet." = "Schütteln Sie ihr %@ um einen einzigartigen Master-Key für ihre Wallet zu erstellen.";
+
+/* No comment provided by engineer. */
+"Size" = "Größe";
+
+/* No comment provided by engineer. */
+"Start" = "Start";
+
+/* No comment provided by engineer. */
+"Status" = "Status";
+
+/* No comment provided by engineer. */
+"Stored seed differs from the one which the app asked to save." = "Gespeicherte Seed unterscheidet sich von jener, welche die App speichern wollte.";
+
+/* No comment provided by engineer. */
+"The backup is complete. Keep your master seed safe. You can use it to restore your wallet when you install Mycelium Wallet on another device (or reinstall on this one)." = "Ihre Sicherheitskopie ist abgeschlossen. Bewahren Sie ihre Master-Seed sicher auf. Sie können diese nutzen um Mycelium auf einem anderen Gerät zu installieren (oder auf diesem Wiederherzustellen)";
+
+/* Errors */
+"The recipient’s claimed name %@ is not signed by a trusted authority." = "Name des Empfängers %@ nicht von einer vertrauten Autorität signiert.";
+
+/* Errors */
+"The request for payment is not signed by a trusted authority." = "Die Zahlungsaufforderung ist nicht von einer vertrauten Autorität signiert.";
+
+/* No comment provided by engineer. */
+"This is a monthly reminder. Make sure your wallet backup is stored in a safe place and not lost or destroyed. If you are not sure, you should back up immediately." = "Dies ist eine monatliche Erinnerung. Stellen Sie sicher das die Sicherheitskopie ihrer Wallet sicher verwahrt und nicht verloren oder unnutzbar ist. Sollten Sie sich dem nicht sicher sein, erstellen Sie unverzüglich eine Sicherheitskopie.";
+
+/* No comment provided by engineer. */
+"This is a public address with %@" = "Dies ist eine öffentlichte Addresse mit %@";
+
+/* No comment provided by engineer. */
+"This seed does not match this wallet." = "Diese Seed stimmt nicht mit dieser Wallet überein.";
+
+/* No comment provided by engineer. */
+"This seed does not match this wallet. To restore from a different seed, re-install the app." = "Diese Seed stimmt nicht mit dieser Wallet überein. Um von einer anderen wiederherzustellen, installieren Sie diese App neu.";
+
+/* No comment provided by engineer. */
+"To protect your bitcoins please set up a passcode or Touch ID in System Settings." = "Um ihre Bitcoin zu schützen, setzen Sie bitte einen Passcode oder aktivieren TouchID in Systemeinstellungen.";
+
+/* No comment provided by engineer. */
+"To restore later, go to Settings and choose Restore from backup." = "Um später wiederherzustellen, gehen Sie in die Einstellungen und wählen von Sicherheitskopie wiederherstellen.";
+
+/* No comment provided by engineer. */
+"Too many words entered." = "Zu viele Worte eingegeben.";
+
+/* No comment provided by engineer. */
+"Transaction Details" = "Transaktions-Details";
+
+/* No comment provided by engineer. */
+"Transaction ID" = "Transaktions-ID";
+
+/* No comment provided by engineer. */
+"Transaction Notes" = "Transaktions-Notizen";
+
+/* No comment provided by engineer. */
+"Transactions" = "Transaktionen";
+
+/* No comment provided by engineer. */
+"Type in your master seed (separated by spaces)" = "Geben Sie ihre Master-Seed ein (getrennt durch Leerzeichen)";
+
+/* No comment provided by engineer. */
+"Type in your master seed separated by spaces" = "Geben Sie ihre Master-Seed durch Leerzeichen getrennt ein";
+
+/* No comment provided by engineer. */
+"Use Testnet" = "Verwende Testnet";
+
+/* No comment provided by engineer. */
+"Use all funds" = "gesamtes Guthaben";
+
+/* No comment provided by engineer. */
+"Use email ios@mycelium.com or Telegram @mycelium." = "Nutzen Sie Email ios@mycelium.com oder Telegram @mycelium.";
+
+/* No comment provided by engineer. */
+"Verification failed. PLEASE WRITE DOWN YOUR BACKUP SEED: %@" = "Verifikation fehlgeschlagen. BITTE NOTIEREN SIE DIE SEED IHRER SICHERHEITSKOPIE: %@";
+
+/* No comment provided by engineer. */
+"Verify" = "Verifizieren";
+
+/* No comment provided by engineer. */
+"Verify Backup" = "Sicherheitskopie verifizieren";
+
+/* No comment provided by engineer. */
+"Verifying that backup matches this wallet." = "Verifiziere das Sicherheitskopie mit Wallet übereinstimmt.";
+
+/* No comment provided by engineer. */
+"Verifying that migration did succeed." = "Verifiziere das Migration erfolgreich war.";
+
+/* No comment provided by engineer. */
+"Verifying wallet integrity." = "Verifiziere Integrität der Wallet.";
+
+/* No comment provided by engineer. */
+"View Transactions" = "Transaktionen ansehen";
+
+/* No comment provided by engineer. */
+"Wallet Locked Out" = "Wallet ausgesperrt";
+
+/* No comment provided by engineer. */
+"Wallet is locked" = "Wallet ist gesperrt";
+
+/* No comment provided by engineer. */
+"Wallet is not restored" = "Wallet ist nicht wiederhergestellt";
+
+/* No comment provided by engineer. */
+"Wallet is restored" = "Wallet ist wiederhergestellt";
+
+/* No comment provided by engineer. */
+"You have full responsibility for security of your backup. " = "Sie tragen die volle Verantwortung für das sichere verwahren ihrer Sicherheitskopie. ";
+
+/* No comment provided by engineer. */
+"You may use a paper backup or a private key slip from an ATM. Only WIF format is supported for now." = "Sie können ein Papier-Backup oder den Ausdruck eines Bitcoin-Automaten mit dem privaten Schlüssel nutzen. Lediglich WIF (Wallet Import Format) wird momentan untersützt.";
+
+/* No comment provided by engineer. */
+"Your keys will be wiped out from this device and app will restart with clean state." = "Ihre Schlüssel werden von diesem Gerät gelöscht und die App wird sich in einem leeren Zustand neustarten.";
+
+/* No comment provided by engineer. */
+"Your payment can't be completed, please check your internet connection. Your payment will be completed automatically." = "Ihre Zahlung konnte nicht abgeschlossen werden, bitte prüfen Sie ihre Internetverbindung. Ihre Zahlung wird dann automatisch abgeschlossen.";
+
+/* No comment provided by engineer. */
+"Your payment was rejected. Please try to synchronize your account and try again." = "Ihre Zahlung wurde abgelehnt. Bitte synchronisieren Sie ihr Konto und versuchen es erneut.";
+
+/* No comment provided by engineer. */
+"iOS Keychain failed with error: %@" = "iOS-Schlüsselbund fehlgeschlagen mit Fehler: %@";
+
+/* No comment provided by engineer. */
+"satoshis/byte" = "satoshis/byte";
+
+/* No comment provided by engineer. */
+"v%@" = "v%@";
+

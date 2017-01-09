@@ -1,0 +1,21 @@
+/* Class = "UIButton"; normalTitle = "Backup your wallet"; ObjectID = "E9X-Ob-kXK"; */
+"E9X-Ob-kXK.normalTitle" = "Sichern Sie ihre Wallet";
+
+/* Class = "UIButton"; normalTitle = "Main Account"; ObjectID = "Enb-d0-ZL3"; */
+"Enb-d0-ZL3.normalTitle" = "Hauptkonto";
+
+/* Class = "UIButton"; normalTitle = "Receive"; ObjectID = "MPE-AQ-jAs"; */
+"MPE-AQ-jAs.normalTitle" = "Empfangen";
+
+/* Class = "UILabel"; text = "1 123 456,78 bits"; ObjectID = "Yb0-XZ-Ygw"; */
+"Yb0-XZ-Ygw.text" = "1 123 456,78 bits";
+
+/* Class = "UIButton"; normalTitle = "Cold Storage"; ObjectID = "o1L-jw-pA5"; */
+"o1L-jw-pA5.normalTitle" = "Cold Storage";
+
+/* Class = "UILabel"; text = "398.23 usd"; ObjectID = "o2C-Sr-dwE"; */
+"o2C-Sr-dwE.text" = "398,23 usd";
+
+/* Class = "UIButton"; normalTitle = "Send"; ObjectID = "qAK-Zb-AXQ"; */
+"qAK-Zb-AXQ.normalTitle" = "Senden";
+
