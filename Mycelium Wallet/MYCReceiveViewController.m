@@ -259,7 +259,7 @@
     
     if (self.requestedAmount > 0)
     {
-        NSString* amount = [self.wallet.primaryCurrencyFormatter stringFromAmount:self.requestedAmount];
+        NSString* amount = [self.wallet.btcCurrencyFormatter stringFromAmount:self.requestedAmount];
         items = @[[NSString stringWithFormat:NSLocalizedString(@"Please send %@ to %@", @""), amount, self.account.externalAddress.string]];
     }
     else
