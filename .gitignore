@@ -41,5 +41,15 @@ DerivedData
 .idea/
 *.hmap
 
+# Custom
+
+Mycelium\ Wallet.xcodeproj/project.xcworkspace/xcuserdata
+Mycelium\ Wallet.xcodeproj/xcuserdata
+Pods
+Mycelium\ Wallet.xcworkspace/xcuserdata
+*.app.dSYM.zip
+*.ipa
+fastlane/Appfile
+fastlane/report.xml
 
 

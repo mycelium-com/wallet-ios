@@ -9,4 +9,6 @@ source 'https://github.com/CocoaPods/Specs.git'
 target "Mycelium Wallet" do
   pod 'FMDB', :git => 'https://github.com/pierlis/fmdb.git', :commit => '9264dec1133c646af5c59ed8ad12a647599a99be'
   pod 'CoreBitcoin', :git => "https://github.com/andrewtoth/CoreBitcoin.git"
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Crashlytics'
 end

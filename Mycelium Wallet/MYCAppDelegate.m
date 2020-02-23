@@ -14,6 +14,8 @@
 #import "MYCWalletAccount.h"
 #import "BTCBitcoinURL.h"
 
+@import Firebase;
+
 @interface MYCAppDelegate ()
 @property(nonatomic) MYCWelcomeViewController* welcomeViewController;
 @property(nonatomic) MYCTabBarController* mainController;
@@ -29,7 +31,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [Crashlytics startWithAPIKey:@"a0449b892cadffe38ac3e11d7d564d916b905e5c"];
+    [FIRApp configure];
 
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
