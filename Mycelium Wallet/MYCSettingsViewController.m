@@ -321,7 +321,7 @@
 
                             //[[[UIAlertView alloc] initWithTitle:@"Send to Mycelium" message:@"Send the exported data" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
                             UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Please send data to Mycelium", @"")
-                                                                                              message:NSLocalizedString(@"Use email ios@mycelium.com or Telegram @mycelium.", @"")
+                                                                                              message:NSLocalizedString(@"Use email support@mycelium.com.", @"")
                                                                                        preferredStyle:UIAlertControllerStyleAlert];
                             [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
                             }]];
