@@ -1,0 +1,31 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    latest_build_number = latest_testflight_build_number()
+
+    new_build_number = latest_build_number.to_i + 1
+
+    set_info_plist_value(path: "./Mycelium Wallet/Info.plist", key: "CFBundleVersion", value: new_build_number.to_s)
+
+    build_app(workspace: "Mycelium\ Wallet.xcworkspace", scheme: "Mycelium\ Wallet")
+    # upload_to_testflight
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
+end
