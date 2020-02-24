@@ -1011,7 +1011,12 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
         // If synced less than 5 minutes ago, skip sync.
         if (account.syncDate && [account.syncDate timeIntervalSinceNow] > -300)
         {
-            if (completion) completion(NO, nil);
+            NSError* error = [NSError errorWithDomain:MYCErrorDomain
+                                                 code:-4
+                                             userInfo:@{
+                                                 NSLocalizedDescriptionKey: @"Account sync date is still valid and force flag is set to NO."
+                                             }];
+            if (completion) completion(NO, error);
             return;
         }
     }

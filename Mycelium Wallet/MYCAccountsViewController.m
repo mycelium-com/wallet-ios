@@ -243,7 +243,7 @@
         [[MYCWallet currentWallet] updateAccount:acc force:NO completion:^(BOOL success, NSError *error) {
             if (!success)
             {
-                if (!didDisplayError)
+                if (!didDisplayError && [error code] != -4) // -4 is the special error code, if syncDate is still valid and force is NO
                 {
                     didDisplayError = YES;
                     UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
@@ -269,13 +269,16 @@
     [[MYCWallet currentWallet] updateAccount:acc force:!acc.isArchived completion:^(BOOL success, NSError *error) {
         if (!success)
         {
-            UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
-                                                                        message:NSLocalizedString(@"Can't synchronize accounts. Try again later.", @"")
-                                                                 preferredStyle:UIAlertControllerStyleAlert];
-            [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
-                                                   style:UIAlertActionStyleCancel
-                                                 handler:^(UIAlertAction *action) {}]];
-            [self presentViewController:ac animated:YES completion:nil];
+            if ([error code] != -4) // -4 is the special error code, if syncDate is still valid and force is NO
+            {
+                UIAlertController* ac = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", @"")
+                                                                            message:NSLocalizedString(@"Can't synchronize accounts. Try again later.", @"")
+                                                                     preferredStyle:UIAlertControllerStyleAlert];
+                [ac addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"")
+                                                       style:UIAlertActionStyleCancel
+                                                     handler:^(UIAlertAction *action) {}]];
+                [self presentViewController:ac animated:YES completion:nil];
+            }
             return;
         }
         [self recursivelyUpdateAccounts:[accs subarrayWithRange:NSMakeRange(1, accs.count - 1)]];
