@@ -121,7 +121,7 @@
             MYCExchangeRate * rate = [MYCWallet currentWallet].exchangeRate;
             item.title = rate.provider;
             MYCCurrencyFormatter* formatter = [MYCWallet currentWallet].fiatCurrencyFormatter;
-            item.detailTitle = [formatter stringFromAmount:100000000LL];
+            item.detailTitle = [formatter stringFromAmount:BTCCoin];
             item.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             item.action = ^(PTableViewSourceItem* item, NSIndexPath* indexPath) {
                 [weakself showExchangeRates:nil];

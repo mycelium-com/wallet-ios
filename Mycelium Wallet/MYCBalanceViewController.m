@@ -250,7 +250,7 @@
     if (self.primaryAmountLabel.text.length == 0) {
         self.primaryAmountLabel.text = @"—";
     }
-    self.secondaryAmountLabel.text = [self.wallet.fiatCurrencyFormatter stringFromAmount:self.account.spendableAmount];
+    self.secondaryAmountLabel.text = [self.wallet.fiatCurrencyFormatter stringFromAmount:self.account.spendableAmount] ?: NSLocalizedString(@"N/A", @"");
 }
 
 - (void) updateStatusLabel
@@ -272,8 +272,9 @@
     
     {
         NSString* rateString = [NSString stringWithFormat:NSLocalizedString(@"%@ ~ %@", @""),
-                                NSLocalizedString(@"1 BTC", @""),
-                                [self.wallet.fiatCurrencyFormatter stringFromAmount:BTCCoin]];
+                                           NSLocalizedString(@"1 BTC", @""),
+                                           [self.wallet.fiatCurrencyFormatter stringFromAmount:BTCCoin] ?: NSLocalizedString(@"N/A", @"")];
+        
         if (![rateString containsString:@"null"]) {
             [strings addObject:rateString];
         }
