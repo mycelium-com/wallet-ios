@@ -334,4 +334,9 @@
       };
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    NSDictionary* selfDict = [self dictionary];
+    return [[MYCCurrencyFormatter alloc] initWithDictionary:selfDict];
+}
+
 @end

@@ -18,7 +18,7 @@ typedef NS_ENUM(NSInteger, MYCCurrencyFormatterStyle) {
 // App-specific currency formatter that can show both bitcoin denominations (BTC, bits) and
 // fiat denominations (exchange rate converted and updated automatically).
 // NSNumber returned and consumed is always BTCAmount.
-@interface MYCCurrencyFormatter : NSNumberFormatter
+@interface MYCCurrencyFormatter : NSNumberFormatter<NSCopying>
 
 // Short currency code (BTC, bits, USD, EUR etc.)
 // Setter is inactive.
