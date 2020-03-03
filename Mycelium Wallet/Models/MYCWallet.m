@@ -410,7 +410,15 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     NSData * data = [NSKeyedArchiver archivedDataWithRootObject:exchangeRate];
     [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"MYCWalletExchangeRate"];
     _exchangeRate = exchangeRate;
-    [self updateCurrencyFormatter:_primaryCurrencyFormatter completionHandler:nil];
+    
+    __typeof(self) __weak weakself = self;
+    [self updateCurrencyFormatter:self.fiatCurrencyFormatter completionHandler:^(BOOL result, NSError *error) {
+        if (!result) {
+            // If network update request failed, then still use cached exchange rates.
+            // Also, triggers all of the necessary notification to keep UI up to date.
+            [weakself loadAndSetSavedExchangeRates];
+        }
+    }];
 }
 
 - (void)loadExchangeRate {
