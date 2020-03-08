@@ -1388,7 +1388,7 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     NSMutableArray* addrs = [NSMutableArray array];
     
     // Scan external addresses...
-    for (uint32_t j = 0; j < 2; j++) {
+    for (uint32_t j = 0; j < 20; j++) {
         BTCAddress* addr = [self addressForAddress:[BTCPublicKeyAddress addressWithData:BTCHash160([accKeychain externalKeyAtIndex:j].publicKey)]];
         [addrs addObject:addr];
     }
