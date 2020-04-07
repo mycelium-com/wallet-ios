@@ -42,7 +42,19 @@
 @property (weak, nonatomic) IBOutlet UIButton* restorePassphraseCancelButton;
 @property (weak, nonatomic) IBOutlet UIButton* restorePassphraseCompleteButton;
 
+@property (strong, nonatomic) IBOutlet UIView *restorePassphraseDisclaimerView;
+@property (weak, nonatomic) IBOutlet UILabel *restorePassphraseDisclaimerTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *restorePassphraseDisclaimerTextLabel;
+@property (weak, nonatomic) IBOutlet UIButton* restorePassphraseDisclaimerCancelButton;
+@property (weak, nonatomic) IBOutlet UIButton* restorePassphraseDisclaimerCompleteButton;
+
 @property (strong, nonatomic) IBOutlet UIView *backupWarningView;
+
+@property (weak, nonatomic) IBOutlet UILabel *passphraseSwitchLabel;
+@property (weak, nonatomic) IBOutlet UISwitch *passphraseSwitch;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *passphraseWarningLabelHeightConstraint;
+
+@property (nonatomic) NSString *restorePassphraseTextViewText;
 
 @end
 
@@ -67,6 +79,7 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])
     {
         _restorePlaceholderText = @"chancellor brink second bailout banks...";
+        _restorePassphraseTextViewText = @"";
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -86,10 +99,10 @@
     return YES;
 }
 
-- (BOOL) automaticallyAdjustsScrollViewInsets
-{
-    return YES;
-}
+//- (BOOL) automaticallyAdjustsScrollViewInsets
+//{
+//    return YES;
+//}
 
 - (void) viewWillAppear:(BOOL)animated
 {
@@ -261,7 +274,25 @@
 
 - (IBAction)cancelRestorePassphrase:(id)sender
 {
+    [self.restorePassphraseTextView setText:@""];
     [self.restorePassphraseWalletView removeFromSuperview];
+}
+
+- (IBAction)cancelRestorePassphraseDisclaimer:(id)sender
+{
+    [self.restorePassphraseDisclaimerView removeFromSuperview];
+    [self cancelRestorePassphrase:sender];
+    [self.passphraseSwitch setOn:NO];
+    [self passphraseSwitchValueChanged:sender];
+}
+
+- (IBAction)goToPassphraseOrFinishRestore:(id)sender
+{
+    if ([self.passphraseSwitch isOn]) {
+        [self goToPassphrase:sender];
+    } else {
+        [self finishRestore:sender];
+    }
 }
 
 - (IBAction)goToPassphrase:(id)sender
@@ -271,12 +302,30 @@
     self.restorePassphraseWalletView.translatesAutoresizingMaskIntoConstraints = YES;
     [self.containerView addSubview:self.restorePassphraseWalletView];
 
-    self.restorePassphraseLabel.text = NSLocalizedString(@"Enter a passphrase\n(omit passphrase if you did not specify it while creating a wallet)", @"");
+    self.restorePassphraseLabel.text = NSLocalizedString(@"Enter a passphrase\n(Go back to normal restore if you did not specify it before)", @"");
     [self.restorePassphraseCancelButton setTitle:NSLocalizedString(@"Back", @"") forState:UIControlStateNormal];
     [self.restorePassphraseCompleteButton setTitle:NSLocalizedString(@"Continue", @"") forState:UIControlStateNormal];
 
     self.restorePassphraseTextView.text = @"";
+    self.restorePassphraseCompleteButton.enabled = NO;
 
+    [self updateRestoreUI];
+    [self updateRestorePlaceholder];
+}
+
+- (IBAction)goToPassphraseDisclaimer:(id)sender {
+    [self.view endEditing:YES];
+
+    self.restorePassphraseDisclaimerView.frame = self.containerView.bounds;
+    self.restorePassphraseDisclaimerView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    self.restorePassphraseDisclaimerView.translatesAutoresizingMaskIntoConstraints = YES;
+    [self.containerView addSubview:self.restorePassphraseDisclaimerView];
+
+    self.restorePassphraseDisclaimerTitleLabel.text = NSLocalizedString(@"Important note!", @"");
+    self.restorePassphraseDisclaimerTextLabel.text = NSLocalizedString(@"Restoring your wallet from a master seed with a passphrase will lead to completely new keys derivation comparing to restoring without it. It means that you WON'T be able to access your funds if they were on a master seed without a passphrase.\n\nIf you have entered a passphrase by mistake please go back to the normal restore procedure.", @"");
+    [self.restorePassphraseDisclaimerCancelButton setTitle:NSLocalizedString(@"Back", @"") forState:UIControlStateNormal];
+    [self.restorePassphraseDisclaimerCompleteButton setTitle:NSLocalizedString(@"I understand, continue", @"") forState:UIControlStateNormal];
+        
     [self updateRestoreUI];
     [self updateRestorePlaceholder];
 }
@@ -309,11 +358,30 @@
     }
 }
 
+- (IBAction)passphraseSwitchValueChanged:(id)sender
+{
+    [self.passphraseWarningLabelHeightConstraint setActive:![self.passphraseSwitch isOn]];
+    
+    [UIView animateWithDuration:0.15 delay:0.0
+                        options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState
+                     animations:^{
+                        [self.view layoutIfNeeded];
+                     } completion:nil];
+}
+
 - (void)textViewDidChange:(UITextView *)textView
 {
     if (textView.text.length > 0)
     {
         [self updateRestoreUI];
+    }
+    
+    if ([textView isEqual:self.restorePassphraseTextView] && textView.secureTextEntry == YES) {
+        NSString *securedText = @"";
+        for (NSInteger i = 0;i < [self.restorePassphraseTextViewText length];i++) {
+            securedText = [securedText stringByAppendingString:@"•"];
+        }
+        [textView setText:securedText];
     }
 }
 
@@ -331,6 +399,12 @@
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
+    if ([textView isEqual:self.restorePassphraseTextView]) {
+        NSString *newText = [textView.text stringByReplacingCharactersInRange:range withString:text];
+        [self.restorePassphraseCompleteButton setEnabled:[newText length] != 0];
+        self.restorePassphraseTextViewText = [self.restorePassphraseTextViewText stringByReplacingCharactersInRange:range withString:text];
+    }
+    
     if ([text isEqualToString:@"\n"])
     {
         // User tapped "Done" button, simply add another space.
