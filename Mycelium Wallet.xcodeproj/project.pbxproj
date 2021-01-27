@@ -83,11 +83,11 @@
 		20C2D81719E573B00022CAAC /* MYCUnlockedWallet.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D81619E573B00022CAAC /* MYCUnlockedWallet.m */; };
 		20C2D82919EBC7680022CAAC /* MYCErrorAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */; };
 		20C2D82C19EBD6CB0022CAAC /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C2D82B19EBD6CB0022CAAC /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		20DAD9DB1ACECD9700EBC85F /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20DAD9DA1ACECD9700EBC85F /* Crashlytics.framework */; };
 		311D63221AADD72900798450 /* MYCCurrenciesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D63201AADD72900798450 /* MYCCurrenciesViewController.m */; };
 		311D63261AADD8AF00798450 /* MYCCurrencyFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D63251AADD8AF00798450 /* MYCCurrencyFormatter.m */; };
 		311D63291AADE8F700798450 /* MYCCurrencyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 311D63281AADE8F700798450 /* MYCCurrencyTableViewCell.m */; };
 		311D632B1AADEE6600798450 /* MYCCurrencyTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 311D632A1AADEE6600798450 /* MYCCurrencyTableViewCell.xib */; };
+		3B9A783B2402B9EC00BC3A15 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B9A783A2402B9EC00BC3A15 /* GoogleService-Info.plist */; };
 		B74E9BEB1836ACD1C0F0B780 /* libPods-Mycelium Wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD7880E55331BB60C383284 /* libPods-Mycelium Wallet.a */; };
 /* End PBXBuildFile section */
 
@@ -235,7 +235,6 @@
 		20C2D82819EBC7680022CAAC /* MYCErrorAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCErrorAnimation.m; sourceTree = "<group>"; };
 		20C2D82A19EBD6CB0022CAAC /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		20C2D82B19EBD6CB0022CAAC /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		20DAD9DA1ACECD9700EBC85F /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		311D631F1AADD72900798450 /* MYCCurrenciesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCCurrenciesViewController.h; sourceTree = "<group>"; };
 		311D63201AADD72900798450 /* MYCCurrenciesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCCurrenciesViewController.m; sourceTree = "<group>"; };
 		311D63241AADD8AF00798450 /* MYCCurrencyFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYCCurrencyFormatter.h; path = Models/MYCCurrencyFormatter.h; sourceTree = "<group>"; };
@@ -243,6 +242,7 @@
 		311D63271AADE8F700798450 /* MYCCurrencyTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCCurrencyTableViewCell.h; sourceTree = "<group>"; };
 		311D63281AADE8F700798450 /* MYCCurrencyTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCCurrencyTableViewCell.m; sourceTree = "<group>"; };
 		311D632A1AADEE6600798450 /* MYCCurrencyTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MYCCurrencyTableViewCell.xib; sourceTree = "<group>"; };
+		3B9A783A2402B9EC00BC3A15 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5BF328B65E8D41F25B2317A5 /* Pods-Mycelium Wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		BF97CDAFD46B44D6507A4B17 /* Pods-Mycelium Wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mycelium Wallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet.release.xcconfig"; sourceTree = "<group>"; };
 		CDD7880E55331BB60C383284 /* libPods-Mycelium Wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mycelium Wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -255,7 +255,6 @@
 			files = (
 				20BDE1C91AE687E600EBC09D /* libz.dylib in Frameworks */,
 				200AAE3919F93FFB0004F908 /* AVFoundation.framework in Frameworks */,
-				20DAD9DB1ACECD9700EBC85F /* Crashlytics.framework in Frameworks */,
 				B74E9BEB1836ACD1C0F0B780 /* libPods-Mycelium Wallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -461,6 +460,7 @@
 				208FFB9F19D9802000D4C159 /* Images.xcassets */,
 				208FFBA119D9802000D4C159 /* LaunchScreen.xib */,
 				208FFB9319D9802000D4C159 /* Info.plist */,
+				3B9A783A2402B9EC00BC3A15 /* GoogleService-Info.plist */,
 				208FFB9419D9802000D4C159 /* main.m */,
 				20C2D81419E5713A0022CAAC /* MYCPrefix.pch */,
 				2076471B1A0D0A39000F00F2 /* Credits.html */,
@@ -579,7 +579,6 @@
 			isa = PBXGroup;
 			children = (
 				20BDE1C81AE687E600EBC09D /* libz.dylib */,
-				20DAD9DA1ACECD9700EBC85F /* Crashlytics.framework */,
 				200AAE3819F93FFB0004F908 /* AVFoundation.framework */,
 				CDD7880E55331BB60C383284 /* libPods-Mycelium Wallet.a */,
 			);
@@ -618,9 +617,6 @@
 				208FFB8B19D9802000D4C159 /* Sources */,
 				208FFB8C19D9802000D4C159 /* Frameworks */,
 				208FFB8D19D9802000D4C159 /* Resources */,
-				20DAD9D91ACECD6000EBC85F /* ShellScript */,
-				A4C87451C8509054AAB24042 /* [CP] Embed Pods Frameworks */,
-				001AE0F6624E0F030241E5ED /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -684,6 +680,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				de,
@@ -708,6 +705,7 @@
 				0E39A2EA1E1FF2FC001825C3 /* MYCReceiveViewController.xib in Resources */,
 				2064E38819D9A0E400CD81B8 /* MYCAccountsViewController.xib in Resources */,
 				311D632B1AADEE6600798450 /* MYCCurrencyTableViewCell.xib in Resources */,
+				3B9A783B2402B9EC00BC3A15 /* GoogleService-Info.plist in Resources */,
 				2076471A1A0D080A000F00F2 /* MYCWebViewController.xib in Resources */,
 				20A1C6AD1AD2AF6900284EDA /* MYCRecoveryInfo0415.html in Resources */,
 				208FFBA319D9802000D4C159 /* LaunchScreen.xib in Resources */,
@@ -746,62 +744,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		001AE0F6624E0F030241E5ED /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		20DAD9D91ACECD6000EBC85F /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "./Crashlytics.framework/run a0449b892cadffe38ac3e11d7d564d916b905e5c 14a15ad0e654ac3560db0a9fba7a33be42877c2807a04761606aceb6ec7e2a74\n";
-		};
 		9453E2C3EA45FACCD5F43BC7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Mycelium Wallet-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		A4C87451C8509054AAB24042 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mycelium Wallet/Pods-Mycelium Wallet-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1048,6 +1006,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
+				CURRENT_PROJECT_VERSION = 36;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1062,6 +1021,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.16;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mycelium.wallet-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1078,6 +1038,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
+				CURRENT_PROJECT_VERSION = 36;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1092,6 +1053,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				INFOPLIST_FILE = "Mycelium Wallet/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.16;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mycelium.wallet-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

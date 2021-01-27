@@ -53,7 +53,6 @@
         instance.endpointURLs = @[
                                   [NSURL URLWithString:@"https://mws20.mycelium.com/wapi"],
                                   [NSURL URLWithString:@"https://mws60.mycelium.com/wapi"],
-                                  [NSURL URLWithString:@"https://mws70.mycelium.com/wapi"],
                                   [NSURL URLWithString:@"https://mws80.mycelium.com/wapi"],
                                   ];
         instance.currentEndpointIndex = 0;

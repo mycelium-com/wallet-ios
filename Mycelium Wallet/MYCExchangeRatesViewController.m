@@ -14,7 +14,7 @@
 @interface MYCExchangeRatesViewController ()
 
 @property(nonatomic) NSArray * exchangeRates;
-@property(nonatomic) MYCCurrencyFormatter * formatter;
+@property(nonatomic, copy) MYCCurrencyFormatter * formatter; // must be copied, otherwise it will change wallet's one properties.
 
 @end
 
@@ -49,9 +49,13 @@
     MYCExchangeRate * rate = self.exchangeRates[indexPath.row];
     
     cell.textLabel.text = rate.provider;
-
-    self.formatter.currencyConverter.averageRate = rate.price;
-    cell.detailTextLabel.text = [self.formatter stringFromAmount:100000000LL];
+    
+    if ([rate.price compare:[NSDecimalNumber zero]]) {
+        self.formatter.currencyConverter.averageRate = rate.price;
+        cell.detailTextLabel.text = [self.formatter stringFromAmount:BTCCoin];
+    } else {
+        cell.detailTextLabel.text = NSLocalizedString(@"N/A", @"");
+    }
     
     if ([[MYCWallet currentWallet].exchangeRate.provider isEqualToString:rate.provider]) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;

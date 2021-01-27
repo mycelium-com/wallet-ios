@@ -177,15 +177,13 @@
     }];
     cell.transaction = tx;
 
-    NSString* amountString = nil;
-    if ([MYCWallet currentWallet].primaryCurrencyFormatter.isFiatFormatter &&
+    NSString *amountString = [[MYCWallet currentWallet].primaryCurrencyFormatter stringFromAmount:ABS(tx.amountTransferred)];
+    
+    if ((!amountString || [amountString isEqualToString:@""]) &&
+        [MYCWallet currentWallet].primaryCurrencyFormatter.isFiatFormatter &&
         tx.transactionDetails.fiatAmount.length > 0 &&
         tx.transactionDetails.fiatCode.length > 0) {
         amountString = [[MYCWallet currentWallet] reformatString:[tx.transactionDetails.fiatAmount stringByReplacingOccurrencesOfString:@"-" withString:@""] forCurrency:tx.transactionDetails.fiatCode];
-    }
-
-    if (!amountString) {
-        amountString = [[MYCWallet currentWallet].primaryCurrencyFormatter stringFromAmount:ABS(tx.amountTransferred)];
     }
 
     if (amountString) {

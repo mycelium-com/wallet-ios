@@ -641,15 +641,33 @@ static const BTCAmount MYCPriorityFeeRate = 100000;
     // figure the required fees and put the difference as a spending amount.
 
     BTCTransactionBuilder* builder = [self makeTransactionBuilder];
-    builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:0 address:[BTCPublicKeyAddress addressWithData:BTCZero160()]] ];
+    if (builder.outputs.count == 0 || !self.amountValid) {
+        // Address may not be entered yet, so use dummy address.
+        builder.outputs = @[ [[BTCTransactionOutput alloc] initWithValue:0 address:self.spendingAddress ?: [BTCPublicKeyAddress addressWithData:BTCZero160()]] ];
+    }
     builder.shouldSign = NO;
 
     NSError* berror = nil;
     BTCTransactionBuilderResult* result = [builder buildTransaction:&berror];
     if (result)
     {
-        self.amountField.text = [self.wallet.primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(result.outputsAmount)];
-        self.spendingAmount = result.outputsAmount;
+        BTCAmount satoshis = 0;
+        
+        BTCTransactionOutput *unspentOutput;
+        NSEnumerator *unspentOutputsEnumerator = [builder unspentOutputsEnumerator];
+        
+        while (unspentOutput = [unspentOutputsEnumerator nextObject])
+        {
+            satoshis += [unspentOutput value];
+        }
+        satoshis -= result.fee;
+        
+        if (satoshis <= 0) {
+            satoshis = 0;
+        }
+        
+        self.amountField.text = [self.wallet.primaryCurrencyFormatter.nakedFormatter stringFromNumber:@(satoshis)];
+        self.spendingAmount = satoshis;
     }
 }
 

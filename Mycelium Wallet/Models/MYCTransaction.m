@@ -156,9 +156,12 @@ static const NSInteger MYCTransactionBlockHeightUnconfirmed = 9999999;
                 {
                     self.amountTransferred  -= mout.value;
                 }
-                txin.userInfo = @{@"value": @(mout.value),
-                                  @"address": [[MYCWallet currentWallet] addressForAddress:mout.script.standardAddress],
-                                  @"script": mout.script};
+                
+                if (mout.script.standardAddress) {
+                    txin.userInfo = @{@"value": @(mout.value),
+                                      @"address": [[MYCWallet currentWallet] addressForAddress:mout.script.standardAddress],
+                                      @"script": mout.script};
+                }
             }
         }
     }

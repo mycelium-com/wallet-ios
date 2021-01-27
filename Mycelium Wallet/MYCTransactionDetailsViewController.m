@@ -220,7 +220,7 @@
             [section item:^(PTableViewSourceItem *item) {
                 item.cellIdentifier = @"keyvalue2";
                 item.key = [btcfmt stringFromAmount:BTCAmountFromDecimalNumber(txin.userInfo[@"value"])];
-                item.value = [txin.userInfo[@"address"] base58String];
+                item.value = [txin.userInfo[@"address"] base58String] ?: @"<unknown>";
                 if (item.value)
                 {
                     item.userInfo = @{@"path": [@"/address/" stringByAppendingString:item.value],

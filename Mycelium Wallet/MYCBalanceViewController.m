@@ -11,10 +11,12 @@
 #import "MYCReceiveViewController.h"
 #import "MYCBackupViewController.h"
 #import "MYCCurrenciesViewController.h"
+#import "MYCExchangeRatesViewController.h"
 #import "MYCCurrencyFormatter.h"
 
 #import "MYCAppDelegate.h"
 #import "MYCWallet.h"
+#import "MYCExchangeRate.h"
 #import "MYCWalletAccount.h"
 #import "MYCScanPrivateKeyViewController.h"
 #import "MYCVerifyBackupViewController.h"
@@ -32,6 +34,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *primaryAmountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *secondaryAmountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
+@property (weak, nonatomic) IBOutlet UILabel *exchangeLabel;
 @property (weak, nonatomic) IBOutlet UIButton* accountButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
@@ -195,6 +198,7 @@
 {
     [self updateAmounts];
     [self updateStatusLabel];
+    [self updateExchangeLabel];
 }
 
 - (void) walletDidUpdateNetworkActivity:(NSNotification*)notif
@@ -237,15 +241,16 @@
     self.backupButton.hidden = !(!self.wallet.isBackedUp && self.account.unconfirmedAmount > 0);
 
     [self updateStatusLabel];
+    [self updateExchangeLabel];
 }
 
 - (void) updateAmounts
 {
-    self.primaryAmountLabel.text = [self.wallet.primaryCurrencyFormatter stringFromAmount:self.account.spendableAmount];
+    self.primaryAmountLabel.text = [self.wallet.btcCurrencyFormatter stringFromAmount:self.account.spendableAmount];
     if (self.primaryAmountLabel.text.length == 0) {
         self.primaryAmountLabel.text = @"—";
     }
-    self.secondaryAmountLabel.text = [self.wallet.secondaryCurrencyFormatter stringFromAmount:self.account.spendableAmount];
+    self.secondaryAmountLabel.text = [self.wallet.fiatCurrencyFormatter stringFromAmount:self.account.spendableAmount] ?: NSLocalizedString(@"N/A", @"");
 }
 
 - (void) updateStatusLabel
@@ -266,9 +271,10 @@
     }
     
     {
-        NSString* rateString = [NSString stringWithFormat:NSLocalizedString(@"%@: %@", @""),
-                                NSLocalizedString(@"Exchange rate", @""),
-                                [self.wallet.fiatCurrencyFormatter stringFromAmount:BTCCoin]];
+        NSString* rateString = [NSString stringWithFormat:NSLocalizedString(@"%@ ~ %@", @""),
+                                           NSLocalizedString(@"1 BTC", @""),
+                                           [self.wallet.fiatCurrencyFormatter stringFromAmount:BTCCoin] ?: NSLocalizedString(@"N/A", @"")];
+        
         if (![rateString containsString:@"null"]) {
             [strings addObject:rateString];
         }
@@ -282,6 +288,10 @@
     paragraphStyle.alignment = NSTextAlignmentCenter;
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, text.length)];
     self.statusLabel.attributedText = attributedString;
+}
+
+- (void) updateExchangeLabel {
+    [self.exchangeLabel setText:[[[MYCWallet currentWallet] exchangeRate] provider]];
 }
 
 - (void) updateRefreshControlAnimated:(BOOL)animated
@@ -427,6 +437,13 @@
     MYCCurrenciesViewController* currenciesVC = [[MYCCurrenciesViewController alloc] initWithNibName:nil bundle:nil];
     UINavigationController* navC = [[UINavigationController alloc] initWithRootViewController:currenciesVC];
     [self presentViewController:navC animated:YES completion:nil];
+}
+
+- (IBAction) showExchanges:(id)sender
+{
+    UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"MYCExchangeRates" bundle:nil];
+    UIViewController * vc = [storyboard instantiateInitialViewController];
+    [self presentViewController:vc animated:YES completion:nil];
 }
 
 - (IBAction) refresh:(id)sender

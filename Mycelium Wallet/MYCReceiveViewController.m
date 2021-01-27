@@ -41,12 +41,16 @@
 
 @property (weak, nonatomic) IBOutlet UIView *backupWarningOverlay;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleTopConstraint;
 
 @property(nonatomic) NSNumber* previousBrightness;
 
 @end
 
 @implementation MYCReceiveViewController
+
+static CGFloat const kDefaultStatusBarHeight = 20.0; // It is intended that it has the same value for X-devices
+static CGFloat const kDefaultTopBarOffset = 12.0;
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -99,6 +103,21 @@
     if (![self warnAboutSecretLoss]) {
         [self warnAboutBackupIfNeeded];
     }
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    CGFloat statusBarHeight = kDefaultStatusBarHeight;
+    CGFloat offset = kDefaultTopBarOffset;
+
+    if ([self modalPresentationStyle] != UIModalPresentationPageSheet) {
+        statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
+    } else {
+        offset = 0.0;
+    }
+
+    [self.titleTopConstraint setConstant:statusBarHeight + offset];
 }
 
 - (BOOL) warnAboutSecretLoss {

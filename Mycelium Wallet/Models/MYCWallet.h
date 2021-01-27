@@ -121,6 +121,8 @@ typedef NS_ENUM(NSInteger, MYCWalletPreferredCurrency) {
 
 - (void) loadMinerFeeEstimationsWithCompletion:(void(^)(MYCMinerFeeEstimations* estimations, NSError* error))completion;
 
+- (void)loadAndSetSavedExchangeRates;
+
 // Date formatters
 @property(nonatomic) NSDateFormatter* compactDateFormatter;
 @property(nonatomic) NSDateFormatter* compactTimeFormatter;
