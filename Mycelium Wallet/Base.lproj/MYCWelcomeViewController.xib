@@ -344,7 +344,7 @@
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="passphrase" translatesAutoresizingMaskIntoConstraints="NO" id="RI8-vZ-RIs" customClass="MYCRoundedTextView">
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RI8-vZ-RIs" customClass="MYCRoundedTextView">
                     <rect key="frame" x="20" y="315.33333333333331" width="280" height="36"/>
                     <color key="backgroundColor" red="0.96227037906646729" green="0.96224147081375122" blue="0.96225786209106445" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
