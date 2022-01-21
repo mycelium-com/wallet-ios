@@ -335,7 +335,7 @@
     [self.view endEditing:YES];
 
     BTCMnemonic* mnemonic = [[BTCMnemonic alloc] initWithWords:[self currentWords]
-                                                      password:self.restorePassphraseTextView.text
+                                                      password: _restorePassphraseTextViewText
                                                   wordListType:BTCMnemonicWordListTypeEnglish];
 
     if (mnemonic && mnemonic.keychain)
