@@ -8,6 +8,7 @@
 
 #import "MYCWelcomeViewController.h"
 #import "MYCBackupViewController.h"
+#import "BackupInfoVC.h"
 #import "MYCAppDelegate.h"
 
 #import "MYCWallet.h"
@@ -121,6 +122,11 @@
             [self presentViewController:alert animated:YES completion:nil];
         }
     });
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self showBackupInfo];
 }
 
 - (void) setupWalletWithMnemonic:(BTCMnemonic*)mnemonic newWallet:(BOOL)newWallet completionHandler:(void(^)(BOOL result))completionHandler
@@ -654,6 +660,12 @@
             });
         });
     }
+}
+
+- (void)showBackupInfo {
+    BackupInfoVC *vc = [[BackupInfoVC alloc] init];
+    vc.hideBackupButton = YES;
+    [self presentViewController:vc animated:YES completion:nil];
 }
 
 
