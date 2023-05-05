@@ -20,6 +20,7 @@
 #import "MYCWalletAccount.h"
 #import "MYCScanPrivateKeyViewController.h"
 #import "MYCVerifyBackupViewController.h"
+#import "BackupInfoVC.h"
 
 
 @interface MYCBalanceViewController ()
@@ -42,6 +43,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *backupButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *currencyButton;
+
+@property(nonatomic) BOOL backupInfoShown;
 
 @end
 
@@ -95,9 +98,12 @@
 
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-
-    if (![self promptToBackupIfNeeded]) {
-        [self promptToVerifyBackupIfNeeded];
+    if (!self.backupInfoShown) {
+        [self showBackupInfo];
+    } else {
+        if (![self promptToBackupIfNeeded]) {
+            [self promptToVerifyBackupIfNeeded];
+        }
     }
 }
 
@@ -519,5 +525,13 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)showBackupInfo {
+    self.backupInfoShown = YES;
+    BackupInfoVC *vc = [[BackupInfoVC alloc] init];
+    vc.makeBackupAction = ^{
+        [self backup:nil];
+    };
+    [self presentViewController:vc animated:YES completion:nil];
+}
 
 @end
