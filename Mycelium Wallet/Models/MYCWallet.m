@@ -1432,13 +1432,15 @@ const NSUInteger MYCAccountDiscoveryWindow = 10;
     }
 
     BTCKeychain* accKeychain = [[rootKeychain keychainForAccount:(uint32_t)accountIndex] publicKeychain];
-
-    // Scan 20 external address and 2 internal ones.
     NSMutableArray* addrs = [NSMutableArray array];
-    for (uint32_t j = 0; j < 2; j++) {
+    
+    // Scan external addresses...
+    for (uint32_t j = 0; j < 20; j++) {
         BTCAddress* addr = [self addressForAddress:[BTCPublicKeyAddress addressWithData:BTCHash160([accKeychain externalKeyAtIndex:j].publicKey)]];
         [addrs addObject:addr];
     }
+    
+    // ... and internal addresses.
     for (uint32_t j = 0; j < 2; j++) {
         BTCAddress* addr = [self addressForAddress:[BTCPublicKeyAddress addressWithData:BTCHash160([accKeychain changeKeyAtIndex:j].publicKey)]];
         [addrs addObject:addr];
